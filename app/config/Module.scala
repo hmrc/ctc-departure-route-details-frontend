@@ -18,6 +18,26 @@ package config
 
 import com.google.inject.AbstractModule
 import controllers.actions._
+import navigation.{
+  CountryOfRoutingNavigatorProvider,
+  CountryOfRoutingNavigatorProviderImpl,
+  ExitNavigatorProvider,
+  ExitNavigatorProviderImpl,
+  LoadingAndUnloadingNavigatorProvider,
+  LoadingAndUnloadingNavigatorProviderImpl,
+  LocationOfGoodsNavigatorProvider,
+  LocationOfGoodsNavigatorProviderImpl,
+  OfficeOfExitNavigatorProvider,
+  OfficeOfExitNavigatorProviderImpl,
+  OfficeOfTransitNavigatorProvider,
+  OfficeOfTransitNavigatorProviderImpl,
+  RouteDetailsNavigatorProvider,
+  RouteDetailsNavigatorProviderImpl,
+  RoutingNavigatorProvider,
+  RoutingNavigatorProviderImpl,
+  TransitNavigatorProvider,
+  TransitNavigatorProviderImpl
+}
 
 import java.time.{Clock, ZoneOffset}
 
@@ -31,6 +51,16 @@ class Module extends AbstractModule {
     bind(classOf[LockActionProvider]).to(classOf[LockActionProviderImpl]).asEagerSingleton()
     bind(classOf[DependentTasksAction]).to(classOf[DependentTasksActionImpl]).asEagerSingleton()
     bind(classOf[SpecificDataRequiredActionProvider]).to(classOf[SpecificDataRequiredActionImpl]).asEagerSingleton()
+
+    bind(classOf[RouteDetailsNavigatorProvider]).to(classOf[RouteDetailsNavigatorProviderImpl])
+    bind(classOf[RoutingNavigatorProvider]).to(classOf[RoutingNavigatorProviderImpl])
+    bind(classOf[CountryOfRoutingNavigatorProvider]).to(classOf[CountryOfRoutingNavigatorProviderImpl])
+    bind(classOf[TransitNavigatorProvider]).to(classOf[TransitNavigatorProviderImpl])
+    bind(classOf[OfficeOfTransitNavigatorProvider]).to(classOf[OfficeOfTransitNavigatorProviderImpl])
+    bind(classOf[ExitNavigatorProvider]).to(classOf[ExitNavigatorProviderImpl])
+    bind(classOf[OfficeOfExitNavigatorProvider]).to(classOf[OfficeOfExitNavigatorProviderImpl])
+    bind(classOf[LocationOfGoodsNavigatorProvider]).to(classOf[LocationOfGoodsNavigatorProviderImpl])
+    bind(classOf[LoadingAndUnloadingNavigatorProvider]).to(classOf[LoadingAndUnloadingNavigatorProviderImpl])
 
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
   }

@@ -53,6 +53,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   def signOutUrl(lrn: LocalReferenceNumber): String = s"$departureHubUrl/$lrn/delete-lock"
 
+  lazy val maxOfficesOfExit: Int = configuration.get[Int]("limits.maxOfficesOfExit")
+
   def taskListUrl(lrn: LocalReferenceNumber): String = s"$departureHubUrl/$lrn/task-list"
 
   val cacheUrl: String = servicesConfig.fullServiceUrl("manage-transit-movements-departure-cache")

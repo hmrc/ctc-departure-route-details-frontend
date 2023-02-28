@@ -19,11 +19,11 @@ package generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
-import play.api.mvc.Call
 import play.twirl.api.Html
+import viewModels.sections.Section
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import viewModels.{Link, ListItem, Section}
+import viewModels.{sections, Link, ListItem}
 
 trait ViewModelGenerators {
   self: Generators =>
@@ -89,8 +89,8 @@ trait ViewModelGenerators {
     } yield Section(sectionTitle, rows, link)
   }
 
-  implicit lazy val arbitrarySections: Arbitrary[List[Section]] = Arbitrary {
-    listWithMaxLength[Section]().retryUntil {
+  implicit lazy val arbitrarySections: Arbitrary[List[sections.Section]] = Arbitrary {
+    listWithMaxLength[sections.Section]().retryUntil {
       sections =>
         val sectionTitles = sections.map(_.sectionTitle)
         sectionTitles.distinct.size == sectionTitles.size

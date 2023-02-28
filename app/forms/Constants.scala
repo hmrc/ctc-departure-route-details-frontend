@@ -16,4 +16,6 @@
 
 package forms
 
-object Constants {}
+object Constants {
+  lazy val maxAuthorisationNumberLength: Int    = 35
+}

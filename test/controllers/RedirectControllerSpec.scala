@@ -29,13 +29,12 @@ class RedirectControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind(classOf[GuaranteeDetailsNavigatorProvider]).toInstance(fakeGuaranteeDetailsNavigatorProvider))
+      .overrides(bind(classOf[RouteDetailsNavigatorProvider]).toInstance(fakeRouteDetailsNavigatorProvider))
 
   "Redirect Controller" - {
 
-    "must redirect to the 'add another' page" in {
-      val userAnswers = emptyUserAnswers
-      setExistingUserAnswers(userAnswers)
+    "must redirect to next page" in {
+      setExistingUserAnswers(emptyUserAnswers)
 
       val request = FakeRequest(GET, redirectRoute)
       val result  = route(app, request).value

@@ -19,21 +19,33 @@ package controllers
 import com.google.inject.Inject
 import controllers.actions.Actions
 import models.{LocalReferenceNumber, NormalMode}
+import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+
+import scala.concurrent.ExecutionContext
 
 class RedirectController @Inject() (
   override val messagesApi: MessagesApi,
-  navigatorProvider: GuaranteeDetailsNavigatorProvider,
   actions: Actions,
-  val controllerComponents: MessagesControllerComponents
-) extends FrontendBaseController
+  val controllerComponents: MessagesControllerComponents,
+  navigatorProvider: RouteDetailsNavigatorProvider,
+  countriesService: CountriesService
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport {
 
-  def redirect(lrn: LocalReferenceNumber): Action[AnyContent] = actions.requireData(lrn) {
+  def redirect(lrn: LocalReferenceNumber): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      Redirect(navigatorProvider.apply(NormalMode).nextPage(request.userAnswers))
+      for {
+        ctcCountries                          <- countriesService.getCountryCodesCTC()
+        customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
+      } yield {
+        val navigator: UserAnswersNavigator = navigatorProvider(NormalMode, ctcCountries, customsSecurityAgreementAreaCountries)
+        Redirect(navigator.nextPage(request.userAnswers))
+      }
   }
 
 }

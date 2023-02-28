@@ -17,6 +17,8 @@
 package generators
 
 import models._
+import models.reference.{Country, CountryCode, CustomsOffice, UnLocode}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HttpVerbs._
@@ -54,4 +56,44 @@ trait ModelGenerators {
       url    <- nonEmptyString
     } yield Call(method, url)
   }
+
+  implicit lazy val arbitraryCountryCode: Arbitrary[CountryCode] =
+    Arbitrary {
+      Gen
+        .pick(CountryCode.Constants.countryCodeLength, 'A' to 'Z')
+        .map(
+          code => CountryCode(code.mkString)
+        )
+    }
+
+  implicit lazy val arbitraryCountry: Arbitrary[Country] =
+    Arbitrary {
+      for {
+        code <- arbitrary[CountryCode]
+        name <- nonEmptyString
+      } yield Country(code, name)
+    }
+
+  implicit lazy val arbitraryCountryList: Arbitrary[CountryList] = Arbitrary {
+    for {
+      countries <- listWithMaxLength[Country]()
+    } yield CountryList(countries.distinctBy(_.code))
+  }
+
+  implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] =
+    Arbitrary {
+      for {
+        id          <- nonEmptyString
+        name        <- nonEmptyString
+        phoneNumber <- Gen.option(Gen.alphaNumStr)
+      } yield CustomsOffice(id, name, phoneNumber)
+    }
+
+  implicit lazy val arbitraryUnLocode: Arbitrary[UnLocode] =
+    Arbitrary {
+      for {
+        unLocodeExtendedCode <- nonEmptyString
+        name                 <- nonEmptyString
+      } yield UnLocode(unLocodeExtendedCode, name)
+    }
 }

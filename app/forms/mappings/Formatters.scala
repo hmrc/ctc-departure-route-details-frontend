@@ -16,7 +16,8 @@
 
 package forms.mappings
 
-import models.{Enumerable, RichString}
+import models.reference.{Country, CustomsOffice, UnLocode}
+import models.{CountryList, CustomsOfficeList, Enumerable, RichString, UnLocodeList}
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -124,4 +125,70 @@ trait Formatters {
       override def unbind(key: String, value: A): Map[String, String] =
         baseFormatter.unbind(key, value.toString)
     }
+
+  private[mappings] def customsOfficeFormatter(
+    customsOfficeList: CustomsOfficeList,
+    errorKey: String,
+    args: Seq[Any] = Seq.empty
+  ): Formatter[CustomsOffice] = new Formatter[CustomsOffice] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], CustomsOffice] = {
+      lazy val error = Left(Seq(FormError(key, errorKey, args)))
+      data.get(key) match {
+        case None => error
+        case Some(id) =>
+          customsOfficeList.customsOffices.find(_.id == id) match {
+            case Some(customsOffice) => Right(customsOffice)
+            case None                => error
+          }
+      }
+    }
+
+    override def unbind(key: String, customsOffice: CustomsOffice): Map[String, String] =
+      Map(key -> customsOffice.id)
+  }
+
+  private[mappings] def countryFormatter(
+    countryList: CountryList,
+    errorKey: String,
+    args: Seq[Any] = Seq.empty
+  ): Formatter[Country] = new Formatter[Country] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Country] = {
+      lazy val error = Left(Seq(FormError(key, errorKey, args)))
+      data.get(key) match {
+        case None => error
+        case Some(code) =>
+          countryList.countries.find(_.code.code == code) match {
+            case Some(country) => Right(country)
+            case None          => error
+          }
+      }
+    }
+
+    override def unbind(key: String, country: Country): Map[String, String] =
+      Map(key -> country.code.code)
+  }
+
+  private[mappings] def unLocodeFormatter(
+    unLocodeList: UnLocodeList,
+    errorKey: String,
+    args: Seq[Any] = Seq.empty
+  ): Formatter[UnLocode] = new Formatter[UnLocode] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], UnLocode] = {
+      lazy val error = Left(Seq(FormError(key, errorKey, args)))
+      data.get(key) match {
+        case None => error
+        case Some(unLocodeExtendedCode) =>
+          unLocodeList.getUnLocode(unLocodeExtendedCode) match {
+            case Some(unLocode: UnLocode) => Right(unLocode)
+            case None                     => error
+          }
+      }
+    }
+
+    override def unbind(key: String, unLocode: UnLocode): Map[String, String] =
+      Map(key -> unLocode.unLocodeExtendedCode)
+  }
 }
