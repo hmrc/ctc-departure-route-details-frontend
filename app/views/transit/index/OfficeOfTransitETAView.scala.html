@@ -30,9 +30,9 @@
 @(form: Form[DateTime], lrn: LocalReferenceNumber, countryName: String, customsOffice: String, mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.transit.index.officeOfTransitETA.title", customsOffice, countryName),
+    title = messages("transit.index.officeOfTransitETA.title", customsOffice, countryName),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.OfficeOfTransitETAController.onSubmit(lrn, mode, index), Symbol("autoComplete") -> "off") {
@@ -40,13 +40,13 @@
         @errorSummary(form)
 
         @inputDateTime(
-            caption = Some(messages("routeDetails.transit.caption")),
-            legend = messages("routeDetails.transit.index.officeOfTransitETA.heading", customsOffice, countryName),
+            caption = Some(messages("transit.caption")),
+            legend = messages("transit.index.officeOfTransitETA.heading", customsOffice, countryName),
             form = form,
-            dateLabel = messages("routeDetails.transit.index.officeOfTransitETA.date.title"),
-            dateHint = Some(messages("routeDetails.transit.index.officeOfTransitETA.date.hint")),
-            timeLabel = messages("routeDetails.transit.index.officeOfTransitETA.time.title"),
-            timeHint = Some(messages("routeDetails.transit.index.officeOfTransitETA.time.hint"))
+            dateLabel = messages("transit.index.officeOfTransitETA.date.title"),
+            dateHint = Some(messages("transit.index.officeOfTransitETA.date.hint")),
+            timeLabel = messages("transit.index.officeOfTransitETA.time.title"),
+            timeHint = Some(messages("transit.index.officeOfTransitETA.time.hint"))
         )
 
         @button(attributes = Map("id" -> "submit"))

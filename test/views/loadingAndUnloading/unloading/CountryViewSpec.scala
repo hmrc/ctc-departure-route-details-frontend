@@ -16,12 +16,14 @@
 
 package views.loadingAndUnloading.unloading
 
+import forms.CountryFormProvider
 import models.reference.Country
 import models.{CountryList, NormalMode}
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.InputSelectViewBehaviours
+import views.html.loadingAndUnloading.unloading.CountryView
 
 class CountryViewSpec extends InputSelectViewBehaviours[Country] {
 
@@ -32,7 +34,7 @@ class CountryViewSpec extends InputSelectViewBehaviours[Country] {
 
   implicit override val arbitraryT: Arbitrary[Country] = arbitraryCountry
 
-  override val prefix: String = "routeDetails.loadingAndUnloading.unloading.country"
+  override val prefix: String = "loadingAndUnloading.unloading.country"
 
   behave like pageWithTitle()
 

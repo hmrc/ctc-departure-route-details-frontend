@@ -17,6 +17,7 @@
 package pages.loadingAndUnloading.unloading
 
 import pages.behaviours.PageBehaviours
+import pages.sections.unloading.UnloadingLocationSection
 import play.api.libs.json.Json
 
 class AddExtraInformationYesNoPageSpec extends PageBehaviours {

@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.behaviours.OptionFieldBehaviours
 import models.RadioModel
 import org.scalacheck.Gen
 import play.api.data.FormError

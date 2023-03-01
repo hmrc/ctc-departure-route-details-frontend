@@ -16,6 +16,7 @@
 
 package viewModels.exit
 
+import config.FrontendAppConfig
 import models.{Index, Mode, UserAnswers}
 import play.api.i18n.Messages
 import utils.cyaHelpers.exit.OfficeOfExitCheckYourAnswersHelper
@@ -29,7 +30,7 @@ object OfficeOfExitAnswersViewModel {
 
   class OfficeOfExitAnswersViewModelProvider @Inject() () {
 
-    def apply(userAnswers: UserAnswers, mode: Mode, index: Index)(implicit messages: Messages): OfficeOfExitAnswersViewModel = {
+    def apply(userAnswers: UserAnswers, mode: Mode, index: Index)(implicit messages: Messages, config: FrontendAppConfig): OfficeOfExitAnswersViewModel = {
       val helper = new OfficeOfExitCheckYourAnswersHelper(userAnswers, mode, index)
 
       val rows = Seq(

@@ -16,13 +16,19 @@
 
 package controllers.transit.index
 
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
+import forms.CustomsOfficeForCountryFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
+import pages.routing.CountryOfDestinationPage
+import pages.transit.index.{OfficeOfTransitCountryPage, OfficeOfTransitPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{CountriesService, CustomsOfficesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.transit.index.OfficeOfTransitView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +57,7 @@ class OfficeOfTransitController @Inject() (
           val country = request.arg
           customsOfficesService.getCustomsOfficesOfTransitForCountry(country.code).map {
             customsOfficeList =>
-              val form = formProvider("routeDetails.transit.index.officeOfTransit", customsOfficeList, country.description)
+              val form = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
               val preparedForm = request.userAnswers.get(OfficeOfTransitPage(index)) match {
                 case None        => form
                 case Some(value) => form.fill(value)
@@ -69,7 +75,7 @@ class OfficeOfTransitController @Inject() (
           val country = request.arg
           customsOfficesService.getCustomsOfficesOfTransitForCountry(country.code).flatMap {
             customsOfficeList =>
-              val form = formProvider("routeDetails.transit.index.officeOfTransit", customsOfficeList, country.description)
+              val form = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
               form
                 .bindFromRequest()
                 .fold(
@@ -83,7 +89,7 @@ class OfficeOfTransitController @Inject() (
                         implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
                         OfficeOfTransitPage(index)
                           .writeToUserAnswers(value)
-                          .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                           .writeToSession()
                           .navigate()
                       }

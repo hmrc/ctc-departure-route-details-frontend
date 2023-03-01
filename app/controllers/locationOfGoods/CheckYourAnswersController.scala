@@ -16,6 +16,7 @@
 
 package controllers.locationOfGoods
 
+import config.FrontendAppConfig
 import controllers.actions._
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
@@ -37,7 +38,7 @@ class CheckYourAnswersController @Inject() (
   navigatorProvider: RouteDetailsNavigatorProvider,
   viewModelProvider: LocationOfGoodsAnswersViewModelProvider,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

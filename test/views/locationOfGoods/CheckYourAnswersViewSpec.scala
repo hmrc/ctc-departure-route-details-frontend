@@ -19,7 +19,9 @@ package views.locationOfGoods
 import models.Mode
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
+import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
+import views.html.locationOfGoods.CheckYourAnswersView
 
 class CheckYourAnswersViewSpec extends CheckYourAnswersViewBehaviours {
 
@@ -30,7 +32,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersViewBehaviours {
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector.instanceOf[CheckYourAnswersView].apply(lrn, mode, sections)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.locationOfGoods.checkYourAnswers"
+  override val prefix: String = "locationOfGoods.checkYourAnswers"
 
   behave like pageWithTitle()
 

@@ -24,7 +24,6 @@ import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.Aliases.Content
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import utils.cyaHelpers.exit.ExitCheckYourAnswersHelper
-import utils.cyaHelpers.exit.ExitCheckYourAnswersHelper
 import viewModels.{AddAnotherViewModel, ListItem}
 
 import javax.inject.Inject
@@ -33,7 +32,7 @@ case class AddAnotherOfficeOfExitViewModel(
   override val listItems: Seq[ListItem],
   onSubmitCall: Call
 ) extends AddAnotherViewModel {
-  override val prefix: String = "routeDetails.exit.addAnotherOfficeOfExit"
+  override val prefix: String = "exit.addAnotherOfficeOfExit"
 
   override def maxCount(implicit config: FrontendAppConfig): Int = config.maxOfficesOfExit
 
@@ -44,7 +43,7 @@ object AddAnotherOfficeOfExitViewModel {
 
   class AddAnotherOfficeOfExitViewModelProvider @Inject() () {
 
-    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages): AddAnotherOfficeOfExitViewModel = {
+    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig): AddAnotherOfficeOfExitViewModel = {
       val helper = new ExitCheckYourAnswersHelper(userAnswers, mode)
 
       val listItems = helper.listItems.collect {

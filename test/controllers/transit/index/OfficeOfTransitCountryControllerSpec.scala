@@ -17,16 +17,22 @@
 package controllers.transit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.CountryFormProvider
 import generators.Generators
-import models.{CountryList, Index, NormalMode}
+import models.{CountryList, CustomsOfficeList, Index, NormalMode}
+import navigation.OfficeOfTransitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
+import pages.routing.index.CountryOfRoutingPage
+import pages.transit.index.OfficeOfTransitCountryPage
 import play.api.data.FormError
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.CustomsOfficesService
+import views.html.transit.index.OfficeOfTransitCountryView
 
 import scala.concurrent.Future
 
@@ -37,7 +43,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
   private val countryList = CountryList(Seq(country1, country2))
 
   private val formProvider = new CountryFormProvider()
-  private val form         = formProvider("routeDetails.transit.index.officeOfTransitCountry", countryList)
+  private val form         = formProvider("transit.index.officeOfTransitCountry", countryList)
   private val mode         = NormalMode
 
   private val mockCustomsOfficesService: CustomsOfficesService = mock[CustomsOfficesService]
@@ -196,7 +202,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -210,7 +216,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

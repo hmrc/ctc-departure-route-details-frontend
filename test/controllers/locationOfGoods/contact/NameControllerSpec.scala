@@ -17,20 +17,24 @@
 package controllers.locationOfGoods.contact
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.NameFormProvider
 import models.NormalMode
+import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.locationOfGoods.contact.NamePage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.locationOfGoods.contact.NameView
 
 import scala.concurrent.Future
 
 class NameControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   private val formProvider   = new NameFormProvider()
-  private val form           = formProvider("routeDetails.locationOfGoods.contact.name")
+  private val form           = formProvider("locationOfGoods.contact.name")
   private val mode           = NormalMode
   private lazy val nameRoute = routes.NameController.onPageLoad(lrn, mode).url
 
@@ -121,7 +125,7 @@ class NameControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -135,7 +139,7 @@ class NameControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

@@ -21,6 +21,7 @@ import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
+import views.html.transit.index.AddOfficeOfTransitETAYesNoView
 
 class AddOfficeOfTransitETAYesNoViewSpec extends YesNoViewBehaviours with Generators {
 
@@ -29,7 +30,7 @@ class AddOfficeOfTransitETAYesNoViewSpec extends YesNoViewBehaviours with Genera
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
     injector.instanceOf[AddOfficeOfTransitETAYesNoView].apply(form, lrn, NormalMode, officeOfTransit, index)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.transit.index.addOfficeOfTransitETAYesNo"
+  override val prefix: String = "transit.index.addOfficeOfTransitETAYesNo"
 
   behave like pageWithTitle(officeOfTransit)
 

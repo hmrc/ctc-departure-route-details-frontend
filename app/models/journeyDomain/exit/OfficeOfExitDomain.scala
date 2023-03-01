@@ -16,10 +16,13 @@
 
 package models.journeyDomain.exit
 
-import models.domain.UserAnswersReader
+import controllers.exit.index.routes
+import cats.implicits.catsSyntaxTuple2Semigroupal
+import models.domain.{GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.reference.Country
+import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode, UserAnswers}
+import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
 import play.api.mvc.Call
 
 case class OfficeOfExitDomain(

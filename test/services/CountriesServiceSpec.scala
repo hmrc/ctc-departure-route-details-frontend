@@ -17,6 +17,7 @@
 package services
 
 import base.SpecBase
+import connectors.ReferenceDataConnector
 import generators.Generators
 import models.reference.{Country, CountryCode}
 import models.{CountryList, DeclarationType}
@@ -24,6 +25,7 @@ import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.BeforeAndAfterEach
+import pages.external.DeclarationTypePage
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

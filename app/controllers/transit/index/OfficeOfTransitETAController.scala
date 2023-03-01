@@ -17,14 +17,20 @@
 package controllers.transit.index
 
 import config.FrontendAppConfig
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
-import models.{Index, LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import forms.DateTimeFormProvider
+import models.{DateTime, Index, LocalReferenceNumber, Mode}
+import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
+import pages.routing.CountryOfDestinationPage
+import pages.transit.index.{OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{CountriesService, DateTimeService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.transit.index.OfficeOfTransitETAView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class OfficeOfTransitETAController @Inject() (
   override val messagesApi: MessagesApi,
   implicit val sessionRepository: SessionRepository,
-  appConfig: FrontendAppConfig,
   navigatorProvider: OfficeOfTransitNavigatorProvider,
   formProvider: DateTimeFormProvider,
   actions: Actions,
@@ -41,15 +46,15 @@ class OfficeOfTransitETAController @Inject() (
   view: OfficeOfTransitETAView,
   dateTimeService: DateTimeService,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   private def form: Form[DateTime] = {
     val today      = dateTimeService.today
-    val pastDate   = today.minusDays(appConfig.etaDateDaysBefore)
-    val futureDate = today.plusDays(appConfig.etaDateDaysAfter)
-    formProvider("routeDetails.transit.index.officeOfTransitETA", pastDate, futureDate)
+    val pastDate   = today.minusDays(config.etaDateDaysBefore)
+    val futureDate = today.plusDays(config.etaDateDaysAfter)
+    formProvider("transit.index.officeOfTransitETA", pastDate, futureDate)
   }
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
@@ -87,7 +92,7 @@ class OfficeOfTransitETAController @Inject() (
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
                       OfficeOfTransitETAPage(index)
                         .writeToUserAnswers(value)
-                        .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                         .writeToSession()
                         .navigate()
                     }

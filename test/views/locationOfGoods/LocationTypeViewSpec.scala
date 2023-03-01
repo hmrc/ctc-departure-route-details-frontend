@@ -17,11 +17,12 @@
 package views.locationOfGoods
 
 import forms.EnumerableFormProvider
-import models.NormalMode
+import models.{LocationType, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import views.behaviours.RadioViewBehaviours
+import views.html.locationOfGoods.LocationTypeView
 
 class LocationTypeViewSpec extends RadioViewBehaviours[LocationType] {
 
@@ -30,7 +31,7 @@ class LocationTypeViewSpec extends RadioViewBehaviours[LocationType] {
   override def applyView(form: Form[LocationType]): HtmlFormat.Appendable =
     injector.instanceOf[LocationTypeView].apply(form, lrn, LocationType.radioItems, NormalMode)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.locationOfGoods.locationType"
+  override val prefix: String = "locationOfGoods.locationType"
 
   override def radioItems(fieldId: String, checkedValue: Option[LocationType] = None): Seq[RadioItem] =
     LocationType.radioItems(fieldId, checkedValue)

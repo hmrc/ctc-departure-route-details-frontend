@@ -16,14 +16,17 @@
 
 package views.exit.index
 
+import controllers.exit.index.routes
 import models.Mode
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
+import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
+import views.html.exit.index.CheckOfficeOfExitAnswersView
 
 class CheckOfficeOfExitAnswersViewSpec extends CheckYourAnswersViewBehaviours {
 
-  override val prefix: String = "routeDetails.exit.index.checkOfficeOfExitAnswers"
+  override val prefix: String = "exit.index.checkOfficeOfExitAnswers"
 
   override def view: HtmlFormat.Appendable = viewWithSections(sections)
 

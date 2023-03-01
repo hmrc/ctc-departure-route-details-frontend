@@ -30,7 +30,7 @@ case class AddAnotherCountryOfRoutingViewModel(
   override val listItems: Seq[ListItem],
   onSubmitCall: Call
 ) extends AddAnotherViewModel {
-  override val prefix: String = "routeDetails.routing.addAnotherCountryOfRouting"
+  override val prefix: String = "routing.addAnotherCountryOfRouting"
 
   override def maxCount(implicit config: FrontendAppConfig): Int = config.maxCountriesOfRouting
 }
@@ -39,7 +39,7 @@ object AddAnotherCountryOfRoutingViewModel {
 
   class AddAnotherCountryOfRoutingViewModelProvider @Inject() () {
 
-    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages): AddAnotherCountryOfRoutingViewModel = {
+    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig): AddAnotherCountryOfRoutingViewModel = {
       val helper = new RoutingCheckYourAnswersHelper(userAnswers, mode)
 
       val listItems = helper.listItems.collect {

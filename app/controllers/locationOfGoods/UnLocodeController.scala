@@ -17,12 +17,17 @@
 package controllers.locationOfGoods
 
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
+import forms.UnLocodeFormProvider
 import models.{LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
+import pages.locationOfGoods.UnLocodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{CountriesService, UnLocodesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.locationOfGoods.UnLocodeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +52,7 @@ class UnLocodeController @Inject() (
       implicit request =>
         unLocodesService.getUnLocodes().map {
           unLocodeList =>
-            val form = formProvider("routeDetails.locationOfGoods.unLocode", unLocodeList)
+            val form = formProvider("locationOfGoods.unLocode", unLocodeList)
             val preparedForm = request.userAnswers
               .get(UnLocodePage)
               .flatMap(
@@ -65,7 +70,7 @@ class UnLocodeController @Inject() (
       implicit request =>
         unLocodesService.getUnLocodes().flatMap {
           unLocodeList =>
-            val form = formProvider("routeDetails.locationOfGoods.unLocode", unLocodeList)
+            val form = formProvider("locationOfGoods.unLocode", unLocodeList)
             form
               .bindFromRequest()
               .fold(
@@ -78,7 +83,7 @@ class UnLocodeController @Inject() (
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                       UnLocodePage
                         .writeToUserAnswers(value)
-                        .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                         .writeToSession()
                         .navigate()
                     }

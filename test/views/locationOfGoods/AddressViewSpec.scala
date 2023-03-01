@@ -16,10 +16,13 @@
 
 package views.locationOfGoods
 
+import forms.DynamicAddressFormProvider
+import forms.behaviours.DynamicAddressViewBehaviours
 import generators.Generators
-import models.NormalMode
+import models.{DynamicAddress, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.html.locationOfGoods.AddressView
 
 class AddressViewSpec extends DynamicAddressViewBehaviours with Generators {
 
@@ -28,7 +31,7 @@ class AddressViewSpec extends DynamicAddressViewBehaviours with Generators {
   override def applyView(form: Form[DynamicAddress]): HtmlFormat.Appendable =
     injector.instanceOf[AddressView].apply(form, lrn, NormalMode, isPostalCodeRequired)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.locationOfGoods.address"
+  override val prefix: String = "locationOfGoods.address"
 
   behave like pageWithTitle()
 

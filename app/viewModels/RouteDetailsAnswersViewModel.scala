@@ -16,16 +16,12 @@
 
 package viewModels
 
+import config.FrontendAppConfig
 import models.{CheckMode, UserAnswers}
 import play.api.i18n.Messages
 import viewModels.exit.ExitAnswersViewModel.ExitAnswersViewModelProvider
 import viewModels.loadingAndUnloading.LoadingAndUnloadingAnswersViewModel.LoadingAndUnloadingAnswersViewModelProvider
 import viewModels.locationOfGoods.LocationOfGoodsAnswersViewModel.LocationOfGoodsAnswersViewModelProvider
-import viewModels.exit.ExitAnswersViewModel.ExitAnswersViewModelProvider
-import viewModels.loadingAndUnloading.LoadingAndUnloadingAnswersViewModel.LoadingAndUnloadingAnswersViewModelProvider
-import viewModels.locationOfGoods.LocationOfGoodsAnswersViewModel.LocationOfGoodsAnswersViewModelProvider
-import viewModels.routing.RoutingAnswersViewModel.RoutingAnswersViewModelProvider
-import viewModels.transit.TransitAnswersViewModel.TransitAnswersViewModelProvider
 import viewModels.routing.RoutingAnswersViewModel.RoutingAnswersViewModelProvider
 import viewModels.sections.Section
 import viewModels.transit.TransitAnswersViewModel.TransitAnswersViewModelProvider
@@ -47,7 +43,7 @@ object RouteDetailsAnswersViewModel {
     def apply(userAnswers: UserAnswers)(
       ctcCountryCodes: Seq[String],
       customsSecurityAgreementAreaCountryCodes: Seq[String]
-    )(implicit messages: Messages): RouteDetailsAnswersViewModel = {
+    )(implicit messages: Messages, config: FrontendAppConfig): RouteDetailsAnswersViewModel = {
       val mode = CheckMode
       new RouteDetailsAnswersViewModel(
         routingAnswersViewModelProvider.apply(userAnswers, mode).sections ++

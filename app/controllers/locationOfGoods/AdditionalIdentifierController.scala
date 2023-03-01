@@ -16,10 +16,9 @@
 
 package controllers.locationOfGoods
 
-import controllers.SettableOps
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.AdditionalIdentifierFormProvider
-import models.journeyDomain.RouteDetailsDomain
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
 import pages.locationOfGoods.AdditionalIdentifierPage
@@ -46,7 +45,7 @@ class AdditionalIdentifierController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider("routeDetails.locationOfGoods.additionalIdentifier")
+  private val form = formProvider("locationOfGoods.additionalIdentifier")
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
@@ -71,7 +70,7 @@ class AdditionalIdentifierController @Inject() (
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                 AdditionalIdentifierPage
                   .writeToUserAnswers(value)
-                  .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                   .writeToSession()
                   .navigate()
               }

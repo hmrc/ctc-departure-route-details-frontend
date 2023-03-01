@@ -33,9 +33,9 @@
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.locationOfGoods.coordinates.title"),
+    title = messages("locationOfGoods.coordinates.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.CoordinatesController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
@@ -44,8 +44,8 @@
 
         @inputCoordinates(
             form = form,
-            messageKeyPrefix = "routeDetails.locationOfGoods.coordinates",
-            caption = Some(messages("routeDetails.locationOfGoods.caption"))
+            messageKeyPrefix = "locationOfGoods.coordinates",
+            caption = Some(messages("locationOfGoods.caption"))
         )
 
         @button(attributes = Map("id" -> "submit"))

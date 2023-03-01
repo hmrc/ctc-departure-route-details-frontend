@@ -16,16 +16,18 @@
 
 package views.loadingAndUnloading.unloading
 
+import forms.LocationFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.InputSize
 import views.behaviours.InputTextViewBehaviours
+import views.html.loadingAndUnloading.unloading.LocationView
 
 class LocationViewSpec extends InputTextViewBehaviours[String] {
 
-  override val prefix: String = "routeDetails.loadingAndUnloading.unloading.location"
+  override val prefix: String = "loadingAndUnloading.unloading.location"
 
   private val location = nonEmptyString.sample.value
 

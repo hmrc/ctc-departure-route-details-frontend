@@ -17,12 +17,17 @@
 package controllers.locationOfGoods
 
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
+import forms.EoriNumberFormProvider
 import models.{LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
+import pages.locationOfGoods.EoriPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.locationOfGoods.EoriView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +45,7 @@ class EoriController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider("routeDetails.locationOfGoods.eori")
+  private val form = formProvider("locationOfGoods.eori")
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
@@ -65,7 +70,7 @@ class EoriController @Inject() (
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                 EoriPage
                   .writeToUserAnswers(value)
-                  .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                   .writeToSession()
                   .navigate()
               }

@@ -20,13 +20,14 @@ import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
+import views.html.loadingAndUnloading.unloading.AddExtraInformationYesNoView
 
 class AddExtraInformationYesNoViewSpec extends YesNoViewBehaviours {
 
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
     injector.instanceOf[AddExtraInformationYesNoView].apply(form, lrn, NormalMode)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.loadingAndUnloading.unloading.addExtraInformationYesNo"
+  override val prefix: String = "loadingAndUnloading.unloading.addExtraInformationYesNo"
 
   behave like pageWithTitle()
 

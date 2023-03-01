@@ -36,14 +36,14 @@
 @mainTemplate(
     title = viewModel.title,
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @errorSummary(form.errors)
 
     @heading(
         heading = viewModel.heading,
-        caption = Some(messages("routeDetails.transit.caption"))
+        caption = Some(messages("transit.caption"))
     )
 
     @listWithActions(viewModel.listItems)

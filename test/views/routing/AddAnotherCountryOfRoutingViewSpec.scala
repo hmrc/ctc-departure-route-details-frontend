@@ -20,7 +20,9 @@ import forms.AddAnotherFormProvider
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import viewModels.routing.AddAnotherCountryOfRoutingViewModel
 import views.behaviours.ListWithActionsViewBehaviours
+import views.html.routing.AddAnotherCountryOfRoutingView
 
 class AddAnotherCountryOfRoutingViewSpec extends ListWithActionsViewBehaviours {
 
@@ -43,7 +45,7 @@ class AddAnotherCountryOfRoutingViewSpec extends ListWithActionsViewBehaviours {
       .instanceOf[AddAnotherCountryOfRoutingView]
       .apply(formProvider(maxedOutViewModel), lrn, maxedOutViewModel)(fakeRequest, messages, frontendAppConfig)
 
-  override val prefix: String = "routeDetails.routing.addAnotherCountryOfRouting"
+  override val prefix: String = "routing.addAnotherCountryOfRouting"
 
   behave like pageWithBackLink()
 

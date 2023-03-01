@@ -16,6 +16,7 @@
 
 package pages.locationOfGoods
 
+import models.reference.UnLocode
 import pages.behaviours.PageBehaviours
 
 class UnLocodePageSpec extends PageBehaviours {

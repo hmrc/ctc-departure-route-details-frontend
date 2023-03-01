@@ -17,15 +17,19 @@
 package controllers.locationOfGoods
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.locationOfGoods.PostalCodeFormProvider
 import generators.Generators
-import models.{CountryList, NormalMode}
+import models.{CountryList, NormalMode, PostalCodeAddress}
+import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
+import pages.locationOfGoods.PostalCodePage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.locationOfGoods.PostalCodeView
 
 import scala.concurrent.Future
 
@@ -35,7 +39,7 @@ class PostalCodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
   private val countryList = CountryList(Seq(testAddress.country))
 
   private val formProvider = new PostalCodeFormProvider()
-  private val form         = formProvider("routeDetails.locationOfGoods.postalCode", countryList)
+  private val form         = formProvider("locationOfGoods.postalCode", countryList)
 
   private val mode                 = NormalMode
   private lazy val postalCodeRoute = routes.PostalCodeController.onPageLoad(lrn, mode).url
@@ -143,7 +147,7 @@ class PostalCodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -161,7 +165,7 @@ class PostalCodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

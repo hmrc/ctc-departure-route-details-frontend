@@ -17,8 +17,10 @@
 package models.journeyDomain.loadingAndUnloading.loading
 
 import cats.implicits._
-import models.domain.UserAnswersReader
+import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.JourneyDomainModel
+import models.reference.UnLocode
+import pages.loadingAndUnloading.loading.{AddExtraInformationYesNoPage, AddUnLocodeYesNoPage, UnLocodePage}
 
 case class LoadingDomain(
   unLocode: Option[UnLocode],

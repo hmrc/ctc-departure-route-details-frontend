@@ -34,9 +34,9 @@
 @(form: Form[CustomsOffice], lrn: LocalReferenceNumber, customsOffices: Seq[CustomsOffice], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.routing.officeOfDestination.title"),
+    title = messages("routing.officeOfDestination.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.OfficeOfDestinationController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
@@ -46,13 +46,13 @@
         @inputSelect(
             field = form("value"),
             selectType = SelectWithAdditionalHtml(
-                heading = messages("routeDetails.routing.officeOfDestination.heading"),
-                caption = Some(messages("routeDetails.routing.caption")),
-                additionalHtml = messages("routeDetails.routing.officeOfDestination.paragraph").toParagraph
+                heading = messages("routing.officeOfDestination.heading"),
+                caption = Some(messages("routing.caption")),
+                additionalHtml = messages("routing.officeOfDestination.paragraph").toParagraph
             ),
-            hint = Some(messages("routeDetails.routing.officeOfDestination.hint")),
+            hint = Some(messages("routing.officeOfDestination.hint")),
             selectItems = customsOffices.toSelectItems(form.value),
-            placeholder = messages("routeDetails.routing.officeOfDestination.placeholder")
+            placeholder = messages("routing.officeOfDestination.placeholder")
         )
 
         @button(attributes = Map("id" -> "submit"))

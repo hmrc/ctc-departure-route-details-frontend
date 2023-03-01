@@ -20,7 +20,9 @@ import forms.AddAnotherFormProvider
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import viewModels.transit.AddAnotherOfficeOfTransitViewModel
 import views.behaviours.ListWithActionsViewBehaviours
+import views.html.transit.AddAnotherOfficeOfTransitView
 
 class AddAnotherOfficeOfTransitViewSpec extends ListWithActionsViewBehaviours {
 
@@ -43,7 +45,7 @@ class AddAnotherOfficeOfTransitViewSpec extends ListWithActionsViewBehaviours {
       .instanceOf[AddAnotherOfficeOfTransitView]
       .apply(formProvider(maxedOutViewModel), lrn, maxedOutViewModel)(fakeRequest, messages, frontendAppConfig)
 
-  override val prefix: String = "routeDetails.transit.addAnotherOfficeOfTransit"
+  override val prefix: String = "transit.addAnotherOfficeOfTransit"
 
   behave like pageWithBackLink()
 

@@ -34,9 +34,9 @@
 @(form: Form[Country], lrn: LocalReferenceNumber, countries: Seq[Country], index: Index, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.exit.index.officeOfExitCountry.title"),
+    title = messages("exit.index.officeOfExitCountry.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.OfficeOfExitCountryController.onSubmit(lrn, index, mode), Symbol("autoComplete") -> "off") {
@@ -46,13 +46,13 @@
         @inputSelect(
             field = form("value"),
             selectType = SelectWithAdditionalHtml(
-                heading = messages("routeDetails.exit.index.officeOfExitCountry.heading"),
-                caption = Some(messages("routeDetails.exit.caption")),
-                additionalHtml = messages("routeDetails.exit.index.officeOfExitCountry.paragraph").toParagraph
+                heading = messages("exit.index.officeOfExitCountry.heading"),
+                caption = Some(messages("exit.caption")),
+                additionalHtml = messages("exit.index.officeOfExitCountry.paragraph").toParagraph
             ),
-            hint = Some(messages("routeDetails.exit.index.officeOfExitCountry.hint")),
+            hint = Some(messages("exit.index.officeOfExitCountry.hint")),
             selectItems = countries.toSelectItems(form.value),
-            placeholder = messages("routeDetails.exit.index.officeOfExitCountry.placeholder")
+            placeholder = messages("exit.index.officeOfExitCountry.placeholder")
         )
 
         @button(attributes = Map("id" -> "submit"))

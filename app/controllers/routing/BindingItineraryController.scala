@@ -17,13 +17,17 @@
 package controllers.routing
 
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
 import models.{LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
+import pages.routing.BindingItineraryPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.routing.BindingItineraryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +45,7 @@ class BindingItineraryController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider("routeDetails.routing.bindingItinerary")
+  private val form = formProvider("routing.bindingItinerary")
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
@@ -67,7 +71,7 @@ class BindingItineraryController @Inject() (
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                 BindingItineraryPage
                   .writeToUserAnswers(value)
-                  .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                   .writeToSession()
                   .navigate()
               }

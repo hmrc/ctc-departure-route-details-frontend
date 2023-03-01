@@ -20,13 +20,14 @@ import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
+import views.html.transit.T2DeclarationTypeYesNoView
 
 class T2DeclarationTypeYesNoViewSpec extends YesNoViewBehaviours {
 
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
     injector.instanceOf[T2DeclarationTypeYesNoView].apply(form, lrn, NormalMode)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.transit.t2DeclarationTypeYesNo"
+  override val prefix: String = "transit.t2DeclarationTypeYesNo"
 
   behave like pageWithTitle()
 

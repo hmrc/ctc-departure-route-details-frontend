@@ -16,8 +16,10 @@
 
 package models.journeyDomain.locationOfGoods
 
+import cats.implicits.catsSyntaxTuple2Semigroupal
 import models.domain._
 import models.journeyDomain.JourneyDomainModel
+import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
 
 case class AdditionalContactDomain(
   name: String,

@@ -16,16 +16,22 @@
 
 package controllers.routing.index
 
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
+import controllers.routing.{routes => routingRoutes}
 import forms.YesNoFormProvider
 import models.reference.Country
 import models.requests.SpecificDataRequestProvider1
 import models.{Index, LocalReferenceNumber, Mode}
+import pages.routing.index.CountryOfRoutingPage
+import pages.sections.routing.CountryOfRoutingSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.routing.index.RemoveCountryOfRoutingYesNoView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +52,7 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
   private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[_]
 
   private def form(implicit request: Request): Form[Boolean] =
-    formProvider("routeDetails.routing.index.removeCountryOfRoutingYesNo", request.arg.toString)
+    formProvider("routing.index.removeCountryOfRoutingYesNo", request.arg.toString)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
     .requireData(lrn)
@@ -71,7 +77,7 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
                   customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
                   result <- CountryOfRoutingSection(index)
                     .removeFromUserAnswers()
-                    .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                     .writeToSession()
                     .navigateTo(routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode))
                 } yield result

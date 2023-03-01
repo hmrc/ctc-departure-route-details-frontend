@@ -16,16 +16,18 @@
 
 package views.locationOfGoods
 
+import forms.AdditionalIdentifierFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.InputSize
 import views.behaviours.InputTextViewBehaviours
+import views.html.locationOfGoods.AdditionalIdentifierView
 
 class AdditionalIdentifierViewSpec extends InputTextViewBehaviours[String] {
 
-  override val prefix: String = "routeDetails.locationOfGoods.additionalIdentifier"
+  override val prefix: String = "locationOfGoods.additionalIdentifier"
 
   override def form: Form[String] = new AdditionalIdentifierFormProvider()(prefix)
 

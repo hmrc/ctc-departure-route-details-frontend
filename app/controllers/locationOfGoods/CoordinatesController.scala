@@ -16,10 +16,9 @@
 
 package controllers.locationOfGoods
 
-import controllers.SettableOps
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.locationOfGoods.CoordinatesFormProvider
-import models.journeyDomain.RouteDetailsDomain
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
 import pages.locationOfGoods.CoordinatesPage
@@ -49,7 +48,7 @@ class CoordinatesController @Inject() (
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn) {
       implicit request =>
-        val form = formProvider("routeDetails.locationOfGoods.coordinates")
+        val form = formProvider("locationOfGoods.coordinates")
         val preparedForm = request.userAnswers.get(CoordinatesPage) match {
           case None        => form
           case Some(value) => form.fill(value)
@@ -61,7 +60,7 @@ class CoordinatesController @Inject() (
     .requireData(lrn)
     .async {
       implicit request =>
-        val form = formProvider("routeDetails.locationOfGoods.coordinates")
+        val form = formProvider("locationOfGoods.coordinates")
         form
           .bindFromRequest()
           .fold(
@@ -74,7 +73,7 @@ class CoordinatesController @Inject() (
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                   CoordinatesPage
                     .writeToUserAnswers(value)
-                    .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                     .writeToSession()
                     .navigate()
                 }

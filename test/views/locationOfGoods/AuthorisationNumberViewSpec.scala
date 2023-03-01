@@ -16,16 +16,18 @@
 
 package views.locationOfGoods
 
+import forms.locationOfGoods.AuthorisationNumberFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.InputSize
 import views.behaviours.InputTextViewBehaviours
+import views.html.locationOfGoods.AuthorisationNumberView
 
 class AuthorisationNumberViewSpec extends InputTextViewBehaviours[String] {
 
-  override val prefix: String = "routeDetails.locationOfGoods.authorisationNumber"
+  override val prefix: String = "locationOfGoods.authorisationNumber"
 
   override def form: Form[String] = new AuthorisationNumberFormProvider()(prefix)
 

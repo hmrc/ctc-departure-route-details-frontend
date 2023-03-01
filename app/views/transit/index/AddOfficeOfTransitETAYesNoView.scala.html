@@ -31,9 +31,9 @@
 @(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode, officeOfTransit: CustomsOffice, index: Index)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.transit.index.addOfficeOfTransitETAYesNo.title", officeOfTransit.toString),
+    title = messages("transit.index.addOfficeOfTransitETAYesNo.title", officeOfTransit.toString),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.AddOfficeOfTransitETAYesNoController.onSubmit(lrn, mode, index), Symbol("autoComplete") -> "off") {
@@ -43,9 +43,9 @@
         @inputYesNo(
             field = form("value"),
             yesNoType = YesNoWithAdditionalHtml(
-                heading = messages("routeDetails.transit.index.addOfficeOfTransitETAYesNo.heading", officeOfTransit.toString),
-                caption = Some(messages("routeDetails.transit.caption")),
-                additionalHtml = messages("routeDetails.transit.index.addOfficeOfTransitETAYesNo.paragraph").toParagraph
+                heading = messages("transit.index.addOfficeOfTransitETAYesNo.heading", officeOfTransit.toString),
+                caption = Some(messages("transit.caption")),
+                additionalHtml = messages("transit.index.addOfficeOfTransitETAYesNo.paragraph").toParagraph
             )
         )
 

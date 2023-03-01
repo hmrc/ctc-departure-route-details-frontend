@@ -16,14 +16,18 @@
 
 package controllers.transit.index
 
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
 import forms.YesNoFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
+import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.transit.index.AddOfficeOfTransitETAYesNoView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +52,7 @@ class AddOfficeOfTransitETAYesNoController @Inject() (
       .andThen(getMandatoryPage(OfficeOfTransitPage(index))) {
         implicit request =>
           val officeOfTransit = request.arg
-          val form            = formProvider("routeDetails.transit.index.addOfficeOfTransitETAYesNo")
+          val form            = formProvider("transit.index.addOfficeOfTransitETAYesNo")
           val preparedForm = request.userAnswers.get(AddOfficeOfTransitETAYesNoPage(index)) match {
             case None        => form
             case Some(value) => form.fill(value)
@@ -63,7 +67,7 @@ class AddOfficeOfTransitETAYesNoController @Inject() (
       .async {
         implicit request =>
           val officeOfTransit = request.arg
-          val form            = formProvider("routeDetails.transit.index.addOfficeOfTransitETAYesNo")
+          val form            = formProvider("transit.index.addOfficeOfTransitETAYesNo")
           form
             .bindFromRequest()
             .fold(
@@ -76,7 +80,7 @@ class AddOfficeOfTransitETAYesNoController @Inject() (
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
                     AddOfficeOfTransitETAYesNoPage(index)
                       .writeToUserAnswers(value)
-                      .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                       .writeToSession()
                       .navigate()
                   }

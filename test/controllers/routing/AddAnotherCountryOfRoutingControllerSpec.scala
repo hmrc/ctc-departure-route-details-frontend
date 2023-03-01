@@ -22,16 +22,23 @@ import generators.Generators
 import models.SecurityDetailsType.NoSecurityDetails
 import models.reference.{Country, CountryCode}
 import models.{Index, NormalMode}
+import navigation.RoutingNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.external.SecurityDetailsTypePage
+import pages.routing.BindingItineraryPage
+import pages.routing.index.CountryOfRoutingPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewModels.ListItem
+import viewModels.routing.AddAnotherCountryOfRoutingViewModel
+import viewModels.routing.AddAnotherCountryOfRoutingViewModel.AddAnotherCountryOfRoutingViewModelProvider
+import views.html.routing.AddAnotherCountryOfRoutingView
 
 import scala.concurrent.Future
 
@@ -73,7 +80,7 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
 
     "redirect to binding itinerary page" - {
       "when 0 countries" in {
-        when(mockViewModelProvider.apply(any(), any())(any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(emptyViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -93,7 +100,7 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
     "must return OK and the correct view for a GET" - {
       "when max limit not reached" in {
 
-        when(mockViewModelProvider.apply(any(), any())(any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(notMaxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -112,7 +119,7 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
 
       "when max limit reached" in {
 
-        when(mockViewModelProvider.apply(any(), any())(any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(maxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -133,7 +140,7 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
     "when max limit not reached" - {
       "when yes submitted" - {
         "must redirect to guarantee type page at next index" in {
-          when(mockViewModelProvider.apply(any(), any())(any()))
+          when(mockViewModelProvider.apply(any(), any())(any(), any()))
             .thenReturn(notMaxedOutViewModel)
 
           setExistingUserAnswers(emptyUserAnswers)
@@ -152,7 +159,7 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
 
       "when no submitted" - {
         "must redirect to check your answers" in {
-          when(mockViewModelProvider.apply(any(), any())(any()))
+          when(mockViewModelProvider.apply(any(), any())(any(), any()))
             .thenReturn(notMaxedOutViewModel)
 
           when(mockSessionRepository.set(any())(any()))
@@ -179,7 +186,7 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
 
     "when max limit reached" - {
       "must redirect to check your answers" in {
-        when(mockViewModelProvider.apply(any(), any())(any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(maxedOutViewModel)
 
         when(mockSessionRepository.set(any())(any()))
@@ -205,7 +212,7 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
 
     "must return a Bad Request and errors" - {
       "when invalid data is submitted and max limit not reached" in {
-        when(mockViewModelProvider.apply(any(), any())(any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(notMaxedOutViewModel)
 
         when(mockSessionRepository.set(any())(any()))
@@ -244,7 +251,7 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -258,7 +265,7 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

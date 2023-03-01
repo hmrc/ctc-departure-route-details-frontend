@@ -20,13 +20,14 @@ import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
+import views.html.routing.BindingItineraryView
 
 class BindingItineraryViewSpec extends YesNoViewBehaviours {
 
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
     injector.instanceOf[BindingItineraryView].apply(form, lrn, NormalMode)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.routing.bindingItinerary"
+  override val prefix: String = "routing.bindingItinerary"
 
   behave like pageWithTitle()
 

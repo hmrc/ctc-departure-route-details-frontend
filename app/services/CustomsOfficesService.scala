@@ -21,6 +21,9 @@ import connectors.ReferenceDataConnector
 import models.CustomsOfficeList.{officesOfExitReads, officesOfTransitReads}
 import models.reference.{CountryCode, CustomsOffice}
 import models.{CustomsOfficeList, RichOptionalJsArray, UserAnswers}
+import pages.routing.OfficeOfDestinationPage
+import pages.sections.exit.OfficesOfExitSection
+import pages.sections.transit.OfficesOfTransitSection
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

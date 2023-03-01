@@ -17,17 +17,24 @@
 package controllers.exit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.CountryFormProvider
 import generators.Generators
 import models.reference.{Country, CountryCode}
-import models.{CountryList, Index, NormalMode}
+import models.{CountryList, CustomsOfficeList, Index, NormalMode}
+import navigation.OfficeOfExitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
+import pages.exit.index.OfficeOfExitCountryPage
+import pages.routing.CountryOfDestinationPage
+import pages.routing.index.CountryOfRoutingPage
 import play.api.data.FormError
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.CustomsOfficesService
+import views.html.exit.index.OfficeOfExitCountryView
 
 import scala.concurrent.Future
 
@@ -44,7 +51,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
   private val secAgreementCountries = CountryList(Seq(austria, italy, france))
 
   private val formProvider                   = new CountryFormProvider()
-  private def form(countryList: CountryList) = formProvider("routeDetails.exit.index.officeOfExitCountry", countryList)
+  private def form(countryList: CountryList) = formProvider("exit.index.officeOfExitCountry", countryList)
   private val mode                           = NormalMode
 
   private val mockCustomsOfficesService: CustomsOfficesService = mock[CustomsOfficesService]
@@ -249,7 +256,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -263,7 +270,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

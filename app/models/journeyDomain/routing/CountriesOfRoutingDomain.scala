@@ -17,8 +17,12 @@
 package models.journeyDomain.routing
 
 import cats.implicits._
-import models.Index
-import models.domain.UserAnswersReader
+import models.SecurityDetailsType.NoSecurityDetails
+import models.{Index, RichJsArray}
+import models.domain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
+import pages.external.SecurityDetailsTypePage
+import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage}
+import pages.sections.routing.CountriesOfRoutingSection
 
 object CountriesOfRoutingDomain {
 

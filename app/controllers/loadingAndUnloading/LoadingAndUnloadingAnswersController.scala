@@ -17,6 +17,7 @@
 package controllers.loadingAndUnloading
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import controllers.actions.Actions
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
@@ -37,7 +38,7 @@ class LoadingAndUnloadingAnswersController @Inject() (
   view: LoadingAndUnloadingAnswersView,
   viewModelProvider: LoadingAndUnloadingAnswersViewModelProvider,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

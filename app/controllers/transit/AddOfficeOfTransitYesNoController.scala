@@ -16,14 +16,18 @@
 
 package controllers.transit
 
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
 import forms.YesNoFormProvider
 import models.{LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{TransitNavigatorProvider, UserAnswersNavigator}
+import pages.transit.AddOfficeOfTransitYesNoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.transit.AddOfficeOfTransitYesNoView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +45,7 @@ class AddOfficeOfTransitYesNoController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider("routeDetails.transit.addOfficeOfTransitYesNo")
+  private val form = formProvider("transit.addOfficeOfTransitYesNo")
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
@@ -67,7 +71,7 @@ class AddOfficeOfTransitYesNoController @Inject() (
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                 AddOfficeOfTransitYesNoPage
                   .writeToUserAnswers(value)
-                  .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                   .writeToSession()
                   .navigate()
               }

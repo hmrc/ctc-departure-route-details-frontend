@@ -16,6 +16,7 @@
 
 package pages.locationOfGoods
 
+import models.{LocationOfGoodsIdentification, LocationType}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 

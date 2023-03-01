@@ -16,16 +16,18 @@
 
 package views.locationOfGoods.contact
 
+import forms.NameFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.InputSize
 import views.behaviours.InputTextViewBehaviours
+import views.html.locationOfGoods.contact.NameView
 
 class NameViewSpec extends InputTextViewBehaviours[String] {
 
-  override val prefix: String = "routeDetails.locationOfGoods.contact.name"
+  override val prefix: String = "locationOfGoods.contact.name"
 
   override def form: Form[String] = new NameFormProvider()(prefix)
 

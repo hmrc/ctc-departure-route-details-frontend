@@ -16,10 +16,16 @@
 
 package models.journeyDomain.transit
 
-import models.domain.UserAnswersReader
+import cats.implicits.{catsSyntaxTuple2Semigroupal, catsSyntaxTuple3Semigroupal}
+import config.Constants.AD
+import models.SecurityDetailsType.{EntryAndExitSummaryDeclarationSecurityDetails, EntrySummaryDeclarationSecurityDetails}
+import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.reference.Country
-import models.{Index, Mode, UserAnswers}
+import models.reference.{Country, CustomsOffice}
+import models.{DateTime, Index, Mode, UserAnswers}
+import pages.external.SecurityDetailsTypePage
+import pages.routing.OfficeOfDestinationPage
+import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
 import play.api.mvc.Call
 
 case class OfficeOfTransitDomain(

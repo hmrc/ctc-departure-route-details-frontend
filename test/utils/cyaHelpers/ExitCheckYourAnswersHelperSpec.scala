@@ -17,13 +17,18 @@
 package utils.cyaHelpers
 
 import base.SpecBase
+import controllers.exit.index.routes
 import generators.Generators
 import models.domain.UserAnswersReader
+import models.journeyDomain.exit.OfficeOfExitDomain
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
+import pages.sections.exit.OfficeOfExitSection
 import play.api.libs.json.Json
+import utils.cyaHelpers.exit.ExitCheckYourAnswersHelper
 import viewModels.ListItem
 
 class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {

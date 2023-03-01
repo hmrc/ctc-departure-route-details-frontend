@@ -18,6 +18,7 @@ package pages.transit
 
 import generators.Generators
 import pages.behaviours.PageBehaviours
+import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
 
 class AddOfficeOfTransitYesNoPageSpec extends PageBehaviours with Generators {
 

@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.Constants.locationMaxLength
 import forms.behaviours.StringFieldBehaviours
 import models.domain.StringFieldRegex.stringFieldRegex
 import org.scalacheck.Gen

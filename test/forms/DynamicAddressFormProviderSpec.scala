@@ -53,7 +53,7 @@ class DynamicAddressFormProviderSpec extends StringFieldBehaviours with SpecBase
         lengthError = FormError(fieldName, lengthKey, Seq(NumberAndStreet.arg, arg1, arg2, NumberAndStreet.length))
       )
 
-      behave like mandatoryTrimmedField(
+      behave like mandatoryField(
         form = form,
         fieldName = fieldName,
         requiredError = FormError(fieldName, requiredKey, Seq(NumberAndStreet.arg, arg1, arg2))
@@ -84,7 +84,7 @@ class DynamicAddressFormProviderSpec extends StringFieldBehaviours with SpecBase
         lengthError = FormError(fieldName, lengthKey, Seq(City.arg, arg1, arg2, City.length))
       )
 
-      behave like mandatoryTrimmedField(
+      behave like mandatoryField(
         form = form,
         fieldName = fieldName,
         requiredError = FormError(fieldName, requiredKey, Seq(City.arg, arg1, arg2))
@@ -120,7 +120,7 @@ class DynamicAddressFormProviderSpec extends StringFieldBehaviours with SpecBase
         gen = invalidPostalOverLength
       )
 
-      behave like mandatoryTrimmedField(
+      behave like mandatoryField(
         form = form,
         fieldName = fieldName,
         requiredError = FormError(fieldName, requiredKey, Seq(PostalCode.arg, arg1, arg2))
@@ -156,7 +156,7 @@ class DynamicAddressFormProviderSpec extends StringFieldBehaviours with SpecBase
         lengthError = FormError(fieldName, lengthKey, Seq(NumberAndStreet.arg, arg1, arg2, NumberAndStreet.length))
       )
 
-      behave like mandatoryTrimmedField(
+      behave like mandatoryField(
         form = form,
         fieldName = fieldName,
         requiredError = FormError(fieldName, requiredKey, Seq(NumberAndStreet.arg, arg1, arg2))
@@ -187,7 +187,7 @@ class DynamicAddressFormProviderSpec extends StringFieldBehaviours with SpecBase
         lengthError = FormError(fieldName, lengthKey, Seq(City.arg, arg1, arg2, City.length))
       )
 
-      behave like mandatoryTrimmedField(
+      behave like mandatoryField(
         form = form,
         fieldName = fieldName,
         requiredError = FormError(fieldName, requiredKey, Seq(City.arg, arg1, arg2))

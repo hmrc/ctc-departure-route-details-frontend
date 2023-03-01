@@ -23,6 +23,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
+import views.html.exit.index.ConfirmRemoveOfficeOfExitView
 
 class ConfirmRemoveOfficeOfExitViewSpec extends YesNoViewBehaviours with Generators {
 
@@ -33,7 +34,7 @@ class ConfirmRemoveOfficeOfExitViewSpec extends YesNoViewBehaviours with Generat
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
     injector.instanceOf[ConfirmRemoveOfficeOfExitView].apply(form, lrn, index, mode, prefix, exitOfficeName)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.exit.index.confirmRemoveOfficeOfExit"
+  override val prefix: String = "exit.index.confirmRemoveOfficeOfExit"
 
   behave like pageWithTitle(exitOfficeName)
 

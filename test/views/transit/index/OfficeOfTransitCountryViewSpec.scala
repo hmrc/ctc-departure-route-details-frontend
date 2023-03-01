@@ -16,12 +16,14 @@
 
 package views.transit.index
 
+import forms.CountryFormProvider
 import models.reference.Country
 import models.{CountryList, NormalMode}
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.InputSelectViewBehaviours
+import views.html.transit.index.OfficeOfTransitCountryView
 
 class OfficeOfTransitCountryViewSpec extends InputSelectViewBehaviours[Country] {
 
@@ -32,7 +34,7 @@ class OfficeOfTransitCountryViewSpec extends InputSelectViewBehaviours[Country] 
 
   implicit override val arbitraryT: Arbitrary[Country] = arbitraryCountry
 
-  override val prefix: String = "routeDetails.transit.index.officeOfTransitCountry"
+  override val prefix: String = "transit.index.officeOfTransitCountry"
 
   behave like pageWithTitle()
 

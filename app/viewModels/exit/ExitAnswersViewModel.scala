@@ -16,6 +16,7 @@
 
 package viewModels.exit
 
+import config.FrontendAppConfig
 import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
 import utils.cyaHelpers.exit.ExitCheckYourAnswersHelper
@@ -29,12 +30,12 @@ object ExitAnswersViewModel {
 
   class ExitAnswersViewModelProvider @Inject() () {
 
-    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages): ExitAnswersViewModel = {
+    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig): ExitAnswersViewModel = {
 
       val helper = new ExitCheckYourAnswersHelper(userAnswers, mode)
 
       val officesOfExitSection = Section(
-        sectionTitle = messages("routeDetails.checkYourAnswers.exit.subheading"),
+        sectionTitle = messages("checkYourAnswers.exit.subheading"),
         rows = helper.officesOfExit,
         addAnotherLink = helper.addOrRemoveOfficesOfExit
       )

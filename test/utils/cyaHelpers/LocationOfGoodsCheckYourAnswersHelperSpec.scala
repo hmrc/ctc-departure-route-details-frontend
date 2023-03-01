@@ -17,14 +17,34 @@
 package utils.cyaHelpers
 
 import base.SpecBase
+import controllers.locationOfGoods.routes
+import controllers.locationOfGoods.contact
 import generators.Generators
-import models.Mode
-import models.reference.{Country, CustomsOffice}
+import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, Mode, PostalCodeAddress}
+import models.reference.{Country, CustomsOffice, UnLocode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
+import pages.locationOfGoods.{
+  AddContactYesNoPage,
+  AddIdentifierYesNoPage,
+  AddLocationOfGoodsPage,
+  AdditionalIdentifierPage,
+  AddressPage,
+  AuthorisationNumberPage,
+  CoordinatesPage,
+  CountryPage,
+  CustomsOfficeIdentifierPage,
+  EoriPage,
+  IdentificationPage,
+  LocationTypePage,
+  PostalCodePage,
+  UnLocodePage
+}
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import utils.cyaHelpers.locationOfGoods.LocationOfGoodsCheckYourAnswersHelper
 
 class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

@@ -16,16 +16,18 @@
 
 package views.locationOfGoods
 
+import forms.EoriNumberFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.InputSize
 import views.behaviours.InputTextViewBehaviours
+import views.html.locationOfGoods.EoriView
 
 class EoriViewSpec extends InputTextViewBehaviours[String] {
 
-  override val prefix: String = "routeDetails.locationOfGoods.eori"
+  override val prefix: String = "locationOfGoods.eori"
 
   override def form: Form[String] = new EoriNumberFormProvider()(prefix)
 

@@ -18,10 +18,12 @@ package viewModels.transit
 
 import base.SpecBase
 import generators.Generators
-import models.Mode
+import models.{DateTime, Mode}
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
+import viewModels.transit.OfficeOfTransitAnswersViewModel.OfficeOfTransitAnswersViewModelProvider
 
 class OfficeOfTransitAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

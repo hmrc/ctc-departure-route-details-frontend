@@ -16,14 +16,17 @@
 
 package views.locationOfGoods.contact
 
+import forms.TelephoneNumberFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.behaviours.TelephoneNumberViewBehaviours
+import views.html.locationOfGoods.contact.TelephoneNumberView
 
 class TelephoneNumberViewSpec extends TelephoneNumberViewBehaviours {
 
-  override val prefix: String = "routeDetails.locationOfGoods.contact.telephoneNumber"
+  override val prefix: String = "locationOfGoods.contact.telephoneNumber"
 
   private val name: String = nonEmptyString.sample.value
 

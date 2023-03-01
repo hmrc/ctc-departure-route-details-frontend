@@ -31,9 +31,9 @@
 @(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode, index: Index, country: Country)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.routing.index.removeCountryOfRoutingYesNo.title", country.toString),
+    title = messages("routing.index.removeCountryOfRoutingYesNo.title", country.toString),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.RemoveCountryOfRoutingYesNoController.onSubmit(lrn, mode, index), Symbol("autoComplete") -> "off") {
@@ -43,8 +43,8 @@
         @inputYesNo(
             field = form("value"),
             yesNoType = OrdinaryYesNo(
-                heading = messages("routeDetails.routing.index.removeCountryOfRoutingYesNo.heading", country.toString),
-                caption = Some(messages("routeDetails.routing.caption"))
+                heading = messages("routing.index.removeCountryOfRoutingYesNo.heading", country.toString),
+                caption = Some(messages("routing.caption"))
             )
         )
 

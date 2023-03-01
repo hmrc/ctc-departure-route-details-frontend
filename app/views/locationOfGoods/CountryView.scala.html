@@ -34,9 +34,9 @@
 @(form: Form[Country], lrn: LocalReferenceNumber, countryList: Seq[Country], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.locationOfGoods.country.title"),
+    title = messages("locationOfGoods.country.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.CountryController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
@@ -46,12 +46,12 @@
         @inputSelect(
             field = form("value"),
             selectType = OrdinarySelect(
-                heading = messages("routeDetails.locationOfGoods.country.heading"),
-                caption = Some(messages("routeDetails.locationOfGoods.caption"))
+                heading = messages("locationOfGoods.country.heading"),
+                caption = Some(messages("locationOfGoods.caption"))
             ),
-            hint = Some(messages("routeDetails.locationOfGoods.country.hint")),
+            hint = Some(messages("locationOfGoods.country.hint")),
             selectItems = countryList.toSelectItems(form.value),
-            placeholder = messages("routeDetails.locationOfGoods.country.placeholder")
+            placeholder = messages("locationOfGoods.country.placeholder")
         )
 
         @button(attributes = Map("id" -> "submit"))

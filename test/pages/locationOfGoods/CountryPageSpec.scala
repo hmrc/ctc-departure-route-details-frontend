@@ -16,6 +16,7 @@
 
 package pages.locationOfGoods
 
+import models.DynamicAddress
 import models.reference.Country
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary

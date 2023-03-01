@@ -22,6 +22,8 @@ import models.Mode
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.exit.index.OfficeOfExitCountryPage
+import viewModels.exit.OfficeOfExitAnswersViewModel.OfficeOfExitAnswersViewModelProvider
 
 class OfficeOfExitAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

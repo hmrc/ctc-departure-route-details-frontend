@@ -16,14 +16,17 @@
 
 package views.transit.index
 
+import controllers.transit.index.routes
 import models.Mode
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
+import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
+import views.html.transit.index.CheckOfficeOfTransitAnswersView
 
 class CheckOfficeOfTransitAnswersViewSpec extends CheckYourAnswersViewBehaviours {
 
-  override val prefix: String = "routeDetails.transit.index.checkOfficeOfTransitAnswers"
+  override val prefix: String = "transit.index.checkOfficeOfTransitAnswers"
 
   override def view: HtmlFormat.Appendable = viewWithSections(sections)
 

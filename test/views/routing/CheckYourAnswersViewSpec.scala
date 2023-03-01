@@ -16,14 +16,17 @@
 
 package views.routing
 
+import controllers.routing.routes
 import models.Mode
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
+import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
+import views.html.routing.CheckYourAnswersView
 
 class CheckYourAnswersViewSpec extends CheckYourAnswersViewBehaviours {
 
-  override val prefix: String = "routeDetails.routing.checkYourAnswers"
+  override val prefix: String = "routing.checkYourAnswers"
 
   override def view: HtmlFormat.Appendable = viewWithSections(sections)
 

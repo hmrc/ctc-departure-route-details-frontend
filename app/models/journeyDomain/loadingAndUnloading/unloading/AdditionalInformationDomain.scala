@@ -16,9 +16,11 @@
 
 package models.journeyDomain.loadingAndUnloading.unloading
 
+import cats.implicits.catsSyntaxTuple2Semigroupal
 import models.domain._
 import models.journeyDomain.JourneyDomainModel
 import models.reference.Country
+import pages.loadingAndUnloading.unloading.{CountryPage, LocationPage}
 
 case class AdditionalInformationDomain(
   country: Country,

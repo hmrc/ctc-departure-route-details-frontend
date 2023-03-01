@@ -17,6 +17,7 @@
 package controllers.routing.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import controllers.routing.{routes => routingRoutes}
 import forms.YesNoFormProvider
 import generators.Generators
 import models.reference.Country
@@ -25,15 +26,18 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.routing.index.CountryOfRoutingPage
+import pages.sections.routing.CountryOfRoutingSection
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.routing.index.RemoveCountryOfRoutingYesNoView
 
 import scala.concurrent.Future
 
 class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val formProvider           = new YesNoFormProvider()
-  private def form(country: Country) = formProvider("routeDetails.routing.index.removeCountryOfRoutingYesNo", country.toString)
+  private def form(country: Country) = formProvider("routing.index.removeCountryOfRoutingYesNo", country.toString)
 
   private val mode = NormalMode
 
@@ -140,7 +144,7 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
       }
 
       "when country not found at index" in {
@@ -152,7 +156,7 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
       }
     }
 
@@ -167,7 +171,7 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
       }
 
       "when country not found at index" in {
@@ -180,7 +184,7 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
       }
     }
   }

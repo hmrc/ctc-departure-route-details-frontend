@@ -16,13 +16,18 @@
 
 package controllers.locationOfGoods.contact
 
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
+import forms.TelephoneNumberFormProvider
 import models.{LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
+import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.locationOfGoods.contact.TelephoneNumberView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +51,7 @@ class TelephoneNumberController @Inject() (
     .andThen(getMandatoryPage(NamePage)) {
       implicit request =>
         val contactName = request.arg
-        val form        = formProvider("routeDetails.locationOfGoods.contact.telephoneNumber", contactName)
+        val form        = formProvider("locationOfGoods.contact.telephoneNumber", contactName)
         val preparedForm = request.userAnswers.get(TelephoneNumberPage) match {
           case None        => form
           case Some(value) => form.fill(value)
@@ -60,7 +65,7 @@ class TelephoneNumberController @Inject() (
     .async {
       implicit request =>
         val contactName = request.arg
-        val form        = formProvider("routeDetails.locationOfGoods.contact.telephoneNumber", contactName)
+        val form        = formProvider("locationOfGoods.contact.telephoneNumber", contactName)
         form
           .bindFromRequest()
           .fold(
@@ -73,7 +78,7 @@ class TelephoneNumberController @Inject() (
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                   TelephoneNumberPage
                     .writeToUserAnswers(value)
-                    .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                     .writeToSession()
                     .navigate()
                 }

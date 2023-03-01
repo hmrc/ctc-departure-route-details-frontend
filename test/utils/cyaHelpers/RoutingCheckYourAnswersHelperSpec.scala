@@ -17,16 +17,23 @@
 package utils.cyaHelpers
 
 import base.SpecBase
+import controllers.routing.{routes => routingRoutes}
+import controllers.routing.index.{routes => indexRoutes}
 import generators.Generators
 import models.domain.UserAnswersReader
+import models.journeyDomain.routing.CountryOfRoutingDomain
 import models.reference.{Country, CountryCode, CustomsOffice}
 import models.{Index, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.routing.index.CountryOfRoutingPage
+import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage, CountryOfDestinationPage, OfficeOfDestinationPage}
+import pages.sections.routing.CountryOfRoutingSection
 import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.html.components.{ActionItem, Actions}
+import utils.cyaHelpers.routing.RoutingCheckYourAnswersHelper
 import viewModels.ListItem
 
 class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {

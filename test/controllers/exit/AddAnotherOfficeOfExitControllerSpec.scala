@@ -20,6 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.AddAnotherFormProvider
 import generators.Generators
 import models.{Index, NormalMode}
+import navigation.RouteDetailsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -30,6 +31,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewModels.ListItem
+import viewModels.exit.AddAnotherOfficeOfExitViewModel
+import viewModels.exit.AddAnotherOfficeOfExitViewModel.AddAnotherOfficeOfExitViewModelProvider
+import views.html.exit.AddAnotherOfficeOfExitView
 
 class AddAnotherOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
@@ -69,7 +73,7 @@ class AddAnotherOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultM
 
     "redirect to correct start page in this sub-section" - {
       "when 0 offices of exit" in {
-        when(mockViewModelProvider.apply(any(), any())(any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(emptyViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -87,7 +91,7 @@ class AddAnotherOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultM
 
     "must return OK and the correct view for a GET" - {
       "when max limit not reached" in {
-        when(mockViewModelProvider.apply(any(), any())(any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(notMaxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -105,7 +109,7 @@ class AddAnotherOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultM
       }
 
       "when max limit reached" in {
-        when(mockViewModelProvider.apply(any(), any())(any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(maxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -126,7 +130,7 @@ class AddAnotherOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultM
     "when max limit not reached" - {
       "when yes submitted" - {
         "must redirect to office of exit country page at next index" in {
-          when(mockViewModelProvider.apply(any(), any())(any()))
+          when(mockViewModelProvider.apply(any(), any())(any(), any()))
             .thenReturn(notMaxedOutViewModel)
 
           setExistingUserAnswers(emptyUserAnswers)
@@ -145,7 +149,7 @@ class AddAnotherOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultM
 
       "when no submitted" - {
         "must redirect to the next page" in {
-          when(mockViewModelProvider.apply(any(), any())(any()))
+          when(mockViewModelProvider.apply(any(), any())(any(), any()))
             .thenReturn(notMaxedOutViewModel)
 
           setExistingUserAnswers(emptyUserAnswers)
@@ -164,7 +168,7 @@ class AddAnotherOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultM
 
     "when max limit reached" - {
       "must redirect to the next page" in {
-        when(mockViewModelProvider.apply(any(), any())(any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(maxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -182,7 +186,7 @@ class AddAnotherOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultM
 
     "must return a Bad Request and errors" - {
       "when invalid data is submitted and max limit not reached" in {
-        when(mockViewModelProvider.apply(any(), any())(any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(notMaxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -213,7 +217,7 @@ class AddAnotherOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultM
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -227,7 +231,7 @@ class AddAnotherOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultM
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 

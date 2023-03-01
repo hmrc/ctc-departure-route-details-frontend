@@ -19,8 +19,12 @@ package viewModels.loadingAndUnloading
 import base.SpecBase
 import generators.Generators
 import models.Mode
+import pages.loadingAndUnloading
+import pages.loadingAndUnloading.loading
+import pages.loadingAndUnloading.unloading
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import viewModels.loadingAndUnloading.LoadingAndUnloadingAnswersViewModel.LoadingAndUnloadingAnswersViewModelProvider
 
 class LoadingAndUnloadingAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

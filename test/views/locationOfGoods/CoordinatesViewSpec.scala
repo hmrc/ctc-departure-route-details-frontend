@@ -16,10 +16,13 @@
 
 package views.locationOfGoods
 
+import forms.behaviours.CoordinatesViewBehaviours
+import forms.locationOfGoods.CoordinatesFormProvider
 import generators.Generators
-import models.NormalMode
+import models.{Coordinates, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.html.locationOfGoods.CoordinatesView
 
 class CoordinatesViewSpec extends CoordinatesViewBehaviours with Generators {
 
@@ -28,7 +31,7 @@ class CoordinatesViewSpec extends CoordinatesViewBehaviours with Generators {
   override def applyView(form: Form[Coordinates]): HtmlFormat.Appendable =
     injector.instanceOf[CoordinatesView].apply(form, lrn, NormalMode)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.locationOfGoods.coordinates"
+  override val prefix: String = "locationOfGoods.coordinates"
 
   behave like pageWithTitle()
 

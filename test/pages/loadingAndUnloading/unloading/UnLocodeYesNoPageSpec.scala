@@ -16,6 +16,7 @@
 
 package pages.loadingAndUnloading.unloading
 
+import models.reference.UnLocode
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 

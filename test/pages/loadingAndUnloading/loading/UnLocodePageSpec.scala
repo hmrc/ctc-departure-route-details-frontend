@@ -16,6 +16,7 @@
 
 package pages.loadingAndUnloading.loading
 
+import models.reference.UnLocode
 import pages.behaviours.PageBehaviours
 
 class UnLocodePageSpec extends PageBehaviours {

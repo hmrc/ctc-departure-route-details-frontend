@@ -19,20 +19,23 @@ package controllers.locationOfGoods
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.YesNoFormProvider
 import models.NormalMode
+import navigation.RouteDetailsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import pages.locationOfGoods.AddLocationOfGoodsPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.locationOfGoods.AddLocationOfGoodsView
 
 import scala.concurrent.Future
 
 class AddLocationOfGoodsControllerSpec extends SpecBase with AppWithDefaultMockFixtures with MockitoSugar {
 
   private val formProvider                 = new YesNoFormProvider()
-  private val form                         = formProvider("routeDetails.locationOfGoods.addLocationOfGoods")
+  private val form                         = formProvider("locationOfGoods.addLocationOfGoods")
   private val mode                         = NormalMode
   private lazy val addLocationOfGoodsRoute = routes.AddLocationOfGoodsController.onPageLoad(lrn, mode).url
 
@@ -120,7 +123,7 @@ class AddLocationOfGoodsControllerSpec extends SpecBase with AppWithDefaultMockF
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -134,7 +137,7 @@ class AddLocationOfGoodsControllerSpec extends SpecBase with AppWithDefaultMockF
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

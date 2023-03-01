@@ -19,7 +19,7 @@ package pages.routing
 import controllers.routing.routes
 import models.{Mode, SecurityDetailsType, UserAnswers}
 import pages.QuestionPage
-import pages.preTaskList.SecurityDetailsTypePage
+import pages.external.SecurityDetailsTypePage
 import pages.sections.routing.RoutingSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call

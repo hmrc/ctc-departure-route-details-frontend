@@ -17,6 +17,7 @@
 package generators
 
 import cats.data.NonEmptyList
+import models.DateTime
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Arbitrary, Gen, Shrink}
@@ -202,5 +203,38 @@ trait Generators extends UserAnswersGenerator with ModelGenerators with ViewMode
       tailSize <- Gen.choose(1, maxSize - 1)
       tail     <- Gen.listOfN(tailSize, gen)
     } yield NonEmptyList(head, tail)
+
+  implicit lazy val arbitraryDateTime: Arbitrary[DateTime] = Arbitrary {
+    dateTimesBetween(
+      min = LocalDateTime.of(2000, 1, 1, 23, 55, 0),
+      max = LocalDateTime.now(ZoneOffset.UTC)
+    ).map {
+      localDateTime =>
+        val dateTimeWithoutSeconds = localDateTime.minusSeconds(localDateTime.getSecond).minusNanos(localDateTime.getNano)
+        DateTime(dateTimeWithoutSeconds)
+    }
+  }
+
+  implicit lazy val arbitraryLocalTime: Arbitrary[LocalTime] = Arbitrary {
+    dateTimesBetween(
+      LocalDateTime.of(1900, 1, 1, 0, 0, 0),
+      LocalDateTime.of(2100, 1, 1, 0, 0, 0)
+    ).map(
+      result => result.toLocalTime.minusSeconds(result.getSecond).minusNanos(result.getNano)
+    )
+  }
+
+  implicit lazy val arbitraryAny: Arbitrary[Any] = Arbitrary {
+    Gen.oneOf[Any](Gen.alphaNumStr, arbitrary[Int])
+  }
+
+  implicit lazy val arbitraryLocalDateTime: Arbitrary[LocalDateTime] = Arbitrary {
+    dateTimesBetween(
+      LocalDateTime.of(1900, 1, 1, 0, 0, 0),
+      LocalDateTime.of(2100, 1, 1, 0, 0, 0)
+    ).map(
+      x => x.withNano(0).withSecond(0)
+    )
+  }
 }
 // scalastyle:on number.of.methods

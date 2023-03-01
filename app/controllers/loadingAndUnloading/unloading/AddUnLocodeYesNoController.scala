@@ -16,10 +16,9 @@
 
 package controllers.loadingAndUnloading.unloading
 
-import controllers.SettableOps
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
-import models.journeyDomain.RouteDetailsDomain
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LoadingAndUnloadingNavigatorProvider, UserAnswersNavigator}
 import pages.loadingAndUnloading.unloading.UnLocodeYesNoPage
@@ -46,7 +45,7 @@ class AddUnLocodeYesNoController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider("routeDetails.loadingAndUnloading.unloading.addUnLocodeYesNo")
+  private val form = formProvider("loadingAndUnloading.unloading.addUnLocodeYesNo")
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
@@ -72,7 +71,7 @@ class AddUnLocodeYesNoController @Inject() (
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                 UnLocodeYesNoPage
                   .writeToUserAnswers(value)
-                  .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                   .writeToSession()
                   .navigate()
               }

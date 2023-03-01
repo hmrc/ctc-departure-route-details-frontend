@@ -17,13 +17,18 @@
 package utils.cyaHelpers
 
 import base.SpecBase
+import controllers.loadingAndUnloading.loading.{routes => loadingRoutes}
+import controllers.loadingAndUnloading.unloading.{routes => unloadingRoutes}
+import controllers.loadingAndUnloading.{routes => loadingAndUnloadingRoutes}
 import generators.Generators
 import models.Mode
-import models.reference.Country
+import models.reference.{Country, UnLocode}
+import pages.loadingAndUnloading.{loading, unloading, AddPlaceOfUnloadingPage}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import utils.cyaHelpers.loadingAndUnloading.LoadingAndUnloadingCheckYourAnswersHelper
 
 class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

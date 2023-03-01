@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.behaviours.BooleanFieldBehaviours
 import org.scalacheck.Gen
 import play.api.data.FormError
 

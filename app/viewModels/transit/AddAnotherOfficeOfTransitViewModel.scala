@@ -30,7 +30,7 @@ case class AddAnotherOfficeOfTransitViewModel(
   override val listItems: Seq[ListItem],
   onSubmitCall: Call
 ) extends AddAnotherViewModel {
-  override val prefix: String = "routeDetails.transit.addAnotherOfficeOfTransit"
+  override val prefix: String = "transit.addAnotherOfficeOfTransit"
 
   override def maxCount(implicit config: FrontendAppConfig): Int = config.maxOfficesOfTransit
 }
@@ -44,7 +44,7 @@ object AddAnotherOfficeOfTransitViewModel {
       mode: Mode,
       ctcCountries: CountryList,
       customsSecurityAgreementAreaCountries: CountryList
-    )(implicit messages: Messages): AddAnotherOfficeOfTransitViewModel = {
+    )(implicit messages: Messages, config: FrontendAppConfig): AddAnotherOfficeOfTransitViewModel = {
       val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)(
         ctcCountries.countryCodes,
         customsSecurityAgreementAreaCountries.countryCodes

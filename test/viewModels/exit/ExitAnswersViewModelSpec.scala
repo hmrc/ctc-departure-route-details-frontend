@@ -21,6 +21,8 @@ import generators.Generators
 import models.Mode
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
+import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
+import viewModels.exit.ExitAnswersViewModel.ExitAnswersViewModelProvider
 
 class ExitAnswersViewModelSpec extends SpecBase with Generators {
 

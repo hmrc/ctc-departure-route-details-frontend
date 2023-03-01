@@ -16,11 +16,11 @@
 
 import cats.data.ReaderT
 import models.TaskStatus.{Completed, InProgress}
-import models.UserAnswers
 import models.domain.UserAnswersReader
 import models.journeyDomain.OpsError.WriterError
 import models.journeyDomain.RouteDetailsDomain
 import models.requests.MandatoryDataRequest
+import models.{CountryList, UserAnswers}
 import navigation.UserAnswersNavigator
 import pages.QuestionPage
 import play.api.libs.json.Format
@@ -62,12 +62,14 @@ package object controllers {
 
   implicit class SettableOpsRunner[A](userAnswersWriter: UserAnswersWriter[Write[A]]) {
 
-    def updateTask(): UserAnswersWriter[Write[A]] =
+    def updateTask(ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersWriter[Write[A]] =
       userAnswersWriter.flatMapF {
         case (page, userAnswers) =>
           page.path.path.headOption.map(_.toJsonString) match {
             case Some(section) =>
-              val status = UserAnswersReader[RouteDetailsDomain].run(userAnswers) match {
+              val status = UserAnswersReader[RouteDetailsDomain](
+                RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes)
+              ).run(userAnswers) match {
                 case Left(_)  => InProgress
                 case Right(_) => Completed
               }

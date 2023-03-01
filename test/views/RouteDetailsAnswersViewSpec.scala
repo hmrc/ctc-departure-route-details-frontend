@@ -16,12 +16,15 @@
 
 package views
 
+import controllers.routes
 import play.twirl.api.HtmlFormat
+import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
+import views.html.RouteDetailsAnswersView
 
 class RouteDetailsAnswersViewSpec extends CheckYourAnswersViewBehaviours {
 
-  override val prefix: String = "routeDetails.checkYourAnswers"
+  override val prefix: String = "checkYourAnswers"
 
   override def view: HtmlFormat.Appendable = viewWithSections(sections)
 

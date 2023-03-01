@@ -17,14 +17,19 @@
 package controllers.routing.index
 
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
+import forms.CountryFormProvider
 import models.reference.Country
 import models.{CountryList, Index, LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{CountryOfRoutingNavigatorProvider, UserAnswersNavigator}
+import pages.routing.index.CountryOfRoutingPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.routing.index.CountryOfRoutingView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +48,7 @@ class CountryOfRoutingController @Inject() (
     with I18nSupport {
 
   private def form(countryList: CountryList): Form[Country] =
-    formProvider("routeDetails.routing.index.countryOfRouting", countryList)
+    formProvider("routing.index.countryOfRouting", countryList)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
@@ -74,7 +79,7 @@ class CountryOfRoutingController @Inject() (
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
                     CountryOfRoutingPage(index)
                       .writeToUserAnswers(value)
-                      .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                       .writeToSession()
                       .navigate()
                   }

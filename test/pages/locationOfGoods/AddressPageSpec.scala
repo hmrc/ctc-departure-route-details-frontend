@@ -16,6 +16,7 @@
 
 package pages.locationOfGoods
 
+import models.DynamicAddress
 import pages.behaviours.PageBehaviours
 
 class AddressPageSpec extends PageBehaviours {

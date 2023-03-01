@@ -70,17 +70,6 @@ trait StringFieldBehaviours extends FieldBehaviours {
       }
     }
 
-  def mandatoryTrimmedField(form: Form[_], fieldName: String, requiredError: FormError): Unit = {
-
-    mandatoryField(form, fieldName, requiredError)
-
-    "must not bind values that trim to empty" in {
-
-      val result = form.bind(Map(fieldName -> "   ")).apply(fieldName)
-      result.errors mustEqual Seq(requiredError)
-    }
-  }
-
   def stringFieldWithMaximumIntValue(form: Form[_], fieldName: String, max: Int, fieldMax: Int, expectedError: FormError): Unit =
     s"must not bind values > $max and < $max" in {
       forAll(positiveIntsMinMax(max, fieldMax)) {

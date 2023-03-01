@@ -16,10 +16,13 @@
 
 package views.transit.index
 
+import forms.DateTimeFormProvider
 import generators.Generators
-import models.NormalMode
+import models.{DateTime, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.behaviours.DateTimeInputViewBehaviours
+import views.html.transit.index.OfficeOfTransitETAView
 
 import java.time.LocalDate
 
@@ -39,7 +42,7 @@ class OfficeOfTransitETAViewSpec extends DateTimeInputViewBehaviours with Genera
       .instanceOf[OfficeOfTransitETAView]
       .apply(form, lrn, transitCountry.description, transitCustomsOffice.name, NormalMode, index)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.transit.index.officeOfTransitETA"
+  override val prefix: String = "transit.index.officeOfTransitETA"
 
   behave like pageWithTitle(transitCustomsOffice.name, transitCountry.description)
 

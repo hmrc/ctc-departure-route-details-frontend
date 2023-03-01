@@ -16,16 +16,22 @@
 
 package controllers.transit.index
 
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
+import forms.CountryFormProvider
 import models.CountryList.countriesOfRoutingReads
 import models.requests.DataRequest
 import models.{CountryList, Index, LocalReferenceNumber, Mode, RichOptionalJsArray}
-import navigation.UserAnswersNavigator
+import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
+import pages.sections.routing.CountriesOfRoutingSection
+import pages.transit.index.OfficeOfTransitCountryPage
 import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{CountriesService, CustomsOfficesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.transit.index.OfficeOfTransitCountryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +50,7 @@ class OfficeOfTransitCountryController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val prefix: String = "routeDetails.transit.index.officeOfTransitCountry"
+  private val prefix: String = "transit.index.officeOfTransitCountry"
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
@@ -79,7 +85,7 @@ class OfficeOfTransitCountryController @Inject() (
                         implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
                         OfficeOfTransitCountryPage(index)
                           .writeToUserAnswers(value)
-                          .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                           .writeToSession()
                           .navigate()
                       }

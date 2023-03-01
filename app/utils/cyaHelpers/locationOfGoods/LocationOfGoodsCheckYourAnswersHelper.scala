@@ -16,123 +16,142 @@
 
 package utils.cyaHelpers.locationOfGoods
 
-import models.reference.{Country, CustomsOffice}
-import models.{Mode, UserAnswers}
+import config.FrontendAppConfig
+import models.reference.{Country, CustomsOffice, UnLocode}
+import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, Mode, PostalCodeAddress, UserAnswers}
+import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
+import pages.locationOfGoods.{
+  AddContactYesNoPage,
+  AddIdentifierYesNoPage,
+  AddLocationOfGoodsPage,
+  AdditionalIdentifierPage,
+  AddressPage,
+  AuthorisationNumberPage,
+  CoordinatesPage,
+  CountryPage,
+  CustomsOfficeIdentifierPage,
+  EoriPage,
+  IdentificationPage,
+  LocationTypePage,
+  PostalCodePage,
+  UnLocodePage
+}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
 import utils.cyaHelpers.AnswersHelper
 
-class LocationOfGoodsCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages) extends AnswersHelper(userAnswers, mode) {
+class LocationOfGoodsCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig)
+    extends AnswersHelper(userAnswers, mode) {
 
   def addLocationOfGoods: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = AddLocationOfGoodsPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.locationOfGoods.addLocationOfGoods",
+    prefix = "locationOfGoods.addLocationOfGoods",
     id = Some("change-add-location-of-goods")
   )
 
   def locationType: Option[SummaryListRow] = getAnswerAndBuildRow[LocationType](
     page = LocationTypePage,
     formatAnswer = formatEnumAsText(LocationType.messageKeyPrefix),
-    prefix = "routeDetails.locationOfGoods.locationType",
+    prefix = "locationOfGoods.locationType",
     id = Some("change-location-type")
   )
 
   def locationOfGoodsIdentification: Option[SummaryListRow] = getAnswerAndBuildRow[LocationOfGoodsIdentification](
     page = IdentificationPage,
     formatAnswer = formatEnumAsText(LocationOfGoodsIdentification.messageKeyPrefix),
-    prefix = "routeDetails.locationOfGoods.identification",
+    prefix = "locationOfGoods.identification",
     id = Some("change-location-of-goods-identification")
   )
 
   def customsOfficeIdentifier: Option[SummaryListRow] = getAnswerAndBuildRow[CustomsOffice](
     page = CustomsOfficeIdentifierPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.locationOfGoods.customsOfficeIdentifier",
+    prefix = "locationOfGoods.customsOfficeIdentifier",
     id = Some("change-location-of-goods-customs-office-identifier")
   )
 
   def eori: Option[SummaryListRow] = getAnswerAndBuildRow[String](
     page = EoriPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.locationOfGoods.eori",
+    prefix = "locationOfGoods.eori",
     id = Some("change-location-of-goods-eori")
   )
 
   def authorisationNumber: Option[SummaryListRow] = getAnswerAndBuildRow[String](
     page = AuthorisationNumberPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.locationOfGoods.authorisationNumber",
+    prefix = "locationOfGoods.authorisationNumber",
     id = Some("change-location-of-goods-authorisation-number")
   )
 
   def coordinates: Option[SummaryListRow] = getAnswerAndBuildRow[Coordinates](
     page = CoordinatesPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.locationOfGoods.coordinates",
+    prefix = "locationOfGoods.coordinates",
     id = Some("change-location-of-goods-coordinates")
   )
 
   def unLocode: Option[SummaryListRow] = getAnswerAndBuildRow[UnLocode](
     page = UnLocodePage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.locationOfGoods.unLocode",
+    prefix = "locationOfGoods.unLocode",
     id = Some("change-location-of-goods-un-locode")
   )
 
   def country: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = CountryPage,
     formatAnswer = formatAsCountry,
-    prefix = "routeDetails.locationOfGoods.country",
+    prefix = "locationOfGoods.country",
     id = Some("change-location-of-goods-country")
   )
 
   def address: Option[SummaryListRow] = getAnswerAndBuildRow[DynamicAddress](
     page = AddressPage,
     formatAnswer = formatAsDynamicAddress,
-    prefix = "routeDetails.locationOfGoods.address",
+    prefix = "locationOfGoods.address",
     id = Some("change-location-of-goods-address")
   )
 
   def postalCode: Option[SummaryListRow] = getAnswerAndBuildRow[PostalCodeAddress](
     page = PostalCodePage,
     formatAnswer = formatAsPostalCodeAddress,
-    prefix = "routeDetails.locationOfGoods.postalCode",
+    prefix = "locationOfGoods.postalCode",
     id = Some("change-location-of-goods-postal-code")
   )
 
   def additionalIdentifierYesNo: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = AddIdentifierYesNoPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.locationOfGoods.addIdentifierYesNo",
+    prefix = "locationOfGoods.addIdentifierYesNo",
     id = Some("change-location-of-goods-add-identifier")
   )
 
   def additionalIdentifier: Option[SummaryListRow] = getAnswerAndBuildRow[String](
     page = AdditionalIdentifierPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.locationOfGoods.additionalIdentifier",
+    prefix = "locationOfGoods.additionalIdentifier",
     id = Some("change-location-of-goods-additional-identifier")
   )
 
   def contactYesNo: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = AddContactYesNoPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.locationOfGoods.addContactLocationOfGoods",
+    prefix = "locationOfGoods.addContactLocationOfGoods",
     id = Some("change-location-of-goods-add-contact")
   )
 
   def contactName: Option[SummaryListRow] = getAnswerAndBuildRow[String](
     page = NamePage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.locationOfGoods.contact.name",
+    prefix = "locationOfGoods.contact.name",
     id = Some("change-location-of-goods-contact")
   )
 
   def contactPhoneNumber: Option[SummaryListRow] = getAnswerAndBuildRow[String](
     page = TelephoneNumberPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.locationOfGoods.contact.telephoneNumber",
+    prefix = "locationOfGoods.contact.telephoneNumber",
     id = Some("change-location-of-goods-contact-telephone-number")
   )
 }

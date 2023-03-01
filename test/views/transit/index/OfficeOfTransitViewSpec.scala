@@ -16,12 +16,14 @@
 
 package views.transit.index
 
-import models.NormalMode
+import forms.CustomsOfficeForCountryFormProvider
+import models.{CustomsOfficeList, NormalMode}
 import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.InputSelectViewBehaviours
+import views.html.transit.index.OfficeOfTransitView
 
 class OfficeOfTransitViewSpec extends InputSelectViewBehaviours[CustomsOffice] {
 
@@ -34,7 +36,7 @@ class OfficeOfTransitViewSpec extends InputSelectViewBehaviours[CustomsOffice] {
 
   implicit override val arbitraryT: Arbitrary[CustomsOffice] = arbitraryCustomsOffice
 
-  override val prefix: String = "routeDetails.transit.index.officeOfTransit"
+  override val prefix: String = "transit.index.officeOfTransit"
 
   behave like pageWithTitle(countryName)
 

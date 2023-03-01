@@ -17,14 +17,19 @@
 package controllers.routing
 
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
+import forms.CustomsOfficeFormProvider
 import models.reference.CustomsOffice
-import models.{LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import models.{CustomsOfficeList, LocalReferenceNumber, Mode}
+import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
+import pages.routing.{CountryOfDestinationPage, OfficeOfDestinationPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{CountriesService, CustomsOfficesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.routing.OfficeOfDestinationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +50,7 @@ class OfficeOfDestinationController @Inject() (
     with I18nSupport {
 
   private def form(customsOfficeList: CustomsOfficeList): Form[CustomsOffice] =
-    formProvider("routeDetails.routing.officeOfDestination", customsOfficeList)
+    formProvider("routing.officeOfDestination", customsOfficeList)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
@@ -84,7 +89,7 @@ class OfficeOfDestinationController @Inject() (
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                       OfficeOfDestinationPage
                         .writeToUserAnswers(value)
-                        .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                         .writeToSession()
                         .navigate()
                     }

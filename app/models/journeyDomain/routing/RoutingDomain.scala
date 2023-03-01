@@ -16,10 +16,12 @@
 
 package models.journeyDomain.routing
 
-import models.domain.UserAnswersReader
+import cats.implicits.catsSyntaxTuple4Semigroupal
+import models.domain.{GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.reference.Country
+import models.reference.{Country, CustomsOffice}
 import models.{Mode, UserAnswers}
+import pages.routing.{BindingItineraryPage, CountryOfDestinationPage, OfficeOfDestinationPage}
 import play.api.mvc.Call
 
 case class RoutingDomain(

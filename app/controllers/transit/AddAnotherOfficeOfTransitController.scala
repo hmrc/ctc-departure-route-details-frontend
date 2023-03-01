@@ -18,14 +18,19 @@ package controllers.transit
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.transit.index.{routes => indexRoutes}
 import forms.AddAnotherFormProvider
 import models.{LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewModels.transit.AddAnotherOfficeOfTransitViewModel
+import viewModels.transit.AddAnotherOfficeOfTransitViewModel.AddAnotherOfficeOfTransitViewModelProvider
+import views.html.transit.AddAnotherOfficeOfTransitView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext

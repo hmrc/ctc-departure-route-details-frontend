@@ -16,6 +16,7 @@
 
 package controllers.exit.index
 
+import config.FrontendAppConfig
 import controllers.actions._
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{ExitNavigatorProvider, UserAnswersNavigator}
@@ -37,7 +38,7 @@ class CheckOfficeOfExitAnswersController @Inject() (
   view: CheckOfficeOfExitAnswersView,
   viewModelProvider: OfficeOfExitAnswersViewModelProvider,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

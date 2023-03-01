@@ -19,10 +19,14 @@ package generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
+import play.api.mvc.Call
 import play.twirl.api.Html
 import viewModels.sections.Section
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+import viewModels.exit.AddAnotherOfficeOfExitViewModel
+import viewModels.routing.AddAnotherCountryOfRoutingViewModel
+import viewModels.transit.AddAnotherOfficeOfTransitViewModel
 import viewModels.{sections, Link, ListItem}
 
 trait ViewModelGenerators {
@@ -167,5 +171,26 @@ trait ViewModelGenerators {
       changeUrl <- nonEmptyString
       removeUrl <- Gen.option(nonEmptyString)
     } yield ListItem(name, changeUrl, removeUrl)
+  }
+
+  implicit lazy val arbitraryAddAnotherOfficeOfTransitViewModel: Arbitrary[AddAnotherOfficeOfTransitViewModel] = Arbitrary {
+    for {
+      listItems    <- arbitrary[Seq[ListItem]]
+      onSubmitCall <- arbitrary[Call]
+    } yield AddAnotherOfficeOfTransitViewModel(listItems, onSubmitCall)
+  }
+
+  implicit lazy val arbitraryAddAnotherOfficeOfExitViewModel: Arbitrary[AddAnotherOfficeOfExitViewModel] = Arbitrary {
+    for {
+      listItems    <- arbitrary[Seq[ListItem]]
+      onSubmitCall <- arbitrary[Call]
+    } yield AddAnotherOfficeOfExitViewModel(listItems, onSubmitCall)
+  }
+
+  implicit lazy val arbitraryAddAnotherCountryOfRoutingViewModel: Arbitrary[AddAnotherCountryOfRoutingViewModel] = Arbitrary {
+    for {
+      listItems    <- arbitrary[Seq[ListItem]]
+      onSubmitCall <- arbitrary[Call]
+    } yield AddAnotherCountryOfRoutingViewModel(listItems, onSubmitCall)
   }
 }

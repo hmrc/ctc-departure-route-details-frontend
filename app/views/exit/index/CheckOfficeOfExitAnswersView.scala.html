@@ -30,14 +30,14 @@
 @(lrn: LocalReferenceNumber, index: Index, mode: Mode, sections: Seq[Section])(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.exit.index.checkOfficeOfExitAnswers.title"),
+    title = messages("exit.index.checkOfficeOfExitAnswers.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @heading(
-        heading =messages("routeDetails.exit.index.checkOfficeOfExitAnswers.heading"),
-        caption = Some(messages("routeDetails.exit.caption"))
+        heading =messages("exit.index.checkOfficeOfExitAnswers.heading"),
+        caption = Some(messages("exit.caption"))
     )
 
     @answerSections(sections)

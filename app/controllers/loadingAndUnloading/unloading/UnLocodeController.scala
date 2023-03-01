@@ -16,10 +16,9 @@
 
 package controllers.loadingAndUnloading.unloading
 
-import controllers.SettableOps
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.UnLocodeFormProvider
-import models.journeyDomain.RouteDetailsDomain
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LoadingAndUnloadingNavigatorProvider, UserAnswersNavigator}
 import pages.loadingAndUnloading.unloading.UnLocodePage
@@ -51,7 +50,7 @@ class UnLocodeController @Inject() (
     implicit request =>
       unLocodesService.getUnLocodes().map {
         unLocodeList =>
-          val form = formProvider("routeDetails.loadingAndUnloading.unloading.unLocode", unLocodeList)
+          val form = formProvider("loadingAndUnloading.unloading.unLocode", unLocodeList)
           val preparedForm = request.userAnswers.get(UnLocodePage) match {
             case None        => form
             case Some(value) => form.fill(value)
@@ -65,7 +64,7 @@ class UnLocodeController @Inject() (
     implicit request =>
       unLocodesService.getUnLocodes().flatMap {
         unLocodeList =>
-          val form = formProvider("routeDetails.loadingAndUnloading.unloading.unLocode", unLocodeList)
+          val form = formProvider("loadingAndUnloading.unloading.unLocode", unLocodeList)
           form
             .bindFromRequest()
             .fold(
@@ -78,7 +77,7 @@ class UnLocodeController @Inject() (
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                     UnLocodePage
                       .writeToUserAnswers(value)
-                      .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                       .writeToSession()
                       .navigate()
                   }

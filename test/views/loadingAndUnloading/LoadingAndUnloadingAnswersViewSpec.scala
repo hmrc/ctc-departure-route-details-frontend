@@ -16,14 +16,17 @@
 
 package views.loadingAndUnloading
 
+import controllers.loadingAndUnloading.routes
 import models.Mode
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
+import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
+import views.html.loadingAndUnloading.LoadingAndUnloadingAnswersView
 
 class LoadingAndUnloadingAnswersViewSpec extends CheckYourAnswersViewBehaviours {
 
-  override val prefix: String = "routeDetails.loadingAndUnloading.checkYourAnswers"
+  override val prefix: String = "loadingAndUnloading.checkYourAnswers"
 
   override def view: HtmlFormat.Appendable = viewWithSections(sections)
 

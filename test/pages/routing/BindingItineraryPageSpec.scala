@@ -19,6 +19,7 @@ package pages.routing
 import models.SecurityDetailsType
 import org.scalacheck.Gen
 import pages.behaviours.PageBehaviours
+import pages.external.SecurityDetailsTypePage
 
 class BindingItineraryPageSpec extends PageBehaviours {
 

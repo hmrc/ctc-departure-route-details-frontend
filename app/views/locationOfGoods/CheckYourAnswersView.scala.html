@@ -30,14 +30,14 @@
 @(lrn: LocalReferenceNumber, mode: Mode, sections: Seq[Section])(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.locationOfGoods.checkYourAnswers.title"),
+    title = messages("locationOfGoods.checkYourAnswers.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @heading(
-        heading = messages("routeDetails.locationOfGoods.checkYourAnswers.heading"),
-        caption = Some(messages("routeDetails.locationOfGoods.caption"))
+        heading = messages("locationOfGoods.checkYourAnswers.heading"),
+        caption = Some(messages("locationOfGoods.caption"))
     )
 
     @answerSections(sections)

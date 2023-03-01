@@ -20,7 +20,9 @@ import forms.AddAnotherFormProvider
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import viewModels.exit.AddAnotherOfficeOfExitViewModel
 import views.behaviours.ListWithActionsViewBehaviours
+import views.html.exit.AddAnotherOfficeOfExitView
 
 class AddAnotherOfficeOfExitViewSpec extends ListWithActionsViewBehaviours {
 
@@ -47,7 +49,7 @@ class AddAnotherOfficeOfExitViewSpec extends ListWithActionsViewBehaviours {
       .instanceOf[AddAnotherOfficeOfExitView]
       .apply(formProvider(maxedOutViewModel), lrn, maxedOutViewModel)(fakeRequest, messages, frontendAppConfig)
 
-  override val prefix: String = "routeDetails.exit.addAnotherOfficeOfExit"
+  override val prefix: String = "exit.addAnotherOfficeOfExit"
 
   behave like pageWithBackLink()
 

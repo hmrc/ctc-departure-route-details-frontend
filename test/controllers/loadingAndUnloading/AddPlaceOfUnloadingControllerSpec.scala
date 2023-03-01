@@ -19,20 +19,23 @@ package controllers.loadingAndUnloading
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.YesNoFormProvider
 import models.NormalMode
+import navigation.LoadingAndUnloadingNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.loadingAndUnloading.AddPlaceOfUnloadingView
 
 import scala.concurrent.Future
 
 class AddPlaceOfUnloadingControllerSpec extends SpecBase with AppWithDefaultMockFixtures with MockitoSugar {
 
   private val formProvider                  = new YesNoFormProvider()
-  private val form                          = formProvider("routeDetails.loadingAndUnloading.addPlaceOfUnloading")
+  private val form                          = formProvider("loadingAndUnloading.addPlaceOfUnloading")
   private val mode                          = NormalMode
   private lazy val addPlaceOfUnloadingRoute = routes.AddPlaceOfUnloadingController.onPageLoad(lrn, mode).url
 
@@ -120,7 +123,7 @@ class AddPlaceOfUnloadingControllerSpec extends SpecBase with AppWithDefaultMock
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -134,7 +137,7 @@ class AddPlaceOfUnloadingControllerSpec extends SpecBase with AppWithDefaultMock
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

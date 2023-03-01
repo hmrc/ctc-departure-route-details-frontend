@@ -16,12 +16,15 @@
 
 package generators
 
-import models._
+import models.AddressLine.{City, NumberAndStreet, PostalCode, StreetNumber}
+import models.{PostalCodeAddress, _}
+import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
 import models.reference.{Country, CountryCode, CustomsOffice, UnLocode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HttpVerbs._
+import wolfendale.scalacheck.regexp.RegexpGen
 
 trait ModelGenerators {
   self: Generators =>
@@ -96,4 +99,93 @@ trait ModelGenerators {
         name                 <- nonEmptyString
       } yield UnLocode(unLocodeExtendedCode, name)
     }
+
+  implicit lazy val arbitraryLocationType: Arbitrary[LocationType] =
+    Arbitrary {
+      Gen.oneOf(LocationType.values)
+    }
+
+  implicit lazy val arbitraryLocationOfGoodsIdentification: Arbitrary[LocationOfGoodsIdentification] =
+    Arbitrary {
+      Gen.oneOf(LocationOfGoodsIdentification.values)
+    }
+
+  implicit lazy val arbitraryCoordinates: Arbitrary[Coordinates] =
+    Arbitrary {
+      for {
+        latitude  <- RegexpGen.from(coordinatesLatitudeMaxRegex)
+        longitude <- RegexpGen.from(coordinatesLongitudeMaxRegex)
+      } yield Coordinates(latitude, longitude)
+    }
+
+  implicit lazy val arbitraryCustomsOfficeList: Arbitrary[CustomsOfficeList] =
+    Arbitrary {
+      for {
+        customsOffices <- listWithMaxLength[CustomsOffice]()
+      } yield CustomsOfficeList(customsOffices)
+    }
+
+  implicit lazy val arbitraryDynamicAddress: Arbitrary[DynamicAddress] =
+    Arbitrary {
+      for {
+        numberAndStreet <- stringsWithMaxLength(NumberAndStreet.length, Gen.alphaNumChar)
+        city            <- stringsWithMaxLength(City.length, Gen.alphaNumChar)
+        postalCode      <- Gen.option(stringsWithMaxLength(PostalCode.length, Gen.alphaNumChar))
+      } yield DynamicAddress(numberAndStreet, city, postalCode)
+    }
+
+  lazy val arbitraryDynamicAddressWithRequiredPostalCode: Arbitrary[DynamicAddress] =
+    Arbitrary {
+      for {
+        numberAndStreet <- stringsWithMaxLength(NumberAndStreet.length, Gen.alphaNumChar)
+        city            <- stringsWithMaxLength(City.length, Gen.alphaNumChar)
+        postalCode      <- stringsWithMaxLength(PostalCode.length, Gen.alphaNumChar)
+      } yield DynamicAddress(numberAndStreet, city, Some(postalCode))
+    }
+
+  implicit lazy val arbitraryPostalCodeAddress: Arbitrary[PostalCodeAddress] =
+    Arbitrary {
+      for {
+        streetNumber <- stringsWithMaxLength(StreetNumber.length, Gen.alphaNumChar)
+        postalCode   <- stringsWithMaxLength(PostalCode.length, Gen.alphaNumChar)
+        country      <- arbitrary[Country]
+      } yield PostalCodeAddress(streetNumber, postalCode, country)
+    }
+
+  implicit lazy val arbitraryDeclarationType: Arbitrary[DeclarationType] =
+    Arbitrary {
+      Gen.oneOf(DeclarationType.values)
+    }
+
+  lazy val arbitraryXiCustomsOffice: Arbitrary[CustomsOffice] =
+    Arbitrary {
+      for {
+        id          <- stringsWithMaxLength(stringMaxLength)
+        name        <- stringsWithMaxLength(stringMaxLength)
+        phoneNumber <- Gen.option(stringsWithMaxLength(stringMaxLength))
+      } yield CustomsOffice(id, name, phoneNumber)
+    }
+
+  lazy val arbitraryGbCustomsOffice: Arbitrary[CustomsOffice] =
+    Arbitrary {
+      for {
+        id          <- stringsWithMaxLength(stringMaxLength)
+        name        <- stringsWithMaxLength(stringMaxLength)
+        phoneNumber <- Gen.option(stringsWithMaxLength(stringMaxLength))
+      } yield CustomsOffice(id, name, phoneNumber)
+    }
+
+  lazy val arbitraryOfficeOfDeparture: Arbitrary[CustomsOffice] =
+    Arbitrary {
+      Gen.oneOf(arbitraryGbCustomsOffice.arbitrary, arbitraryXiCustomsOffice.arbitrary)
+    }
+
+  implicit lazy val arbitrarySecurityDetailsType: Arbitrary[SecurityDetailsType] =
+    Arbitrary {
+      Gen.oneOf(SecurityDetailsType.values)
+    }
+
+  lazy val arbitraryIncompleteTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
+    Gen.oneOf(TaskStatus.InProgress, TaskStatus.NotStarted, TaskStatus.CannotStartYet)
+  }
 }

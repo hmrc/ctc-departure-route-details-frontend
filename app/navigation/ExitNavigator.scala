@@ -16,6 +16,7 @@
 
 package navigation
 
+import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.exit.ExitDomain
 import models.{CheckMode, CountryList, Mode, NormalMode}
@@ -24,7 +25,7 @@ import navigation.UserAnswersNavigator
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class ExitNavigatorProviderImpl @Inject() () extends ExitNavigatorProvider {
+class ExitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends ExitNavigatorProvider {
 
   def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
     mode match {
@@ -40,7 +41,7 @@ trait ExitNavigatorProvider {
   def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
 }
 
-class ExitNavigator(override val mode: Mode) extends UserAnswersNavigator {
+class ExitNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig) extends UserAnswersNavigator {
 
   override type T = ExitDomain
 

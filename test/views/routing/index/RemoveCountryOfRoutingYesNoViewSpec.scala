@@ -23,6 +23,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
+import views.html.routing.index.RemoveCountryOfRoutingYesNoView
 
 class RemoveCountryOfRoutingYesNoViewSpec extends YesNoViewBehaviours with Generators {
 
@@ -33,7 +34,7 @@ class RemoveCountryOfRoutingYesNoViewSpec extends YesNoViewBehaviours with Gener
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
     injector.instanceOf[RemoveCountryOfRoutingYesNoView].apply(form, lrn, mode, index, country)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.routing.index.removeCountryOfRoutingYesNo"
+  override val prefix: String = "routing.index.removeCountryOfRoutingYesNo"
 
   behave like pageWithTitle(country.toString)
 

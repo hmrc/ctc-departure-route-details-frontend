@@ -16,10 +16,9 @@
 
 package controllers.loadingAndUnloading.loading
 
-import controllers.SettableOps
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.LocationFormProvider
-import models.journeyDomain.RouteDetailsDomain
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LoadingAndUnloadingNavigatorProvider, UserAnswersNavigator}
 import pages.loadingAndUnloading.loading.{CountryPage, LocationPage}
@@ -52,7 +51,7 @@ class LocationController @Inject() (
     .andThen(getMandatoryPage(CountryPage)) {
       implicit request =>
         val countryName = request.arg.description
-        val form        = formProvider("routeDetails.loadingAndUnloading.loading.location", countryName)
+        val form        = formProvider("loadingAndUnloading.loading.location", countryName)
         val preparedForm = request.userAnswers.get(LocationPage) match {
           case None        => form
           case Some(value) => form.fill(value)
@@ -66,7 +65,7 @@ class LocationController @Inject() (
     .async {
       implicit request =>
         val countryName = request.arg.description
-        val form        = formProvider("routeDetails.loadingAndUnloading.loading.location", countryName)
+        val form        = formProvider("loadingAndUnloading.loading.location", countryName)
         form
           .bindFromRequest()
           .fold(
@@ -79,7 +78,7 @@ class LocationController @Inject() (
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                   LocationPage
                     .writeToUserAnswers(value)
-                    .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                     .writeToSession()
                     .navigate()
                 }

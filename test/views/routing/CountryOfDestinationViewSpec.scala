@@ -16,12 +16,14 @@
 
 package views.routing
 
+import forms.CountryFormProvider
 import models.reference.Country
 import models.{CountryList, NormalMode}
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.InputSelectViewBehaviours
+import views.html.routing.CountryOfDestinationView
 
 class CountryOfDestinationViewSpec extends InputSelectViewBehaviours[Country] {
 
@@ -32,7 +34,7 @@ class CountryOfDestinationViewSpec extends InputSelectViewBehaviours[Country] {
 
   implicit override val arbitraryT: Arbitrary[Country] = arbitraryCountry
 
-  override val prefix: String = "routeDetails.routing.countryOfDestination"
+  override val prefix: String = "routing.countryOfDestination"
 
   behave like pageWithTitle()
 

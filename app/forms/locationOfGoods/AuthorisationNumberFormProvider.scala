@@ -16,6 +16,7 @@
 
 package forms.locationOfGoods
 
+import forms.Constants.maxAuthorisationNumberLength
 import forms.mappings.Mappings
 import models.domain.StringFieldRegex.alphaNumericRegex
 import play.api.data.Form

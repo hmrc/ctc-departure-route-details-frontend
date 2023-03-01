@@ -16,6 +16,7 @@
 
 package navigation
 
+import config.FrontendAppConfig
 import models._
 import models.domain.UserAnswersReader
 import models.journeyDomain.transit.OfficeOfTransitDomain
@@ -24,7 +25,7 @@ import navigation.UserAnswersNavigator
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class OfficeOfTransitNavigatorProviderImpl @Inject() () extends OfficeOfTransitNavigatorProvider {
+class OfficeOfTransitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends OfficeOfTransitNavigatorProvider {
 
   def apply(mode: Mode, index: Index, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
     mode match {
@@ -45,7 +46,8 @@ class OfficeOfTransitNavigator(
   index: Index,
   ctcCountries: CountryList,
   customsSecurityAgreementAreaCountries: CountryList
-) extends UserAnswersNavigator {
+)(implicit override val config: FrontendAppConfig)
+    extends UserAnswersNavigator {
 
   override type T = OfficeOfTransitDomain
 

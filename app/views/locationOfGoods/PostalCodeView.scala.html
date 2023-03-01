@@ -35,9 +35,9 @@
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.locationOfGoods.postalCode.title"),
+    title = messages("locationOfGoods.postalCode.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
    @formHelper(action = routes.PostalCodeController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
@@ -46,8 +46,8 @@
 
       @inputPostalCodeAddress(
           form = form,
-          messageKeyPrefix = "routeDetails.locationOfGoods.postalCode",
-          caption = Some(messages("routeDetails.locationOfGoods.caption")),
+          messageKeyPrefix = "locationOfGoods.postalCode",
+          caption = Some(messages("locationOfGoods.caption")),
           countries = countries
       )
 

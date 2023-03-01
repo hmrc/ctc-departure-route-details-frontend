@@ -20,13 +20,14 @@ import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
+import views.html.routing.AddCountryOfRoutingYesNoView
 
 class AddCountryOfRoutingYesNoViewSpec extends YesNoViewBehaviours {
 
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
     injector.instanceOf[AddCountryOfRoutingYesNoView].apply(form, lrn, NormalMode)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.routing.addCountryOfRoutingYesNo"
+  override val prefix: String = "routing.addCountryOfRoutingYesNo"
 
   behave like pageWithTitle()
 

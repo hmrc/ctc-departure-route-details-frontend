@@ -30,9 +30,9 @@
 @(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.transit.t2DeclarationTypeYesNo.title"),
+    title = messages("transit.t2DeclarationTypeYesNo.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.T2DeclarationTypeYesNoController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
@@ -42,9 +42,9 @@
         @inputYesNo(
             field = form("value"),
             yesNoType = YesNoWithAdditionalHtml(
-                heading = messages("routeDetails.transit.t2DeclarationTypeYesNo.heading"),
-                caption = Some(messages("routeDetails.caption")),
-                additionalHtml = messages("routeDetails.transit.t2DeclarationTypeYesNo.paragraph").toParagraph
+                heading = messages("transit.t2DeclarationTypeYesNo.heading"),
+                caption = Some(messages("caption")),
+                additionalHtml = messages("transit.t2DeclarationTypeYesNo.paragraph").toParagraph
             )
         )
 

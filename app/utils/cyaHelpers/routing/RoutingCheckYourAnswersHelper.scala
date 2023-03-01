@@ -16,40 +16,48 @@
 
 package utils.cyaHelpers.routing
 
+import controllers.routing.index.routes
+import config.FrontendAppConfig
+import models.journeyDomain.routing.CountryOfRoutingDomain
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode, UserAnswers}
+import pages.routing.index.CountryOfRoutingPage
+import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage, CountryOfDestinationPage, OfficeOfDestinationPage}
+import pages.sections.routing.CountriesOfRoutingSection
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
 import utils.cyaHelpers.AnswersHelper
 import viewModels.{Link, ListItem}
 
-class RoutingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages) extends AnswersHelper(userAnswers, mode) {
+class RoutingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig)
+    extends AnswersHelper(userAnswers, mode) {
 
   def countryOfDestination: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = CountryOfDestinationPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.routing.countryOfDestination",
+    prefix = "routing.countryOfDestination",
     id = Some("change-country-of-destination")
   )
 
   def officeOfDestination: Option[SummaryListRow] = getAnswerAndBuildRow[CustomsOffice](
     page = OfficeOfDestinationPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.routing.officeOfDestination",
+    prefix = "routing.officeOfDestination",
     id = Some("change-office-of-destination")
   )
 
   def bindingItinerary: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = BindingItineraryPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.routing.bindingItinerary",
+    prefix = "routing.bindingItinerary",
     id = Some("change-binding-itinerary")
   )
 
   def addCountryOfRouting: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = AddCountryOfRoutingYesNoPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.routing.addCountryOfRoutingYesNo",
+    prefix = "routing.addCountryOfRoutingYesNo",
     id = Some("change-add-country-of-routing")
   )
 
@@ -58,7 +66,7 @@ class RoutingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implic
 
   def countryOfRouting(index: Index): Option[SummaryListRow] = getAnswerAndBuildSectionRow[CountryOfRoutingDomain](
     formatAnswer = _.country.toString.toText,
-    prefix = "routeDetails.checkYourAnswers.routing.countryOfRouting",
+    prefix = "checkYourAnswers.routing.countryOfRouting",
     id = Some(s"change-country-of-routing-${index.display}"),
     args = index.display
   )(CountryOfRoutingDomain.userAnswersReader(index))
@@ -66,7 +74,7 @@ class RoutingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implic
   def addOrRemoveCountriesOfRouting: Option[Link] = buildLink(CountriesOfRoutingSection) {
     Link(
       id = "add-or-remove-transit-route-countries",
-      text = messages("routeDetails.checkYourAnswers.routing.addOrRemove"),
+      text = messages("checkYourAnswers.routing.addOrRemove"),
       href = controllers.routing.routes.AddAnotherCountryOfRoutingController.onPageLoad(userAnswers.lrn, mode).url
     )
   }

@@ -17,14 +17,18 @@
 package controllers.routing.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.CountryFormProvider
 import generators.Generators
 import models.{CountryList, NormalMode}
+import navigation.CountryOfRoutingNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.routing.index.CountryOfRoutingPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.routing.index.CountryOfRoutingView
 
 import scala.concurrent.Future
 
@@ -35,7 +39,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
   private val countryList = CountryList(Seq(country1, country2))
 
   private val formProvider = new CountryFormProvider()
-  private val form         = formProvider("routeDetails.routing.index.countryOfRouting", countryList)
+  private val form         = formProvider("routing.index.countryOfRouting", countryList)
   private val mode         = NormalMode
 
   private lazy val countryOfRoutingRoute = routes.CountryOfRoutingController.onPageLoad(lrn, mode, index).url
@@ -128,7 +132,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -142,7 +146,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

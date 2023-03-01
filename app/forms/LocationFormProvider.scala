@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.Constants.locationMaxLength
 import forms.mappings.Mappings
 import models.domain.StringFieldRegex.stringFieldRegex
 import play.api.data.Form

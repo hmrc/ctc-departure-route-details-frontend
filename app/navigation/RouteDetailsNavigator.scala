@@ -16,6 +16,7 @@
 
 package navigation
 
+import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.RouteDetailsDomain
 import models.{CountryList, Mode}
@@ -23,7 +24,7 @@ import models.{CountryList, Mode}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RouteDetailsNavigatorProviderImpl @Inject() () extends RouteDetailsNavigatorProvider {
+class RouteDetailsNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends RouteDetailsNavigatorProvider {
 
   def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
     RouteDetailsNavigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
@@ -40,7 +41,7 @@ object RouteDetailsNavigatorProvider {
     mode: Mode,
     ctcCountries: CountryList,
     customsSecurityAgreementAreaCountries: CountryList
-  ): UserAnswersNavigator =
+  )(implicit config: FrontendAppConfig): UserAnswersNavigator =
     new RouteDetailsNavigator(
       mode,
       ctcCountries,
@@ -52,7 +53,8 @@ class RouteDetailsNavigator(
   override val mode: Mode,
   ctcCountries: CountryList,
   customsSecurityAgreementAreaCountries: CountryList
-) extends UserAnswersNavigator {
+)(implicit override val config: FrontendAppConfig)
+    extends UserAnswersNavigator {
 
   override type T = RouteDetailsDomain
 

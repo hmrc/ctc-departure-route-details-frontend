@@ -25,9 +25,8 @@ import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
-import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.{DeclarationType, Mode, SecurityDetailsType, UserAnswers}
-import pages.preTaskList.{DeclarationTypePage, OfficeOfDeparturePage, SecurityDetailsTypePage}
+import pages.external.{DeclarationTypePage, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.routing.CountriesOfRoutingInSecurityAgreement
 import play.api.mvc.Call

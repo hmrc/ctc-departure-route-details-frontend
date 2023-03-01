@@ -16,6 +16,7 @@
 
 package viewModels.loadingAndUnloading
 
+import config.FrontendAppConfig
 import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
 import utils.cyaHelpers.loadingAndUnloading.LoadingAndUnloadingCheckYourAnswersHelper
@@ -29,11 +30,11 @@ object LoadingAndUnloadingAnswersViewModel {
 
   class LoadingAndUnloadingAnswersViewModelProvider @Inject() () {
 
-    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages): LoadingAndUnloadingAnswersViewModel = {
+    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig): LoadingAndUnloadingAnswersViewModel = {
       val helper = new LoadingAndUnloadingCheckYourAnswersHelper(userAnswers, mode)
 
       val loadingSection = Section(
-        sectionTitle = messages("routeDetails.loadingAndUnloading.checkYourAnswers.loading"),
+        sectionTitle = messages("loadingAndUnloading.checkYourAnswers.loading"),
         rows = Seq(
           helper.addLoadingUnLocode,
           helper.loadingUnLocode,
@@ -44,7 +45,7 @@ object LoadingAndUnloadingAnswersViewModel {
       )
 
       val unloadingSection = Section(
-        sectionTitle = messages("routeDetails.loadingAndUnloading.checkYourAnswers.unloading"),
+        sectionTitle = messages("loadingAndUnloading.checkYourAnswers.unloading"),
         rows = Seq(
           helper.addPlaceOfUnloading,
           helper.addUnloadingUnLocode,

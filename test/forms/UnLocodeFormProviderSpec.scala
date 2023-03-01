@@ -17,6 +17,8 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import models.UnLocodeList
+import models.reference.UnLocode
 import org.scalacheck.Gen
 import play.api.data.FormError
 

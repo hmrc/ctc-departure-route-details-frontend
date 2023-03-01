@@ -23,6 +23,9 @@ import models.{CustomsOfficeList, Index}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import pages.exit.index.OfficeOfExitPage
+import pages.routing.OfficeOfDestinationPage
+import pages.transit.index.OfficeOfTransitPage
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

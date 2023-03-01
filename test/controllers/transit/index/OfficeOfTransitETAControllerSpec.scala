@@ -17,14 +17,19 @@
 package controllers.transit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.DateTimeFormProvider
 import generators.Generators
-import models.NormalMode
+import models.{DateTime, NormalMode}
+import navigation.OfficeOfTransitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.routing.CountryOfDestinationPage
+import pages.transit.index.{OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.transit.index.OfficeOfTransitETAView
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
@@ -44,7 +49,7 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
   private val dateAfter  = localDateTime.toLocalDate.plusDays(1)
 
   private val formProvider = new DateTimeFormProvider()
-  private val form         = formProvider("routeDetails.transit.index.officeOfTransitETA", dateBefore, dateAfter)
+  private val form         = formProvider("transit.index.officeOfTransitETA", dateBefore, dateAfter)
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -238,7 +243,7 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -258,7 +263,7 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

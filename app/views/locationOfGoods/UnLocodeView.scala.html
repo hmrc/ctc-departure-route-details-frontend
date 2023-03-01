@@ -34,9 +34,9 @@
 @(form: Form[UnLocode], lrn: LocalReferenceNumber, unLocodes: Seq[UnLocode], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.locationOfGoods.unLocode.title"),
+    title = messages("locationOfGoods.unLocode.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.UnLocodeController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
@@ -46,13 +46,13 @@
         @inputSelect(
             field = form("value"),
             selectType = SelectWithAdditionalHtml(
-                heading = messages("routeDetails.locationOfGoods.unLocode.heading"),
-                caption = Some(messages("routeDetails.locationOfGoods.caption")),
-                additionalHtml = messages("routeDetails.locationOfGoods.unLocode.paragraph").toParagraph
+                heading = messages("locationOfGoods.unLocode.heading"),
+                caption = Some(messages("locationOfGoods.caption")),
+                additionalHtml = messages("locationOfGoods.unLocode.paragraph").toParagraph
             ),
-            hint = Some(messages("routeDetails.locationOfGoods.unLocode.hint")),
+            hint = Some(messages("locationOfGoods.unLocode.hint")),
             selectItems = unLocodes.toSelectItems(form.value),
-            placeholder = messages("routeDetails.locationOfGoods.unLocode.placeholder")
+            placeholder = messages("locationOfGoods.unLocode.placeholder")
         )
 
         @button(attributes = Map("id" -> "submit"))

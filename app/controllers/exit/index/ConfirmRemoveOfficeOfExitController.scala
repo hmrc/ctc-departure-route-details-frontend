@@ -16,11 +16,11 @@
 
 package controllers.exit.index
 
-import controllers.SettableOps
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.exit.{routes => exitRoutes}
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
-import models.journeyDomain.RouteDetailsDomain
 import models.reference.CustomsOffice
 import models.requests.DataRequest
 import models.{Index, LocalReferenceNumber, Mode}
@@ -44,7 +44,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: ConfirmRemoveOfficeOfExitView,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -53,7 +53,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
   private def dynamicHeading(index: Index)(implicit request: DataRequest[_]): Option[DynamicHeading] =
     request.userAnswers.get(OfficeOfExitSection(index)) map {
       _ =>
-        val prefix = "routeDetails.exit.index.confirmRemoveOfficeOfExit"
+        val prefix = "exit.index.confirmRemoveOfficeOfExit"
         request.userAnswers.get(OfficeOfExitPage(index)) match {
           case Some(CustomsOffice(_, name, _)) => DynamicHeading(prefix, name)
           case None                            => DynamicHeading(s"$prefix.default")
@@ -65,7 +65,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
       dynamicHeading(index) match {
         case Some(DynamicHeading(prefix, args @ _*)) =>
           Ok(view(formProvider(prefix, args: _*), lrn, index, mode, prefix, args: _*))
-        case _ => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+        case _ => Redirect(config.sessionExpiredUrl)
       }
   }
 
@@ -84,7 +84,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
                     customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
                     result <- OfficeOfExitSection(index)
                       .removeFromUserAnswers()
-                      .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                       .writeToSession()
                       .navigateTo(exitRoutes.AddAnotherOfficeOfExitController.onPageLoad(lrn, mode))
                   } yield result
@@ -92,7 +92,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
                   Future.successful(Redirect(exitRoutes.AddAnotherOfficeOfExitController.onPageLoad(lrn, mode)))
               }
             )
-        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        case _ => Future.successful(Redirect(config.sessionExpiredUrl))
       }
   }
 }

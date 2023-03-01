@@ -16,15 +16,22 @@
 
 package controllers.transit.index
 
+import config.FrontendAppConfig
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
+import controllers.transit.{routes => transitRoutes}
 import forms.YesNoFormProvider
 import models.reference.CustomsOffice
 import models.requests.DataRequest
 import models.{Index, LocalReferenceNumber, Mode}
+import pages.sections.transit.OfficeOfTransitSection
+import pages.transit.index.OfficeOfTransitPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.transit.index.ConfirmRemoveOfficeOfTransitView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +44,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: ConfirmRemoveOfficeOfTransitView,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -46,7 +53,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
   private def dynamicHeading(index: Index)(implicit request: DataRequest[_]): Option[DynamicHeading] =
     request.userAnswers.get(OfficeOfTransitSection(index)) map {
       _ =>
-        val prefix = "routeDetails.transit.index.confirmRemoveOfficeOfTransit"
+        val prefix = "transit.index.confirmRemoveOfficeOfTransit"
         request.userAnswers.get(OfficeOfTransitPage(index)) match {
           case Some(CustomsOffice(_, name, _)) => DynamicHeading(prefix, name)
           case None                            => DynamicHeading(s"$prefix.default")
@@ -58,7 +65,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
       dynamicHeading(index) match {
         case Some(DynamicHeading(prefix, args @ _*)) =>
           Ok(view(formProvider(prefix, args: _*), lrn, mode, index, prefix, args: _*))
-        case _ => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+        case _ => Redirect(config.sessionExpiredUrl)
       }
   }
 
@@ -77,7 +84,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
                     customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
                     result <- OfficeOfTransitSection(index)
                       .removeFromUserAnswers()
-                      .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                       .writeToSession()
                       .navigateTo(transitRoutes.AddAnotherOfficeOfTransitController.onPageLoad(lrn, mode))
                   } yield result
@@ -85,7 +92,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
                   Future.successful(Redirect(transitRoutes.AddAnotherOfficeOfTransitController.onPageLoad(lrn, mode)))
               }
             )
-        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        case _ => Future.successful(Redirect(config.sessionExpiredUrl))
       }
   }
 }

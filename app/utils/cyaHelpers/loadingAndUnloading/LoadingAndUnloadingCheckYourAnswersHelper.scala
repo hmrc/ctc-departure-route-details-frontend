@@ -16,88 +16,92 @@
 
 package utils.cyaHelpers.loadingAndUnloading
 
-import models.reference.Country
+import config.FrontendAppConfig
+import models.reference.{Country, UnLocode}
 import models.{Mode, UserAnswers}
+import pages.loadingAndUnloading
+import pages.loadingAndUnloading._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
 import utils.cyaHelpers.AnswersHelper
 
-class LoadingAndUnloadingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages) extends AnswersHelper(userAnswers, mode) {
+class LoadingAndUnloadingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig)
+    extends AnswersHelper(userAnswers, mode) {
 
   def addLoadingUnLocode: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = loading.AddUnLocodeYesNoPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.loadingAndUnloading.loading.addUnLocodeYesNo",
+    prefix = "loadingAndUnloading.loading.addUnLocodeYesNo",
     id = Some("change-add-loading-un-locode")
   )
 
   def loadingUnLocode: Option[SummaryListRow] = getAnswerAndBuildRow[UnLocode](
     page = loading.UnLocodePage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.loadingAndUnloading.loading.unLocode",
+    prefix = "loadingAndUnloading.loading.unLocode",
     id = Some("change-loading-un-locode")
   )
 
   def addLoadingCountryAndLocation: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = loading.AddExtraInformationYesNoPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.loadingAndUnloading.loading.addExtraInformationYesNo",
+    prefix = "loadingAndUnloading.loading.addExtraInformationYesNo",
     id = Some("change-add-loading-country-and-location")
   )
 
   def loadingCountry: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = loading.CountryPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.loadingAndUnloading.loading.country",
+    prefix = "loadingAndUnloading.loading.country",
     id = Some("change-loading-country")
   )
 
   def loadingLocation: Option[SummaryListRow] = getAnswerAndBuildRow[String](
     page = loading.LocationPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.loadingAndUnloading.loading.location",
+    prefix = "loadingAndUnloading.loading.location",
     id = Some("change-loading-location")
   )
 
   def addPlaceOfUnloading: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = loadingAndUnloading.AddPlaceOfUnloadingPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.loadingAndUnloading.addPlaceOfUnloading",
+    prefix = "loadingAndUnloading.addPlaceOfUnloading",
     id = Some("change-add-place-of-unloading")
   )
 
   def addUnloadingUnLocode: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = unloading.UnLocodeYesNoPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.loadingAndUnloading.unloading.addUnLocodeYesNo",
+    prefix = "loadingAndUnloading.unloading.addUnLocodeYesNo",
     id = Some("change-add-unloading-un-locode")
   )
 
   def unloadingUnLocode: Option[SummaryListRow] = getAnswerAndBuildRow[UnLocode](
     page = unloading.UnLocodePage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.loadingAndUnloading.unloading.unLocode",
+    prefix = "loadingAndUnloading.unloading.unLocode",
     id = Some("change-unloading-un-locode")
   )
 
   def addUnloadingCountryAndLocation: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = unloading.AddExtraInformationYesNoPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.loadingAndUnloading.unloading.addExtraInformationYesNo",
+    prefix = "loadingAndUnloading.unloading.addExtraInformationYesNo",
     id = Some("change-add-unloading-country-and-location")
   )
 
   def unloadingCountry: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = unloading.CountryPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.loadingAndUnloading.unloading.country",
+    prefix = "loadingAndUnloading.unloading.country",
     id = Some("change-unloading-country")
   )
 
   def unloadingLocation: Option[SummaryListRow] = getAnswerAndBuildRow[String](
     page = unloading.LocationPage,
     formatAnswer = formatAsText,
-    prefix = "routeDetails.loadingAndUnloading.unloading.location",
+    prefix = "loadingAndUnloading.unloading.location",
     id = Some("change-unloading-location")
   )
 }

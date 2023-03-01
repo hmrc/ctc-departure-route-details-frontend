@@ -16,11 +16,14 @@
 
 package views.loadingAndUnloading.loading
 
-import models.NormalMode
+import forms.UnLocodeFormProvider
+import models.{NormalMode, UnLocodeList}
+import models.reference.UnLocode
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.InputSelectViewBehaviours
+import views.html.loadingAndUnloading.loading.UnLocodeView
 
 class UnLocodeViewSpec extends InputSelectViewBehaviours[UnLocode] {
 
@@ -31,7 +34,7 @@ class UnLocodeViewSpec extends InputSelectViewBehaviours[UnLocode] {
 
   implicit override val arbitraryT: Arbitrary[UnLocode] = arbitraryUnLocode
 
-  override val prefix: String = "routeDetails.loadingAndUnloading.loading.unLocode"
+  override val prefix: String = "loadingAndUnloading.loading.unLocode"
 
   behave like pageWithTitle()
 

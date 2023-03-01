@@ -17,14 +17,19 @@
 package controllers.loadingAndUnloading.loading
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.UnLocodeFormProvider
 import generators.Generators
-import models.NormalMode
+import models.{NormalMode, UnLocodeList}
+import navigation.LoadingAndUnloadingNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.loadingAndUnloading.loading.UnLocodePage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.UnLocodesService
+import views.html.loadingAndUnloading.loading.UnLocodeView
 
 import scala.concurrent.Future
 
@@ -35,7 +40,7 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
   private val unLocodeList = UnLocodeList(Seq(unLocode1, unLocode2))
 
   private val formProvider = new UnLocodeFormProvider()
-  private val form         = formProvider("routeDetails.loadingAndUnloading.loading.unLocode", unLocodeList)
+  private val form         = formProvider("loadingAndUnloading.loading.unLocode", unLocodeList)
   private val mode         = NormalMode
 
   private val mockUnLocodesService: UnLocodesService = mock[UnLocodesService]
@@ -130,7 +135,7 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -144,7 +149,7 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

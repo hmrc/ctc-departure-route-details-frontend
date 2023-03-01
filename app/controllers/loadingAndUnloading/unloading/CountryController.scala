@@ -16,10 +16,9 @@
 
 package controllers.loadingAndUnloading.unloading
 
-import controllers.SettableOps
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.CountryFormProvider
-import models.journeyDomain.RouteDetailsDomain
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LoadingAndUnloadingNavigatorProvider, UserAnswersNavigator}
 import pages.loadingAndUnloading.unloading.CountryPage
@@ -50,7 +49,7 @@ class CountryController @Inject() (
     implicit request =>
       countriesService.getCountries().map {
         countryList =>
-          val form = formProvider("routeDetails.loadingAndUnloading.unloading.country", countryList)
+          val form = formProvider("loadingAndUnloading.unloading.country", countryList)
           val preparedForm = request.userAnswers.get(CountryPage) match {
             case None        => form
             case Some(value) => form.fill(value)
@@ -64,7 +63,7 @@ class CountryController @Inject() (
     implicit request =>
       countriesService.getCountries().flatMap {
         countryList =>
-          val form = formProvider("routeDetails.loadingAndUnloading.unloading.country", countryList)
+          val form = formProvider("loadingAndUnloading.unloading.country", countryList)
           form
             .bindFromRequest()
             .fold(
@@ -77,7 +76,7 @@ class CountryController @Inject() (
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                     CountryPage
                       .writeToUserAnswers(value)
-                      .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                       .writeToSession()
                       .navigate()
                   }

@@ -20,13 +20,16 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.YesNoFormProvider
 import generators.Generators
 import models.NormalMode
+import navigation.OfficeOfTransitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.transit.index.AddOfficeOfTransitETAYesNoView
 
 import scala.concurrent.Future
 
@@ -34,7 +37,7 @@ class AddOfficeOfTransitETAYesNoControllerSpec extends SpecBase with AppWithDefa
 
   private val formProvider                         = new YesNoFormProvider()
   private val officeOfTransit                      = arbitraryCustomsOffice.arbitrary.sample.get
-  private val form                                 = formProvider("routeDetails.transit.index.addOfficeOfTransitETAYesNo")
+  private val form                                 = formProvider("transit.index.addOfficeOfTransitETAYesNo")
   private val mode                                 = NormalMode
   private lazy val addOfficeOfTransitETAYesNoRoute = routes.AddOfficeOfTransitETAYesNoController.onPageLoad(lrn, mode, index).url
 
@@ -129,7 +132,7 @@ class AddOfficeOfTransitETAYesNoControllerSpec extends SpecBase with AppWithDefa
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -143,7 +146,7 @@ class AddOfficeOfTransitETAYesNoControllerSpec extends SpecBase with AppWithDefa
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

@@ -17,12 +17,16 @@
 package controllers.transit.index
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import controllers.actions.Actions
 import models.{Index, LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{TransitNavigatorProvider, UserAnswersNavigator}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewModels.transit.OfficeOfTransitAnswersViewModel.OfficeOfTransitAnswersViewModelProvider
+import views.html.transit.index.CheckOfficeOfTransitAnswersView
 
 import scala.concurrent.ExecutionContext
 
@@ -34,7 +38,7 @@ class CheckOfficeOfTransitAnswersController @Inject() (
   view: CheckOfficeOfTransitAnswersView,
   viewModelProvider: OfficeOfTransitAnswersViewModelProvider,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

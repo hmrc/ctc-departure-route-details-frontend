@@ -16,17 +16,20 @@
 
 package views.locationOfGoods
 
+import forms.locationOfGoods.PostalCodeFormProvider
 import generators.Generators
-import models.{CountryList, NormalMode}
+import models.{CountryList, NormalMode, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.behaviours.PostalCodeAddressViewBehaviours
+import views.html.locationOfGoods.PostalCodeView
 
 class PostalCodeViewSpec extends PostalCodeAddressViewBehaviours with Generators {
 
   private val countryList = arbitrary[CountryList].sample.value
 
-  override val prefix: String = "routeDetails.locationOfGoods.postalCode"
+  override val prefix: String = "locationOfGoods.postalCode"
 
   override def form: Form[PostalCodeAddress] = new PostalCodeFormProvider()(prefix, countryList)
 

@@ -22,6 +22,7 @@ import models.{Index, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import viewModels.transit.AddAnotherOfficeOfTransitViewModel.AddAnotherOfficeOfTransitViewModelProvider
 
 class AddAnotherOfficeOfTransitViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 

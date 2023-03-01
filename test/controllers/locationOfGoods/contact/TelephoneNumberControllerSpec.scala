@@ -17,13 +17,17 @@
 package controllers.locationOfGoods.contact
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.TelephoneNumberFormProvider
 import models.NormalMode
+import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.locationOfGoods.contact.TelephoneNumberView
 
 import scala.concurrent.Future
 
@@ -31,7 +35,7 @@ class TelephoneNumberControllerSpec extends SpecBase with AppWithDefaultMockFixt
 
   private val formProvider              = new TelephoneNumberFormProvider()
   private val contactName               = "Contact Name"
-  private val form                      = formProvider("routeDetails.locationOfGoods.contact.telephoneNumber", contactName)
+  private val form                      = formProvider("locationOfGoods.contact.telephoneNumber", contactName)
   private val mode                      = NormalMode
   private lazy val telephoneNumberRoute = routes.TelephoneNumberController.onPageLoad(lrn, mode).url
   private val validAnswer: String       = "+123123"
@@ -129,7 +133,7 @@ class TelephoneNumberControllerSpec extends SpecBase with AppWithDefaultMockFixt
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -143,7 +147,7 @@ class TelephoneNumberControllerSpec extends SpecBase with AppWithDefaultMockFixt
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

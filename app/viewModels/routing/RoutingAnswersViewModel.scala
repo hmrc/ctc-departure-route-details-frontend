@@ -16,6 +16,7 @@
 
 package viewModels.routing
 
+import config.FrontendAppConfig
 import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
 import utils.cyaHelpers.routing.RoutingCheckYourAnswersHelper
@@ -29,7 +30,7 @@ object RoutingAnswersViewModel {
 
   class RoutingAnswersViewModelProvider @Inject() () {
 
-    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages): RoutingAnswersViewModel = {
+    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig): RoutingAnswersViewModel = {
 
       val helper = new RoutingCheckYourAnswersHelper(userAnswers, mode)
 
@@ -43,7 +44,7 @@ object RoutingAnswersViewModel {
       )
 
       val countriesOfRoutingSection = Section(
-        sectionTitle = messages("routeDetails.checkYourAnswers.routing.subheading"),
+        sectionTitle = messages("checkYourAnswers.routing.subheading"),
         rows = helper.countriesOfRouting,
         addAnotherLink = helper.addOrRemoveCountriesOfRouting
       )

@@ -19,6 +19,8 @@ package pages.routing.index
 import models.reference.{Country, CountryCode}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.exit.index.OfficeOfExitCountryPage
+import pages.transit.index.OfficeOfTransitCountryPage
 
 class CountryOfRoutingPageSpec extends PageBehaviours {
 

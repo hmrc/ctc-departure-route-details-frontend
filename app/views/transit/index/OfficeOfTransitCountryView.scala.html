@@ -34,9 +34,9 @@
 @(form: Form[Country], lrn: LocalReferenceNumber, countries: Seq[Country], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.transit.index.officeOfTransitCountry.title"),
+    title = messages("transit.index.officeOfTransitCountry.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.OfficeOfTransitCountryController.onSubmit(lrn, mode, index), Symbol("autoComplete") -> "off") {
@@ -46,12 +46,12 @@
         @inputSelect(
             field = form("value"),
             selectType = OrdinarySelect(
-                heading = messages("routeDetails.transit.index.officeOfTransitCountry.heading"),
-                caption = Some(messages("routeDetails.transit.caption"))
+                heading = messages("transit.index.officeOfTransitCountry.heading"),
+                caption = Some(messages("transit.caption"))
             ),
-            hint = Some(messages("routeDetails.transit.index.officeOfTransitCountry.hint")),
+            hint = Some(messages("transit.index.officeOfTransitCountry.hint")),
             selectItems = countries.toSelectItems(form.value),
-            placeholder = messages("routeDetails.transit.index.officeOfTransitCountry.placeholder")
+            placeholder = messages("transit.index.officeOfTransitCountry.placeholder")
         )
 
         @button(attributes = Map("id" -> "submit"))

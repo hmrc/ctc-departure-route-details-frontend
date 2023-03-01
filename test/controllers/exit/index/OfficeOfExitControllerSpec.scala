@@ -17,14 +17,19 @@
 package controllers.exit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.CustomsOfficeForCountryFormProvider
 import generators.Generators
-import models.NormalMode
+import models.{CustomsOfficeList, NormalMode}
+import navigation.OfficeOfExitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.CustomsOfficesService
+import views.html.exit.index.OfficeOfExitView
 
 import scala.concurrent.Future
 
@@ -36,7 +41,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
   private val country           = arbitraryCountry.arbitrary.sample.get
 
   private val formProvider = new CustomsOfficeForCountryFormProvider()
-  private val form         = formProvider("routeDetails.exit.index.officeOfExit", customsOfficeList, country.description)
+  private val form         = formProvider("exit.index.officeOfExit", customsOfficeList, country.description)
   private val mode         = NormalMode
 
   private val mockCustomsOfficesService: CustomsOfficesService = mock[CustomsOfficesService]
@@ -139,7 +144,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -153,7 +158,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

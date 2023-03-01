@@ -18,6 +18,7 @@ package pages.locationOfGoods
 
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
 
 class AddContactYesNoPageSpec extends PageBehaviours {
 

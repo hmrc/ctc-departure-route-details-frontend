@@ -17,12 +17,11 @@
 package controllers.routing
 
 import config.FrontendAppConfig
-import controllers.SettableOps
 import controllers.actions._
 import controllers.routing.index.{routes => indexRoutes}
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.AddAnotherFormProvider
 import models.CountryList.countriesOfRoutingReads
-import models.journeyDomain.RouteDetailsDomain
 import models.{LocalReferenceNumber, Mode, RichOptionalJsArray}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
 import pages.routing.CountriesOfRoutingInSecurityAgreement
@@ -87,13 +86,13 @@ class AddAnotherCountryOfRoutingController @Inject() (
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                       CountriesOfRoutingInSecurityAgreement
                         .writeToUserAnswers(inSecurityAgreement)
-                        .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                         .writeToSession()
                         .navigate()
                     }
                   } yield result
                 case None =>
-                  Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+                  Future.successful(Redirect(s"${config.departureHubUrl}/technical-difficulties"))
               }
           }
         )

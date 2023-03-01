@@ -16,6 +16,7 @@
 
 package pages.locationOfGoods
 
+import models.PostalCodeAddress
 import pages.behaviours.PageBehaviours
 
 class PostalCodePageSpec extends PageBehaviours {

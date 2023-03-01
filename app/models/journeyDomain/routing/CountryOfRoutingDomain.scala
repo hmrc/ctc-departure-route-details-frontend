@@ -16,11 +16,12 @@
 
 package models.journeyDomain.routing
 
-import models.domain.UserAnswersReader
+import models.domain.{GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.Stage._
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.Country
 import models.{Index, Mode, UserAnswers}
+import pages.routing.index.CountryOfRoutingPage
 import play.api.mvc.Call
 
 case class CountryOfRoutingDomain(

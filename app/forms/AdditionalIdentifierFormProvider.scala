@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.Constants.additionalIdentifierMaxLength
 import forms.mappings.Mappings
 import models.domain.StringFieldRegex.alphaNumericRegex
 import play.api.data.Form
@@ -29,7 +30,7 @@ class AdditionalIdentifierFormProvider @Inject() extends Mappings {
       "value" -> text(s"$prefix.error.required")
         .verifying(
           StopOnFirstFail[String](
-            maxLength(addiationalIdentifierMaxLength, s"$prefix.error.length"),
+            maxLength(additionalIdentifierMaxLength, s"$prefix.error.length"),
             regexp(alphaNumericRegex, s"$prefix.error.invalid")
           )
         )

@@ -26,13 +26,17 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
+import pages.sections.exit.OfficeOfExitSection
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.exit.index.ConfirmRemoveOfficeOfExitView
 
 import scala.concurrent.Future
 
 class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators with ScalaCheckPropertyChecks {
 
-  private val prefix        = "routeDetails.exit.index.confirmRemoveOfficeOfExit"
+  private val prefix        = "exit.index.confirmRemoveOfficeOfExit"
   private val defaultPrefix = s"$prefix.default"
 
   private val formProvider                       = new YesNoFormProvider()
@@ -189,7 +193,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a GET if no existing data is found at given index" in {
@@ -203,7 +207,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
 
           status(result) mustEqual SEE_OTHER
 
-          redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+          redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
       }
     }
 
@@ -217,7 +221,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found at given index" in {
@@ -232,7 +236,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
 
           status(result) mustEqual SEE_OTHER
 
-          redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+          redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
       }
     }
   }

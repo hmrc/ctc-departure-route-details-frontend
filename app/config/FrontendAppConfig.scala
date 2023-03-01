@@ -25,6 +25,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val appName: String = configuration.get[String]("appName")
 
+  val etaDateDaysBefore: Int = configuration.get[Int]("dates.officeOfTransitETA.daysBefore")
+  val etaDateDaysAfter: Int  = configuration.get[Int]("dates.officeOfTransitETA.daysAfter")
+
   val enrolmentProxyUrl: String            = servicesConfig.fullServiceUrl("enrolment-store-proxy")
   val eccEnrolmentSplashPage: String       = configuration.get[String]("urls.eccEnrolmentSplashPage")
   val legacyEnrolmentKey: String           = configuration.get[String]("keys.legacy.enrolmentKey")
@@ -53,9 +56,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   def signOutUrl(lrn: LocalReferenceNumber): String = s"$departureHubUrl/$lrn/delete-lock"
 
-  lazy val maxOfficesOfExit: Int = configuration.get[Int]("limits.maxOfficesOfExit")
+  lazy val maxOfficesOfExit: Int      = configuration.get[Int]("limits.maxOfficesOfExit")
+  lazy val maxCountriesOfRouting: Int = configuration.get[Int]("limits.maxCountriesOfRouting")
+  lazy val maxOfficesOfTransit: Int   = configuration.get[Int]("limits.maxOfficesOfTransit")
 
   def taskListUrl(lrn: LocalReferenceNumber): String = s"$departureHubUrl/$lrn/task-list"
 
   val cacheUrl: String = servicesConfig.fullServiceUrl("manage-transit-movements-departure-cache")
+
+  val dependentTasks: Seq[String] = configuration.get[Seq[String]]("dependent-tasks")
 }

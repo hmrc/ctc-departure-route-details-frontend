@@ -16,10 +16,35 @@
 
 package models.journeyDomain.locationOfGoods
 
-import models.domain.UserAnswersReader
+import cats.implicits.{catsSyntaxTuple2Semigroupal, catsSyntaxTuple3Semigroupal, catsSyntaxTuple4Semigroupal}
+import models.LocationOfGoodsIdentification.{
+  AddressIdentifier,
+  AuthorisationNumber,
+  CoordinatesIdentifier,
+  CustomsOfficeIdentifier,
+  EoriNumber,
+  PostalCode,
+  UnlocodeIdentifier
+}
+import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.reference.Country
-import models.{Mode, UserAnswers}
+import models.reference.{Country, CustomsOffice, UnLocode}
+import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, Mode, PostalCodeAddress, UserAnswers}
+import pages.locationOfGoods.{
+  AddContactYesNoPage,
+  AddIdentifierYesNoPage,
+  AdditionalIdentifierPage,
+  AddressPage,
+  AuthorisationNumberPage,
+  CoordinatesPage,
+  CountryPage,
+  CustomsOfficeIdentifierPage,
+  EoriPage,
+  IdentificationPage,
+  LocationTypePage,
+  PostalCodePage,
+  UnLocodePage
+}
 import play.api.mvc.Call
 
 sealed trait LocationOfGoodsDomain extends JourneyDomainModel {

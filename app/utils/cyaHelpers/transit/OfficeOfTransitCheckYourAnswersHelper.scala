@@ -16,40 +16,42 @@
 
 package utils.cyaHelpers.transit
 
+import config.FrontendAppConfig
 import models.reference.{Country, CustomsOffice}
-import models.{Index, Mode, UserAnswers}
+import models.{DateTime, Index, Mode, UserAnswers}
+import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
 import utils.cyaHelpers.AnswersHelper
 
-class OfficeOfTransitCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode, index: Index)(implicit messages: Messages)
+class OfficeOfTransitCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode, index: Index)(implicit messages: Messages, config: FrontendAppConfig)
     extends AnswersHelper(userAnswers, mode) {
 
   def officeOfTransitCountry: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = OfficeOfTransitCountryPage(index),
     formatAnswer = formatAsText,
-    prefix = "routeDetails.transit.index.officeOfTransitCountry",
+    prefix = "transit.index.officeOfTransitCountry",
     id = Some("change-office-of-transit-country")
   )
 
   def officeOfTransit: Option[SummaryListRow] = getAnswerAndBuildRow[CustomsOffice](
     page = OfficeOfTransitPage(index),
     formatAnswer = formatAsText,
-    prefix = "routeDetails.transit.index.officeOfTransit",
+    prefix = "transit.index.officeOfTransit",
     id = Some("change-office-of-transit")
   )
 
   def addOfficeOfTransitETA: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = AddOfficeOfTransitETAYesNoPage(index),
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.transit.index.addOfficeOfTransitETAYesNo",
+    prefix = "transit.index.addOfficeOfTransitETAYesNo",
     id = Some("change-office-of-transit-add-eta")
   )
 
   def officeOfTransitETA: Option[SummaryListRow] = getAnswerAndBuildRow[DateTime](
     page = OfficeOfTransitETAPage(index),
     formatAnswer = formatAsDateTime,
-    prefix = "routeDetails.transit.index.officeOfTransitETA",
+    prefix = "transit.index.officeOfTransitETA",
     id = Some("change-office-of-transit-eta")
   )
 

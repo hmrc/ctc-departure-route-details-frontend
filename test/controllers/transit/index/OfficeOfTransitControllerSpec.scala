@@ -17,16 +17,22 @@
 package controllers.transit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.CustomsOfficeForCountryFormProvider
 import generators.Generators
 import models.reference.{Country, CustomsOffice}
-import models.{reference, NormalMode}
+import models.{reference, CustomsOfficeList, NormalMode}
+import navigation.OfficeOfTransitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
+import pages.routing.CountryOfDestinationPage
+import pages.transit.index.{OfficeOfTransitCountryPage, OfficeOfTransitPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.CustomsOfficesService
+import views.html.transit.index.OfficeOfTransitView
 
 import scala.concurrent.Future
 
@@ -38,7 +44,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
   private val country           = arbitrary[Country].sample.value
 
   private val formProvider = new CustomsOfficeForCountryFormProvider()
-  private val form         = formProvider("routeDetails.transit.index.officeOfTransit", customsOfficeList, country.description)
+  private val form         = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
   private val mode         = NormalMode
 
   private val mockCustomsOfficesService: CustomsOfficesService = mock[CustomsOfficesService]
@@ -214,7 +220,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -228,7 +234,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

@@ -16,6 +16,7 @@
 
 package pages.transit.index
 
+import models.DateTime
 import pages.behaviours.PageBehaviours
 
 class OfficeOfTransitETAPageSpec extends PageBehaviours {

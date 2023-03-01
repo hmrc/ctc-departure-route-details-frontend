@@ -16,6 +16,7 @@
 
 package viewModels.transit
 
+import config.FrontendAppConfig
 import models.{Index, Mode, UserAnswers}
 import play.api.i18n.Messages
 import utils.cyaHelpers.transit.OfficeOfTransitCheckYourAnswersHelper
@@ -29,7 +30,7 @@ object OfficeOfTransitAnswersViewModel {
 
   class OfficeOfTransitAnswersViewModelProvider @Inject() () {
 
-    def apply(userAnswers: UserAnswers, mode: Mode, index: Index)(implicit messages: Messages): OfficeOfTransitAnswersViewModel = {
+    def apply(userAnswers: UserAnswers, mode: Mode, index: Index)(implicit messages: Messages, config: FrontendAppConfig): OfficeOfTransitAnswersViewModel = {
       val helper = new OfficeOfTransitCheckYourAnswersHelper(userAnswers, mode, index)
 
       val rows = Seq(

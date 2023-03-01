@@ -16,9 +16,16 @@
 
 package utils.cyaHelpers.transit
 
+import controllers.transit.index.routes
+import config.FrontendAppConfig
+import models.journeyDomain.transit.OfficeOfTransitDomain
 import models.{Index, Mode, UserAnswers}
+import pages.sections.transit.OfficesOfTransitSection
+import pages.transit.index.OfficeOfTransitCountryPage
+import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
 import play.api.i18n.Messages
 import play.api.mvc.Call
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
 import utils.cyaHelpers.AnswersHelper
 import viewModels.{Link, ListItem}
@@ -29,20 +36,20 @@ class TransitCheckYourAnswersHelper(
 )(
   ctcCountryCodes: Seq[String],
   customsSecurityAgreementAreaCountryCodes: Seq[String]
-)(implicit messages: Messages)
+)(implicit messages: Messages, config: FrontendAppConfig)
     extends AnswersHelper(userAnswers, mode) {
 
   def includesT2Declarations: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = T2DeclarationTypeYesNoPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.transit.t2DeclarationTypeYesNo",
+    prefix = "transit.t2DeclarationTypeYesNo",
     id = Some("change-includes-t2-declarations")
   )
 
   def addOfficeOfTransit: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = AddOfficeOfTransitYesNoPage,
     formatAnswer = formatAsYesOrNo,
-    prefix = "routeDetails.transit.addOfficeOfTransitYesNo",
+    prefix = "transit.addOfficeOfTransitYesNo",
     id = Some("change-add-office-of-transit")
   )
 
@@ -51,7 +58,7 @@ class TransitCheckYourAnswersHelper(
 
   def officeOfTransit(index: Index): Option[SummaryListRow] = getAnswerAndBuildSectionRow[OfficeOfTransitDomain](
     formatAnswer = _.label.toText,
-    prefix = "routeDetails.checkYourAnswers.transit.officeOfTransit",
+    prefix = "checkYourAnswers.transit.officeOfTransit",
     id = Some(s"change-office-of-transit-${index.display}"),
     args = index.display
   )(OfficeOfTransitDomain.userAnswersReader(index, ctcCountryCodes, customsSecurityAgreementAreaCountryCodes))
@@ -59,7 +66,7 @@ class TransitCheckYourAnswersHelper(
   def addOrRemoveOfficesOfTransit: Option[Link] = buildLink(OfficesOfTransitSection) {
     Link(
       id = "add-or-remove-offices-of-transit",
-      text = messages("routeDetails.checkYourAnswers.transit.addOrRemove"),
+      text = messages("checkYourAnswers.transit.addOrRemove"),
       href = controllers.transit.routes.AddAnotherOfficeOfTransitController.onPageLoad(userAnswers.lrn, mode).url
     )
   }

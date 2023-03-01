@@ -18,12 +18,32 @@ package generators
 
 import models.domain.UserAnswersReader
 import models.journeyDomain.OpsError.ReaderError
-import models.{EoriNumber, Index, LocalReferenceNumber, RichJsObject, UserAnswers}
+import models.journeyDomain.RouteDetailsDomain
+import models.reference.Country
+import models.{CountryList, EoriNumber, LocalReferenceNumber, RichJsObject, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
-trait UserAnswersGenerator extends UserAnswersEntryGenerators {
+trait UserAnswersGenerator extends UserAnswersEntryGenerators with RouteDetailsUserAnswersGenerator {
   self: Generators =>
+
+  val ctcCountries: Seq[Country]                             = listWithMaxLength[Country]().sample.get
+  val ctcCountriesList: CountryList                          = CountryList(ctcCountries)
+  val ctcCountryCodes: Seq[String]                           = ctcCountries.map(_.code.code)
+  val customsSecurityAgreementAreaCountries: Seq[Country]    = listWithMaxLength[Country]().sample.get
+  val customsSecurityAgreementAreaCountriesList: CountryList = CountryList(customsSecurityAgreementAreaCountries)
+  val customsSecurityAgreementAreaCountryCodes: Seq[String]  = customsSecurityAgreementAreaCountries.map(_.code.code)
+
+  implicit lazy val arbitraryUserAnswers: Arbitrary[UserAnswers] =
+    Arbitrary {
+      for {
+        lrn        <- arbitrary[LocalReferenceNumber]
+        eoriNumber <- arbitrary[EoriNumber]
+        answers <- buildUserAnswers[RouteDetailsDomain](UserAnswers(lrn, eoriNumber))(
+          RouteDetailsDomain.userAnswersReader(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+        )
+      } yield answers
+    }
 
   protected def buildUserAnswers[T](
     initialUserAnswers: UserAnswers

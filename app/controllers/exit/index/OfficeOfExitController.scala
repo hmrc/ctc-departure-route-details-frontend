@@ -16,10 +16,9 @@
 
 package controllers.exit.index
 
-import controllers.SettableOps
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.CustomsOfficeForCountryFormProvider
-import models.journeyDomain.RouteDetailsDomain
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
 import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
@@ -56,7 +55,7 @@ class OfficeOfExitController @Inject() (
         val country = request.arg
         customsOfficesService.getCustomsOfficesOfExitForCountry(country.code).map {
           customsOfficeList =>
-            val form = formProvider("routeDetails.exit.index.officeOfExit", customsOfficeList, country.description)
+            val form = formProvider("exit.index.officeOfExit", customsOfficeList, country.description)
             val preparedForm = request.userAnswers.get(OfficeOfExitPage(index)) match {
               case None        => form
               case Some(value) => form.fill(value)
@@ -74,7 +73,7 @@ class OfficeOfExitController @Inject() (
         val country = request.arg
         customsOfficesService.getCustomsOfficesOfExitForCountry(country.code).flatMap {
           customsOfficeList =>
-            val form = formProvider("routeDetails.exit.index.officeOfExit", customsOfficeList, country.description)
+            val form = formProvider("exit.index.officeOfExit", customsOfficeList, country.description)
             form
               .bindFromRequest()
               .fold(
@@ -87,7 +86,7 @@ class OfficeOfExitController @Inject() (
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
                       OfficeOfExitPage(index)
                         .writeToUserAnswers(value)
-                        .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                         .writeToSession()
                         .navigate()
                     }

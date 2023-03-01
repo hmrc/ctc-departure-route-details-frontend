@@ -16,6 +16,7 @@
 
 package viewModels.locationOfGoods
 
+import config.FrontendAppConfig
 import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
 import utils.cyaHelpers.locationOfGoods.LocationOfGoodsCheckYourAnswersHelper
@@ -29,11 +30,11 @@ object LocationOfGoodsAnswersViewModel {
 
   class LocationOfGoodsAnswersViewModelProvider @Inject() () {
 
-    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages): LocationOfGoodsAnswersViewModel = {
+    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig): LocationOfGoodsAnswersViewModel = {
       val helper = new LocationOfGoodsCheckYourAnswersHelper(userAnswers, mode)
 
       val section = Section(
-        sectionTitle = messages("routeDetails.locationOfGoods.checkYourAnswers.subHeading"),
+        sectionTitle = messages("locationOfGoods.checkYourAnswers.subHeading"),
         rows = Seq(
           helper.addLocationOfGoods,
           helper.locationType,

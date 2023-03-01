@@ -30,9 +30,9 @@
 @(form: Form[String], lrn: LocalReferenceNumber, location: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.loadingAndUnloading.unloading.location.title", location),
+    title = messages("loadingAndUnloading.unloading.location.title", location),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.LocationController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
@@ -42,10 +42,10 @@
         @inputText(
             field = form("value"),
             inputTextType = OrdinaryTextInput(
-                heading = messages("routeDetails.loadingAndUnloading.unloading.location.heading", location),
-                caption = Some(messages("routeDetails.loadingAndUnloading.unloading.caption"))
+                heading = messages("loadingAndUnloading.unloading.location.heading", location),
+                caption = Some(messages("loadingAndUnloading.unloading.caption"))
             ),
-            hint = Some(messages("routeDetails.loadingAndUnloading.unloading.location.hint")),
+            hint = Some(messages("loadingAndUnloading.unloading.location.hint")),
             inputClass = InputSize.Width20
         )
 

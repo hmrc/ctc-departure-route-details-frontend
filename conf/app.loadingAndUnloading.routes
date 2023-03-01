@@ -1,6 +1,6 @@
 
-->         /                   app.loadingAndUnloading.loading.Routes
-->         /                   app.loadingAndUnloading.unloading.Routes
+->         /                                                                                app.loadingAndUnloading.loading.Routes
+->         /                                                                                app.loadingAndUnloading.unloading.Routes
 
 GET        /:lrn/route-details/place-of-unloading/add                                       controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 POST       /:lrn/route-details/place-of-unloading/add                                       controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)

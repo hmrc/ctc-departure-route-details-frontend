@@ -16,6 +16,7 @@
 
 package forms.locationOfGoods
 
+import forms.Constants.maxAuthorisationNumberLength
 import forms.behaviours.StringFieldBehaviours
 import models.domain.StringFieldRegex.alphaNumericRegex
 import org.scalacheck.Gen

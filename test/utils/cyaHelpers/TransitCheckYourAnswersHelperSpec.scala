@@ -17,16 +17,24 @@
 package utils.cyaHelpers
 
 import base.SpecBase
+import controllers.transit.index.{routes => indexRoutes}
 import generators.Generators
 import models.SecurityDetailsType.NoSecurityDetails
 import models.domain.UserAnswersReader
+import models.journeyDomain.transit.OfficeOfTransitDomain
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.external.{OfficeOfDeparturePage, SecurityDetailsTypePage}
+import pages.routing.OfficeOfDestinationPage
+import pages.sections.transit.OfficeOfTransitSection
+import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitPage}
+import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
 import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+import utils.cyaHelpers.transit.TransitCheckYourAnswersHelper
 import viewModels.ListItem
 
 class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {

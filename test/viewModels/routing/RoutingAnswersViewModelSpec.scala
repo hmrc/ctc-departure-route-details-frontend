@@ -21,6 +21,9 @@ import generators.Generators
 import models.Mode
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
+import pages.routing.index.CountryOfRoutingPage
+import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage, OfficeOfDestinationPage}
+import viewModels.routing.RoutingAnswersViewModel.RoutingAnswersViewModelProvider
 
 class RoutingAnswersViewModelSpec extends SpecBase with Generators {
 

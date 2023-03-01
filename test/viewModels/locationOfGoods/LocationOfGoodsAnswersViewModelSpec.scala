@@ -18,9 +18,20 @@ package viewModels.locationOfGoods
 
 import base.SpecBase
 import generators.Generators
+import models.LocationOfGoodsIdentification.{
+  AddressIdentifier,
+  AuthorisationNumber,
+  CoordinatesIdentifier,
+  CustomsOfficeIdentifier,
+  EoriNumber,
+  PostalCode,
+  UnlocodeIdentifier
+}
 import models.Mode
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.locationOfGoods.{AddContactYesNoPage, AddIdentifierYesNoPage, AddLocationOfGoodsPage, IdentificationPage}
+import viewModels.locationOfGoods.LocationOfGoodsAnswersViewModel.LocationOfGoodsAnswersViewModelProvider
 
 class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

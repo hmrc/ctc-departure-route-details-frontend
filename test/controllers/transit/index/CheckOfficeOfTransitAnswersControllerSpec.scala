@@ -19,6 +19,7 @@ package controllers.transit.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.NormalMode
+import navigation.TransitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
@@ -26,6 +27,10 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import viewModels.sections.Section
+import viewModels.transit.OfficeOfTransitAnswersViewModel
+import viewModels.transit.OfficeOfTransitAnswersViewModel.OfficeOfTransitAnswersViewModelProvider
+import views.html.transit.index.CheckOfficeOfTransitAnswersView
 
 class CheckOfficeOfTransitAnswersControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
@@ -44,7 +49,7 @@ class CheckOfficeOfTransitAnswersControllerSpec extends SpecBase with AppWithDef
     "must return OK and the correct view for a GET" in {
       val sampleSection = arbitrary[Section].sample.value
 
-      when(mockViewModelProvider.apply(any(), any(), any())(any()))
+      when(mockViewModelProvider.apply(any(), any(), any())(any(), any()))
         .thenReturn(OfficeOfTransitAnswersViewModel(sampleSection))
 
       setExistingUserAnswers(emptyUserAnswers)
@@ -70,7 +75,7 @@ class CheckOfficeOfTransitAnswersControllerSpec extends SpecBase with AppWithDef
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to next page" in {

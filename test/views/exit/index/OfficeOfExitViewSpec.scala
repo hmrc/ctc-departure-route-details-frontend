@@ -16,12 +16,14 @@
 
 package views.exit.index
 
-import models.NormalMode
+import forms.CustomsOfficeForCountryFormProvider
+import models.{CustomsOfficeList, NormalMode}
 import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.InputSelectViewBehaviours
+import views.html.exit.index.OfficeOfExitView
 
 class OfficeOfExitViewSpec extends InputSelectViewBehaviours[CustomsOffice] {
 
@@ -34,7 +36,7 @@ class OfficeOfExitViewSpec extends InputSelectViewBehaviours[CustomsOffice] {
 
   implicit override val arbitraryT: Arbitrary[CustomsOffice] = arbitraryCustomsOffice
 
-  override val prefix: String = "routeDetails.exit.index.officeOfExit"
+  override val prefix: String = "exit.index.officeOfExit"
 
   behave like pageWithTitle(countryName)
 

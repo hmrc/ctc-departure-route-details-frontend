@@ -22,13 +22,12 @@ import play.api.data.FieldMapping
 import play.api.data.Forms.of
 import play.api.data.format.Formats.ignoredFormat
 
+import java.time.{LocalDate, LocalTime}
+
 trait Mappings extends Formatters with Constraints {
 
   protected def text(errorKey: String = "error.required", args: Seq[Any] = Seq.empty): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
-
-  protected def trimmedText(errorKey: String = "error.required", args: Seq[Any] = Seq.empty): FieldMapping[String] =
-    of(trimmedStringFormatter(errorKey, args))
 
   protected def textWithSpacesRemoved(errorKey: String = "error.required"): FieldMapping[String] =
     of(spacelessStringFormatter(errorKey))
@@ -70,4 +69,22 @@ trait Mappings extends Formatters with Constraints {
     args: Seq[Any] = Seq.empty
   ): FieldMapping[UnLocode] =
     of(unLocodeFormatter(unLocodeList, errorKey, args))
+
+  protected def localDate(
+    invalidKey: String,
+    allRequiredKey: String,
+    twoRequiredKey: String,
+    requiredKey: String,
+    args: Seq[String] = Seq.empty
+  ): FieldMapping[LocalDate] =
+    of(new LocalDateFormatter(invalidKey, allRequiredKey, twoRequiredKey, requiredKey, args))
+
+  protected def localTime(
+    invalidKey: String,
+    allRequiredKey: String,
+    requiredKey: String,
+    args: Seq[String] = Seq.empty
+  ): FieldMapping[LocalTime] =
+    of(new LocalTimeFormatter(invalidKey, allRequiredKey, requiredKey, args))
+
 }

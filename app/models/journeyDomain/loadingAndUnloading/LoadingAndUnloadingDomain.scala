@@ -17,9 +17,14 @@
 package models.journeyDomain.loadingAndUnloading
 
 import cats.implicits._
-import models.domain.UserAnswersReader
+import models.SecurityDetailsType.{EntryAndExitSummaryDeclarationSecurityDetails, EntrySummaryDeclarationSecurityDetails, ExitSummaryDeclarationSecurityDetails}
+import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
+import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
+import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.{Mode, UserAnswers}
+import pages.external.SecurityDetailsTypePage
+import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
 import play.api.mvc.Call
 
 case class LoadingAndUnloadingDomain(

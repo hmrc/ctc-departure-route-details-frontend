@@ -23,6 +23,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
+import views.html.transit.index.ConfirmRemoveOfficeOfTransitView
 
 class ConfirmRemoveOfficeOfTransitViewSpec extends YesNoViewBehaviours with Generators {
 
@@ -33,7 +34,7 @@ class ConfirmRemoveOfficeOfTransitViewSpec extends YesNoViewBehaviours with Gene
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
     injector.instanceOf[ConfirmRemoveOfficeOfTransitView].apply(form, lrn, mode, index, prefix, transitOfficeName)(fakeRequest, messages)
 
-  override val prefix: String = "routeDetails.transit.index.confirmRemoveOfficeOfTransit"
+  override val prefix: String = "transit.index.confirmRemoveOfficeOfTransit"
 
   behave like pageWithTitle(transitOfficeName)
 

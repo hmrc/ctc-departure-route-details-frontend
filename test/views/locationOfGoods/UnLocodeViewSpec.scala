@@ -16,11 +16,14 @@
 
 package views.locationOfGoods
 
-import models.NormalMode
+import forms.UnLocodeFormProvider
+import models.{NormalMode, UnLocodeList}
+import models.reference.UnLocode
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.InputSelectViewBehaviours
+import views.html.locationOfGoods.UnLocodeView
 
 class UnLocodeViewSpec extends InputSelectViewBehaviours[UnLocode] {
 
@@ -31,7 +34,7 @@ class UnLocodeViewSpec extends InputSelectViewBehaviours[UnLocode] {
 
   implicit override val arbitraryT: Arbitrary[UnLocode] = arbitraryUnLocode
 
-  override val prefix: String = "routeDetails.locationOfGoods.unLocode"
+  override val prefix: String = "locationOfGoods.unLocode"
 
   behave like pageWithTitle()
 

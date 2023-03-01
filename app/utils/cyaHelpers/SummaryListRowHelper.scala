@@ -16,13 +16,13 @@
 
 package utils.cyaHelpers
 
+import models.{DateTime, DynamicAddress, PostalCodeAddress}
+import models.reference.Country
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-
-import java.text.NumberFormat
-import java.util.Currency
+import utils.Format.RichDateTime
 
 private[utils] class SummaryListRowHelper(implicit messages: Messages) {
 
@@ -34,6 +34,17 @@ private[utils] class SummaryListRowHelper(implicit messages: Messages) {
     }
 
   protected def formatAsText[T](answer: T): Content = s"$answer".toText
+
+  protected def formatAsCountry(country: Country): Content = country.description.toText
+
+  protected def formatAsDynamicAddress(address: DynamicAddress): Content =
+    HtmlContent(address.toString)
+
+  protected def formatAsPostalCodeAddress(address: PostalCodeAddress): Content =
+    HtmlContent(address.toString)
+
+  def formatAsDateTime(answer: DateTime): Content =
+    answer.formatAsString.toText
 
   protected def formatAsPassword(answer: String): Content = ("•" * answer.length).toText
 

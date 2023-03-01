@@ -17,14 +17,18 @@
 package controllers.locationOfGoods
 
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
 import models.requests.DataRequest
-import models.{LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import models.{LocalReferenceNumber, LocationType, Mode}
+import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
+import pages.locationOfGoods.LocationTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.locationOfGoods.LocationTypeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +46,7 @@ class LocationTypeController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider[LocationType]("routeDetails.locationOfGoods.locationType")
+  private val form = formProvider[LocationType]("locationOfGoods.locationType")
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn) {
@@ -71,7 +75,7 @@ class LocationTypeController @Inject() (
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                   LocationTypePage
                     .writeToUserAnswers(value)
-                    .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                     .writeToSession()
                     .navigate()
                 }

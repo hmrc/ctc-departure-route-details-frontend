@@ -21,7 +21,9 @@ import play.api.i18n.Messages
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.implicits._
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorLink
 import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
 
 object ViewUtils {
@@ -100,6 +102,22 @@ object ViewUtils {
       caption match {
         case Some(value) => characterCount.withHeadingAndSectionCaption(Text(heading), Text(value))
         case None        => characterCount.withHeading(Text(heading))
+      }
+  }
+
+  implicit class DateTimeRichFormErrors(formErrors: Seq[FormError])(implicit messages: Messages) {
+
+    def toErrorLinks: Seq[ErrorLink] =
+      formErrors.map {
+        formError =>
+          val args = formError.key match {
+            case "date" => Seq("day", "month", "year")
+            case "time" => Seq("hour", "minute")
+            case _      => Seq("")
+          }
+          val arg = formError.args.find(args.contains).getOrElse(args.head).toString
+          val key = s"#${formError.key}${arg.capitalize}"
+          ErrorLink(href = Some(key), content = messages(formError.message, formError.args: _*).toText)
       }
   }
 

@@ -20,6 +20,8 @@ import base.SpecBase
 import generators.Generators
 import models.Mode
 import org.scalacheck.Arbitrary.arbitrary
+import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
+import viewModels.transit.TransitAnswersViewModel.TransitAnswersViewModelProvider
 
 class TransitAnswersViewModelSpec extends SpecBase with Generators {
 

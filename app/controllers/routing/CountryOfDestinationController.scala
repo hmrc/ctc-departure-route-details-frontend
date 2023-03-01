@@ -17,13 +17,18 @@
 package controllers.routing
 
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
+import forms.CountryFormProvider
 import models.{LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
+import pages.routing.CountryOfDestinationPage
 import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{CountriesService, CustomsOfficesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.routing.CountryOfDestinationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +47,7 @@ class CountryOfDestinationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val prefix: String = "routeDetails.routing.countryOfDestination"
+  private val prefix: String = "routing.countryOfDestination"
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
@@ -77,7 +82,7 @@ class CountryOfDestinationController @Inject() (
                         implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                         CountryOfDestinationPage
                           .writeToUserAnswers(value)
-                          .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                           .writeToSession()
                           .navigate()
                       }

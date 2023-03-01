@@ -16,9 +16,11 @@
 
 package pages.transit
 
+import models.DateTime
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
 
 class T2DeclarationTypeYesNoPageSpec extends PageBehaviours {
 

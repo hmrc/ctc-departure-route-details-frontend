@@ -17,14 +17,18 @@
 package controllers.loadingAndUnloading.unloading
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.CountryFormProvider
 import generators.Generators
 import models.{CountryList, NormalMode}
+import navigation.LoadingAndUnloadingNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.loadingAndUnloading.unloading.CountryPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.loadingAndUnloading.unloading.CountryView
 
 import scala.concurrent.Future
 
@@ -35,7 +39,7 @@ class CountryControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
   private val countryList = CountryList(Seq(country1, country2))
 
   private val formProvider = new CountryFormProvider()
-  private val form         = formProvider("routeDetails.loadingAndUnloading.unloading.country", countryList)
+  private val form         = formProvider("loadingAndUnloading.unloading.country", countryList)
   private val mode         = NormalMode
 
   private lazy val countryRoute = routes.CountryController.onPageLoad(lrn, mode).url
@@ -128,7 +132,7 @@ class CountryControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -142,7 +146,7 @@ class CountryControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

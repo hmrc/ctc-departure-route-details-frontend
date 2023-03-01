@@ -30,9 +30,9 @@
 @(form: Form[String], lrn: LocalReferenceNumber, name: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("routeDetails.locationOfGoods.contact.telephoneNumber.title"),
+    title = messages("locationOfGoods.contact.telephoneNumber.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.TelephoneNumberController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
@@ -42,10 +42,10 @@
         @inputText(
             field = form("value"),
             inputTextType = OrdinaryTextInput(
-                heading = messages("routeDetails.locationOfGoods.contact.telephoneNumber.heading", name),
-                caption = Some(messages("routeDetails.locationOfGoods.caption"))
+                heading = messages("locationOfGoods.contact.telephoneNumber.heading", name),
+                caption = Some(messages("locationOfGoods.caption"))
             ),
-            hint = Some(messages("routeDetails.locationOfGoods.contact.telephoneNumber.hint")),
+            hint = Some(messages("locationOfGoods.contact.telephoneNumber.hint")),
             inputType = "tel",
             autocomplete = Some("tel"),
             inputClass = InputSize.Width20

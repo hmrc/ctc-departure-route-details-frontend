@@ -17,6 +17,7 @@
 package controllers
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import navigation.RouteDetailsNavigatorProvider
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest

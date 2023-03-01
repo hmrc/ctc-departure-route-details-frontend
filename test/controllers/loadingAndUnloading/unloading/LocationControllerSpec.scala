@@ -17,16 +17,20 @@
 package controllers.loadingAndUnloading.unloading
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.LocationFormProvider
 import generators.Generators
 import models.NormalMode
 import models.reference.Country
+import navigation.LoadingAndUnloadingNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
+import pages.loadingAndUnloading.unloading.{CountryPage, LocationPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.loadingAndUnloading.unloading.LocationView
 
 import scala.concurrent.Future
 
@@ -35,7 +39,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
   private val country            = arbitrary[Country].sample.value
   private val location           = country.description
   private val formProvider       = new LocationFormProvider()
-  private val form               = formProvider("routeDetails.loadingAndUnloading.unloading.location", location)
+  private val form               = formProvider("loadingAndUnloading.unloading.location", location)
   private val mode               = NormalMode
   private lazy val locationRoute = routes.LocationController.onPageLoad(lrn, mode).url
 
@@ -130,7 +134,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -144,7 +148,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

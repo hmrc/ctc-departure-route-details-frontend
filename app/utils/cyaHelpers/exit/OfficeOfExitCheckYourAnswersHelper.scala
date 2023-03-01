@@ -16,26 +16,28 @@
 
 package utils.cyaHelpers.exit
 
+import config.FrontendAppConfig
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode, UserAnswers}
+import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
 import utils.cyaHelpers.AnswersHelper
 
-class OfficeOfExitCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode, index: Index)(implicit messages: Messages)
+class OfficeOfExitCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode, index: Index)(implicit messages: Messages, config: FrontendAppConfig)
     extends AnswersHelper(userAnswers, mode) {
 
   def officeOfExitCountry: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = OfficeOfExitCountryPage(index),
     formatAnswer = formatAsText,
-    prefix = "routeDetails.exit.index.officeOfExitCountry",
+    prefix = "exit.index.officeOfExitCountry",
     id = Some("change-office-of-exit-country")
   )
 
   def officeOfExit: Option[SummaryListRow] = getAnswerAndBuildRow[CustomsOffice](
     page = OfficeOfExitPage(index),
     formatAnswer = formatAsText,
-    prefix = "routeDetails.exit.index.officeOfExit",
+    prefix = "exit.index.officeOfExit",
     id = Some("change-office-of-exit")
   )
 }

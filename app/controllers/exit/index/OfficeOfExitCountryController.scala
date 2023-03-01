@@ -16,11 +16,10 @@
 
 package controllers.exit.index
 
-import controllers.SettableOps
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.CountryFormProvider
 import models.CountryList.countriesOfRoutingReads
-import models.journeyDomain.RouteDetailsDomain
 import models.reference.Country
 import models.requests.SpecificDataRequestProvider1
 import models.{CountryList, Index, LocalReferenceNumber, Mode, RichOptionalJsArray}
@@ -54,7 +53,7 @@ class OfficeOfExitCountryController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val prefix: String = "routeDetails.exit.index.officeOfExitCountry"
+  private val prefix: String = "exit.index.officeOfExitCountry"
 
   private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[_]
 
@@ -98,7 +97,7 @@ class OfficeOfExitCountryController @Inject() (
                             implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
                             OfficeOfExitCountryPage(index)
                               .writeToUserAnswers(value)
-                              .updateTask()(RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes))
+                              .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
                               .writeToSession()
                               .navigate()
                           }

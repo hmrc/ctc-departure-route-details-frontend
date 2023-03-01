@@ -16,9 +16,15 @@
 
 package models.journeyDomain.transit
 
-import models.domain.UserAnswersReader
+import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
+import models.journeyDomain.routing.CountryOfRoutingDomain
+import models.journeyDomain.transit.TransitDomain.OfficesOfTransit
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.{Index, Mode, UserAnswers}
+import models.{DeclarationType, Index, Mode, RichJsArray, UserAnswers}
+import pages.external.{DeclarationTypePage, OfficeOfDeparturePage}
+import pages.routing.OfficeOfDestinationPage
+import pages.sections.transit.OfficesOfTransitSection
+import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
 import play.api.mvc.Call
 
 case class TransitDomain(

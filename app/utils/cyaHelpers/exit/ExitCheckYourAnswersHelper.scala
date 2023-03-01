@@ -16,8 +16,14 @@
 
 package utils.cyaHelpers.exit
 
+import config.FrontendAppConfig
+import controllers.exit.index.routes
+import models.journeyDomain.exit.OfficeOfExitDomain
 import models.{Index, Mode, UserAnswers}
+import pages.exit.index.OfficeOfExitCountryPage
+import pages.sections.exit.OfficesOfExitSection
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
 import utils.cyaHelpers.AnswersHelper
 import viewModels.{Link, ListItem}
@@ -25,7 +31,7 @@ import viewModels.{Link, ListItem}
 class ExitCheckYourAnswersHelper(
   userAnswers: UserAnswers,
   mode: Mode
-)(implicit messages: Messages)
+)(implicit messages: Messages, config: FrontendAppConfig)
     extends AnswersHelper(userAnswers, mode) {
 
   def officesOfExit: Seq[SummaryListRow] =
@@ -33,7 +39,7 @@ class ExitCheckYourAnswersHelper(
 
   def officeOfExit(index: Index): Option[SummaryListRow] = getAnswerAndBuildSectionRow[OfficeOfExitDomain](
     formatAnswer = _.label.toText,
-    prefix = "routeDetails.checkYourAnswers.exit.officeOfExit",
+    prefix = "checkYourAnswers.exit.officeOfExit",
     id = Some(s"change-office-of-exit-${index.display}"),
     args = index.display
   )(OfficeOfExitDomain.userAnswersReader(index))
@@ -41,7 +47,7 @@ class ExitCheckYourAnswersHelper(
   def addOrRemoveOfficesOfExit: Option[Link] = buildLink(OfficesOfExitSection) {
     Link(
       id = "add-or-remove-offices-of-exit",
-      text = messages("routeDetails.checkYourAnswers.exit.addOrRemove"),
+      text = messages("checkYourAnswers.exit.addOrRemove"),
       href = controllers.exit.routes.AddAnotherOfficeOfExitController.onPageLoad(userAnswers.lrn, mode).url
     )
   }

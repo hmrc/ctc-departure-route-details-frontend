@@ -17,16 +17,20 @@
 package controllers.locationOfGoods
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.DynamicAddressFormProvider
 import generators.Generators
-import models.NormalMode
+import models.{DynamicAddress, NormalMode}
 import models.reference.Country
+import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
+import pages.locationOfGoods.{AddressPage, CountryPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.locationOfGoods.AddressView
 
 import scala.concurrent.Future
 
@@ -38,7 +42,7 @@ class AddressControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
   private val country     = arbitrary[Country].sample.value
 
   private val formProvider                        = new DynamicAddressFormProvider()
-  private def form(isPostalCodeRequired: Boolean) = formProvider("routeDetails.locationOfGoods.address", isPostalCodeRequired, addressHolderName)
+  private def form(isPostalCodeRequired: Boolean) = formProvider("locationOfGoods.address", isPostalCodeRequired, addressHolderName)
 
   private val mode              = NormalMode
   private lazy val addressRoute = routes.AddressController.onPageLoad(lrn, mode).url
@@ -255,7 +259,7 @@ class AddressControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
 
     }
 
@@ -274,7 +278,7 @@ class AddressControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
 
     }
 

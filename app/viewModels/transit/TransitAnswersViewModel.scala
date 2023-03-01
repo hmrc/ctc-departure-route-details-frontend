@@ -16,6 +16,7 @@
 
 package viewModels.transit
 
+import config.FrontendAppConfig
 import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
 import utils.cyaHelpers.transit.TransitCheckYourAnswersHelper
@@ -32,7 +33,7 @@ object TransitAnswersViewModel {
     def apply(userAnswers: UserAnswers, mode: Mode)(
       ctcCountryCodes: Seq[String],
       customsSecurityAgreementAreaCountryCodes: Seq[String]
-    )(implicit messages: Messages): TransitAnswersViewModel = {
+    )(implicit messages: Messages, config: FrontendAppConfig): TransitAnswersViewModel = {
 
       val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
 
@@ -44,7 +45,7 @@ object TransitAnswersViewModel {
       )
 
       val officesOfTransitSection = Section(
-        sectionTitle = messages("routeDetails.checkYourAnswers.transit.subheading"),
+        sectionTitle = messages("checkYourAnswers.transit.subheading"),
         rows = helper.officesOfTransit,
         addAnotherLink = helper.addOrRemoveOfficesOfTransit
       )

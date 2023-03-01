@@ -18,6 +18,8 @@ package forms.locationOfGoods
 
 import forms.StopOnFirstFail
 import forms.mappings.Mappings
+import models.Coordinates
+import models.domain.StringFieldRegex._
 import play.api.data.Form
 import play.api.data.Forms.mapping
 
@@ -30,7 +32,7 @@ class CoordinatesFormProvider @Inject() extends Mappings {
       mapping(
         "latitude" -> {
           lazy val args = Seq("latitude")
-          trimmedText(s"$prefix.error.required", args)
+          text(s"$prefix.error.required", args)
             .verifying(
               StopOnFirstFail[String](
                 regexp(coordinatesCharacterRegex, s"$prefix.error.invalid", args),
@@ -41,7 +43,7 @@ class CoordinatesFormProvider @Inject() extends Mappings {
         },
         "longitude" -> {
           lazy val args = Seq("longitude")
-          trimmedText(s"$prefix.error.required", args)
+          text(s"$prefix.error.required", args)
             .verifying(
               StopOnFirstFail[String](
                 regexp(coordinatesCharacterRegex, s"$prefix.error.invalid", args),

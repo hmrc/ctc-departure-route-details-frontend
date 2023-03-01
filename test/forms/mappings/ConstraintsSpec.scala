@@ -28,65 +28,6 @@ import java.time.LocalDate
 // scalastyle:off magic.number
 class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with Generators with Constraints {
 
-  "firstError" - {
-
-    "must return Valid when all constraints pass" in {
-      val result = firstError(maxLength(10, "error.length"), regexp("""^\w+$""".r, "error.regexp"))("foo")
-      result mustEqual Valid
-    }
-
-    "must return Invalid when the first constraint fails" in {
-      val result = firstError(maxLength(10, "error.length"), regexp("""^\w+$""".r, "error.regexp"))("a" * 11)
-      result mustEqual Invalid("error.length", 10)
-    }
-
-    "must return Invalid when the second constraint fails" in {
-      val result = firstError(maxLength(10, "error.length"), regexp("""^\w+$""".r, "error.regexp"))("")
-      result mustEqual Invalid("error.regexp", """^\w+$""")
-    }
-
-    "must return Invalid for the first error when both constraints fail" in {
-      val result = firstError(maxLength(-1, "error.length"), regexp("""^\w+$""".r, "error.regexp"))("")
-      result mustEqual Invalid("error.length", -1)
-    }
-  }
-
-  "minimumValue" - {
-
-    "must return Valid for a number greater than the threshold" in {
-      val result = minimumValue(1, "error.min").apply(2)
-      result mustEqual Valid
-    }
-
-    "must return Valid for a number equal to the threshold" in {
-      val result = minimumValue(1, "error.min").apply(1)
-      result mustEqual Valid
-    }
-
-    "must return Invalid for a number below the threshold" in {
-      val result = minimumValue(1, "error.min").apply(0)
-      result mustEqual Invalid("error.min", 1)
-    }
-  }
-
-  "maximumValue" - {
-
-    "must return Valid for a number less than the threshold" in {
-      val result = maximumValue(1, "error.max").apply(0)
-      result mustEqual Valid
-    }
-
-    "must return Valid for a number equal to the threshold" in {
-      val result = maximumValue(1, "error.max").apply(1)
-      result mustEqual Valid
-    }
-
-    "must return Invalid for a number above the threshold" in {
-      val result = maximumValue(1, "error.max").apply(2)
-      result mustEqual Invalid("error.max", 1)
-    }
-  }
-
   "regexp" - {
 
     "must return Valid for an input that matches the expression" in {
@@ -124,24 +65,6 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
 
     "must trim values when boolean is true" in {
       val result = maxLength(10, "error.length", Seq.empty, trim = true)("a " * 10)
-      result mustEqual Valid
-    }
-  }
-
-  "minLength" - {
-
-    "must return InValid for a string shorter than the allowed length" in {
-      val result = minLength(10, "error.length")("a" * 9)
-      result mustBe Invalid("error.length", 10)
-    }
-
-    "must return Valid for a string equal to the allowed length" in {
-      val result = minLength(10, "error.length")("a" * 10)
-      result mustEqual Valid
-    }
-
-    "must trim values when boolean is true" in {
-      val result = minLength(10, "error.length", Seq.empty, trim = true)("a " * 10)
       result mustEqual Valid
     }
   }

@@ -30,14 +30,14 @@
 @(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @html = {
-<p class="govuk-body">@messages("routeDetails.locationOfGoods.addLocationOfGoods.paragraph1")</p>
-<p class="govuk-body">@messages("routeDetails.locationOfGoods.addLocationOfGoods.paragraph2")</p>
+<p class="govuk-body">@messages("locationOfGoods.addLocationOfGoods.paragraph1")</p>
+<p class="govuk-body">@messages("locationOfGoods.addLocationOfGoods.paragraph2")</p>
 }
 
 @mainTemplate(
-    title = messages("routeDetails.locationOfGoods.addLocationOfGoods.title"),
+    title = messages("locationOfGoods.addLocationOfGoods.title"),
     showBackLink = true,
-    lrn = Some(lrn)
+    lrn = lrn
 ) {
 
     @formHelper(action = routes.AddLocationOfGoodsController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
@@ -47,8 +47,8 @@
         @inputYesNo(
             field = form("value"),
             yesNoType = YesNoWithAdditionalHtml(
-                heading = messages("routeDetails.locationOfGoods.addLocationOfGoods.heading"),
-                caption = Some(messages("routeDetails.locationOfGoods.caption")),
+                heading = messages("locationOfGoods.addLocationOfGoods.heading"),
+                caption = Some(messages("locationOfGoods.caption")),
                 additionalHtml = html
             )
         )

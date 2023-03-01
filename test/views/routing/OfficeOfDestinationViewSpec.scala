@@ -16,12 +16,14 @@
 
 package views.routing
 
-import models.NormalMode
+import forms.CustomsOfficeFormProvider
+import models.{CustomsOfficeList, NormalMode}
 import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.InputSelectViewBehaviours
+import views.html.routing.OfficeOfDestinationView
 
 class OfficeOfDestinationViewSpec extends InputSelectViewBehaviours[CustomsOffice] {
 
@@ -32,7 +34,7 @@ class OfficeOfDestinationViewSpec extends InputSelectViewBehaviours[CustomsOffic
 
   implicit override val arbitraryT: Arbitrary[CustomsOffice] = arbitraryCustomsOffice
 
-  override val prefix: String = "routeDetails.routing.officeOfDestination"
+  override val prefix: String = "routing.officeOfDestination"
 
   behave like pageWithTitle()
 

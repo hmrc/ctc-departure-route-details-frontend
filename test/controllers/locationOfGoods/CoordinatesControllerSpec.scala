@@ -17,14 +17,18 @@
 package controllers.locationOfGoods
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.locationOfGoods.CoordinatesFormProvider
 import generators.Generators
 import models.NormalMode
+import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.locationOfGoods.CoordinatesPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.locationOfGoods.CoordinatesView
 
 import scala.concurrent.Future
 
@@ -33,7 +37,7 @@ class CoordinatesControllerSpec extends SpecBase with AppWithDefaultMockFixtures
   private val testCoordinates = arbitraryCoordinates.arbitrary.sample.value
 
   private val formProvider = new CoordinatesFormProvider()
-  private val form         = formProvider("routeDetails.locationOfGoods.coordinates")
+  private val form         = formProvider("locationOfGoods.coordinates")
 
   private val mode                  = NormalMode
   private lazy val coordinatesRoute = routes.CoordinatesController.onPageLoad(lrn, mode).url
@@ -132,7 +136,7 @@ class CoordinatesControllerSpec extends SpecBase with AppWithDefaultMockFixtures
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -149,7 +153,7 @@ class CoordinatesControllerSpec extends SpecBase with AppWithDefaultMockFixtures
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

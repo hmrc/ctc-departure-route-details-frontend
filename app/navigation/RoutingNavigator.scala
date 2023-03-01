@@ -16,6 +16,7 @@
 
 package navigation
 
+import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.routing.RoutingDomain
 import models.{CheckMode, CountryList, Mode, NormalMode}
@@ -24,7 +25,7 @@ import navigation.UserAnswersNavigator
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RoutingNavigatorProviderImpl @Inject() () extends RoutingNavigatorProvider {
+class RoutingNavigatorProviderImpl @Inject() (implicit val config: FrontendAppConfig) extends RoutingNavigatorProvider {
 
   def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
     mode match {
@@ -40,7 +41,7 @@ trait RoutingNavigatorProvider {
   def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
 }
 
-class RoutingNavigator(override val mode: Mode) extends UserAnswersNavigator {
+class RoutingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig) extends UserAnswersNavigator {
 
   override type T = RoutingDomain
 

@@ -17,12 +17,16 @@
 package controllers.routing
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import controllers.actions.Actions
 import models.{LocalReferenceNumber, Mode}
-import navigation.UserAnswersNavigator
+import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewModels.routing.RoutingAnswersViewModel.RoutingAnswersViewModelProvider
+import views.html.routing.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext
 
@@ -34,7 +38,7 @@ class CheckYourAnswersController @Inject() (
   view: CheckYourAnswersView,
   viewModelProvider: RoutingAnswersViewModelProvider,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -25,6 +25,10 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import viewModels.RouteDetailsAnswersViewModel
+import viewModels.RouteDetailsAnswersViewModel.RouteDetailsAnswersViewModelProvider
+import viewModels.sections.Section
+import views.html.RouteDetailsAnswersView
 
 class RouteDetailsAnswersControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
@@ -40,7 +44,7 @@ class RouteDetailsAnswersControllerSpec extends SpecBase with AppWithDefaultMock
     "must return OK and the correct view for a GET" in {
       val sampleSections = arbitrary[List[Section]].sample.value
 
-      when(mockViewModelProvider.apply(any())(any(), any())(any())).thenReturn(RouteDetailsAnswersViewModel(sampleSections))
+      when(mockViewModelProvider.apply(any())(any(), any())(any(), any())).thenReturn(RouteDetailsAnswersViewModel(sampleSections))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -65,7 +69,7 @@ class RouteDetailsAnswersControllerSpec extends SpecBase with AppWithDefaultMock
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
     "must redirect to task list" in {
@@ -77,7 +81,7 @@ class RouteDetailsAnswersControllerSpec extends SpecBase with AppWithDefaultMock
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad(lrn).url
+      redirectLocation(result).value mustEqual frontendAppConfig.taskListUrl(lrn)
 
     }
   }

@@ -16,8 +16,10 @@
 
 package pages.locationOfGoods
 
+import models.LocationOfGoodsIdentification
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.sections.locationOfGoods.LocationOfGoodsIdentifierSection
 import play.api.libs.json.Json
 
 class IdentificationPageSpec extends PageBehaviours {
