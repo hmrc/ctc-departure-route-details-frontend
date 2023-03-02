@@ -1,0 +1,13 @@
+
+->         /                                                                                app.loadingAndUnloading.loading.Routes
+->         /                                                                                app.loadingAndUnloading.unloading.Routes
+
+GET        /:lrn/route-details/place-of-unloading/add                                       controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/place-of-unloading/add                                       controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/place-of-unloading/change-add                                controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/place-of-unloading/change-add                                controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/place-of-loading-unloading/check-answers                     controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/place-of-loading-unloading/check-answers                     controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/place-of-loading-unloading/change-check-answers              controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/place-of-loading-unloading/change-check-answers              controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)

@@ -1,0 +1,85 @@
+
+GET        /:lrn/route-details/location-of-goods/add                                      controllers.locationOfGoods.AddLocationOfGoodsController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/add                                      controllers.locationOfGoods.AddLocationOfGoodsController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-add                               controllers.locationOfGoods.AddLocationOfGoodsController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-add                               controllers.locationOfGoods.AddLocationOfGoodsController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/type                                     controllers.locationOfGoods.LocationTypeController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/type                                     controllers.locationOfGoods.LocationTypeController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-type                              controllers.locationOfGoods.LocationTypeController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-type                              controllers.locationOfGoods.LocationTypeController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/identification                           controllers.locationOfGoods.IdentificationController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/identification                           controllers.locationOfGoods.IdentificationController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-identification                    controllers.locationOfGoods.IdentificationController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-identification                    controllers.locationOfGoods.IdentificationController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/customs-office-identifier                controllers.locationOfGoods.CustomsOfficeIdentifierController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/customs-office-identifier                controllers.locationOfGoods.CustomsOfficeIdentifierController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-customs-office-identifier         controllers.locationOfGoods.CustomsOfficeIdentifierController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-customs-office-identifier         controllers.locationOfGoods.CustomsOfficeIdentifierController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/eori-tin                                 controllers.locationOfGoods.EoriController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/eori-tin                                 controllers.locationOfGoods.EoriController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-eori-tin                          controllers.locationOfGoods.EoriController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-eori-tin                          controllers.locationOfGoods.EoriController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/authorisation-number                     controllers.locationOfGoods.AuthorisationNumberController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/authorisation-number                     controllers.locationOfGoods.AuthorisationNumberController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-authorisation-number              controllers.locationOfGoods.AuthorisationNumberController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-authorisation-number              controllers.locationOfGoods.AuthorisationNumberController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/coordinates                              controllers.locationOfGoods.CoordinatesController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/coordinates                              controllers.locationOfGoods.CoordinatesController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-coordinates                       controllers.locationOfGoods.CoordinatesController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-coordinates                       controllers.locationOfGoods.CoordinatesController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/country                                  controllers.locationOfGoods.CountryController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/country                                  controllers.locationOfGoods.CountryController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-country                           controllers.locationOfGoods.CountryController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-country                           controllers.locationOfGoods.CountryController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/address                                  controllers.locationOfGoods.AddressController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/address                                  controllers.locationOfGoods.AddressController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-address                           controllers.locationOfGoods.AddressController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-address                           controllers.locationOfGoods.AddressController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/add-identifier                           controllers.locationOfGoods.AddIdentifierYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/add-identifier                           controllers.locationOfGoods.AddIdentifierYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-add-identifier                    controllers.locationOfGoods.AddIdentifierYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-add-identifier                    controllers.locationOfGoods.AddIdentifierYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/postal-code                              controllers.locationOfGoods.PostalCodeController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/postal-code                              controllers.locationOfGoods.PostalCodeController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-postal-code                       controllers.locationOfGoods.PostalCodeController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-postal-code                       controllers.locationOfGoods.PostalCodeController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/additional-identifier                    controllers.locationOfGoods.AdditionalIdentifierController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/additional-identifier                    controllers.locationOfGoods.AdditionalIdentifierController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-additional-identifier             controllers.locationOfGoods.AdditionalIdentifierController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-additional-identifier             controllers.locationOfGoods.AdditionalIdentifierController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/un-locode                                controllers.locationOfGoods.UnLocodeController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/un-locode                                controllers.locationOfGoods.UnLocodeController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-un-locode                         controllers.locationOfGoods.UnLocodeController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-un-locode                         controllers.locationOfGoods.UnLocodeController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/add-contact                              controllers.locationOfGoods.AddContactYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/add-contact                              controllers.locationOfGoods.AddContactYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-add-contact                       controllers.locationOfGoods.AddContactYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-add-contact                       controllers.locationOfGoods.AddContactYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/contact-name                             controllers.locationOfGoods.contact.NameController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/contact-name                             controllers.locationOfGoods.contact.NameController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-contact-name                      controllers.locationOfGoods.contact.NameController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-contact-name                      controllers.locationOfGoods.contact.NameController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/contact-telephone-number                 controllers.locationOfGoods.contact.TelephoneNumberController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/contact-telephone-number                 controllers.locationOfGoods.contact.TelephoneNumberController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-contact-telephone-number          controllers.locationOfGoods.contact.TelephoneNumberController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-contact-telephone-number          controllers.locationOfGoods.contact.TelephoneNumberController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:lrn/route-details/location-of-goods/check-answers                            controllers.locationOfGoods.CheckYourAnswersController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /:lrn/route-details/location-of-goods/check-answers                            controllers.locationOfGoods.CheckYourAnswersController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /:lrn/route-details/location-of-goods/change-check-answers                     controllers.locationOfGoods.CheckYourAnswersController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /:lrn/route-details/location-of-goods/change-check-answers                     controllers.locationOfGoods.CheckYourAnswersController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
