@@ -91,7 +91,7 @@ class UserAnswersSpec extends SpecBase {
     }
 
     "updateTask" - {
-      val section = ".guaranteeDetails"
+      val section = ".routeDetails"
 
       "must set task status" - {
         "when task has not previously been set" in {
@@ -108,13 +108,13 @@ class UserAnswersSpec extends SpecBase {
         "when there are other tasks" in {
           val tasks = Map(
             section             -> TaskStatus.InProgress,
-            ".routeDetails"     -> TaskStatus.NotStarted,
+            ".guaranteeDetails" -> TaskStatus.NotStarted,
             ".transportDetails" -> TaskStatus.CannotStartYet
           )
           val result = emptyUserAnswers.copy(tasks = tasks).updateTask(section, TaskStatus.Completed)
           result.tasks mustBe Map(
             section             -> TaskStatus.Completed,
-            ".routeDetails"     -> TaskStatus.NotStarted,
+            ".guaranteeDetails" -> TaskStatus.NotStarted,
             ".transportDetails" -> TaskStatus.CannotStartYet
           )
         }
