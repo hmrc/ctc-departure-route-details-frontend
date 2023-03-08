@@ -21,7 +21,7 @@ import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.CustomsOfficeForCountryFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
-import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
+import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage, OfficeOfExitPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -49,7 +49,7 @@ class OfficeOfExitController @Inject() (
 
   def onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
-    .andThen(getMandatoryPage(OfficeOfExitCountryPage(index)))
+    .andThen(getMandatoryPage(OfficeOfExitCountryPage(index), InferredOfficeOfExitCountryPage(index)))
     .async {
       implicit request =>
         val country = request.arg
@@ -67,7 +67,7 @@ class OfficeOfExitController @Inject() (
 
   def onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
-    .andThen(getMandatoryPage(OfficeOfExitCountryPage(index)))
+    .andThen(getMandatoryPage(OfficeOfExitCountryPage(index), InferredOfficeOfExitCountryPage(index)))
     .async {
       implicit request =>
         val country = request.arg

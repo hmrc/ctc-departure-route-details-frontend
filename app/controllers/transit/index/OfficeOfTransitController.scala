@@ -16,13 +16,13 @@
 
 package controllers.transit.index
 
-import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.CustomsOfficeForCountryFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
 import pages.routing.CountryOfDestinationPage
-import pages.transit.index.{OfficeOfTransitCountryPage, OfficeOfTransitPage}
+import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage, OfficeOfTransitPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -48,53 +48,50 @@ class OfficeOfTransitController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] =
-    actions
-      .requireData(lrn)
-      .andThen(getMandatoryPage(OfficeOfTransitCountryPage(index), CountryOfDestinationPage))
-      .async {
-        implicit request =>
-          val country = request.arg
-          customsOfficesService.getCustomsOfficesOfTransitForCountry(country.code).map {
-            customsOfficeList =>
-              val form = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
-              val preparedForm = request.userAnswers.get(OfficeOfTransitPage(index)) match {
-                case None        => form
-                case Some(value) => form.fill(value)
-              }
-              Ok(view(preparedForm, lrn, customsOfficeList.customsOffices, country.description, mode, index))
-          }
-      }
+  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
+    .requireData(lrn)
+    .andThen(getMandatoryPage(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index), CountryOfDestinationPage))
+    .async {
+      implicit request =>
+        val country = request.arg
+        customsOfficesService.getCustomsOfficesOfTransitForCountry(country.code).map {
+          customsOfficeList =>
+            val form = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
+            val preparedForm = request.userAnswers.get(OfficeOfTransitPage(index)) match {
+              case None        => form
+              case Some(value) => form.fill(value)
+            }
+            Ok(view(preparedForm, lrn, customsOfficeList.customsOffices, country.description, mode, index))
+        }
+    }
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] =
-    actions
-      .requireData(lrn)
-      .andThen(getMandatoryPage(OfficeOfTransitCountryPage(index), CountryOfDestinationPage))
-      .async {
-        implicit request =>
-          val country = request.arg
-          customsOfficesService.getCustomsOfficesOfTransitForCountry(country.code).flatMap {
-            customsOfficeList =>
-              val form = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
-              form
-                .bindFromRequest()
-                .fold(
-                  formWithErrors =>
-                    Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, country.description, mode, index))),
-                  value =>
-                    for {
-                      ctcCountries                          <- countriesService.getCountryCodesCTC()
-                      customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                      result <- {
-                        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
-                        OfficeOfTransitPage(index)
-                          .writeToUserAnswers(value)
-                          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                          .writeToSession()
-                          .navigate()
-                      }
-                    } yield result
-                )
-          }
-      }
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
+    .requireData(lrn)
+    .andThen(getMandatoryPage(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index), CountryOfDestinationPage))
+    .async {
+      implicit request =>
+        val country = request.arg
+        customsOfficesService.getCustomsOfficesOfTransitForCountry(country.code).flatMap {
+          customsOfficeList =>
+            val form = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, country.description, mode, index))),
+                value =>
+                  for {
+                    ctcCountries                          <- countriesService.getCountryCodesCTC()
+                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
+                    result <- {
+                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
+                      OfficeOfTransitPage(index)
+                        .writeToUserAnswers(value)
+                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                        .writeToSession()
+                        .navigate()
+                    }
+                  } yield result
+              )
+        }
+    }
 }
