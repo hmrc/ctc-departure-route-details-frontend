@@ -41,3 +41,10 @@ case class OfficeOfTransitCountryPage(index: Index) extends QuestionPage[Country
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.OfficeOfTransitCountryController.onPageLoad(userAnswers.lrn, mode, index))
 }
+
+case class InferredOfficeOfTransitCountryPage(index: Index) extends QuestionPage[Country] {
+
+  override def path: JsPath = OfficeOfTransitSection(index).path \ toString
+
+  override def toString: String = "inferredOfficeOfTransitCountry"
+}

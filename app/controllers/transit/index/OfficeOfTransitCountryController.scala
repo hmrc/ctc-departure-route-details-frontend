@@ -19,12 +19,15 @@ package controllers.transit.index
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.CountryFormProvider
-import models.{Index, LocalReferenceNumber, Mode}
+import models.reference.Country
+import models.requests.DataRequest
+import models.{CountryList, Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
-import pages.transit.index.OfficeOfTransitCountryPage
+import pages.QuestionPage
+import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage}
 import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.{CountriesService, CustomsOfficesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -51,15 +54,17 @@ class OfficeOfTransitCountryController @Inject() (
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      countriesService.getOfficeOfTransitCountries(request.userAnswers).map {
-        countryList =>
+      countriesService.getOfficeOfTransitCountries(request.userAnswers).flatMap {
+        case CountryList(country :: Nil) =>
+          redirect(mode, index, InferredOfficeOfTransitCountryPage, country)
+        case countryList =>
           val form = formProvider(prefix, countryList)
           val preparedForm = request.userAnswers.get(OfficeOfTransitCountryPage(index)) match {
             case None        => form
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, lrn, countryList.countries, mode, index))
+          Future.successful(Ok(view(preparedForm, lrn, countryList.countries, mode, index)))
       }
   }
 
@@ -75,18 +80,7 @@ class OfficeOfTransitCountryController @Inject() (
               value =>
                 customsOfficesService.getCustomsOfficesOfTransitForCountry(value.code).flatMap {
                   case x if x.customsOffices.nonEmpty =>
-                    for {
-                      ctcCountries                          <- countriesService.getCountryCodesCTC()
-                      customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                      result <- {
-                        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
-                        OfficeOfTransitCountryPage(index)
-                          .writeToUserAnswers(value)
-                          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                          .writeToSession()
-                          .navigate()
-                      }
-                    } yield result
+                    redirect(mode, index, OfficeOfTransitCountryPage, value)
                   case _ =>
                     val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
                     Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, mode, index)))
@@ -94,4 +88,23 @@ class OfficeOfTransitCountryController @Inject() (
             )
       }
   }
+
+  private def redirect(
+    mode: Mode,
+    index: Index,
+    page: Index => QuestionPage[Country],
+    country: Country
+  )(implicit request: DataRequest[_]): Future[Result] =
+    for {
+      ctcCountries                          <- countriesService.getCountryCodesCTC()
+      customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
+      result <- {
+        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
+        page(index)
+          .writeToUserAnswers(country)
+          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+          .writeToSession()
+          .navigate()
+      }
+    } yield result
 }

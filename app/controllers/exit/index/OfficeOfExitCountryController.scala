@@ -19,13 +19,16 @@ package controllers.exit.index
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.CountryFormProvider
-import models.{Index, LocalReferenceNumber, Mode}
+import models.reference.Country
+import models.requests.SpecificDataRequestProvider1
+import models.{CountryList, Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
-import pages.exit.index.OfficeOfExitCountryPage
+import pages.QuestionPage
+import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage}
 import pages.routing.CountryOfDestinationPage
 import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.{CountriesService, CustomsOfficesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -51,56 +54,67 @@ class OfficeOfExitCountryController @Inject() (
 
   private val prefix: String = "exit.index.officeOfExitCountry"
 
-  def onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] =
-    actions
-      .requireData(lrn)
-      .andThen(getMandatoryPage(CountryOfDestinationPage))
-      .async {
-        implicit request =>
-          countriesService.getOfficeOfExitCountries(request.userAnswers, request.arg).map {
-            countryList =>
-              val form = formProvider(prefix, countryList)
-              val preparedForm = request.userAnswers.get(OfficeOfExitCountryPage(index)) match {
-                case None        => form
-                case Some(value) => form.fill(value)
-              }
-              Ok(view(preparedForm, lrn, countryList.countries, index, mode))
-          }
-      }
+  private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[_]
 
-  def onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] =
-    actions
-      .requireData(lrn)
-      .andThen(getMandatoryPage(CountryOfDestinationPage))
-      .async {
-        implicit request =>
-          countriesService.getOfficeOfExitCountries(request.userAnswers, request.arg).flatMap {
-            countryList =>
-              val form = formProvider(prefix, countryList)
-              form
-                .bindFromRequest()
-                .fold(
-                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, index, mode))),
-                  value =>
-                    customsOfficesService.getCustomsOfficesOfExitForCountry(value.code).flatMap {
-                      case x if x.customsOffices.nonEmpty =>
-                        for {
-                          ctcCountries                          <- countriesService.getCountryCodesCTC()
-                          customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                          result <- {
-                            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
-                            OfficeOfExitCountryPage(index)
-                              .writeToUserAnswers(value)
-                              .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                              .writeToSession()
-                              .navigate()
-                          }
-                        } yield result
-                      case _ =>
-                        val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
-                        Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, index, mode)))
-                    }
-                )
-          }
+  def onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions
+    .requireData(lrn)
+    .andThen(getMandatoryPage(CountryOfDestinationPage))
+    .async {
+      implicit request =>
+        countriesService.getOfficeOfExitCountries(request.userAnswers, request.arg).flatMap {
+          case CountryList(country :: Nil) =>
+            redirect(mode, index, InferredOfficeOfExitCountryPage, country)
+          case countryList =>
+            val form = formProvider(prefix, countryList)
+            val preparedForm = request.userAnswers.get(OfficeOfExitCountryPage(index)) match {
+              case None        => form
+              case Some(value) => form.fill(value)
+            }
+
+            Future.successful(Ok(view(preparedForm, lrn, countryList.countries, index, mode)))
+        }
+    }
+
+  def onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions
+    .requireData(lrn)
+    .andThen(getMandatoryPage(CountryOfDestinationPage))
+    .async {
+      implicit request =>
+        countriesService.getOfficeOfExitCountries(request.userAnswers, request.arg).flatMap {
+          countryList =>
+            val form = formProvider(prefix, countryList)
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, index, mode))),
+                value =>
+                  customsOfficesService.getCustomsOfficesOfExitForCountry(value.code).flatMap {
+                    case x if x.customsOffices.nonEmpty =>
+                      redirect(mode, index, OfficeOfExitCountryPage, value)
+                    case _ =>
+                      val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
+                      Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, index, mode)))
+                  }
+              )
+        }
+    }
+
+  private def redirect(
+    mode: Mode,
+    index: Index,
+    page: Index => QuestionPage[Country],
+    country: Country
+  )(implicit request: Request): Future[Result] =
+    for {
+      ctcCountries                          <- countriesService.getCountryCodesCTC()
+      customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
+      result <- {
+        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
+        page(index)
+          .writeToUserAnswers(country)
+          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+          .writeToSession()
+          .navigate()
       }
+    } yield result
 }

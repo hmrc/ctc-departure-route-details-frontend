@@ -19,12 +19,13 @@ package controllers.transit.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.CountryFormProvider
 import generators.Generators
-import models.{CountryList, CustomsOfficeList, NormalMode}
+import models.{CountryList, CustomsOfficeList, NormalMode, UserAnswers}
 import navigation.OfficeOfTransitNavigatorProvider
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
-import pages.transit.index.OfficeOfTransitCountryPage
+import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage}
 import play.api.data.FormError
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -61,6 +62,29 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
       .overrides(bind(classOf[CustomsOfficesService]).toInstance(mockCustomsOfficesService))
 
   "OfficeOfTransitCountry Controller" - {
+
+    "must set inferred answer and redirect to next page" - {
+      "when only one country to choose from" in {
+
+        when(mockCountriesService.getOfficeOfTransitCountries(any())(any()))
+          .thenReturn(Future.successful(CountryList(Seq(country1))))
+
+        setExistingUserAnswers(emptyUserAnswers)
+
+        val request = FakeRequest(GET, officeOfTransitCountryRoute)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual onwardRoute.url
+
+        val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+        userAnswersCaptor.getValue.get(OfficeOfTransitCountryPage(index)) must not be defined
+        userAnswersCaptor.getValue.getValue(InferredOfficeOfTransitCountryPage(index)) mustBe country1
+      }
+    }
 
     "must return OK and the correct view for a GET" in {
 

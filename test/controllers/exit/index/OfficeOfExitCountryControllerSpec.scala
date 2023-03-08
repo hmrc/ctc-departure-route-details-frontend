@@ -19,12 +19,13 @@ package controllers.exit.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.CountryFormProvider
 import generators.Generators
-import models.{CountryList, CustomsOfficeList, NormalMode}
+import models.{CountryList, CustomsOfficeList, NormalMode, UserAnswers}
 import navigation.OfficeOfExitNavigatorProvider
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
-import pages.exit.index.OfficeOfExitCountryPage
+import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage}
 import pages.routing.CountryOfDestinationPage
 import play.api.data.FormError
 import play.api.inject.bind
@@ -64,6 +65,29 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
   private val baseAnswers = emptyUserAnswers.setValue(CountryOfDestinationPage, country2)
 
   "OfficeOfExitCountry Controller" - {
+
+    "must set inferred answer and redirect to next page" - {
+      "when only one country to choose from" in {
+
+        when(mockCountriesService.getOfficeOfExitCountries(any(), any())(any()))
+          .thenReturn(Future.successful(CountryList(Seq(country1))))
+
+        setExistingUserAnswers(baseAnswers)
+
+        val request = FakeRequest(GET, officeOfExitCountryRoute)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual onwardRoute.url
+
+        val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+        userAnswersCaptor.getValue.get(OfficeOfExitCountryPage(index)) must not be defined
+        userAnswersCaptor.getValue.getValue(InferredOfficeOfExitCountryPage(index)) mustBe country1
+      }
+    }
 
     "must return OK and the correct view for a GET" in {
 

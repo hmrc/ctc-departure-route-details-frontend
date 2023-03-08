@@ -24,6 +24,8 @@ case class CountryList(countries: Seq[Country]) {
 
   def countryCodes: Seq[String] = countries.map(_.code.code)
 
+  def hasOneCountry: Boolean = countries.size == 1
+
   override def equals(obj: Any): Boolean =
     obj match {
       case value: CountryList => value.countries == countries
