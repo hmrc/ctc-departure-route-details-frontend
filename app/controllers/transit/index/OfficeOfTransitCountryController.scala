@@ -16,14 +16,11 @@
 
 package controllers.transit.index
 
-import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.CountryFormProvider
-import models.CountryList.countriesOfRoutingReads
-import models.requests.DataRequest
-import models.{CountryList, Index, LocalReferenceNumber, Mode, RichOptionalJsArray}
+import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
-import pages.sections.routing.CountriesOfRoutingSection
 import pages.transit.index.OfficeOfTransitCountryPage
 import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -54,7 +51,7 @@ class OfficeOfTransitCountryController @Inject() (
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      getCountries.map {
+      countriesService.getOfficeOfTransitCountries(request.userAnswers).map {
         countryList =>
           val form = formProvider(prefix, countryList)
           val preparedForm = request.userAnswers.get(OfficeOfTransitCountryPage(index)) match {
@@ -68,7 +65,7 @@ class OfficeOfTransitCountryController @Inject() (
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      getCountries.flatMap {
+      countriesService.getOfficeOfTransitCountries(request.userAnswers).flatMap {
         countryList =>
           val form = formProvider(prefix, countryList)
           form
@@ -97,10 +94,4 @@ class OfficeOfTransitCountryController @Inject() (
             )
       }
   }
-
-  private def getCountries(implicit request: DataRequest[_]): Future[CountryList] =
-    request.userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads) match {
-      case Some(x) if x.countries.nonEmpty => Future.successful(x)
-      case _                               => countriesService.getCountries()
-    }
 }

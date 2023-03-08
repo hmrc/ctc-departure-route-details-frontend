@@ -19,14 +19,10 @@ package controllers.exit.index
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.CountryFormProvider
-import models.CountryList.countriesOfRoutingReads
-import models.reference.Country
-import models.requests.SpecificDataRequestProvider1
-import models.{CountryList, Index, LocalReferenceNumber, Mode, RichOptionalJsArray}
+import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
 import pages.exit.index.OfficeOfExitCountryPage
 import pages.routing.CountryOfDestinationPage
-import pages.sections.routing.CountriesOfRoutingSection
 import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -55,15 +51,13 @@ class OfficeOfExitCountryController @Inject() (
 
   private val prefix: String = "exit.index.officeOfExitCountry"
 
-  private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[_]
-
   def onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] =
     actions
       .requireData(lrn)
       .andThen(getMandatoryPage(CountryOfDestinationPage))
       .async {
         implicit request =>
-          getCountries.map {
+          countriesService.getOfficeOfExitCountries(request.userAnswers, request.arg).map {
             countryList =>
               val form = formProvider(prefix, countryList)
               val preparedForm = request.userAnswers.get(OfficeOfExitCountryPage(index)) match {
@@ -80,7 +74,7 @@ class OfficeOfExitCountryController @Inject() (
       .andThen(getMandatoryPage(CountryOfDestinationPage))
       .async {
         implicit request =>
-          getCountries.flatMap {
+          countriesService.getOfficeOfExitCountries(request.userAnswers, request.arg).flatMap {
             countryList =>
               val form = formProvider(prefix, countryList)
               form
@@ -109,20 +103,4 @@ class OfficeOfExitCountryController @Inject() (
                 )
           }
       }
-
-  private def getCountries(implicit request: Request): Future[CountryList] =
-    request.userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads) match {
-      case Some(x) if x.countries.nonEmpty =>
-        countriesService
-          .getCustomsSecurityAgreementAreaCountries()
-          .map(
-            securityCountries =>
-              CountryList(
-                x.countries
-                  .filterNot(_ == request.arg)
-                  .intersect(securityCountries.countries)
-              )
-          )
-      case _ => countriesService.getCountries()
-    }
 }

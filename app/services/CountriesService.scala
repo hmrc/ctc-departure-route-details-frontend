@@ -17,9 +17,11 @@
 package services
 
 import connectors.ReferenceDataConnector
+import models.CountryList.countriesOfRoutingReads
 import models.reference.{Country, CountryCode}
-import models.{CountryList, DeclarationType, UserAnswers}
+import models.{CountryList, DeclarationType, RichOptionalJsArray, UserAnswers}
 import pages.external.DeclarationTypePage
+import pages.sections.routing.CountriesOfRoutingSection
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -69,6 +71,22 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
   def getCountriesWithoutZip()(implicit hc: HeaderCarrier): Future[Seq[CountryCode]] =
     referenceDataConnector
       .getCountriesWithoutZip()
+
+  def getOfficeOfTransitCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[CountryList] =
+    userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads) match {
+      case Some(x) if x.countries.nonEmpty => Future.successful(x)
+      case _                               => getCountries()
+    }
+
+  def getOfficeOfExitCountries(userAnswers: UserAnswers, countryOfDestination: Country)(implicit hc: HeaderCarrier): Future[CountryList] =
+    userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads).map(_.countries) match {
+      case Some(countries) if countries.nonEmpty =>
+        getCustomsSecurityAgreementAreaCountries()
+          .map(_.countries)
+          .map(countries.filterNot(_ == countryOfDestination).intersect(_))
+          .map(CountryList(_))
+      case _ => getCountries()
+    }
 
   private def getCountries(queryParameters: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[CountryList] =
     referenceDataConnector
