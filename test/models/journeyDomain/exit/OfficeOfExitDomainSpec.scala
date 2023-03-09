@@ -32,21 +32,40 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
 
     "can be parsed from UserAnswers" - {
 
-      "when country and office answered at given index" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(OfficeOfExitCountryPage(index), country)
-          .setValue(OfficeOfExitPage(index), customsOffice)
+      "when country and office answered at given index" - {
+        "and country is not inferred" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(OfficeOfExitCountryPage(index), country)
+            .setValue(OfficeOfExitPage(index), customsOffice)
 
-        val expectedResult = OfficeOfExitDomain(
-          country = country,
-          customsOffice = customsOffice
-        )(index)
+          val expectedResult = OfficeOfExitDomain(
+            country = country,
+            customsOffice = customsOffice
+          )(index)
 
-        val result: EitherType[OfficeOfExitDomain] = UserAnswersReader[OfficeOfExitDomain](
-          OfficeOfExitDomain.userAnswersReader(index)
-        ).run(userAnswers)
+          val result: EitherType[OfficeOfExitDomain] = UserAnswersReader[OfficeOfExitDomain](
+            OfficeOfExitDomain.userAnswersReader(index)
+          ).run(userAnswers)
 
-        result.value mustBe expectedResult
+          result.value mustBe expectedResult
+        }
+
+        "and country is inferred" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(InferredOfficeOfExitCountryPage(index), country)
+            .setValue(OfficeOfExitPage(index), customsOffice)
+
+          val expectedResult = OfficeOfExitDomain(
+            country = country,
+            customsOffice = customsOffice
+          )(index)
+
+          val result: EitherType[OfficeOfExitDomain] = UserAnswersReader[OfficeOfExitDomain](
+            OfficeOfExitDomain.userAnswersReader(index)
+          ).run(userAnswers)
+
+          result.value mustBe expectedResult
+        }
       }
     }
 
@@ -61,15 +80,28 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
         result.left.value.page mustBe OfficeOfExitCountryPage(index)
       }
 
-      "when office missing" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(OfficeOfExitCountryPage(index), country)
+      "when office missing" - {
+        "and country defined" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(OfficeOfExitCountryPage(index), country)
 
-        val result: EitherType[OfficeOfExitDomain] = UserAnswersReader[OfficeOfExitDomain](
-          OfficeOfExitDomain.userAnswersReader(index)
-        ).run(userAnswers)
+          val result: EitherType[OfficeOfExitDomain] = UserAnswersReader[OfficeOfExitDomain](
+            OfficeOfExitDomain.userAnswersReader(index)
+          ).run(userAnswers)
 
-        result.left.value.page mustBe OfficeOfExitPage(index)
+          result.left.value.page mustBe OfficeOfExitPage(index)
+        }
+
+        "and inferred country defined" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(InferredOfficeOfExitCountryPage(index), country)
+
+          val result: EitherType[OfficeOfExitDomain] = UserAnswersReader[OfficeOfExitDomain](
+            OfficeOfExitDomain.userAnswersReader(index)
+          ).run(userAnswers)
+
+          result.left.value.page mustBe OfficeOfExitPage(index)
+        }
       }
     }
   }

@@ -16,13 +16,13 @@
 
 package models.journeyDomain.exit
 
+import cats.implicits._
 import controllers.exit.index.routes
-import cats.implicits.catsSyntaxTuple2Semigroupal
 import models.domain.{GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode, UserAnswers}
-import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
+import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage, OfficeOfExitPage}
 import play.api.mvc.Call
 
 case class OfficeOfExitDomain(
@@ -43,7 +43,7 @@ object OfficeOfExitDomain {
     index: Index
   ): UserAnswersReader[OfficeOfExitDomain] =
     (
-      OfficeOfExitCountryPage(index).reader,
+      InferredOfficeOfExitCountryPage(index).reader orElse OfficeOfExitCountryPage(index).reader,
       OfficeOfExitPage(index).reader
     ).mapN {
       (country, office) => OfficeOfExitDomain(country, office)(index)
