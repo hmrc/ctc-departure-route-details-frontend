@@ -16,44 +16,20 @@
 
 package models
 
-sealed trait SecurityDetailsType {
-  val requiresSecurityDetails: Boolean
-  val securityContentType: Int
-}
+sealed trait SecurityDetailsType
 
-object SecurityDetailsType extends RadioModel[SecurityDetailsType] {
+object SecurityDetailsType extends EnumerableType[SecurityDetailsType] {
 
-  sealed trait SecurityDetailsNeededType extends SecurityDetailsType {
-    override val requiresSecurityDetails: Boolean = true
-  }
+  case object NoSecurityDetails extends WithName("noSecurity") with SecurityDetailsType
 
-  case object NoSecurityDetails extends WithName("noSecurity") with SecurityDetailsType {
-    override val requiresSecurityDetails: Boolean = false
-    override val securityContentType: Int         = 0
-  }
+  case object EntrySummaryDeclarationSecurityDetails extends WithName("entrySummaryDeclaration") with SecurityDetailsType
 
-  case object EntrySummaryDeclarationSecurityDetails extends WithName("entrySummaryDeclaration") with SecurityDetailsNeededType {
-    override val securityContentType: Int = 1
-  }
+  case object ExitSummaryDeclarationSecurityDetails extends WithName("exitSummaryDeclaration") with SecurityDetailsType
 
-  case object ExitSummaryDeclarationSecurityDetails extends WithName("exitSummaryDeclaration") with SecurityDetailsNeededType {
-    override val securityContentType: Int = 2
-  }
-
-  case object EntryAndExitSummaryDeclarationSecurityDetails extends WithName("entryAndExitSummaryDeclaration") with SecurityDetailsNeededType {
-    override val securityContentType: Int = 3
-  }
-
-  override val messageKeyPrefix: String = "securityDetailsType"
+  case object EntryAndExitSummaryDeclarationSecurityDetails extends WithName("entryAndExitSummaryDeclaration") with SecurityDetailsType
 
   override val values: Seq[SecurityDetailsType] = Seq(
     NoSecurityDetails,
-    EntrySummaryDeclarationSecurityDetails,
-    ExitSummaryDeclarationSecurityDetails,
-    EntryAndExitSummaryDeclarationSecurityDetails
-  )
-
-  val securityValues: Seq[SecurityDetailsType] = Seq(
     EntrySummaryDeclarationSecurityDetails,
     ExitSummaryDeclarationSecurityDetails,
     EntryAndExitSummaryDeclarationSecurityDetails

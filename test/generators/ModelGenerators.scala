@@ -17,9 +17,9 @@
 package generators
 
 import models.AddressLine.{City, NumberAndStreet, PostalCode, StreetNumber}
-import models.{PostalCodeAddress, _}
 import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
 import models.reference.{Country, CountryCode, CustomsOffice, UnLocode}
+import models.{PostalCodeAddress, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
@@ -157,6 +157,11 @@ trait ModelGenerators {
       Gen.oneOf(DeclarationType.values)
     }
 
+  lazy val arbitraryNonOption4DeclarationType: Arbitrary[DeclarationType] =
+    Arbitrary {
+      Gen.oneOf(DeclarationType.values.filterNot(_ == DeclarationType.Option4))
+    }
+
   lazy val arbitraryXiCustomsOffice: Arbitrary[CustomsOffice] =
     Arbitrary {
       for {
@@ -183,6 +188,11 @@ trait ModelGenerators {
   implicit lazy val arbitrarySecurityDetailsType: Arbitrary[SecurityDetailsType] =
     Arbitrary {
       Gen.oneOf(SecurityDetailsType.values)
+    }
+
+  lazy val arbitrarySomeSecurityDetailsType: Arbitrary[SecurityDetailsType] =
+    Arbitrary {
+      Gen.oneOf(SecurityDetailsType.values.filterNot(_ == SecurityDetailsType.NoSecurityDetails))
     }
 
   lazy val arbitraryIncompleteTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
