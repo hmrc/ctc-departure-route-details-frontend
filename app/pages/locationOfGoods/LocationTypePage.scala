@@ -23,6 +23,8 @@ import pages.sections.locationOfGoods.LocationOfGoodsSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
+import scala.util.Try
+
 case object LocationTypePage extends QuestionPage[LocationType] {
 
   override def path: JsPath = LocationOfGoodsSection.path \ toString
@@ -31,4 +33,10 @@ case object LocationTypePage extends QuestionPage[LocationType] {
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.LocationTypeController.onPageLoad(userAnswers.lrn, mode))
+
+  override def cleanup(value: Option[LocationType], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(_) => userAnswers.remove(IdentificationPage)
+      case None    => super.cleanup(value, userAnswers)
+    }
 }

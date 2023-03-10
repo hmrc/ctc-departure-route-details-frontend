@@ -16,7 +16,8 @@
 
 package pages.locationOfGoods
 
-import models.LocationType
+import models.{LocationOfGoodsIdentification, LocationType}
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
 class LocationTypePageSpec extends PageBehaviours {
@@ -28,5 +29,40 @@ class LocationTypePageSpec extends PageBehaviours {
     beSettable[LocationType](LocationTypePage)
 
     beRemovable[LocationType](LocationTypePage)
+
+    "cleanup" - {
+      "when value changes" - {
+        "must remove location of goods identifer" in {
+          forAll(arbitrary[LocationType], arbitrary[LocationOfGoodsIdentification]) {
+            (firstLocationType, locationIdentifierType) =>
+              forAll(arbitrary[LocationType].retryUntil(_ != firstLocationType)) {
+                secondLocationType =>
+                  val userAnswers = emptyUserAnswers
+                    .setValue(LocationTypePage, firstLocationType)
+                    .setValue(IdentificationPage, locationIdentifierType)
+
+                  val result = userAnswers.setValue(LocationTypePage, secondLocationType)
+
+                  result.get(IdentificationPage) must not be defined
+              }
+          }
+        }
+      }
+
+      "when value doesn't change" - {
+        "must do nothing" in {
+          forAll(arbitrary[LocationType], arbitrary[LocationOfGoodsIdentification]) {
+            (locationType, locationIdentifierType) =>
+              val userAnswers = emptyUserAnswers
+                .setValue(LocationTypePage, locationType)
+                .setValue(IdentificationPage, locationIdentifierType)
+
+              val result = userAnswers.setValue(LocationTypePage, locationType)
+
+              result.get(IdentificationPage) mustBe defined
+          }
+        }
+      }
+    }
   }
 }

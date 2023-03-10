@@ -54,7 +54,7 @@ class IdentificationController @Inject() (
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, lrn, LocationOfGoodsIdentification.radioItems, mode))
+      Ok(view(preparedForm, lrn, LocationOfGoodsIdentification.radioItemsU(request.userAnswers), mode))
   }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
@@ -62,7 +62,7 @@ class IdentificationController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationOfGoodsIdentification.radioItems, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationOfGoodsIdentification.radioItemsU(request.userAnswers), mode))),
           value =>
             for {
               ctcCountries                          <- countriesService.getCountryCodesCTC()
