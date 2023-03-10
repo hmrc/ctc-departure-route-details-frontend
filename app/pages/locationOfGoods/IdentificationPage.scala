@@ -25,11 +25,9 @@ import play.api.mvc.Call
 
 import scala.util.Try
 
-case object IdentificationPage extends QuestionPage[LocationOfGoodsIdentification] {
+trait BaseIdentificationPage extends QuestionPage[LocationOfGoodsIdentification] {
 
   override def path: JsPath = LocationOfGoodsSection.path \ toString
-
-  override def toString: String = "qualifierOfIdentification"
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.IdentificationController.onPageLoad(userAnswers.lrn, mode))
@@ -39,4 +37,12 @@ case object IdentificationPage extends QuestionPage[LocationOfGoodsIdentificatio
       case Some(_) => userAnswers.remove(LocationOfGoodsIdentifierSection)
       case None    => super.cleanup(value, userAnswers)
     }
+}
+
+case object IdentificationPage extends BaseIdentificationPage {
+  override def toString: String = "qualifierOfIdentification"
+}
+
+case object InferredIdentificationPage extends BaseIdentificationPage {
+  override def toString: String = "inferredQualifierOfIdentification"
 }

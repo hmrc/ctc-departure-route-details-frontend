@@ -137,7 +137,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
           val userAnswers = emptyUserAnswers
             .setValue(LocationTypePage, typeOfLocation)
-            .setValue(IdentificationPage, qualifierOfIdentification)
+            .setValue(InferredIdentificationPage, qualifierOfIdentification)
             .setValue(AuthorisationNumberPage, authorisationNumber)
             .setValue(AddIdentifierYesNoPage, false)
             .setValue(AddContactYesNoPage, false)
@@ -161,7 +161,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
           val userAnswers = emptyUserAnswers
             .setValue(LocationTypePage, typeOfLocation)
-            .setValue(IdentificationPage, qualifierOfIdentification)
+            .setValue(InferredIdentificationPage, qualifierOfIdentification)
             .setValue(AuthorisationNumberPage, authorisationNumber)
             .setValue(AddIdentifierYesNoPage, true)
             .setValue(AdditionalIdentifierPage, "1234")
@@ -257,7 +257,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
         val userAnswers = emptyUserAnswers
           .setValue(LocationTypePage, typeOfLocation)
-          .setValue(IdentificationPage, qualifierOfIdentification)
+          .setValue(InferredIdentificationPage, qualifierOfIdentification)
           .setValue(AuthorisationNumberPage, authorisationNumber)
           .setValue(AddIdentifierYesNoPage, true)
           .setValue(AdditionalIdentifierPage, "1234")
@@ -315,7 +315,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
         val userAnswers = emptyUserAnswers
           .setValue(LocationTypePage, typeOfLocation)
-          .setValue(IdentificationPage, qualifierOfIdentification)
+          .setValue(InferredIdentificationPage, qualifierOfIdentification)
           .setValue(AuthorisationNumberPage, authorisationNumber)
           .setValue(AddIdentifierYesNoPage, true)
           .setValue(AddContactYesNoPage, false)
@@ -332,7 +332,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
         val userAnswers = emptyUserAnswers
           .setValue(LocationTypePage, typeOfLocation)
-          .setValue(IdentificationPage, qualifierOfIdentification)
+          .setValue(InferredIdentificationPage, qualifierOfIdentification)
           .setValue(AuthorisationNumberPage, authorisationNumber)
           .setValue(AddIdentifierYesNoPage, true)
           .setValue(AdditionalIdentifierPage, "1234")
@@ -349,7 +349,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
         val userAnswers = emptyUserAnswers
           .setValue(LocationTypePage, typeOfLocation)
-          .setValue(IdentificationPage, qualifierOfIdentification)
+          .setValue(InferredIdentificationPage, qualifierOfIdentification)
           .setValue(AuthorisationNumberPage, authorisationNumber)
           .setValue(AddIdentifierYesNoPage, true)
           .setValue(AdditionalIdentifierPage, "1234")
