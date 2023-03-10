@@ -227,16 +227,30 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           result.left.value.page mustBe OfficeOfTransitCountryPage(index)
         }
 
-        "when office missing" in {
-          val userAnswers = emptyUserAnswers
-            .setValue(OfficeOfTransitCountryPage(Index(0)), country)
-            .setValue(OfficeOfTransitCountryPage(index), country)
+        "when office missing" - {
+          "and country defined" in {
+            val userAnswers = emptyUserAnswers
+              .setValue(OfficeOfTransitCountryPage(Index(0)), country)
+              .setValue(OfficeOfTransitCountryPage(index), country)
 
-          val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index, Nil, Nil)
-          ).run(userAnswers)
+            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index, Nil, Nil)
+            ).run(userAnswers)
 
-          result.left.value.page mustBe OfficeOfTransitPage(index)
+            result.left.value.page mustBe OfficeOfTransitPage(index)
+          }
+
+          "and inferred country defined" in {
+            val userAnswers = emptyUserAnswers
+              .setValue(OfficeOfTransitCountryPage(Index(0)), country)
+              .setValue(InferredOfficeOfTransitCountryPage(index), country)
+
+            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index, Nil, Nil)
+            ).run(userAnswers)
+
+            result.left.value.page mustBe OfficeOfTransitPage(index)
+          }
         }
 
         "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {

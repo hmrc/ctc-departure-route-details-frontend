@@ -19,13 +19,13 @@ package controllers.transit.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.CountryFormProvider
 import generators.Generators
-import models.{CountryList, CustomsOfficeList, Index, NormalMode}
+import models.{CountryList, CustomsOfficeList, NormalMode, UserAnswers}
 import navigation.OfficeOfTransitNavigatorProvider
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
-import pages.routing.index.CountryOfRoutingPage
-import pages.transit.index.OfficeOfTransitCountryPage
+import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage}
 import play.api.data.FormError
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -63,9 +63,32 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
 
   "OfficeOfTransitCountry Controller" - {
 
+    "must set inferred answer and redirect to next page" - {
+      "when only one country to choose from" in {
+
+        when(mockCountriesService.getOfficeOfTransitCountries(any())(any()))
+          .thenReturn(Future.successful(CountryList(Seq(country1))))
+
+        setExistingUserAnswers(emptyUserAnswers)
+
+        val request = FakeRequest(GET, officeOfTransitCountryRoute)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual onwardRoute.url
+
+        val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+        userAnswersCaptor.getValue.get(OfficeOfTransitCountryPage(index)) must not be defined
+        userAnswersCaptor.getValue.getValue(InferredOfficeOfTransitCountryPage(index)) mustBe country1
+      }
+    }
+
     "must return OK and the correct view for a GET" in {
 
-      when(mockCountriesService.getCountries()(any()))
+      when(mockCountriesService.getOfficeOfTransitCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
 
       setExistingUserAnswers(emptyUserAnswers)
@@ -82,31 +105,9 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
         view(form, lrn, countryList.countries, mode, index)(request, messages).toString
     }
 
-    "must use countries of routing if populated in user answers" in {
-
-      val userAnswers = emptyUserAnswers
-        .setValue(CountryOfRoutingPage(Index(0)), country1)
-        .setValue(CountryOfRoutingPage(Index(1)), country2)
-
-      setExistingUserAnswers(userAnswers)
-
-      val request = FakeRequest(GET, officeOfTransitCountryRoute)
-
-      val result = route(app, request).value
-
-      val view = injector.instanceOf[OfficeOfTransitCountryView]
-
-      status(result) mustEqual OK
-
-      contentAsString(result) mustEqual
-        view(form, lrn, countryList.countries, mode, index)(request, messages).toString
-
-      verify(mockCountriesService, never()).getCommunityCountries()(any())
-    }
-
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockCountriesService.getCountries()(any()))
+      when(mockCountriesService.getOfficeOfTransitCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
 
       val userAnswers = emptyUserAnswers.setValue(OfficeOfTransitCountryPage(index), country1)
@@ -130,8 +131,9 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
 
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
-      when(mockCountriesService.getCountries()(any()))
+      when(mockCountriesService.getOfficeOfTransitCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
+
       when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
         .thenReturn(Future.successful(arbitrary[CustomsOfficeList].sample.value))
 
@@ -149,7 +151,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockCountriesService.getCountries()(any()))
+      when(mockCountriesService.getOfficeOfTransitCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
 
       setExistingUserAnswers(emptyUserAnswers)

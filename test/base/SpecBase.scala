@@ -17,13 +17,17 @@
 package base
 
 import config.FrontendAppConfig
+import models.reference.Country
 import models.{EoriNumber, Index, LocalReferenceNumber, RichJsObject, UserAnswers}
+import org.scalacheck.Gen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues, TryValues}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage}
+import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage}
 import pages.{QuestionPage, ReadOnlyPage}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
@@ -88,6 +92,16 @@ trait SpecBase
 
     def removeValue(page: QuestionPage[_]): UserAnswers =
       userAnswers.remove(page).success.value
+
+    def setOfficeOfTransitCountry(country: Country): UserAnswers = {
+      val page = Gen.oneOf(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index))
+      userAnswers.setValue(page.sample.value, country)
+    }
+
+    def setOfficeOfExitCountry(country: Country): UserAnswers = {
+      val page = Gen.oneOf(OfficeOfExitCountryPage(index), InferredOfficeOfExitCountryPage(index))
+      userAnswers.setValue(page.sample.value, country)
+    }
   }
 
   implicit class RichContent(c: Content) {

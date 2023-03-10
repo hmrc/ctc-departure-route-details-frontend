@@ -20,17 +20,20 @@ import base.SpecBase
 import connectors.ReferenceDataConnector
 import generators.Generators
 import models.reference.{Country, CountryCode}
-import models.{CountryList, DeclarationType}
+import models.{CountryList, DeclarationType, Index}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{never, reset, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.external.DeclarationTypePage
+import pages.routing.index.CountryOfRoutingPage
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generators {
+class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generators with ScalaCheckPropertyChecks {
 
   private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   private val service                                      = new CountriesService(mockRefDataConnector)
@@ -39,6 +42,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
   private val country2: Country = Country(CountryCode("FR"), "France")
   private val country3: Country = Country(CountryCode("ES"), "Spain")
   private val countries         = Seq(country1, country2, country3)
+  private val sortedCountries   = Seq(country2, country3, country1)
 
   override def beforeEach(): Unit = {
     reset(mockRefDataConnector)
@@ -57,7 +61,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getDestinationCountries(userAnswers).futureValue mustBe
-          CountryList(Seq(country2, country3, country1))
+          CountryList(sortedCountries)
 
         val expectedQueryParameters = Seq(
           "membership" -> "eu"
@@ -75,7 +79,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getDestinationCountries(userAnswers).futureValue mustBe
-          CountryList(Seq(country2, country3, country1))
+          CountryList(sortedCountries)
 
         val expectedQueryParameters = Seq(
           "membership" -> "ctc"
@@ -92,7 +96,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getCountries().futureValue mustBe
-          CountryList(Seq(country2, country3, country1))
+          CountryList(sortedCountries)
 
         verify(mockRefDataConnector).getCountries(eqTo(Nil))(any(), any())
       }
@@ -105,7 +109,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getTransitCountries().futureValue mustBe
-          CountryList(Seq(country2, country3, country1))
+          CountryList(sortedCountries)
 
         val expectedQueryParameters = Seq(
           "membership" -> "ctc"
@@ -122,7 +126,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getNonEuTransitCountries().futureValue mustBe
-          CountryList(Seq(country2, country3, country1))
+          CountryList(sortedCountries)
 
         val expectedQueryParameters = Seq(
           "membership" -> "non_eu"
@@ -139,7 +143,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getCommunityCountries().futureValue mustBe
-          CountryList(Seq(country2, country3, country1))
+          CountryList(sortedCountries)
 
         val expectedQueryParameters = Seq(
           "membership" -> "eu"
@@ -156,7 +160,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getCustomsSecurityAgreementAreaCountries().futureValue mustBe
-          CountryList(Seq(country2, country3, country1))
+          CountryList(sortedCountries)
 
         verify(mockRefDataConnector).getCustomsSecurityAgreementAreaCountries()(any(), any())
       }
@@ -169,7 +173,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getCountryCodesCTC().futureValue mustBe
-          CountryList(Seq(country2, country3, country1))
+          CountryList(sortedCountries)
 
         verify(mockRefDataConnector).getCountryCodesCTC()(any(), any())
       }
@@ -195,9 +199,82 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getAddressPostcodeBasedCountries().futureValue mustBe
-          CountryList(Seq(country2, country3, country1))
+          CountryList(sortedCountries)
 
         verify(mockRefDataConnector).getAddressPostcodeBasedCountries()(any(), any())
+      }
+    }
+
+    "getOfficeOfTransitCountries" - {
+      "when there are one or more countries of routing in user answers" - {
+        "must return countries of routing" in {
+          forAll(Gen.choose(1, frontendAppConfig.maxCountriesOfRouting)) {
+            numberOfCountries =>
+              val userAnswers = (0 until numberOfCountries).foldLeft(emptyUserAnswers) {
+                (acc, i) =>
+                  acc.setValue(CountryOfRoutingPage(Index(i)), country1)
+              }
+              val result = service.getOfficeOfTransitCountries(userAnswers).futureValue
+
+              result.countries mustBe Seq.fill(numberOfCountries)(country1)
+
+              verify(mockRefDataConnector, never()).getCountries(any())(any(), any())
+          }
+        }
+      }
+
+      "when there are no countries of routing in user answers" - {
+        "must call getCountries" in {
+          when(mockRefDataConnector.getCountries(any())(any(), any()))
+            .thenReturn(Future.successful(countries))
+
+          val result = service.getOfficeOfTransitCountries(emptyUserAnswers).futureValue
+
+          result.countries mustBe sortedCountries
+
+          verify(mockRefDataConnector).getCountries(any())(any(), any())
+        }
+      }
+    }
+
+    "getOfficeOfExitCountries" - {
+      "when there are one or more countries of routing in user answers" - {
+        "must return countries that are in the countries of routing, in the CL147 and aren't the country of destination" in {
+          val country4: Country = Country(CountryCode("DE"), "Germany")
+
+          val userAnswers = emptyUserAnswers
+            .setValue(CountryOfRoutingPage(Index(0)), country1)
+            .setValue(CountryOfRoutingPage(Index(1)), country2)
+            .setValue(CountryOfRoutingPage(Index(2)), country3)
+            .setValue(CountryOfRoutingPage(Index(3)), country4)
+
+          when(mockRefDataConnector.getCustomsSecurityAgreementAreaCountries()(any(), any()))
+            .thenReturn(Future.successful(countries))
+
+          val result = service.getOfficeOfExitCountries(userAnswers, country3).futureValue
+
+          result.countries mustBe Seq(country1, country2)
+
+          verify(mockRefDataConnector, never()).getCountries(any())(any(), any())
+        }
+      }
+
+      "when there are no countries of routing in user answers" - {
+        "must call getCountries" in {
+          forAll(arbitrary[Country]) {
+            countryOfDestination =>
+              beforeEach()
+
+              when(mockRefDataConnector.getCountries(any())(any(), any()))
+                .thenReturn(Future.successful(countries))
+
+              val result = service.getOfficeOfExitCountries(emptyUserAnswers, countryOfDestination).futureValue
+
+              result.countries mustBe sortedCountries
+
+              verify(mockRefDataConnector).getCountries(any())(any(), any())
+          }
+        }
       }
     }
 

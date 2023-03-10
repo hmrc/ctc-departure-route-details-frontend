@@ -24,12 +24,18 @@ import pages.sections.exit.OfficeOfExitSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-case class OfficeOfExitCountryPage(index: Index) extends QuestionPage[Country] {
+abstract class BaseOfficeOfExitCountryPage(index: Index) extends QuestionPage[Country] {
 
   override def path: JsPath = OfficeOfExitSection(index).path \ toString
 
-  override def toString: String = "officeOfExitCountry"
-
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.OfficeOfExitCountryController.onPageLoad(userAnswers.lrn, index, mode))
+}
+
+case class OfficeOfExitCountryPage(index: Index) extends BaseOfficeOfExitCountryPage(index) {
+  override def toString: String = "officeOfExitCountry"
+}
+
+case class InferredOfficeOfExitCountryPage(index: Index) extends BaseOfficeOfExitCountryPage(index) {
+  override def toString: String = "inferredOfficeOfExitCountry"
 }

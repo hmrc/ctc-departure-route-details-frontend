@@ -16,7 +16,7 @@
 
 package models.journeyDomain.transit
 
-import cats.implicits.{catsSyntaxTuple2Semigroupal, catsSyntaxTuple3Semigroupal}
+import cats.implicits._
 import config.Constants.AD
 import models.SecurityDetailsType.{EntryAndExitSummaryDeclarationSecurityDetails, EntrySummaryDeclarationSecurityDetails}
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
@@ -25,7 +25,7 @@ import models.reference.{Country, CustomsOffice}
 import models.{DateTime, Index, Mode, UserAnswers}
 import pages.external.SecurityDetailsTypePage
 import pages.routing.OfficeOfDestinationPage
-import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
+import pages.transit.index._
 import play.api.mvc.Call
 
 case class OfficeOfTransitDomain(
@@ -80,7 +80,7 @@ object OfficeOfTransitDomain {
 
     lazy val readsWithCountry: UserAnswersReader[OfficeOfTransitDomain] =
       (
-        OfficeOfTransitCountryPage(index).reader,
+        InferredOfficeOfTransitCountryPage(index).reader orElse OfficeOfTransitCountryPage(index).reader,
         OfficeOfTransitPage(index).reader,
         etaReads
       ).mapN {

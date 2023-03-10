@@ -23,7 +23,7 @@ import models.{CustomsOfficeList, NormalMode}
 import navigation.OfficeOfExitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
+import pages.exit.index.OfficeOfExitPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -53,14 +53,15 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
       .overrides(bind(classOf[OfficeOfExitNavigatorProvider]).toInstance(fakeOfficeOfExitNavigatorProvider))
       .overrides(bind(classOf[CustomsOfficesService]).toInstance(mockCustomsOfficesService))
 
+  private val baseAnswers = emptyUserAnswers.setOfficeOfExitCountry(country)
+
   "OfficeOfExit Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = emptyUserAnswers.setValue(OfficeOfExitCountryPage(index), country)
-
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any())).thenReturn(Future.successful(customsOfficeList))
-      setExistingUserAnswers(userAnswers)
+
+      setExistingUserAnswers(baseAnswers)
 
       val request = FakeRequest(GET, officeOfExitRoute)
 
@@ -77,9 +78,8 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any())).thenReturn(Future.successful(customsOfficeList))
-      val userAnswers = emptyUserAnswers
-        .setValue(OfficeOfExitCountryPage(index), country)
-        .setValue(OfficeOfExitPage(index), customsOffice1)
+
+      val userAnswers = baseAnswers.setValue(OfficeOfExitPage(index), customsOffice1)
       setExistingUserAnswers(userAnswers)
 
       val request = FakeRequest(GET, officeOfExitRoute)
@@ -98,12 +98,10 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val userAnswers = emptyUserAnswers.setValue(OfficeOfExitCountryPage(index), country)
-
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any())).thenReturn(Future.successful(customsOfficeList))
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
-      setExistingUserAnswers(userAnswers)
+      setExistingUserAnswers(baseAnswers)
 
       val request = FakeRequest(POST, officeOfExitRoute)
         .withFormUrlEncodedBody(("value", customsOffice1.id))
@@ -117,10 +115,9 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val userAnswers = emptyUserAnswers.setValue(OfficeOfExitCountryPage(index), country)
-
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any())).thenReturn(Future.successful(customsOfficeList))
-      setExistingUserAnswers(userAnswers)
+
+      setExistingUserAnswers(baseAnswers)
 
       val request   = FakeRequest(POST, officeOfExitRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))

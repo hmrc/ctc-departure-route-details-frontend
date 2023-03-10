@@ -26,11 +26,9 @@ import play.api.mvc.Call
 
 import scala.util.Try
 
-case class OfficeOfTransitCountryPage(index: Index) extends QuestionPage[Country] {
+abstract class BaseOfficeOfTransitCountryPage(index: Index) extends QuestionPage[Country] {
 
   override def path: JsPath = OfficeOfTransitSection(index).path \ toString
-
-  override def toString: String = "officeOfTransitCountry"
 
   override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
@@ -40,4 +38,12 @@ case class OfficeOfTransitCountryPage(index: Index) extends QuestionPage[Country
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.OfficeOfTransitCountryController.onPageLoad(userAnswers.lrn, mode, index))
+}
+
+case class OfficeOfTransitCountryPage(index: Index) extends BaseOfficeOfTransitCountryPage(index) {
+  override def toString: String = "officeOfTransitCountry"
+}
+
+case class InferredOfficeOfTransitCountryPage(index: Index) extends BaseOfficeOfTransitCountryPage(index) {
+  override def toString: String = "inferredOfficeOfTransitCountry"
 }
