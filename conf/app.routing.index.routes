@@ -1,10 +1,10 @@
 
-GET        /:lrn/route-details/transit-route/:index/country                     controllers.routing.index.CountryOfRoutingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode, index: Index)
-POST       /:lrn/route-details/transit-route/:index/country                     controllers.routing.index.CountryOfRoutingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode, index: Index)
-GET        /:lrn/route-details/transit-route/:index/change-country              controllers.routing.index.CountryOfRoutingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)
-POST       /:lrn/route-details/transit-route/:index/change-country              controllers.routing.index.CountryOfRoutingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)
+GET        /transit-route/:index/country/:lrn                     controllers.routing.index.CountryOfRoutingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode, index: Index)
+POST       /transit-route/:index/country/:lrn                     controllers.routing.index.CountryOfRoutingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode, index: Index)
+GET        /transit-route/:index/change-country/:lrn              controllers.routing.index.CountryOfRoutingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)
+POST       /transit-route/:index/change-country/:lrn              controllers.routing.index.CountryOfRoutingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)
 
-GET        /:lrn/route-details/transit-route/:index/remove-country              controllers.routing.index.RemoveCountryOfRoutingYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode, index: Index)
-POST       /:lrn/route-details/transit-route/:index/remove-country              controllers.routing.index.RemoveCountryOfRoutingYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode, index: Index)
-GET        /:lrn/route-details/transit-route/:index/change-remove-country       controllers.routing.index.RemoveCountryOfRoutingYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)
-POST       /:lrn/route-details/transit-route/:index/change-remove-country       controllers.routing.index.RemoveCountryOfRoutingYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)
+GET        /transit-route/:index/remove-country/:lrn              controllers.routing.index.RemoveCountryOfRoutingYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode, index: Index)
+POST       /transit-route/:index/remove-country/:lrn              controllers.routing.index.RemoveCountryOfRoutingYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode, index: Index)
+GET        /transit-route/:index/change-remove-country/:lrn       controllers.routing.index.RemoveCountryOfRoutingYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)
+POST       /transit-route/:index/change-remove-country/:lrn       controllers.routing.index.RemoveCountryOfRoutingYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)
