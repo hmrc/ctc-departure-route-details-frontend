@@ -36,7 +36,7 @@ case object LocationTypePage extends QuestionPage[LocationType] {
 
   override def cleanup(value: Option[LocationType], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(_) => userAnswers.remove(IdentificationPage)
+      case Some(_) => userAnswers.remove(IdentificationPage).flatMap(_.remove(InferredIdentificationPage))
       case None    => super.cleanup(value, userAnswers)
     }
 }
