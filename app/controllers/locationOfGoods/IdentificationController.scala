@@ -19,13 +19,15 @@ package controllers.locationOfGoods
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
+import models.requests.DataRequest
 import models.{LocalReferenceNumber, LocationOfGoodsIdentification, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
-import pages.locationOfGoods.IdentificationPage
+import pages.QuestionPage
+import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
-import services.CountriesService
+import services.{CountriesService, InferenceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.IdentificationView
 
@@ -40,21 +42,27 @@ class IdentificationController @Inject() (
   formProvider: EnumerableFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: IdentificationView,
-  countriesService: CountriesService
+  countriesService: CountriesService,
+  inferenceService: InferenceService
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   private val form = formProvider[LocationOfGoodsIdentification]("locationOfGoods.identification")
 
-  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
+  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(IdentificationPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      inferenceService.inferLocationOfGoodsIdentifier(request.userAnswers) match {
+        case Some(value) =>
+          redirect(mode, InferredIdentificationPage, value)
+        case None =>
+          val preparedForm = request.userAnswers.get(IdentificationPage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
 
-      Ok(view(preparedForm, lrn, LocationOfGoodsIdentification.radioItems, mode))
+          Future.successful(Ok(view(preparedForm, lrn, LocationOfGoodsIdentification.radioItemsU(request.userAnswers), mode)))
+      }
   }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
@@ -62,20 +70,26 @@ class IdentificationController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationOfGoodsIdentification.radioItems, mode))),
-          value =>
-            for {
-              ctcCountries                          <- countriesService.getCountryCodesCTC()
-              customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-              result <- {
-                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                IdentificationPage
-                  .writeToUserAnswers(value)
-                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                  .writeToSession()
-                  .navigate()
-              }
-            } yield result
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationOfGoodsIdentification.radioItemsU(request.userAnswers), mode))),
+          value => redirect(mode, IdentificationPage, value)
         )
   }
+
+  private def redirect(
+    mode: Mode,
+    page: QuestionPage[LocationOfGoodsIdentification],
+    value: LocationOfGoodsIdentification
+  )(implicit request: DataRequest[_]): Future[Result] =
+    for {
+      ctcCountries                          <- countriesService.getCountryCodesCTC()
+      customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
+      result <- {
+        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        page
+          .writeToUserAnswers(value)
+          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+          .writeToSession()
+          .navigate()
+      }
+    } yield result
 }

@@ -16,11 +16,14 @@
 
 package models
 
+import models.LocationType._
+import pages.locationOfGoods.LocationTypePage
+
 sealed trait LocationOfGoodsIdentification {
   val code: String
 }
 
-object LocationOfGoodsIdentification extends RadioModel[LocationOfGoodsIdentification] {
+object LocationOfGoodsIdentification extends RadioModelU[LocationOfGoodsIdentification] {
 
   case object CustomsOfficeIdentifier extends WithName("customsOfficeIdentifier") with LocationOfGoodsIdentification {
     override val code: String = "V"
@@ -61,4 +64,18 @@ object LocationOfGoodsIdentification extends RadioModel[LocationOfGoodsIdentific
     AddressIdentifier,
     PostalCode
   )
+
+  override def valuesU(userAnswers: UserAnswers): Seq[LocationOfGoodsIdentification] =
+    userAnswers.get(LocationTypePage) match {
+      case Some(DesignatedLocation) =>
+        Seq(CustomsOfficeIdentifier, UnlocodeIdentifier)
+      case Some(AuthorisedPlace) =>
+        Seq(AuthorisationNumber)
+      case Some(ApprovedPlace) =>
+        Seq(EoriNumber, CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier, PostalCode)
+      case Some(Other) =>
+        Seq(CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier, PostalCode)
+      case None =>
+        values
+    }
 }

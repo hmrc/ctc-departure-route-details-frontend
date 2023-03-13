@@ -16,7 +16,7 @@
 
 package models.journeyDomain.locationOfGoods
 
-import cats.implicits.{catsSyntaxTuple2Semigroupal, catsSyntaxTuple3Semigroupal, catsSyntaxTuple4Semigroupal}
+import cats.implicits._
 import models.LocationOfGoodsIdentification.{
   AddressIdentifier,
   AuthorisationNumber,
@@ -29,22 +29,8 @@ import models.LocationOfGoodsIdentification.{
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice, UnLocode}
-import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, Mode, PostalCodeAddress, UserAnswers}
-import pages.locationOfGoods.{
-  AddContactYesNoPage,
-  AddIdentifierYesNoPage,
-  AdditionalIdentifierPage,
-  AddressPage,
-  AuthorisationNumberPage,
-  CoordinatesPage,
-  CountryPage,
-  CustomsOfficeIdentifierPage,
-  EoriPage,
-  IdentificationPage,
-  LocationTypePage,
-  PostalCodePage,
-  UnLocodePage
-}
+import models._
+import pages.locationOfGoods._
 import play.api.mvc.Call
 
 sealed trait LocationOfGoodsDomain extends JourneyDomainModel {
@@ -64,7 +50,8 @@ object LocationOfGoodsDomain {
   implicit val userAnswersReader: UserAnswersReader[LocationOfGoodsDomain] =
     LocationTypePage.reader.flatMap {
       typeOfLocation =>
-        IdentificationPage.reader.flatMap {
+        val identifierReads = InferredIdentificationPage.reader orElse IdentificationPage.reader
+        identifierReads.flatMap {
           case CustomsOfficeIdentifier => LocationOfGoodsV.userAnswersReader(typeOfLocation)
           case EoriNumber              => LocationOfGoodsX.userAnswersReader(typeOfLocation)
           case AuthorisationNumber     => LocationOfGoodsY.userAnswersReader(typeOfLocation)

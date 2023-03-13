@@ -18,32 +18,71 @@ package controllers.locationOfGoods
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.EnumerableFormProvider
-import models.{LocationOfGoodsIdentification, NormalMode}
+import generators.Generators
+import models.{LocationOfGoodsIdentification, NormalMode, UserAnswers}
 import navigation.LocationOfGoodsNavigatorProvider
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.locationOfGoods.IdentificationPage
+import org.mockito.Mockito.{reset, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.InferenceService
 import views.html.locationOfGoods.IdentificationView
 
 import scala.concurrent.Future
 
-class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
+class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val formProvider             = new EnumerableFormProvider()
   private val form                     = formProvider[LocationOfGoodsIdentification]("locationOfGoods.identification")
   private val mode                     = NormalMode
   private lazy val identificationRoute = routes.IdentificationController.onPageLoad(lrn, mode).url
 
+  private val mockInferenceService = mock[InferenceService]
+
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(bind(classOf[LocationOfGoodsNavigatorProvider]).toInstance(fakeLocationOfGoodsNavigatorProvider))
+      .overrides(bind(classOf[InferenceService]).toInstance(mockInferenceService))
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockInferenceService)
+    when(mockInferenceService.inferLocationOfGoodsIdentifier(any())).thenReturn(None)
+  }
 
   "LocationOfGoodsIdentification Controller" - {
+
+    "when value is inferred" - {
+      "must redirect to next page" in {
+        forAll(arbitrary[LocationOfGoodsIdentification]) {
+          identifier =>
+            beforeEach()
+            when(mockInferenceService.inferLocationOfGoodsIdentifier(any())).thenReturn(Some(identifier))
+
+            setExistingUserAnswers(emptyUserAnswers)
+
+            val request = FakeRequest(GET, identificationRoute)
+
+            val result = route(app, request).value
+
+            status(result) mustEqual SEE_OTHER
+
+            redirectLocation(result).value mustEqual onwardRoute.url
+
+            val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+            verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+            userAnswersCaptor.getValue.getValue(InferredIdentificationPage) mustBe identifier
+            userAnswersCaptor.getValue.get(IdentificationPage) must not be defined
+        }
+      }
+    }
 
     "must return OK and the correct view for a GET" in {
 
@@ -58,7 +97,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, LocationOfGoodsIdentification.radioItems, mode)(request, messages).toString
+        view(form, lrn, LocationOfGoodsIdentification.radioItemsU(emptyUserAnswers), mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -77,7 +116,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, LocationOfGoodsIdentification.radioItems, mode)(request, messages).toString
+        view(filledForm, lrn, LocationOfGoodsIdentification.radioItemsU(userAnswers), mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -110,7 +149,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, LocationOfGoodsIdentification.radioItems, mode)(request, messages).toString
+        view(boundForm, lrn, LocationOfGoodsIdentification.radioItemsU(emptyUserAnswers), mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
