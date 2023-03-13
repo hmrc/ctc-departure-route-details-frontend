@@ -16,13 +16,14 @@
 
 package models
 
-sealed trait LocationType {
+sealed trait LocationType extends Radioable[LocationType] {
+  override val messageKeyPrefix: String = LocationType.messageKeyPrefix
   val code: String
 }
 
-object LocationType extends RadioModel[LocationType] {
+object LocationType extends EnumerableType[LocationType] {
 
-  override val messageKeyPrefix = "locationOfGoods.locationType"
+  val messageKeyPrefix = "locationOfGoods.locationType"
 
   case object DesignatedLocation extends WithName("designatedLocation") with LocationType {
     override val code: String = "A"

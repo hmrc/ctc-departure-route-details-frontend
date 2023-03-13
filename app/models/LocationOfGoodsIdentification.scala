@@ -19,11 +19,12 @@ package models
 import models.LocationType._
 import pages.locationOfGoods.LocationTypePage
 
-sealed trait LocationOfGoodsIdentification {
+sealed trait LocationOfGoodsIdentification extends Radioable[LocationOfGoodsIdentification] {
+  override val messageKeyPrefix: String = LocationOfGoodsIdentification.messageKeyPrefix
   val code: String
 }
 
-object LocationOfGoodsIdentification extends RadioModelU[LocationOfGoodsIdentification] {
+object LocationOfGoodsIdentification extends EnumerableType[LocationOfGoodsIdentification] {
 
   case object CustomsOfficeIdentifier extends WithName("customsOfficeIdentifier") with LocationOfGoodsIdentification {
     override val code: String = "V"
@@ -53,7 +54,7 @@ object LocationOfGoodsIdentification extends RadioModelU[LocationOfGoodsIdentifi
     override val code: String = "T"
   }
 
-  override val messageKeyPrefix: String = "locationOfGoods.identification"
+  val messageKeyPrefix: String = "locationOfGoods.identification"
 
   val values: Seq[LocationOfGoodsIdentification] = Seq(
     CustomsOfficeIdentifier,
@@ -65,7 +66,7 @@ object LocationOfGoodsIdentification extends RadioModelU[LocationOfGoodsIdentifi
     PostalCode
   )
 
-  override def valuesU(userAnswers: UserAnswers): Seq[LocationOfGoodsIdentification] =
+  def values(userAnswers: UserAnswers): Seq[LocationOfGoodsIdentification] =
     userAnswers.get(LocationTypePage) match {
       case Some(DesignatedLocation) =>
         Seq(CustomsOfficeIdentifier, UnlocodeIdentifier)

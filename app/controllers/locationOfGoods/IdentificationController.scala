@@ -27,7 +27,7 @@ import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
-import services.{CountriesService, InferenceService}
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.IdentificationView
 
@@ -42,8 +42,7 @@ class IdentificationController @Inject() (
   formProvider: EnumerableFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: IdentificationView,
-  countriesService: CountriesService,
-  inferenceService: InferenceService
+  countriesService: CountriesService
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -52,16 +51,16 @@ class IdentificationController @Inject() (
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      inferenceService.inferLocationOfGoodsIdentifier(request.userAnswers) match {
-        case Some(value) =>
-          redirect(mode, InferredIdentificationPage, value)
-        case None =>
+      LocationOfGoodsIdentification.values(request.userAnswers) match {
+        case identifier :: Nil =>
+          redirect(mode, InferredIdentificationPage, identifier)
+        case identifiers =>
           val preparedForm = request.userAnswers.get(IdentificationPage) match {
             case None        => form
             case Some(value) => form.fill(value)
           }
 
-          Future.successful(Ok(view(preparedForm, lrn, LocationOfGoodsIdentification.radioItemsU(request.userAnswers), mode)))
+          Future.successful(Ok(view(preparedForm, lrn, identifiers, mode)))
       }
   }
 
@@ -70,7 +69,7 @@ class IdentificationController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationOfGoodsIdentification.radioItemsU(request.userAnswers), mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationOfGoodsIdentification.values(request.userAnswers), mode))),
           value => redirect(mode, IdentificationPage, value)
         )
   }
