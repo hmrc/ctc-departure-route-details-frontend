@@ -18,7 +18,6 @@ package models.reference
 
 import models.Selectable
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 case class UnLocode(
   unLocodeExtendedCode: String,
@@ -27,7 +26,7 @@ case class UnLocode(
 
   override def toString: String = s"$name ($unLocodeExtendedCode)"
 
-  override def toSelectItem(selected: Boolean): SelectItem = SelectItem(Some(unLocodeExtendedCode), this.toString, selected)
+  override val value: String = unLocodeExtendedCode
 }
 
 object UnLocode {
