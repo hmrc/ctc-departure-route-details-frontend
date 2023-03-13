@@ -58,7 +58,7 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, LocationType.radioItems, mode)(request, messages).toString
+        view(form, lrn, LocationType.values, mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -77,7 +77,7 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, LocationType.radioItems, mode)(request, messages).toString
+        view(filledForm, lrn, LocationType.values, mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -110,7 +110,7 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, LocationType.radioItems, mode)(request, messages).toString
+        view(boundForm, lrn, LocationType.values, mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

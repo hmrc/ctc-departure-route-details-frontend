@@ -51,7 +51,7 @@ class IdentificationController @Inject() (
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      LocationOfGoodsIdentification.valuesU(request.userAnswers) match {
+      LocationOfGoodsIdentification.values(request.userAnswers) match {
         case identifier :: Nil =>
           redirect(mode, InferredIdentificationPage, identifier)
         case identifiers =>
@@ -60,7 +60,7 @@ class IdentificationController @Inject() (
             case Some(value) => form.fill(value)
           }
 
-          Future.successful(Ok(view(preparedForm, lrn, identifiers.toRadioItems, mode)))
+          Future.successful(Ok(view(preparedForm, lrn, identifiers, mode)))
       }
   }
 
@@ -69,7 +69,7 @@ class IdentificationController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationOfGoodsIdentification.radioItemsU(request.userAnswers), mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationOfGoodsIdentification.values(request.userAnswers), mode))),
           value => redirect(mode, IdentificationPage, value)
         )
   }

@@ -83,7 +83,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, LocationOfGoodsIdentification.radioItemsU(emptyUserAnswers), mode)(request, messages).toString
+        view(form, lrn, LocationOfGoodsIdentification.values(emptyUserAnswers), mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -102,7 +102,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, LocationOfGoodsIdentification.radioItemsU(userAnswers), mode)(request, messages).toString
+        view(filledForm, lrn, LocationOfGoodsIdentification.values(userAnswers), mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -135,7 +135,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, LocationOfGoodsIdentification.radioItemsU(emptyUserAnswers), mode)(request, messages).toString
+        view(boundForm, lrn, LocationOfGoodsIdentification.values(emptyUserAnswers), mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

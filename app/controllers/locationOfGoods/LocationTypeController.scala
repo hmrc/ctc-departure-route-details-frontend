@@ -56,7 +56,7 @@ class LocationTypeController @Inject() (
           case Some(value) => form.fill(value)
         }
 
-        Ok(view(preparedForm, lrn, LocationType.radioItems, mode))
+        Ok(view(preparedForm, lrn, LocationType.values, mode))
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
@@ -66,7 +66,7 @@ class LocationTypeController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationType.radioItems, mode))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationType.values, mode))),
             value =>
               for {
                 ctcCountries                          <- countriesService.getCountryCodesCTC()

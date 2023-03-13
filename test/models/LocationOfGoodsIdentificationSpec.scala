@@ -63,7 +63,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
         "must return U and V" in {
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.DesignatedLocation)
 
-          LocationOfGoodsIdentification.valuesU(userAnswers) mustBe Seq(
+          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
             CustomsOfficeIdentifier,
             UnlocodeIdentifier
           )
@@ -74,7 +74,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
         "must return Y" in {
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.AuthorisedPlace)
 
-          LocationOfGoodsIdentification.valuesU(userAnswers) mustBe Seq(
+          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
             AuthorisationNumber
           )
         }
@@ -84,7 +84,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
         "must return T, U, W, X, Z" in {
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.ApprovedPlace)
 
-          LocationOfGoodsIdentification.valuesU(userAnswers) mustBe Seq(
+          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
             EoriNumber,
             CoordinatesIdentifier,
             UnlocodeIdentifier,
@@ -98,7 +98,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
         "must return T, U, W, Z" in {
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.Other)
 
-          LocationOfGoodsIdentification.valuesU(userAnswers) mustBe Seq(
+          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
             CoordinatesIdentifier,
             UnlocodeIdentifier,
             AddressIdentifier,
@@ -109,7 +109,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
       "when undefined location type" - {
         "must return all values" in {
-          LocationOfGoodsIdentification.valuesU(emptyUserAnswers) mustBe Seq(
+          LocationOfGoodsIdentification.values(emptyUserAnswers) mustBe Seq(
             CustomsOfficeIdentifier,
             EoriNumber,
             AuthorisationNumber,

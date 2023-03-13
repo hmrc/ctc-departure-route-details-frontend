@@ -24,7 +24,7 @@ sealed trait LocationOfGoodsIdentification extends Radioable[LocationOfGoodsIden
   val code: String
 }
 
-object LocationOfGoodsIdentification extends RadioModelU[LocationOfGoodsIdentification] {
+object LocationOfGoodsIdentification extends EnumerableType[LocationOfGoodsIdentification] {
 
   case object CustomsOfficeIdentifier extends WithName("customsOfficeIdentifier") with LocationOfGoodsIdentification {
     override val code: String = "V"
@@ -66,7 +66,7 @@ object LocationOfGoodsIdentification extends RadioModelU[LocationOfGoodsIdentifi
     PostalCode
   )
 
-  override def valuesU(userAnswers: UserAnswers): Seq[LocationOfGoodsIdentification] =
+  def values(userAnswers: UserAnswers): Seq[LocationOfGoodsIdentification] =
     userAnswers.get(LocationTypePage) match {
       case Some(DesignatedLocation) =>
         Seq(CustomsOfficeIdentifier, UnlocodeIdentifier)

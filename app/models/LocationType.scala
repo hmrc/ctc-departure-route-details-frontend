@@ -21,7 +21,7 @@ sealed trait LocationType extends Radioable[LocationType] {
   val code: String
 }
 
-object LocationType extends RadioModel[LocationType] {
+object LocationType extends EnumerableType[LocationType] {
 
   val messageKeyPrefix = "locationOfGoods.locationType"
 

@@ -29,7 +29,7 @@
     button: Button
 )
 
-@(form: Form[LocationOfGoodsIdentification], lrn: LocalReferenceNumber, radios: (String, Option[LocationOfGoodsIdentification]) => Seq[RadioItem], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[LocationOfGoodsIdentification], lrn: LocalReferenceNumber, identifiers: Seq[LocationOfGoodsIdentification], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("locationOfGoods.identification.title"),
@@ -47,7 +47,7 @@
                 heading = messages("locationOfGoods.identification.heading"),
                 caption = Some(messages("locationOfGoods.caption"))
             ),
-            radioItems = fieldId => radios(fieldId, form.value),
+            radioItems = fieldId => identifiers.toRadioItems(fieldId, form.value),
             hint = Some(messages("locationOfGoods.identification.hint"))
         )
 

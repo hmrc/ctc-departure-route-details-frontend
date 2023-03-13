@@ -29,12 +29,12 @@ class LocationTypeViewSpec extends RadioViewBehaviours[LocationType] {
   override def form: Form[LocationType] = new EnumerableFormProvider()(prefix)
 
   override def applyView(form: Form[LocationType]): HtmlFormat.Appendable =
-    injector.instanceOf[LocationTypeView].apply(form, lrn, LocationType.radioItems, NormalMode)(fakeRequest, messages)
+    injector.instanceOf[LocationTypeView].apply(form, lrn, values, NormalMode)(fakeRequest, messages)
 
   override val prefix: String = "locationOfGoods.locationType"
 
   override def radioItems(fieldId: String, checkedValue: Option[LocationType] = None): Seq[RadioItem] =
-    LocationType.radioItems(fieldId, checkedValue)
+    values.toRadioItems(fieldId, checkedValue)
 
   override def values: Seq[LocationType] = LocationType.values
 
