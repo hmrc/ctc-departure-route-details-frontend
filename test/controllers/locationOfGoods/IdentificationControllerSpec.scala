@@ -19,19 +19,19 @@ package controllers.locationOfGoods
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.EnumerableFormProvider
 import generators.Generators
+import models.LocationOfGoodsIdentification.AuthorisationNumber
+import models.LocationType.AuthorisedPlace
 import models.{LocationOfGoodsIdentification, NormalMode, UserAnswers}
 import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
-import org.scalacheck.Arbitrary.arbitrary
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage}
+import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage, LocationTypePage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.InferenceService
 import views.html.locationOfGoods.IdentificationView
 
 import scala.concurrent.Future
@@ -43,44 +43,30 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
   private val mode                     = NormalMode
   private lazy val identificationRoute = routes.IdentificationController.onPageLoad(lrn, mode).url
 
-  private val mockInferenceService = mock[InferenceService]
-
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(bind(classOf[LocationOfGoodsNavigatorProvider]).toInstance(fakeLocationOfGoodsNavigatorProvider))
-      .overrides(bind(classOf[InferenceService]).toInstance(mockInferenceService))
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockInferenceService)
-    when(mockInferenceService.inferLocationOfGoodsIdentifier(any())).thenReturn(None)
-  }
 
   "LocationOfGoodsIdentification Controller" - {
 
     "when value is inferred" - {
       "must redirect to next page" in {
-        forAll(arbitrary[LocationOfGoodsIdentification]) {
-          identifier =>
-            beforeEach()
-            when(mockInferenceService.inferLocationOfGoodsIdentifier(any())).thenReturn(Some(identifier))
+        val userAnswers = emptyUserAnswers.setValue(LocationTypePage, AuthorisedPlace)
+        setExistingUserAnswers(userAnswers)
 
-            setExistingUserAnswers(emptyUserAnswers)
+        val request = FakeRequest(GET, identificationRoute)
 
-            val request = FakeRequest(GET, identificationRoute)
+        val result = route(app, request).value
 
-            val result = route(app, request).value
+        status(result) mustEqual SEE_OTHER
 
-            status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
 
-            redirectLocation(result).value mustEqual onwardRoute.url
-
-            val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-            verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
-            userAnswersCaptor.getValue.getValue(InferredIdentificationPage) mustBe identifier
-            userAnswersCaptor.getValue.get(IdentificationPage) must not be defined
-        }
+        val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+        userAnswersCaptor.getValue.getValue(InferredIdentificationPage) mustBe AuthorisationNumber
+        userAnswersCaptor.getValue.get(IdentificationPage) must not be defined
       }
     }
 

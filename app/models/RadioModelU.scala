@@ -19,7 +19,7 @@ package models
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-trait RadioModelU[T] extends RadioModel[T] {
+trait RadioModelU[T <: Radioable[T]] extends RadioModel[T] {
 
   def valuesU(userAnswers: UserAnswers): Seq[T]
 
@@ -27,5 +27,5 @@ trait RadioModelU[T] extends RadioModel[T] {
     formKey: String = "value",
     checkedValue: Option[T] = None
   )(implicit messages: Messages): Seq[RadioItem] =
-    radioItems(valuesU(userAnswers), formKey, checkedValue)
+    valuesU(userAnswers).toRadioItems(formKey, checkedValue)
 }

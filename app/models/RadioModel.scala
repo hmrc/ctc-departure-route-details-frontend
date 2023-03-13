@@ -19,25 +19,11 @@ package models
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 
-trait RadioModel[T] extends EnumerableType[T] {
-
-  val messageKeyPrefix: String
+trait RadioModel[T <: Radioable[T]] extends EnumerableType[T] {
 
   def radioItems(formKey: String = "value", checkedValue: Option[T] = None)(implicit messages: Messages): Seq[RadioItem] =
     radioItems(values, formKey, checkedValue)
 
   def radioItems(values: Seq[T], formKey: String, checkedValue: Option[T])(implicit messages: Messages): Seq[RadioItem] =
-    values.zipWithIndex.map {
-      case (value, index) =>
-        RadioItem(
-          content = Text(messages(s"$messageKeyPrefix.$value")),
-          id = Some(if (index == 0) formKey else s"${formKey}_$index"),
-          value = Some(value.toString),
-          checked = checkedValue.contains(value),
-          hint = {
-            val hintKey = s"$messageKeyPrefix.$value.hint"
-            if (messages.isDefinedAt(hintKey)) Some(Hint(content = Text(messages(hintKey)))) else None
-          }
-        )
-    }
+    values.toRadioItems(formKey, checkedValue)
 }

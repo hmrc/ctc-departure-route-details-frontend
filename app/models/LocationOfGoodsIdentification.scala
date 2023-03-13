@@ -19,7 +19,8 @@ package models
 import models.LocationType._
 import pages.locationOfGoods.LocationTypePage
 
-sealed trait LocationOfGoodsIdentification {
+sealed trait LocationOfGoodsIdentification extends Radioable[LocationOfGoodsIdentification] {
+  override val messageKeyPrefix: String = LocationOfGoodsIdentification.messageKeyPrefix
   val code: String
 }
 
@@ -53,7 +54,7 @@ object LocationOfGoodsIdentification extends RadioModelU[LocationOfGoodsIdentifi
     override val code: String = "T"
   }
 
-  override val messageKeyPrefix: String = "locationOfGoods.identification"
+  val messageKeyPrefix: String = "locationOfGoods.identification"
 
   val values: Seq[LocationOfGoodsIdentification] = Seq(
     CustomsOfficeIdentifier,
