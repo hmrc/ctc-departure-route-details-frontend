@@ -71,19 +71,14 @@ class CountryOfRoutingController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, mode, index))),
-              value =>
-                for {
-                  ctcCountries                          <- countriesService.getCountryCodesCTC()
-                  customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                  result <- {
-                    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
-                    CountryOfRoutingPage(index)
-                      .writeToUserAnswers(value)
-                      .updateTask()
-                      .writeToSession()
-                      .navigate()
-                  }
-                } yield result
+              value => {
+                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                CountryOfRoutingPage(index)
+                  .writeToUserAnswers(value)
+                  .updateTask()
+                  .writeToSession()
+                  .navigate()
+              }
             )
       }
   }
