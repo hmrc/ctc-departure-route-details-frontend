@@ -68,11 +68,11 @@ object RouteDetailsDomain {
 
   implicit def exitReader(transit: Option[TransitDomain]): UserAnswersReader[Option[ExitDomain]] =
     for {
-      declarationType              <- DeclarationTypePage.reader
-      securityDetails              <- SecurityDetailsTypePage.reader
-      allCountriesOfRoutingInCL147 <- CountriesOfRoutingSection.allCountriesOfRoutingInCL147
+      declarationType                      <- DeclarationTypePage.reader
+      securityDetails                      <- SecurityDetailsTypePage.reader
+      atLeastOneCountryOfRoutingNotInCL147 <- CountriesOfRoutingSection.atLeastOneCountryOfRoutingNotInCL147
       reader <- {
-        if (exitRequired(declarationType, securityDetails, allCountriesOfRoutingInCL147, transit)) {
+        if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingNotInCL147, transit)) {
           UserAnswersReader[ExitDomain].map(Some(_))
         } else {
           none[ExitDomain].pure[UserAnswersReader]
@@ -83,13 +83,13 @@ object RouteDetailsDomain {
   private def exitRequired(
     declarationType: DeclarationType,
     securityDetails: SecurityDetailsType,
-    allCountriesOfRoutingInCL147: Boolean,
+    atLeastOneCountryOfRoutingNotInCL147: Boolean,
     transit: Option[TransitDomain]
   ): Boolean =
-    (declarationType, securityDetails, allCountriesOfRoutingInCL147, transit) match {
+    (declarationType, securityDetails, atLeastOneCountryOfRoutingNotInCL147, transit) match {
       case (Option4, _, _, _)                                                    => false
       case (_, NoSecurityDetails | EntrySummaryDeclarationSecurityDetails, _, _) => false
-      case (_, _, false, Some(TransitDomain(_, _ :: _)))                         => false
+      case (_, _, true, Some(TransitDomain(_, _ :: _)))                          => false
       case _                                                                     => true
     }
 

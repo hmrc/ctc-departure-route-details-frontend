@@ -28,15 +28,15 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
 
   override def toString: String = "countriesOfRouting"
 
-  def allCountriesOfRoutingInCL147: UserAnswersReader[Boolean] =
+  def atLeastOneCountryOfRoutingNotInCL147: UserAnswersReader[Boolean] =
     for {
       numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)
-      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(true)) {
+      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(false)) {
         (acc, index) =>
           for {
-            areAllCountriesOfRoutingInCL147SoFar <- acc
-            isThisCountryOfRoutingInCL147        <- CountryOfRoutingInCL147Page(Index(index)).reader
-          } yield areAllCountriesOfRoutingInCL147SoFar && isThisCountryOfRoutingInCL147
+            areAnyCountriesOfRoutingNotInCL147SoFar <- acc
+            isThisCountryOfRoutingNotInCL147        <- CountryOfRoutingInCL147Page(Index(index)).reader.map(!_)
+          } yield areAnyCountriesOfRoutingNotInCL147SoFar || isThisCountryOfRoutingNotInCL147
       }
     } yield reader
 
