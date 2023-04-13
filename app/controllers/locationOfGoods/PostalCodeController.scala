@@ -74,19 +74,14 @@ class PostalCodeController @Inject() (
               .bindFromRequest()
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, countryList.countries))),
-                value =>
-                  for {
-                    ctcCountries                          <- countriesService.getCountryCodesCTC()
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                    result <- {
-                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                      PostalCodePage
-                        .writeToUserAnswers(value)
-                        .updateTask()
-                        .writeToSession()
-                        .navigate()
-                    }
-                  } yield result
+                value => {
+                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                  PostalCodePage
+                    .writeToUserAnswers(value)
+                    .updateTask()
+                    .writeToSession()
+                    .navigate()
+                }
               )
 
         }

@@ -25,7 +25,6 @@ import pages.locationOfGoods.AuthorisationNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.AuthorisationNumberView
 
@@ -39,8 +38,7 @@ class AuthorisationNumberController @Inject() (
   formProvider: AuthorisationNumberFormProvider,
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
-  view: AuthorisationNumberView,
-  countriesService: CountriesService
+  view: AuthorisationNumberView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -62,19 +60,14 @@ class AuthorisationNumberController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
-          value =>
-            for {
-              ctcCountries                          <- countriesService.getCountryCodesCTC()
-              customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-              result <- {
-                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                AuthorisationNumberPage
-                  .writeToUserAnswers(value)
-                  .updateTask()
-                  .writeToSession()
-                  .navigate()
-              }
-            } yield result
+          value => {
+            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            AuthorisationNumberPage
+              .writeToUserAnswers(value)
+              .updateTask()
+              .writeToSession()
+              .navigate()
+          }
         )
   }
 }

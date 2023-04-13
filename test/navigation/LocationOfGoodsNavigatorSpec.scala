@@ -28,7 +28,7 @@ class LocationOfGoodsNavigatorSpec extends SpecBase with ScalaCheckPropertyCheck
     "when in NormalMode" - {
 
       val mode              = NormalMode
-      val navigatorProvider = new LoadingAndUnloadingNavigatorProviderImpl()
+      val navigatorProvider = new LocationOfGoodsNavigatorProviderImpl()
       val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {
@@ -37,7 +37,7 @@ class LocationOfGoodsNavigatorSpec extends SpecBase with ScalaCheckPropertyCheck
             answers =>
               navigator
                 .nextPage(answers)
-                .mustBe(controllers.loadingAndUnloading.loading.routes.AddUnLocodeYesNoController.onPageLoad(answers.lrn, mode))
+                .mustBe(controllers.locationOfGoods.routes.CheckYourAnswersController.onPageLoad(answers.lrn, mode))
           }
         }
       }
@@ -46,7 +46,7 @@ class LocationOfGoodsNavigatorSpec extends SpecBase with ScalaCheckPropertyCheck
     "when in CheckMode" - {
 
       val mode              = CheckMode
-      val navigatorProvider = new LoadingAndUnloadingNavigatorProviderImpl()
+      val navigatorProvider = new LocationOfGoodsNavigatorProviderImpl()
       val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {

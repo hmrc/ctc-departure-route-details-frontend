@@ -19,14 +19,14 @@ package navigation
 import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
-import models.{CheckMode, CountryList, Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class LocationOfGoodsNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends LocationOfGoodsNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
+  def apply(mode: Mode): UserAnswersNavigator =
     mode match {
       case NormalMode =>
         new LocationOfGoodsNavigator(mode)
@@ -37,7 +37,7 @@ class LocationOfGoodsNavigatorProviderImpl @Inject() (implicit config: FrontendA
 
 trait LocationOfGoodsNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
+  def apply(mode: Mode): UserAnswersNavigator
 }
 
 class LocationOfGoodsNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig) extends UserAnswersNavigator {

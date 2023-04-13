@@ -63,19 +63,14 @@ class AddContactYesNoController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
-          value =>
-            for {
-              ctcCountries                          <- countriesService.getCountryCodesCTC()
-              customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-              result <- {
-                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                AddContactYesNoPage
-                  .writeToUserAnswers(value)
-                  .updateTask()
-                  .writeToSession()
-                  .navigate()
-              }
-            } yield result
+          value => {
+            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            AddContactYesNoPage
+              .writeToUserAnswers(value)
+              .updateTask()
+              .writeToSession()
+              .navigate()
+          }
         )
   }
 }

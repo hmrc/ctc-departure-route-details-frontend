@@ -25,7 +25,6 @@ import pages.locationOfGoods.EoriPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.EoriView
 
@@ -39,8 +38,7 @@ class EoriController @Inject() (
   formProvider: EoriNumberFormProvider,
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
-  view: EoriView,
-  countriesService: CountriesService
+  view: EoriView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -62,19 +60,14 @@ class EoriController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
-          value =>
-            for {
-              ctcCountries                          <- countriesService.getCountryCodesCTC()
-              customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-              result <- {
-                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                EoriPage
-                  .writeToUserAnswers(value)
-                  .updateTask()
-                  .writeToSession()
-                  .navigate()
-              }
-            } yield result
+          value => {
+            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            EoriPage
+              .writeToUserAnswers(value)
+              .updateTask()
+              .writeToSession()
+              .navigate()
+          }
         )
   }
 }

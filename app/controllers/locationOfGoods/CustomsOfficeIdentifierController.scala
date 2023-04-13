@@ -26,7 +26,7 @@ import pages.locationOfGoods.CustomsOfficeIdentifierPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{CountriesService, CustomsOfficesService}
+import services.CustomsOfficesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.CustomsOfficeIdentifierView
 
@@ -40,7 +40,6 @@ class CustomsOfficeIdentifierController @Inject() (
   actions: Actions,
   formProvider: CustomsOfficeFormProvider,
   customsOfficesService: CustomsOfficesService,
-  countriesService: CountriesService,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   val controllerComponents: MessagesControllerComponents,
   view: CustomsOfficeIdentifierView
@@ -79,19 +78,14 @@ class CustomsOfficeIdentifierController @Inject() (
               .bindFromRequest()
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, mode))),
-                value =>
-                  for {
-                    ctcCountries                          <- countriesService.getCountryCodesCTC()
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                    result <- {
-                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                      CustomsOfficeIdentifierPage
-                        .writeToUserAnswers(value)
-                        .updateTask()
-                        .writeToSession()
-                        .navigate()
-                    }
-                  } yield result
+                value => {
+                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                  CustomsOfficeIdentifierPage
+                    .writeToUserAnswers(value)
+                    .updateTask()
+                    .writeToSession()
+                    .navigate()
+                }
               )
         }
     }
