@@ -19,14 +19,16 @@ package controllers.routing
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.CustomsOfficeFormProvider
 import generators.Generators
-import models.{CustomsOfficeList, NormalMode}
-import models.reference.{Country, CountryCode}
+import models.reference.{Country, CountryCode, CustomsOffice}
+import models.{CountryList, CustomsOfficeList, NormalMode, UserAnswers}
 import navigation.RoutingNavigatorProvider
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import pages.routing.{CountryOfDestinationPage, OfficeOfDestinationPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.CustomsOfficesService
@@ -99,21 +101,44 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
 
     "must redirect to the next page when valid data is submitted" in {
 
-      when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any())).thenReturn(Future.successful(customsOfficeList))
+      val customsOffice = CustomsOffice("FR123", "name", None)
+      when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
+        .thenReturn(Future.successful(CustomsOfficeList(Seq(customsOffice))))
+      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(CountryList(Seq(country))))
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
-      val userAnswers = emptyUserAnswers
-        .setValue(CountryOfDestinationPage, country)
+
+      val userAnswers = emptyUserAnswers.setValue(CountryOfDestinationPage, country)
 
       setExistingUserAnswers(userAnswers)
 
       val request = FakeRequest(POST, officeOfDestinationRoute)
-        .withFormUrlEncodedBody(("value", customsOffice1.id))
+        .withFormUrlEncodedBody(("value", customsOffice.id))
 
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
+
+      val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+      userAnswersCaptor.getValue.data mustBe Json.parse(s"""
+          |{
+          |  "routeDetails" : {
+          |    "routing" : {
+          |      "countryOfDestination" : {
+          |        "code" : "${country.code.code}",
+          |        "description" : "${country.description}"
+          |      },
+          |      "officeOfDestination" : {
+          |        "id" : "${customsOffice.id}",
+          |        "name" : "${customsOffice.name}",
+          |        "isInCL112" : true
+          |      }
+          |    }
+          |  }
+          |}
+          |""".stripMargin)
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {

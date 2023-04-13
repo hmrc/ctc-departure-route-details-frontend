@@ -22,7 +22,7 @@ import forms.CountryFormProvider
 import models.reference.Country
 import models.{CountryList, Index, LocalReferenceNumber, Mode}
 import navigation.{CountryOfRoutingNavigatorProvider, UserAnswersNavigator}
-import pages.routing.index.CountryOfRoutingPage
+import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page, CountryOfRoutingPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -71,14 +71,23 @@ class CountryOfRoutingController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, mode, index))),
-              value => {
-                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
-                CountryOfRoutingPage(index)
-                  .writeToUserAnswers(value)
-                  .updateTask()
-                  .writeToSession()
-                  .navigate()
-              }
+              value =>
+                for {
+                  ctcCountries <- countriesService.getCountryCodesCTC().map(_.countries)
+                  isInCL112 = ctcCountries.map(_.code.code).contains(value.code.code)
+                  customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.countries)
+                  isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.code.code)
+                  result <- {
+                    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                    CountryOfRoutingPage(index)
+                      .writeToUserAnswers(value)
+                      .appendValue(CountryOfRoutingInCL112Page(index), isInCL112)
+                      .appendValue(CountryOfRoutingInCL147Page(index), isInCL147)
+                      .updateTask()
+                      .writeToSession()
+                      .navigate()
+                  }
+                } yield result
             )
       }
   }

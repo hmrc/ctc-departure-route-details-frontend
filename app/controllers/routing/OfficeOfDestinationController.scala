@@ -22,12 +22,12 @@ import forms.CustomsOfficeFormProvider
 import models.reference.CustomsOffice
 import models.{CustomsOfficeList, LocalReferenceNumber, Mode}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
-import pages.routing.{CountryOfDestinationPage, OfficeOfDestinationPage}
+import pages.routing.{CountryOfDestinationPage, OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CustomsOfficesService
+import services.{CountriesService, CustomsOfficesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.routing.OfficeOfDestinationView
 
@@ -41,6 +41,7 @@ class OfficeOfDestinationController @Inject() (
   actions: Actions,
   formProvider: CustomsOfficeFormProvider,
   customsOfficesService: CustomsOfficesService,
+  countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   view: OfficeOfDestinationView
@@ -80,14 +81,20 @@ class OfficeOfDestinationController @Inject() (
               .bindFromRequest()
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, mode))),
-                value => {
-                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-                  OfficeOfDestinationPage
-                    .writeToUserAnswers(value)
-                    .updateTask()
-                    .writeToSession()
-                    .navigate()
-                }
+                value =>
+                  for {
+                    ctcCountries <- countriesService.getCountryCodesCTC().map(_.countries)
+                    isInCL112 = ctcCountries.map(_.code.code).contains(value.countryCode)
+                    result <- {
+                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                      OfficeOfDestinationPage
+                        .writeToUserAnswers(value)
+                        .appendValue(OfficeOfDestinationInCL112Page, isInCL112)
+                        .updateTask()
+                        .writeToSession()
+                        .navigate()
+                    }
+                  } yield result
               )
         }
     }

@@ -19,8 +19,8 @@ package pages.routing
 import controllers.routing.routes
 import models.reference.CustomsOffice
 import models.{Mode, UserAnswers}
+import pages.QuestionPage
 import pages.sections.routing.RoutingSection
-import pages.{QuestionPage, ReadOnlyPage}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
@@ -34,7 +34,7 @@ case object OfficeOfDestinationPage extends QuestionPage[CustomsOffice] {
     Some(routes.OfficeOfDestinationController.onPageLoad(userAnswers.lrn, mode))
 }
 
-case object OfficeOfDestinationInCL112Page extends ReadOnlyPage[Boolean] {
+case object OfficeOfDestinationInCL112Page extends QuestionPage[Boolean] {
 
   override def path: JsPath = OfficeOfDestinationPage.path \ toString
 
