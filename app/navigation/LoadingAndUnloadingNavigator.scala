@@ -19,14 +19,14 @@ package navigation
 import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
-import models.{CheckMode, CountryList, Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class LoadingAndUnloadingNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends LoadingAndUnloadingNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
+  def apply(mode: Mode): UserAnswersNavigator =
     mode match {
       case NormalMode =>
         new LoadingAndUnloadingNavigator(mode)
@@ -37,7 +37,7 @@ class LoadingAndUnloadingNavigatorProviderImpl @Inject() (implicit config: Front
 
 trait LoadingAndUnloadingNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
+  def apply(mode: Mode): UserAnswersNavigator
 }
 
 class LoadingAndUnloadingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig) extends UserAnswersNavigator {

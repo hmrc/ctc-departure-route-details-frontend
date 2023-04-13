@@ -29,7 +29,7 @@ class LocationOfGoodsNavigatorSpec extends SpecBase with ScalaCheckPropertyCheck
 
       val mode              = NormalMode
       val navigatorProvider = new LoadingAndUnloadingNavigatorProviderImpl()
-      val navigator         = navigatorProvider.apply(mode, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+      val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {
         "must redirect to location of goods check your answers" in {
@@ -47,7 +47,7 @@ class LocationOfGoodsNavigatorSpec extends SpecBase with ScalaCheckPropertyCheck
 
       val mode              = CheckMode
       val navigatorProvider = new LoadingAndUnloadingNavigatorProviderImpl()
-      val navigator         = navigatorProvider.apply(mode, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+      val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {
         "must redirect to route details check your answers" in {

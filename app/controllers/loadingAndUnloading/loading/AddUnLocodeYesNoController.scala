@@ -25,7 +25,6 @@ import pages.loadingAndUnloading.loading.AddUnLocodeYesNoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.loadingAndUnloading.loading.AddUnLocodeYesNoView
 
@@ -39,8 +38,7 @@ class AddUnLocodeYesNoController @Inject() (
   actions: Actions,
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AddUnLocodeYesNoView,
-  countriesService: CountriesService
+  view: AddUnLocodeYesNoView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -63,19 +61,14 @@ class AddUnLocodeYesNoController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
-          value =>
-            for {
-              ctcCountries                          <- countriesService.getCountryCodesCTC()
-              customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-              result <- {
-                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                AddUnLocodeYesNoPage
-                  .writeToUserAnswers(value)
-                  .updateTask()
-                  .writeToSession()
-                  .navigate()
-              }
-            } yield result
+          value => {
+            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            AddUnLocodeYesNoPage
+              .writeToUserAnswers(value)
+              .updateTask()
+              .writeToSession()
+              .navigate()
+          }
         )
   }
 }
