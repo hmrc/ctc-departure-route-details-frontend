@@ -172,14 +172,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
     "locationOfGoodsReader" - {
       "can be parsed from UserAnswers" - {
         "when office of departure is in set CL147" - {
-          val customsOfficeInCL147 = arbitrary[CustomsOffice]
-            .map(_.copy(id = customsSecurityAgreementAreaCountryCodes.head))
-            .sample
-            .value
+          val customsOffice = arbitrary[CustomsOffice].sample.value
 
           "and not adding a location of goods type" in {
             val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, customsOfficeInCL147)
+              .setValue(OfficeOfDeparturePage, arbitrary[CustomsOffice].sample.value)
               .setValue(OfficeOfDepartureInCL147Page, true)
               .setValue(AddLocationOfGoodsPage, false)
 
@@ -192,7 +189,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
           "and adding a location of goods type" in {
             val initialAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, customsOfficeInCL147)
+              .setValue(OfficeOfDeparturePage, customsOffice)
               .setValue(OfficeOfDepartureInCL147Page, true)
               .setValue(AddLocationOfGoodsPage, true)
 
@@ -208,16 +205,10 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
 
         "when office of departure is not in set CL147" in {
-          val customsOfficeNotInCL147 = arbitrary[CustomsOffice]
-            .retryUntil {
-              x =>
-                !customsSecurityAgreementAreaCountryCodes.contains(x.countryCode)
-            }
-            .sample
-            .value
+          val customsOffice = arbitrary[CustomsOffice].sample.value
 
           val initialAnswers = emptyUserAnswers
-            .setValue(OfficeOfDeparturePage, customsOfficeNotInCL147)
+            .setValue(OfficeOfDeparturePage, customsOffice)
             .setValue(OfficeOfDepartureInCL147Page, false)
 
           forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {

@@ -25,7 +25,7 @@ import models.reference.{Country, CustomsOffice}
 import models.{DateTime, Index}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import pages.external.{OfficeOfDeparturePage, SecurityDetailsTypePage}
+import pages.external.SecurityDetailsTypePage
 import pages.routing._
 import pages.transit.index._
 
@@ -33,7 +33,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
   "OfficeOfTransitDomain" - {
 
-    def customsOffice = arbitrary[CustomsOffice].sample.value
+    val customsOffice = arbitrary[CustomsOffice].sample.value
 
     val country = arbitrary[Country].sample.value
 
@@ -42,7 +42,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
     val securityType1Or3    = Gen.oneOf(EntrySummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
     val securityTypeNot1Or3 = Gen.oneOf(NoSecurityDetails, ExitSummaryDeclarationSecurityDetails).sample.value
 
-    val officeOfTransit = customsOffice
+    val officeOfTransit = arbitrary[CustomsOffice].sample.value
 
     "can be parsed from UserAnswers" - {
       "when first in sequence" - {
@@ -50,7 +50,6 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
         "and office of destination is in set CL112" in {
           val userAnswers = emptyUserAnswers
-            .setValue(OfficeOfDeparturePage, customsOffice)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice)
             .setValue(OfficeOfDestinationInCL112Page, true)
@@ -72,7 +71,6 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
         "and office of destination is in 'AD'" in {
           val userAnswers = emptyUserAnswers
-            .setValue(OfficeOfDeparturePage, customsOffice)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice.copy(id = AD))
             .setValue(OfficeOfDestinationInCL112Page, false)
@@ -94,7 +92,6 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
         "and office of destination is not in 'AD'" in {
           val userAnswers = emptyUserAnswers
-            .setValue(OfficeOfDeparturePage, customsOffice)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice)
             .setValue(OfficeOfDestinationInCL112Page, false)
@@ -120,7 +117,6 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
         val index = Index(1)
 
         val userAnswers = emptyUserAnswers
-          .setValue(OfficeOfDeparturePage, customsOffice)
           .setValue(SecurityDetailsTypePage, NoSecurityDetails)
           .setValue(OfficeOfDestinationPage, customsOffice)
           .setValue(OfficeOfDestinationInCL112Page, false)
@@ -146,7 +142,6 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
       "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
         "and office of transit is in set CL147" in {
           val userAnswers = emptyUserAnswers
-            .setValue(OfficeOfDeparturePage, customsOffice)
             .setValue(SecurityDetailsTypePage, securityType1Or3)
             .setValue(OfficeOfDestinationPage, customsOffice)
             .setValue(OfficeOfDestinationInCL112Page, false)
@@ -170,7 +165,6 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
         "and office of transit is not in CL147" in {
           val userAnswers = emptyUserAnswers
-            .setValue(OfficeOfDeparturePage, customsOffice)
             .setValue(SecurityDetailsTypePage, securityType1Or3)
             .setValue(OfficeOfDestinationPage, customsOffice)
             .setValue(OfficeOfDestinationInCL112Page, false)
@@ -195,7 +189,6 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
       "when security type is not one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" in {
         val userAnswers = emptyUserAnswers
-          .setValue(OfficeOfDeparturePage, customsOffice)
           .setValue(SecurityDetailsTypePage, securityTypeNot1Or3)
           .setValue(OfficeOfDestinationPage, customsOffice)
           .setValue(OfficeOfDestinationInCL112Page, false)

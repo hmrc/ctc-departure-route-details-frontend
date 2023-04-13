@@ -66,8 +66,8 @@ package object controllers {
       userAnswersWriter.flatMapF {
         case (page, userAnswers) =>
           userAnswers.set(subPage, value) match {
-            case Failure(exception) => Left(WriterError(page, Some(s"Failed to append value to answer: ${exception.getMessage}")))
             case Success(value)     => Right((page, value))
+            case Failure(exception) => Left(WriterError(page, Some(s"Failed to append value to answer: ${exception.getMessage}")))
           }
       }
 
