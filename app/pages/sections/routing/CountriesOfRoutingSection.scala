@@ -16,6 +16,9 @@
 
 package pages.sections.routing
 
+import models.Index
+import models.domain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
+import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page}
 import pages.sections.Section
 import play.api.libs.json.{JsArray, JsPath}
 
@@ -24,4 +27,28 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
   override def path: JsPath = RoutingSection.path \ toString
 
   override def toString: String = "countriesOfRouting"
+
+  def allCountriesOfRoutingInCL147: UserAnswersReader[Boolean] =
+    for {
+      numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)
+      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(true)) {
+        (acc, index) =>
+          for {
+            areAllCountriesOfRoutingInCL147SoFar <- acc
+            isThisCountryOfRoutingInCL147        <- CountryOfRoutingInCL147Page(Index(index)).reader
+          } yield areAllCountriesOfRoutingInCL147SoFar && isThisCountryOfRoutingInCL147
+      }
+    } yield reader
+
+  def anyCountriesOfRoutingInCL112: UserAnswersReader[Boolean] =
+    for {
+      numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)
+      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(false)) {
+        (acc, index) =>
+          for {
+            areAnyCountriesOfRoutingInCL112SoFar <- acc
+            isThisCountryOfRoutingInCL112        <- CountryOfRoutingInCL112Page(Index(index)).reader
+          } yield areAnyCountriesOfRoutingInCL112SoFar || isThisCountryOfRoutingInCL112
+      }
+    } yield reader
 }

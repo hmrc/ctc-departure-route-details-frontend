@@ -24,13 +24,14 @@ import models.domain.{EitherType, UserAnswersReader}
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.transit.TransitDomain
-import models.reference.CustomsOffice
+import models.reference.{Country, CustomsOffice}
 import models.{DeclarationType, SecurityDetailsType}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.external.{DeclarationTypePage, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
+import pages.routing.index.{CountryOfRoutingInCL147Page, CountryOfRoutingPage}
 import pages.routing.{BindingItineraryPage, CountriesOfRoutingInSecurityAgreement}
 
 class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -43,7 +44,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           val userAnswers = emptyUserAnswers.setValue(DeclarationTypePage, Option4)
 
           val result: EitherType[Option[TransitDomain]] = UserAnswersReader[Option[TransitDomain]](
-            RouteDetailsDomain.transitReader(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+            RouteDetailsDomain.transitReader
           ).run(userAnswers)
 
           result.value must not be defined
@@ -57,7 +58,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               forAll(arbitraryTransitAnswers(initialAnswers)) {
                 answers =>
                   val result: EitherType[Option[TransitDomain]] = UserAnswersReader[Option[TransitDomain]](
-                    RouteDetailsDomain.transitReader(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+                    RouteDetailsDomain.transitReader
                   ).run(answers)
 
                   result.value mustBe defined
@@ -111,7 +112,8 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                   .setValue(DeclarationTypePage, declarationType)
                   .setValue(SecurityDetailsTypePage, security)
                   .setValue(BindingItineraryPage, true)
-                  .setValue(CountriesOfRoutingInSecurityAgreement, false)
+                  .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
+                  .setValue(CountryOfRoutingInCL147Page(index), false)
 
                 forAll(arbitrary[Option[TransitDomain]](arbitraryPopulatedTransitDomain)) {
                   transit =>
@@ -128,7 +130,8 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                   .setValue(DeclarationTypePage, declarationType)
                   .setValue(SecurityDetailsTypePage, security)
                   .setValue(BindingItineraryPage, true)
-                  .setValue(CountriesOfRoutingInSecurityAgreement, false)
+                  .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
+                  .setValue(CountryOfRoutingInCL147Page(index), false)
 
                 forAll(
                   arbitraryOfficeOfExitAnswers(initialAnswers, index),
@@ -149,7 +152,8 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .setValue(DeclarationTypePage, declarationType)
                 .setValue(SecurityDetailsTypePage, security)
                 .setValue(BindingItineraryPage, true)
-                .setValue(CountriesOfRoutingInSecurityAgreement, true)
+                .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
+                .setValue(CountryOfRoutingInCL147Page(index), true)
 
               forAll(arbitraryOfficeOfExitAnswers(initialAnswers, index)) {
                 answers =>

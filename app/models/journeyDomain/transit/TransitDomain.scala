@@ -21,7 +21,6 @@ import models.journeyDomain.transit.TransitDomain.OfficesOfTransit
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.{DeclarationType, Index, Mode, RichJsArray, UserAnswers}
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage}
-import pages.routing.index.CountryOfRoutingInCL112Page
 import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import pages.sections.routing.CountriesOfRoutingSection
 import pages.sections.transit.OfficesOfTransitSection
@@ -73,14 +72,7 @@ object TransitDomain {
             UserAnswersReader[OfficesOfTransit]
           } else {
             for {
-              numberOfCountriesOfRouting <- CountriesOfRoutingSection.arrayReader.map(_.value.length)
-              anyCountriesOfRoutingInCL112 <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(false)) {
-                (acc, index) =>
-                  for {
-                    areAnyCountriesOfRoutingInCL112SoFar <- acc
-                    isThisCountryOfRoutingInCL112        <- CountryOfRoutingInCL112Page(Index(index)).reader
-                  } yield areAnyCountriesOfRoutingInCL112SoFar || isThisCountryOfRoutingInCL112
-              }
+              anyCountriesOfRoutingInCL112 <- CountriesOfRoutingSection.anyCountriesOfRoutingInCL112
               reader <-
                 if (anyCountriesOfRoutingInCL112) {
                   UserAnswersReader[OfficesOfTransit]
