@@ -17,15 +17,14 @@
 package navigation
 
 import config.FrontendAppConfig
-import models.{CountryList, Index, Mode, UserAnswers}
+import models.{Index, Mode, UserAnswers}
 import play.api.mvc.Call
 
 class FakeNavigator(desiredRoute: Call) extends Navigator {
   override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
 }
 
-class FakeRouteDetailsNavigator(desiredRoute: Call, mode: Mode)(implicit config: FrontendAppConfig)
-    extends RouteDetailsNavigator(mode, CountryList(Nil), CountryList(Nil)) {
+class FakeRouteDetailsNavigator(desiredRoute: Call, mode: Mode)(implicit config: FrontendAppConfig) extends RouteDetailsNavigator(mode) {
   override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
 }
 
@@ -54,12 +53,11 @@ class FakeCountryOfRoutingNavigator(desiredRoute: Call, mode: Mode, index: Index
   override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
 }
 
-class FakeTransitNavigator(desiredRoute: Call, mode: Mode)(implicit config: FrontendAppConfig)
-    extends TransitNavigator(mode, CountryList(Nil), CountryList(Nil)) {
+class FakeTransitNavigator(desiredRoute: Call, mode: Mode)(implicit config: FrontendAppConfig) extends TransitNavigator(mode) {
   override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
 }
 
 class FakeOfficeOfTransitNavigator(desiredRoute: Call, mode: Mode, index: Index)(implicit config: FrontendAppConfig)
-    extends OfficeOfTransitNavigator(mode, index, CountryList(Nil), CountryList(Nil)) {
+    extends OfficeOfTransitNavigator(mode, index) {
   override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
 }

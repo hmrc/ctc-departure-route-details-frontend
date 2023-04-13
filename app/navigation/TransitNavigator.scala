@@ -19,37 +19,34 @@ package navigation
 import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.transit.TransitDomain
-import models.{CheckMode, CountryList, Mode, NormalMode}
-import navigation.UserAnswersNavigator
+import models.{CheckMode, Mode, NormalMode}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class TransitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends TransitNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
+  def apply(mode: Mode): UserAnswersNavigator =
     mode match {
       case NormalMode =>
-        new TransitNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new TransitNavigator(mode)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 
 trait TransitNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
+  def apply(mode: Mode): UserAnswersNavigator
 }
 
 class TransitNavigator(
-  override val mode: Mode,
-  ctcCountries: CountryList,
-  customsSecurityAgreementAreaCountries: CountryList
+  override val mode: Mode
 )(implicit override val config: FrontendAppConfig)
     extends UserAnswersNavigator {
 
   override type T = TransitDomain
 
   implicit override val reader: UserAnswersReader[TransitDomain] =
-    TransitDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes)
+    TransitDomain.userAnswersReader
 }

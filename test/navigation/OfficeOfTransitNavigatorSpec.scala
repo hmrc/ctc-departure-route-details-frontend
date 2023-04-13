@@ -29,7 +29,7 @@ class OfficeOfTransitNavigatorSpec extends SpecBase with ScalaCheckPropertyCheck
 
       val mode              = NormalMode
       val navigatorProvider = new OfficeOfTransitNavigatorProviderImpl()
-      val navigator         = navigatorProvider.apply(mode, index, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+      val navigator         = navigatorProvider.apply(mode, index)
 
       "when answers complete" - {
         "must redirect to check your answers for office of transit" in {
@@ -47,7 +47,7 @@ class OfficeOfTransitNavigatorSpec extends SpecBase with ScalaCheckPropertyCheck
 
       val mode              = CheckMode
       val navigatorProvider = new OfficeOfTransitNavigatorProviderImpl()
-      val navigator         = navigatorProvider.apply(mode, index, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+      val navigator         = navigatorProvider.apply(mode, index)
 
       "when answers complete" - {
         "must redirect to route details check your answers" in {

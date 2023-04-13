@@ -25,7 +25,7 @@ import pages.loadingAndUnloading.unloading.UnLocodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{CountriesService, UnLocodesService}
+import services.UnLocodesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.loadingAndUnloading.unloading.UnLocodeView
 
@@ -40,8 +40,7 @@ class UnLocodeController @Inject() (
   formProvider: UnLocodeFormProvider,
   unLocodesService: UnLocodesService,
   val controllerComponents: MessagesControllerComponents,
-  view: UnLocodeView,
-  countriesService: CountriesService
+  view: UnLocodeView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -69,19 +68,14 @@ class UnLocodeController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, unLocodeList.unLocodes, mode))),
-              value =>
-                for {
-                  ctcCountries                          <- countriesService.getCountryCodesCTC()
-                  customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                  result <- {
-                    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                    UnLocodePage
-                      .writeToUserAnswers(value)
-                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                      .writeToSession()
-                      .navigate()
-                  }
-                } yield result
+              value => {
+                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                UnLocodePage
+                  .writeToUserAnswers(value)
+                  .updateTask()
+                  .writeToSession()
+                  .navigate()
+              }
             )
       }
   }

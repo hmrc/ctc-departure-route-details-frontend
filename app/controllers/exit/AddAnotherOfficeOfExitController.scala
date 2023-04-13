@@ -27,14 +27,12 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.exit.AddAnotherOfficeOfExitViewModel
 import viewModels.exit.AddAnotherOfficeOfExitViewModel.AddAnotherOfficeOfExitViewModelProvider
 import views.html.exit.AddAnotherOfficeOfExitView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class AddAnotherOfficeOfExitController @Inject() (
   override val messagesApi: MessagesApi,
@@ -44,47 +42,39 @@ class AddAnotherOfficeOfExitController @Inject() (
   formProvider: AddAnotherFormProvider,
   viewModelProvider: AddAnotherOfficeOfExitViewModelProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AddAnotherOfficeOfExitView,
-  countriesService: CountriesService
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+  view: AddAnotherOfficeOfExitView
+)(implicit config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   private def form(viewModel: AddAnotherOfficeOfExitViewModel): Form[Boolean] =
     formProvider(viewModel.prefix, viewModel.allowMore)
 
-  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
+  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
       val viewModel = viewModelProvider(request.userAnswers, mode)
       viewModel.count match {
         case 0 => redirectToNextPage(mode)
-        case _ => Future.successful(Ok(view(form(viewModel), lrn, viewModel)))
+        case _ => Ok(view(form(viewModel), lrn, viewModel))
       }
   }
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
       val viewModel = viewModelProvider(request.userAnswers, mode)
       form(viewModel)
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, viewModel))),
+          formWithErrors => BadRequest(view(formWithErrors, lrn, viewModel)),
           {
-            case true =>
-              Future.successful(
-                Redirect(indexRoutes.OfficeOfExitCountryController.onPageLoad(lrn, viewModel.nextIndex, mode))
-              )
+            case true  => Redirect(indexRoutes.OfficeOfExitCountryController.onPageLoad(lrn, viewModel.nextIndex, mode))
             case false => redirectToNextPage(mode)
           }
         )
   }
 
-  private def redirectToNextPage(mode: Mode)(implicit request: DataRequest[_]): Future[Result] =
-    for {
-      ctcCountries                          <- countriesService.getCountryCodesCTC()
-      customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-    } yield {
-      val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-      Redirect(navigator.nextPage(request.userAnswers))
-    }
+  private def redirectToNextPage(mode: Mode)(implicit request: DataRequest[_]): Result = {
+    val navigator: UserAnswersNavigator = navigatorProvider(mode)
+    Redirect(navigator.nextPage(request.userAnswers))
+  }
 }

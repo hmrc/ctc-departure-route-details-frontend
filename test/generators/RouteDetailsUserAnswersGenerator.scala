@@ -31,9 +31,7 @@ trait RouteDetailsUserAnswersGenerator {
   self: UserAnswersGenerator =>
 
   def arbitraryRouteDetailsAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
-    buildUserAnswers[RouteDetailsDomain](userAnswers)(
-      RouteDetailsDomain.userAnswersReader(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
-    )
+    buildUserAnswers[RouteDetailsDomain](userAnswers)
 
   def arbitraryRoutingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
     buildUserAnswers[RoutingDomain](userAnswers)
@@ -42,13 +40,11 @@ trait RouteDetailsUserAnswersGenerator {
     buildUserAnswers[CountryOfRoutingDomain](userAnswers)(CountryOfRoutingDomain.userAnswersReader(index))
 
   def arbitraryTransitAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
-    buildUserAnswers[TransitDomain](userAnswers)(
-      TransitDomain.userAnswersReader(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
-    )
+    buildUserAnswers[TransitDomain](userAnswers)
 
   def arbitraryOfficeOfTransitAnswers(userAnswers: UserAnswers, index: Index): Gen[UserAnswers] =
     buildUserAnswers[OfficeOfTransitDomain](userAnswers)(
-      OfficeOfTransitDomain.userAnswersReader(index, ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+      OfficeOfTransitDomain.userAnswersReader(index)
     )
 
   def arbitraryExitAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =

@@ -25,7 +25,7 @@ import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPag
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{CountriesService, CustomsOfficesService}
+import services.CustomsOfficesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.exit.index.OfficeOfExitView
 
@@ -39,7 +39,6 @@ class OfficeOfExitController @Inject() (
   actions: Actions,
   formProvider: CustomsOfficeForCountryFormProvider,
   customsOfficesService: CustomsOfficesService,
-  countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   view: OfficeOfExitView
@@ -78,19 +77,14 @@ class OfficeOfExitController @Inject() (
               .bindFromRequest()
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, country.description, index, mode))),
-                value =>
-                  for {
-                    ctcCountries                          <- countriesService.getCountryCodesCTC()
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                    result <- {
-                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
-                      OfficeOfExitPage(index)
-                        .writeToUserAnswers(value)
-                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                        .writeToSession()
-                        .navigate()
-                    }
-                  } yield result
+                value => {
+                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                  OfficeOfExitPage(index)
+                    .writeToUserAnswers(value)
+                    .updateTask()
+                    .writeToSession()
+                    .navigate()
+                }
               )
         }
     }

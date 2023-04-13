@@ -26,7 +26,6 @@ import pages.locationOfGoods.LocationTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.LocationTypeView
 
@@ -40,8 +39,7 @@ class LocationTypeController @Inject() (
   actions: Actions,
   formProvider: EnumerableFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: LocationTypeView,
-  countriesService: CountriesService
+  view: LocationTypeView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -67,19 +65,14 @@ class LocationTypeController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationType.values, mode))),
-            value =>
-              for {
-                ctcCountries                          <- countriesService.getCountryCodesCTC()
-                customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                result <- {
-                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                  LocationTypePage
-                    .writeToUserAnswers(value)
-                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                    .writeToSession()
-                    .navigate()
-                }
-              } yield result
+            value => {
+              implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+              LocationTypePage
+                .writeToUserAnswers(value)
+                .updateTask()
+                .writeToSession()
+                .navigate()
+            }
           )
     }
 }

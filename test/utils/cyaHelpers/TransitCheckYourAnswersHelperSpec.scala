@@ -26,8 +26,8 @@ import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.external.{OfficeOfDeparturePage, SecurityDetailsTypePage}
-import pages.routing.OfficeOfDestinationPage
+import pages.external.{OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
+import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import pages.sections.transit.OfficeOfTransitSection
 import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitPage}
 import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
@@ -46,7 +46,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
         "when T2DeclarationTypeYesNoPage undefined" in {
           forAll(arbitrary[Mode]) {
             mode =>
-              val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+              val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.includesT2Declarations
               result mustBe None
           }
@@ -59,7 +59,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val answers = emptyUserAnswers.setValue(T2DeclarationTypeYesNoPage, true)
 
-              val helper = new TransitCheckYourAnswersHelper(answers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+              val helper = new TransitCheckYourAnswersHelper(answers, mode)
               val result = helper.includesT2Declarations
 
               result mustBe Some(
@@ -90,7 +90,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
         "when AddOfficeOfTransitYesNoPage undefined" in {
           forAll(arbitrary[Mode]) {
             mode =>
-              val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+              val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addOfficeOfTransit
               result mustBe None
           }
@@ -103,7 +103,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val answers = emptyUserAnswers.setValue(AddOfficeOfTransitYesNoPage, true)
 
-              val helper = new TransitCheckYourAnswersHelper(answers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+              val helper = new TransitCheckYourAnswersHelper(answers, mode)
               val result = helper.addOfficeOfTransit
 
               result mustBe Some(
@@ -134,7 +134,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
         "when office of transit is undefined" in {
           forAll(arbitrary[Mode]) {
             mode =>
-              val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+              val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.officeOfTransit(index)
               result mustBe None
           }
@@ -146,10 +146,10 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
           forAll(arbitraryOfficeOfTransitAnswers(emptyUserAnswers, index), arbitrary[Mode]) {
             (userAnswers, mode) =>
               val officeOfExit = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index, ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+                OfficeOfTransitDomain.userAnswersReader(index)
               ).run(userAnswers).value
 
-              val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+              val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.officeOfTransit(index).get
 
               result.key.value mustBe "Office of transit 1"
@@ -171,7 +171,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
         "when offices of transit array is empty" in {
           forAll(arbitrary[Mode]) {
             mode =>
-              val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+              val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addOrRemoveOfficesOfTransit
               result mustBe None
           }
@@ -183,7 +183,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
           forAll(arbitrary[Mode]) {
             mode =>
               val answers = emptyUserAnswers.setValue(OfficeOfTransitSection(Index(0)), Json.obj("foo" -> "bar"))
-              val helper  = new TransitCheckYourAnswersHelper(answers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+              val helper  = new TransitCheckYourAnswersHelper(answers, mode)
               val result  = helper.addOrRemoveOfficesOfTransit.get
 
               result.id mustBe "add-or-remove-offices-of-transit"
@@ -210,8 +210,10 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
 
           val answers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOffice)
+            .setValue(OfficeOfDepartureInCL112Page, true)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice1)
+            .setValue(OfficeOfDestinationInCL112Page, true)
             .setValue(OfficeOfTransitCountryPage(Index(0)), country1)
             .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
             .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
@@ -220,7 +222,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             .setValue(AddOfficeOfTransitETAYesNoPage(Index(1)), false)
             .setValue(OfficeOfTransitCountryPage(Index(2)), country3)
 
-          val helper = new TransitCheckYourAnswersHelper(answers, mode)(Seq(country1.code.code), Nil)
+          val helper = new TransitCheckYourAnswersHelper(answers, mode)
           helper.listItems mustBe Seq(
             Right(
               ListItem(
@@ -260,8 +262,10 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
 
           val answers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOffice1)
+            .setValue(OfficeOfDepartureInCL112Page, true)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice1)
+            .setValue(OfficeOfDestinationInCL112Page, true)
             .setValue(AddOfficeOfTransitYesNoPage, true)
             .setValue(OfficeOfTransitCountryPage(Index(0)), country1)
             .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
@@ -271,7 +275,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             .setValue(AddOfficeOfTransitETAYesNoPage(Index(1)), false)
             .setValue(OfficeOfTransitCountryPage(Index(2)), country3)
 
-          val helper = new TransitCheckYourAnswersHelper(answers, mode)(Seq(country1.code.code), Nil)
+          val helper = new TransitCheckYourAnswersHelper(answers, mode)
           helper.listItems mustBe Seq(
             Right(
               ListItem(

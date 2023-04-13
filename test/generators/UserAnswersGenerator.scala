@@ -39,9 +39,7 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with RouteDetailsU
       for {
         lrn        <- arbitrary[LocalReferenceNumber]
         eoriNumber <- arbitrary[EoriNumber]
-        answers <- buildUserAnswers[RouteDetailsDomain](UserAnswers(lrn, eoriNumber))(
-          RouteDetailsDomain.userAnswersReader(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
-        )
+        answers    <- buildUserAnswers[RouteDetailsDomain](UserAnswers(lrn, eoriNumber))
       } yield answers
     }
 

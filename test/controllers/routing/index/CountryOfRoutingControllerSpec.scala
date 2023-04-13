@@ -19,13 +19,15 @@ package controllers.routing.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.CountryFormProvider
 import generators.Generators
-import models.{CountryList, NormalMode}
+import models.{CountryList, NormalMode, UserAnswers}
 import navigation.CountryOfRoutingNavigatorProvider
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import pages.routing.index.CountryOfRoutingPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.routing.index.CountryOfRoutingView
@@ -91,6 +93,8 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
+      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(countryList))
+      when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(countryList))
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
       setExistingUserAnswers(emptyUserAnswers)
@@ -103,6 +107,27 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
+
+      val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+      userAnswersCaptor.getValue.data mustBe Json.parse(s"""
+          |{
+          |  "routeDetails" : {
+          |    "routing" : {
+          |      "countriesOfRouting" : [
+          |        {
+          |          "countryOfRouting" : {
+          |            "code" : "${country1.code.code}",
+          |            "description" : "${country1.description}",
+          |            "isInCL112" : true,
+          |            "isInCL147" : true
+          |          }
+          |        }
+          |      ]
+          |    }
+          |  }
+          |}
+          |""".stripMargin)
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {

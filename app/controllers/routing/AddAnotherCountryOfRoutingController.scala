@@ -19,25 +19,19 @@ package controllers.routing
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routing.index.{routes => indexRoutes}
-import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.AddAnotherFormProvider
-import models.CountryList.countriesOfRoutingReads
-import models.{LocalReferenceNumber, Mode, RichOptionalJsArray}
+import models.{LocalReferenceNumber, Mode}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
-import pages.routing.CountriesOfRoutingInSecurityAgreement
-import pages.sections.routing.CountriesOfRoutingSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.routing.AddAnotherCountryOfRoutingViewModel
 import viewModels.routing.AddAnotherCountryOfRoutingViewModel.AddAnotherCountryOfRoutingViewModelProvider
 import views.html.routing.AddAnotherCountryOfRoutingView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class AddAnotherCountryOfRoutingController @Inject() (
   override val messagesApi: MessagesApi,
@@ -46,10 +40,9 @@ class AddAnotherCountryOfRoutingController @Inject() (
   actions: Actions,
   formProvider: AddAnotherFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  countriesService: CountriesService,
   viewModelProvider: AddAnotherCountryOfRoutingViewModelProvider,
   view: AddAnotherCountryOfRoutingView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -65,35 +58,19 @@ class AddAnotherCountryOfRoutingController @Inject() (
       }
   }
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
       val viewModel = viewModelProvider(request.userAnswers, mode)
       form(viewModel)
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, viewModel))),
+          formWithErrors => BadRequest(view(formWithErrors, lrn, viewModel)),
           {
             case true =>
-              Future.successful(Redirect(indexRoutes.CountryOfRoutingController.onPageLoad(lrn, mode, viewModel.nextIndex)))
+              Redirect(indexRoutes.CountryOfRoutingController.onPageLoad(lrn, mode, viewModel.nextIndex))
             case false =>
-              request.userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads).map(_.countries) match {
-                case Some(countriesOfRouting) =>
-                  for {
-                    ctcCountries                          <- countriesService.getCountryCodesCTC()
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                    inSecurityAgreement = countriesOfRouting.map(_.code.code).forall(customsSecurityAgreementAreaCountries.countryCodes.contains(_))
-                    result <- {
-                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                      CountriesOfRoutingInSecurityAgreement
-                        .writeToUserAnswers(inSecurityAgreement)
-                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                        .writeToSession()
-                        .navigate()
-                    }
-                  } yield result
-                case None =>
-                  Future.successful(Redirect(s"${config.departureHubUrl}/technical-difficulties"))
-              }
+              val navigator: UserAnswersNavigator = navigatorProvider(mode)
+              Redirect(navigator.nextPage(request.userAnswers))
           }
         )
   }

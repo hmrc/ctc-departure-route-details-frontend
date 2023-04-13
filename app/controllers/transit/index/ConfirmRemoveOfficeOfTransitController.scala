@@ -84,7 +84,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
                     customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
                     result <- OfficeOfTransitSection(index)
                       .removeFromUserAnswers()
-                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                      .updateTask()
                       .writeToSession()
                       .navigateTo(transitRoutes.AddAnotherOfficeOfTransitController.onPageLoad(lrn, mode))
                   } yield result

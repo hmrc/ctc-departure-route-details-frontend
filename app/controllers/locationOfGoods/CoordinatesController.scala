@@ -25,7 +25,6 @@ import pages.locationOfGoods.CoordinatesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.CoordinatesView
 
@@ -39,8 +38,7 @@ class CoordinatesController @Inject() (
   actions: Actions,
   formProvider: CoordinatesFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: CoordinatesView,
-  countriesService: CountriesService
+  view: CoordinatesView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -65,19 +63,14 @@ class CoordinatesController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
-            value =>
-              for {
-                ctcCountries                          <- countriesService.getCountryCodesCTC()
-                customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                result <- {
-                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                  CoordinatesPage
-                    .writeToUserAnswers(value)
-                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                    .writeToSession()
-                    .navigate()
-                }
-              } yield result
+            value => {
+              implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+              CoordinatesPage
+                .writeToUserAnswers(value)
+                .updateTask()
+                .writeToSession()
+                .navigate()
+            }
           )
     }
 }

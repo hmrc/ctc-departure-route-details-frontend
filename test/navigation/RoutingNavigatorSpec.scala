@@ -29,7 +29,7 @@ class RoutingNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       val mode              = NormalMode
       val navigatorProvider = new RoutingNavigatorProviderImpl()
-      val navigator         = navigatorProvider.apply(mode, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+      val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {
         "must redirect to routing check your answers" in {
@@ -47,7 +47,7 @@ class RoutingNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       val mode              = CheckMode
       val navigatorProvider = new RoutingNavigatorProviderImpl()
-      val navigator         = navigatorProvider.apply(mode, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+      val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {
         "must redirect to route details check your answers" in {

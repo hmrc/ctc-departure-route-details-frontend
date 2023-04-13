@@ -29,7 +29,7 @@ class LoadingAndUnloadingNavigatorSpec extends SpecBase with ScalaCheckPropertyC
 
       val mode              = NormalMode
       val navigatorProvider = new LoadingAndUnloadingNavigatorProviderImpl()
-      val navigator         = navigatorProvider.apply(mode, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+      val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {
         "must redirect to loading check your answers" in {
@@ -47,7 +47,7 @@ class LoadingAndUnloadingNavigatorSpec extends SpecBase with ScalaCheckPropertyC
 
       val mode              = CheckMode
       val navigatorProvider = new LoadingAndUnloadingNavigatorProviderImpl()
-      val navigator         = navigatorProvider.apply(mode, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+      val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {
         "must redirect to route details check your answers" in {

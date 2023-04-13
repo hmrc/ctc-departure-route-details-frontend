@@ -25,9 +25,9 @@ import models.domain.{EitherType, UserAnswersReader}
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import pages.external.{DeclarationTypePage, OfficeOfDeparturePage, SecurityDetailsTypePage}
+import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.routing._
-import pages.routing.index.CountryOfRoutingPage
+import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingPage}
 import pages.transit._
 import pages.transit.index._
 
@@ -49,7 +49,9 @@ class TransitDomainSpec extends SpecBase with Generators {
       "when offices of departure and destination country codes are in set CL112 and both have same country code" in {
         val userAnswers = emptyUserAnswers
           .setValue(OfficeOfDeparturePage, customsOfficeFromListedCountry)
+          .setValue(OfficeOfDepartureInCL112Page, true)
           .setValue(OfficeOfDestinationPage, customsOfficeFromListedCountry)
+          .setValue(OfficeOfDestinationInCL112Page, true)
           .setValue(AddOfficeOfTransitYesNoPage, false)
 
         val expectedResult = TransitDomain(
@@ -57,7 +59,7 @@ class TransitDomainSpec extends SpecBase with Generators {
           officesOfTransit = Nil
         )
 
-        val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+        val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
         result.value mustBe expectedResult
       }
@@ -65,9 +67,11 @@ class TransitDomainSpec extends SpecBase with Generators {
       "when T2 declaration type" in {
         val userAnswers = emptyUserAnswers
           .setValue(OfficeOfDeparturePage, customsOffice)
+          .setValue(OfficeOfDepartureInCL112Page, false)
           .setValue(DeclarationTypePage, Option2)
           .setValue(SecurityDetailsTypePage, NoSecurityDetails)
           .setValue(OfficeOfDestinationPage, customsOffice)
+          .setValue(OfficeOfDestinationInCL112Page, false)
           .setValue(OfficeOfTransitCountryPage(index), country)
           .setValue(OfficeOfTransitPage(index), officeOfTransit)
           .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
@@ -77,7 +81,7 @@ class TransitDomainSpec extends SpecBase with Generators {
           officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
         )
 
-        val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(Nil, Nil)).run(userAnswers)
+        val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
         result.value mustBe expectedResult
       }
@@ -87,9 +91,11 @@ class TransitDomainSpec extends SpecBase with Generators {
         "and some items are T2 declaration type" in {
           val userAnswers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOffice)
+            .setValue(OfficeOfDepartureInCL112Page, false)
             .setValue(DeclarationTypePage, Option5)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice)
+            .setValue(OfficeOfDestinationInCL112Page, false)
             .setValue(T2DeclarationTypeYesNoPage, true)
             .setValue(OfficeOfTransitCountryPage(index), country)
             .setValue(OfficeOfTransitPage(index), officeOfTransit)
@@ -100,7 +106,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
           )
 
-          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(Nil, Nil)).run(userAnswers)
+          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
           result.value mustBe expectedResult
         }
@@ -109,9 +115,11 @@ class TransitDomainSpec extends SpecBase with Generators {
           "and country code for office of departure is in set CL112" in {
             val userAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOfficeFromListedCountry)
+              .setValue(OfficeOfDepartureInCL112Page, true)
               .setValue(DeclarationTypePage, Option5)
               .setValue(SecurityDetailsTypePage, NoSecurityDetails)
               .setValue(OfficeOfDestinationPage, customsOffice)
+              .setValue(OfficeOfDestinationInCL112Page, false)
               .setValue(T2DeclarationTypeYesNoPage, false)
               .setValue(OfficeOfTransitCountryPage(index), country)
               .setValue(OfficeOfTransitPage(index), officeOfTransit)
@@ -122,7 +130,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
             )
 
-            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
             result.value mustBe expectedResult
           }
@@ -130,9 +138,11 @@ class TransitDomainSpec extends SpecBase with Generators {
           "and country code for office of destination is in set CL112" in {
             val userAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOffice)
+              .setValue(OfficeOfDepartureInCL112Page, false)
               .setValue(DeclarationTypePage, Option5)
               .setValue(SecurityDetailsTypePage, NoSecurityDetails)
               .setValue(OfficeOfDestinationPage, customsOfficeFromListedCountry)
+              .setValue(OfficeOfDestinationInCL112Page, true)
               .setValue(T2DeclarationTypeYesNoPage, false)
               .setValue(OfficeOfTransitPage(index), officeOfTransit)
               .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
@@ -142,7 +152,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               officesOfTransit = Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))
             )
 
-            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
             result.value mustBe expectedResult
           }
@@ -152,11 +162,14 @@ class TransitDomainSpec extends SpecBase with Generators {
             "and at least one country of routing is in set CL112" in {
               val userAnswers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOfficeFromUnlistedCountry)
+                .setValue(OfficeOfDepartureInCL112Page, false)
                 .setValue(DeclarationTypePage, Option5)
                 .setValue(SecurityDetailsTypePage, NoSecurityDetails)
                 .setValue(OfficeOfDestinationPage, customsOfficeFromUnlistedCountry)
+                .setValue(OfficeOfDestinationInCL112Page, false)
                 .setValue(BindingItineraryPage, true)
                 .setValue(CountryOfRoutingPage(index), country)
+                .setValue(CountryOfRoutingInCL112Page(index), true)
                 .setValue(T2DeclarationTypeYesNoPage, false)
                 .setValue(OfficeOfTransitCountryPage(index), country)
                 .setValue(OfficeOfTransitPage(index), officeOfTransit)
@@ -167,8 +180,7 @@ class TransitDomainSpec extends SpecBase with Generators {
                 officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
               )
 
-              val result: EitherType[TransitDomain] =
-                UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+              val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
               result.value mustBe expectedResult
             }
@@ -183,11 +195,14 @@ class TransitDomainSpec extends SpecBase with Generators {
 
               val userAnswers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOfficeFromUnlistedCountry)
+                .setValue(OfficeOfDepartureInCL112Page, false)
                 .setValue(DeclarationTypePage, Option5)
                 .setValue(SecurityDetailsTypePage, NoSecurityDetails)
                 .setValue(OfficeOfDestinationPage, customsOfficeFromUnlistedCountry)
+                .setValue(OfficeOfDestinationInCL112Page, false)
                 .setValue(BindingItineraryPage, true)
                 .setValue(CountryOfRoutingPage(index), country)
+                .setValue(CountryOfRoutingInCL112Page(index), false)
                 .setValue(T2DeclarationTypeYesNoPage, false)
                 .setValue(AddOfficeOfTransitYesNoPage, false)
 
@@ -196,8 +211,7 @@ class TransitDomainSpec extends SpecBase with Generators {
                 officesOfTransit = Nil
               )
 
-              val result: EitherType[TransitDomain] =
-                UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+              val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
               result.value mustBe expectedResult
             }
@@ -212,9 +226,11 @@ class TransitDomainSpec extends SpecBase with Generators {
         "and country code for office of departure is in set CL112" in {
           val userAnswers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOfficeFromListedCountry)
+            .setValue(OfficeOfDepartureInCL112Page, true)
             .setValue(DeclarationTypePage, declarationType)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice)
+            .setValue(OfficeOfDestinationInCL112Page, false)
             .setValue(OfficeOfTransitCountryPage(index), country)
             .setValue(OfficeOfTransitPage(index), officeOfTransit)
             .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
@@ -224,7 +240,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
           )
 
-          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
           result.value mustBe expectedResult
         }
@@ -232,9 +248,11 @@ class TransitDomainSpec extends SpecBase with Generators {
         "and country code for office of destination is in set CL112" in {
           val userAnswers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOffice)
+            .setValue(OfficeOfDepartureInCL112Page, false)
             .setValue(DeclarationTypePage, declarationType)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOfficeFromListedCountry)
+            .setValue(OfficeOfDestinationInCL112Page, true)
             .setValue(OfficeOfTransitPage(index), officeOfTransit)
             .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
 
@@ -243,7 +261,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             officesOfTransit = Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))
           )
 
-          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
           result.value mustBe expectedResult
         }
@@ -253,11 +271,14 @@ class TransitDomainSpec extends SpecBase with Generators {
           "and at least one country of routing is in set CL112" in {
             val userAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOfficeFromUnlistedCountry)
+              .setValue(OfficeOfDepartureInCL112Page, false)
               .setValue(DeclarationTypePage, declarationType)
               .setValue(SecurityDetailsTypePage, NoSecurityDetails)
               .setValue(OfficeOfDestinationPage, customsOfficeFromUnlistedCountry)
+              .setValue(OfficeOfDestinationInCL112Page, false)
               .setValue(BindingItineraryPage, true)
               .setValue(CountryOfRoutingPage(index), country)
+              .setValue(CountryOfRoutingInCL112Page(index), true)
               .setValue(OfficeOfTransitCountryPage(index), country)
               .setValue(OfficeOfTransitPage(index), officeOfTransit)
               .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
@@ -267,8 +288,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
             )
 
-            val result: EitherType[TransitDomain] =
-              UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
             result.value mustBe expectedResult
           }
@@ -283,11 +303,14 @@ class TransitDomainSpec extends SpecBase with Generators {
 
             val userAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOfficeFromUnlistedCountry)
+              .setValue(OfficeOfDepartureInCL112Page, false)
               .setValue(DeclarationTypePage, declarationType)
               .setValue(SecurityDetailsTypePage, NoSecurityDetails)
               .setValue(OfficeOfDestinationPage, customsOfficeFromUnlistedCountry)
+              .setValue(OfficeOfDestinationInCL112Page, false)
               .setValue(BindingItineraryPage, true)
               .setValue(CountryOfRoutingPage(index), country)
+              .setValue(CountryOfRoutingInCL112Page(index), false)
               .setValue(AddOfficeOfTransitYesNoPage, false)
 
             val expectedResult = TransitDomain(
@@ -295,8 +318,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               officesOfTransit = Nil
             )
 
-            val result: EitherType[TransitDomain] =
-              UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
             result.value mustBe expectedResult
           }
@@ -310,9 +332,11 @@ class TransitDomainSpec extends SpecBase with Generators {
         "and add office of transit yes/no unanswered" in {
           val userAnswers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOfficeFromListedCountry)
+            .setValue(OfficeOfDepartureInCL112Page, true)
             .setValue(OfficeOfDestinationPage, customsOfficeFromListedCountry)
+            .setValue(OfficeOfDestinationInCL112Page, true)
 
-          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
           result.left.value.page mustBe AddOfficeOfTransitYesNoPage
         }
@@ -323,10 +347,12 @@ class TransitDomainSpec extends SpecBase with Generators {
           "and empty json at index 0" in {
             val userAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOfficeFromUnlistedCountry)
+              .setValue(OfficeOfDepartureInCL112Page, false)
               .setValue(DeclarationTypePage, Option2)
               .setValue(OfficeOfDestinationPage, customsOfficeFromListedCountry)
+              .setValue(OfficeOfDestinationInCL112Page, true)
 
-            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
             result.left.value.page mustBe OfficeOfTransitPage(Index(0))
           }
@@ -336,10 +362,12 @@ class TransitDomainSpec extends SpecBase with Generators {
           "and empty json at index 0" in {
             val userAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOfficeFromUnlistedCountry)
+              .setValue(OfficeOfDepartureInCL112Page, false)
               .setValue(DeclarationTypePage, Option2)
               .setValue(OfficeOfDestinationPage, customsOfficeFromUnlistedCountry)
+              .setValue(OfficeOfDestinationInCL112Page, false)
 
-            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
             result.left.value.page mustBe OfficeOfTransitCountryPage(Index(0))
           }
@@ -362,14 +390,16 @@ class TransitDomainSpec extends SpecBase with Generators {
 
               val userAnswers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOfficeFromUnlistedCountry)
+                .setValue(OfficeOfDepartureInCL112Page, false)
                 .setValue(DeclarationTypePage, declarationType)
                 .setValue(SecurityDetailsTypePage, NoSecurityDetails)
                 .setValue(OfficeOfDestinationPage, customsOfficeFromUnlistedCountry)
+                .setValue(OfficeOfDestinationInCL112Page, false)
                 .setValue(BindingItineraryPage, true)
                 .setValue(CountryOfRoutingPage(index), country)
+                .setValue(CountryOfRoutingInCL112Page(index), false)
 
-              val result: EitherType[TransitDomain] =
-                UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(countryCodes, Nil)).run(userAnswers)
+              val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
 
               result.left.value.page mustBe AddOfficeOfTransitYesNoPage
             }

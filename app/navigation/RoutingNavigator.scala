@@ -19,26 +19,25 @@ package navigation
 import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.routing.RoutingDomain
-import models.{CheckMode, CountryList, Mode, NormalMode}
-import navigation.UserAnswersNavigator
+import models.{CheckMode, Mode, NormalMode}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class RoutingNavigatorProviderImpl @Inject() (implicit val config: FrontendAppConfig) extends RoutingNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
+  def apply(mode: Mode): UserAnswersNavigator =
     mode match {
       case NormalMode =>
         new RoutingNavigator(mode)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 
 trait RoutingNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
+  def apply(mode: Mode): UserAnswersNavigator
 }
 
 class RoutingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig) extends UserAnswersNavigator {

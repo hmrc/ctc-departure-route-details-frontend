@@ -43,3 +43,17 @@ case class CountryOfRoutingPage(index: Index) extends QuestionPage[Country] {
       case None    => super.cleanup(value, userAnswers)
     }
 }
+
+case class CountryOfRoutingInCL112Page(index: Index) extends QuestionPage[Boolean] {
+
+  override def path: JsPath = CountryOfRoutingPage(index).path \ toString
+
+  override def toString: String = "isInCL112"
+}
+
+case class CountryOfRoutingInCL147Page(index: Index) extends QuestionPage[Boolean] {
+
+  override def path: JsPath = CountryOfRoutingPage(index).path \ toString
+
+  override def toString: String = "isInCL147"
+}

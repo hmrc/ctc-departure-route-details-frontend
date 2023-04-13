@@ -19,26 +19,25 @@ package navigation
 import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.exit.ExitDomain
-import models.{CheckMode, CountryList, Mode, NormalMode}
-import navigation.UserAnswersNavigator
+import models.{CheckMode, Mode, NormalMode}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ExitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends ExitNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
+  def apply(mode: Mode): UserAnswersNavigator =
     mode match {
       case NormalMode =>
         new ExitNavigator(mode)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 
 trait ExitNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
+  def apply(mode: Mode): UserAnswersNavigator
 }
 
 class ExitNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig) extends UserAnswersNavigator {

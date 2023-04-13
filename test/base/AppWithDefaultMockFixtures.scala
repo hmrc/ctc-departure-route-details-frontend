@@ -18,7 +18,7 @@ package base
 
 import controllers.actions._
 import models.{CountryList, Index, Mode, UserAnswers}
-import navigation.{FakeCountryOfRoutingNavigator, FakeLocationOfGoodsNavigator, FakeOfficeOfTransitNavigator, FakeRoutingNavigator, FakeTransitNavigator, _}
+import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
@@ -69,31 +69,31 @@ trait AppWithDefaultMockFixtures extends BeforeAndAfterEach with GuiceOneAppPerS
   protected val fakeNavigator: Navigator = new FakeNavigator(onwardRoute)
 
   protected val fakeRouteDetailsNavigatorProvider: RouteDetailsNavigatorProvider =
-    (mode: Mode, _: CountryList, _: CountryList) => new FakeRouteDetailsNavigator(onwardRoute, mode)
+    (mode: Mode) => new FakeRouteDetailsNavigator(onwardRoute, mode)
 
   protected val fakeExitNavigatorProvider: ExitNavigatorProvider =
-    (mode: Mode, _: CountryList, _: CountryList) => new FakeExitNavigator(onwardRoute, mode)
+    (mode: Mode) => new FakeExitNavigator(onwardRoute, mode)
 
   protected val fakeOfficeOfExitNavigatorProvider: OfficeOfExitNavigatorProvider =
-    (mode: Mode, index: Index, _: CountryList, _: CountryList) => new FakeOfficeOfExitNavigator(onwardRoute, mode, index)
+    (mode: Mode, index: Index) => new FakeOfficeOfExitNavigator(onwardRoute, mode, index)
 
   protected val fakeLoadingNavigatorProvider: LoadingAndUnloadingNavigatorProvider =
-    (mode: Mode, _: CountryList, _: CountryList) => new FakeLoadingAndUnloadingNavigator(onwardRoute, mode)
+    (mode: Mode) => new FakeLoadingAndUnloadingNavigator(onwardRoute, mode)
 
   protected val fakeLocationOfGoodsNavigatorProvider: LocationOfGoodsNavigatorProvider =
-    (mode: Mode, _: CountryList, _: CountryList) => new FakeLocationOfGoodsNavigator(onwardRoute, mode)
+    (mode: Mode) => new FakeLocationOfGoodsNavigator(onwardRoute, mode)
 
   protected val fakeRoutingNavigatorProvider: RoutingNavigatorProvider =
-    (mode: Mode, _: CountryList, _: CountryList) => new FakeRoutingNavigator(onwardRoute, mode)
+    (mode: Mode) => new FakeRoutingNavigator(onwardRoute, mode)
 
   protected val fakeCountryOfRoutingNavigatorProvider: CountryOfRoutingNavigatorProvider =
-    (mode: Mode, index: Index, _: CountryList, _: CountryList) => new FakeCountryOfRoutingNavigator(onwardRoute, mode, index)
+    (mode: Mode, index: Index) => new FakeCountryOfRoutingNavigator(onwardRoute, mode, index)
 
   protected val fakeTransitNavigatorProvider: TransitNavigatorProvider =
-    (mode: Mode, _: CountryList, _: CountryList) => new FakeTransitNavigator(onwardRoute, mode)
+    (mode: Mode) => new FakeTransitNavigator(onwardRoute, mode)
 
   protected val fakeOfficeOfTransitNavigatorProvider: OfficeOfTransitNavigatorProvider =
-    (mode: Mode, index: Index, _: CountryList, _: CountryList) => new FakeOfficeOfTransitNavigator(onwardRoute, mode, index)
+    (mode: Mode, index: Index) => new FakeOfficeOfTransitNavigator(onwardRoute, mode, index)
 
   def guiceApplicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()

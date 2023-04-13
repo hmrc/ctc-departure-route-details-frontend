@@ -63,19 +63,14 @@ class AddIdentifierYesNoController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
-          value =>
-            for {
-              ctcCountries                          <- countriesService.getCountryCodesCTC()
-              customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-              result <- {
-                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                AddIdentifierYesNoPage
-                  .writeToUserAnswers(value)
-                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                  .writeToSession()
-                  .navigate()
-              }
-            } yield result
+          value => {
+            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            AddIdentifierYesNoPage
+              .writeToUserAnswers(value)
+              .updateTask()
+              .writeToSession()
+              .navigate()
+          }
         )
   }
 }

@@ -20,37 +20,34 @@ import config.FrontendAppConfig
 import models._
 import models.domain.UserAnswersReader
 import models.journeyDomain.transit.OfficeOfTransitDomain
-import navigation.UserAnswersNavigator
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class OfficeOfTransitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends OfficeOfTransitNavigatorProvider {
 
-  def apply(mode: Mode, index: Index, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
+  def apply(mode: Mode, index: Index): UserAnswersNavigator =
     mode match {
       case NormalMode =>
-        new OfficeOfTransitNavigator(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
+        new OfficeOfTransitNavigator(mode, index)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 
 trait OfficeOfTransitNavigatorProvider {
 
-  def apply(mode: Mode, index: Index, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
+  def apply(mode: Mode, index: Index): UserAnswersNavigator
 }
 
 class OfficeOfTransitNavigator(
   override val mode: Mode,
-  index: Index,
-  ctcCountries: CountryList,
-  customsSecurityAgreementAreaCountries: CountryList
+  index: Index
 )(implicit override val config: FrontendAppConfig)
     extends UserAnswersNavigator {
 
   override type T = OfficeOfTransitDomain
 
   implicit override val reader: UserAnswersReader[OfficeOfTransitDomain] =
-    OfficeOfTransitDomain.userAnswersReader(index, ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes)
+    OfficeOfTransitDomain.userAnswersReader(index)
 }

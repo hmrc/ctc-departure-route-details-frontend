@@ -104,17 +104,12 @@ class OfficeOfExitCountryController @Inject() (
     index: Index,
     page: Index => QuestionPage[Country],
     country: Country
-  )(implicit request: Request): Future[Result] =
-    for {
-      ctcCountries                          <- countriesService.getCountryCodesCTC()
-      customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-      result <- {
-        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
-        page(index)
-          .writeToUserAnswers(country)
-          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-          .writeToSession()
-          .navigate()
-      }
-    } yield result
+  )(implicit request: Request): Future[Result] = {
+    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+    page(index)
+      .writeToUserAnswers(country)
+      .updateTask()
+      .writeToSession()
+      .navigate()
+  }
 }

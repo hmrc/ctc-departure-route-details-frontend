@@ -16,14 +16,14 @@
 
 import cats.data.ReaderT
 import models.TaskStatus.{Completed, InProgress}
+import models.UserAnswers
 import models.domain.UserAnswersReader
 import models.journeyDomain.OpsError.WriterError
 import models.journeyDomain.RouteDetailsDomain
 import models.requests.MandatoryDataRequest
-import models.{CountryList, UserAnswers}
 import navigation.UserAnswersNavigator
 import pages.QuestionPage
-import play.api.libs.json.Format
+import play.api.libs.json._
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
 import repositories.SessionRepository
@@ -62,14 +62,21 @@ package object controllers {
 
   implicit class SettableOpsRunner[A](userAnswersWriter: UserAnswersWriter[Write[A]]) {
 
-    def updateTask(ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersWriter[Write[A]] =
+    def appendValue[B](subPage: QuestionPage[B], value: B)(implicit format: Format[B]): UserAnswersWriter[Write[A]] =
+      userAnswersWriter.flatMapF {
+        case (page, userAnswers) =>
+          userAnswers.set(subPage, value) match {
+            case Failure(exception) => Left(WriterError(page, Some(s"Failed to append value to answer: ${exception.getMessage}")))
+            case Success(value)     => Right((page, value))
+          }
+      }
+
+    def updateTask(): UserAnswersWriter[Write[A]] =
       userAnswersWriter.flatMapF {
         case (page, userAnswers) =>
           page.path.path.headOption.map(_.toJsonString) match {
             case Some(section) =>
-              val status = UserAnswersReader[RouteDetailsDomain](
-                RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes)
-              ).run(userAnswers) match {
+              val status = UserAnswersReader[RouteDetailsDomain].run(userAnswers) match {
                 case Left(_)  => InProgress
                 case Right(_) => Completed
               }

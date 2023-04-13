@@ -33,3 +33,10 @@ case object OfficeOfDestinationPage extends QuestionPage[CustomsOffice] {
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.OfficeOfDestinationController.onPageLoad(userAnswers.lrn, mode))
 }
+
+case object OfficeOfDestinationInCL112Page extends QuestionPage[Boolean] {
+
+  override def path: JsPath = OfficeOfDestinationPage.path \ toString
+
+  override def toString: String = "isInCL112"
+}

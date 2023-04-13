@@ -26,7 +26,7 @@ import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitC
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{CountriesService, CustomsOfficesService}
+import services.CustomsOfficesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.transit.index.OfficeOfTransitView
 
@@ -40,7 +40,6 @@ class OfficeOfTransitController @Inject() (
   actions: Actions,
   formProvider: CustomsOfficeForCountryFormProvider,
   customsOfficesService: CustomsOfficesService,
-  countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   view: OfficeOfTransitView,
   getMandatoryPage: SpecificDataRequiredActionProvider
@@ -78,19 +77,14 @@ class OfficeOfTransitController @Inject() (
               .bindFromRequest()
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, country.description, mode, index))),
-                value =>
-                  for {
-                    ctcCountries                          <- countriesService.getCountryCodesCTC()
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                    result <- {
-                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
-                      OfficeOfTransitPage(index)
-                        .writeToUserAnswers(value)
-                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                        .writeToSession()
-                        .navigate()
-                    }
-                  } yield result
+                value => {
+                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                  OfficeOfTransitPage(index)
+                    .writeToUserAnswers(value)
+                    .updateTask()
+                    .writeToSession()
+                    .navigate()
+                }
               )
         }
     }

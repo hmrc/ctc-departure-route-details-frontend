@@ -24,7 +24,7 @@ import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice}
 import models.{DateTime, Index, Mode, UserAnswers}
 import pages.external.SecurityDetailsTypePage
-import pages.routing.OfficeOfDestinationPage
+import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import pages.transit.index._
 import play.api.mvc.Call
 
@@ -51,19 +51,15 @@ object OfficeOfTransitDomain {
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
-  implicit def userAnswersReader(
-    index: Index,
-    ctcCountryCodes: Seq[String],
-    customsSecurityAgreementAreaCountryCodes: Seq[String]
-  ): UserAnswersReader[OfficeOfTransitDomain] = {
+  implicit def userAnswersReader(index: Index): UserAnswersReader[OfficeOfTransitDomain] = {
 
     lazy val etaReads: UserAnswersReader[Option[DateTime]] =
       SecurityDetailsTypePage.reader.flatMap {
         case EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
-          OfficeOfTransitPage(index).reader.flatMap {
-            case x if customsSecurityAgreementAreaCountryCodes.contains(x.countryCode) =>
+          OfficeOfTransitInCL147Page(index).reader.flatMap {
+            case true =>
               OfficeOfTransitETAPage(index).reader.map(Some(_))
-            case _ =>
+            case false =>
               AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
           }
         case _ =>
@@ -89,10 +85,14 @@ object OfficeOfTransitDomain {
 
     index.position match {
       case 0 =>
-        OfficeOfDestinationPage.reader.map(_.countryCode).flatMap {
-          case x if ctcCountryCodes.contains(x) => readsWithoutCountry
-          case AD                               => readsWithoutCountry
-          case _                                => readsWithCountry
+        OfficeOfDestinationInCL112Page.reader.flatMap {
+          case true =>
+            readsWithoutCountry
+          case false =>
+            OfficeOfDestinationPage.reader.map(_.countryCode).flatMap {
+              case AD => readsWithoutCountry
+              case _  => readsWithCountry
+            }
         }
       case _ => readsWithCountry
     }

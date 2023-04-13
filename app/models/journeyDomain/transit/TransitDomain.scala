@@ -17,12 +17,12 @@
 package models.journeyDomain.transit
 
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
-import models.journeyDomain.routing.CountryOfRoutingDomain
 import models.journeyDomain.transit.TransitDomain.OfficesOfTransit
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.{DeclarationType, Index, Mode, RichJsArray, UserAnswers}
-import pages.external.{DeclarationTypePage, OfficeOfDeparturePage}
-import pages.routing.OfficeOfDestinationPage
+import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage}
+import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
+import pages.sections.routing.CountriesOfRoutingSection
 import pages.sections.transit.OfficesOfTransitSection
 import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
 import play.api.mvc.Call
@@ -42,20 +42,17 @@ object TransitDomain {
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
-  implicit def userAnswersReader(
-    ctcCountryCodes: Seq[String],
-    customsSecurityAgreementAreaCountryCodes: Seq[String]
-  ): UserAnswersReader[TransitDomain] = {
+  implicit val userAnswersReader: UserAnswersReader[TransitDomain] = {
 
     implicit val officesOfTransitReader: UserAnswersReader[OfficesOfTransit] =
       OfficesOfTransitSection.arrayReader.flatMap {
         case x if x.isEmpty =>
           UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(Index(0), ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+            OfficeOfTransitDomain.userAnswersReader(Index(0))
           ).map(Seq(_))
         case x =>
           x.traverse[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(_, ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+            OfficeOfTransitDomain.userAnswersReader
           )
       }
 
@@ -64,50 +61,49 @@ object TransitDomain {
         .filterOptionalDependent(identity)(officesOfTransitReader)
         .map(_.getOrElse(Nil))
 
-    OfficeOfDeparturePage.reader.flatMap {
-      officeOfDeparture =>
-        OfficeOfDestinationPage.reader.flatMap {
-          officeOfDestination =>
-            def countriesOfRoutingReader(isT2DeclarationType: Option[Boolean]): UserAnswersReader[TransitDomain] = {
-              val officesOfTransit = if (ctcCountryCodes.contains(officeOfDeparture.countryCode) || ctcCountryCodes.contains(officeOfDestination.countryCode)) {
-                UserAnswersReader[OfficesOfTransit]
-              } else {
-                UserAnswersReader[Seq[CountryOfRoutingDomain]]
-                  .map(_.map(_.country.code.code))
-                  .flatMap {
-                    _.filter(ctcCountryCodes.contains(_)) match {
-                      case Nil => addOfficesOfTransitReader
-                      case _   => UserAnswersReader[OfficesOfTransit]
-                    }
-                  }
-              }
+    for {
+      officeOfDeparture          <- OfficeOfDeparturePage.reader
+      officeOfDepartureInCL112   <- OfficeOfDepartureInCL112Page.reader
+      officeOfDestination        <- OfficeOfDestinationPage.reader
+      officeOfDestinationInCL112 <- OfficeOfDestinationInCL112Page.reader
+      reader <- {
+        def countriesOfRoutingReader(isT2DeclarationType: Option[Boolean]): UserAnswersReader[TransitDomain] = {
+          val officesOfTransit = if (officeOfDepartureInCL112 || officeOfDestinationInCL112) {
+            UserAnswersReader[OfficesOfTransit]
+          } else {
+            for {
+              anyCountriesOfRoutingInCL112 <- CountriesOfRoutingSection.anyCountriesOfRoutingInCL112
+              reader <-
+                if (anyCountriesOfRoutingInCL112) {
+                  UserAnswersReader[OfficesOfTransit]
+                } else {
+                  addOfficesOfTransitReader
+                }
+            } yield reader
+          }
 
-              officesOfTransit.map(TransitDomain(isT2DeclarationType, _))
-            }
-
-            if (
-              ctcCountryCodes.contains(officeOfDeparture.countryCode) &&
-              ctcCountryCodes.contains(officeOfDestination.countryCode) &&
-              officeOfDeparture.countryCode == officeOfDestination.countryCode
-            ) {
-              addOfficesOfTransitReader.map(TransitDomain(None, _))
-            } else {
-              DeclarationTypePage.reader.flatMap {
-                case DeclarationType.Option2 =>
-                  UserAnswersReader[OfficesOfTransit].map(TransitDomain(None, _))
-                case DeclarationType.Option5 =>
-                  T2DeclarationTypeYesNoPage.reader.flatMap {
-                    case true =>
-                      UserAnswersReader[OfficesOfTransit].map(TransitDomain(Some(true), _))
-                    case false =>
-                      countriesOfRoutingReader(Some(false))
-                  }
-                case _ =>
-                  countriesOfRoutingReader(None)
-              }
-            }
+          officesOfTransit.map(TransitDomain(isT2DeclarationType, _))
         }
-    }
+
+        if (officeOfDepartureInCL112 && officeOfDestinationInCL112 && officeOfDeparture.countryCode == officeOfDestination.countryCode) {
+          addOfficesOfTransitReader.map(TransitDomain(None, _))
+        } else {
+          DeclarationTypePage.reader.flatMap {
+            case DeclarationType.Option2 =>
+              UserAnswersReader[OfficesOfTransit].map(TransitDomain(None, _))
+            case DeclarationType.Option5 =>
+              T2DeclarationTypeYesNoPage.reader.flatMap {
+                case true =>
+                  UserAnswersReader[OfficesOfTransit].map(TransitDomain(Some(true), _))
+                case false =>
+                  countriesOfRoutingReader(Some(false))
+              }
+            case _ =>
+              countriesOfRoutingReader(None)
+          }
+        }
+      }
+    } yield reader
   }
   // scalastyle:on cyclomatic.complexity
   // scalastyle:on method.length

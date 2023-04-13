@@ -22,7 +22,7 @@ import forms.CustomsOfficeFormProvider
 import models.reference.CustomsOffice
 import models.{CustomsOfficeList, LocalReferenceNumber, Mode}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
-import pages.routing.{CountryOfDestinationPage, OfficeOfDestinationPage}
+import pages.routing.{CountryOfDestinationPage, OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -83,13 +83,14 @@ class OfficeOfDestinationController @Inject() (
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, mode))),
                 value =>
                   for {
-                    ctcCountries                          <- countriesService.getCountryCodesCTC()
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
+                    ctcCountries <- countriesService.getCountryCodesCTC().map(_.countries)
+                    isInCL112 = ctcCountries.map(_.code.code).contains(value.countryCode)
                     result <- {
-                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                       OfficeOfDestinationPage
                         .writeToUserAnswers(value)
-                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                        .appendValue(OfficeOfDestinationInCL112Page, isInCL112)
+                        .updateTask()
                         .writeToSession()
                         .navigate()
                     }

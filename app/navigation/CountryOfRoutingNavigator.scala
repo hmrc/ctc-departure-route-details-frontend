@@ -20,25 +20,24 @@ import config.FrontendAppConfig
 import models._
 import models.domain.UserAnswersReader
 import models.journeyDomain.routing.CountryOfRoutingDomain
-import navigation.UserAnswersNavigator
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CountryOfRoutingNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends CountryOfRoutingNavigatorProvider {
 
-  def apply(mode: Mode, index: Index, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
+  def apply(mode: Mode, index: Index): UserAnswersNavigator =
     mode match {
       case NormalMode =>
         new CountryOfRoutingNavigator(mode, index)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 
 trait CountryOfRoutingNavigatorProvider {
 
-  def apply(mode: Mode, index: Index, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
+  def apply(mode: Mode, index: Index): UserAnswersNavigator
 }
 
 class CountryOfRoutingNavigator(

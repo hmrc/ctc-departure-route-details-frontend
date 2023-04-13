@@ -25,7 +25,7 @@ import pages.locationOfGoods.UnLocodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{CountriesService, UnLocodesService}
+import services.UnLocodesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.UnLocodeView
 
@@ -39,7 +39,6 @@ class UnLocodeController @Inject() (
   actions: Actions,
   formProvider: UnLocodeFormProvider,
   unLocodesService: UnLocodesService,
-  countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   view: UnLocodeView
 )(implicit ec: ExecutionContext)
@@ -75,19 +74,14 @@ class UnLocodeController @Inject() (
               .bindFromRequest()
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, unLocodeList.unLocodes, mode))),
-                value =>
-                  for {
-                    ctcCountries                          <- countriesService.getCountryCodesCTC()
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                    result <- {
-                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                      UnLocodePage
-                        .writeToUserAnswers(value)
-                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-                        .writeToSession()
-                        .navigate()
-                    }
-                  } yield result
+                value => {
+                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                  UnLocodePage
+                    .writeToUserAnswers(value)
+                    .updateTask()
+                    .writeToSession()
+                    .navigate()
+                }
               )
         }
     }

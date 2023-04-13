@@ -27,7 +27,6 @@ import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.IdentificationView
 
@@ -41,8 +40,7 @@ class IdentificationController @Inject() (
   actions: Actions,
   formProvider: EnumerableFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: IdentificationView,
-  countriesService: CountriesService
+  view: IdentificationView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -78,17 +76,12 @@ class IdentificationController @Inject() (
     mode: Mode,
     page: QuestionPage[LocationOfGoodsIdentification],
     value: LocationOfGoodsIdentification
-  )(implicit request: DataRequest[_]): Future[Result] =
-    for {
-      ctcCountries                          <- countriesService.getCountryCodesCTC()
-      customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-      result <- {
-        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-        page
-          .writeToUserAnswers(value)
-          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
-          .writeToSession()
-          .navigate()
-      }
-    } yield result
+  )(implicit request: DataRequest[_]): Future[Result] = {
+    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+    page
+      .writeToUserAnswers(value)
+      .updateTask()
+      .writeToSession()
+      .navigate()
+  }
 }
