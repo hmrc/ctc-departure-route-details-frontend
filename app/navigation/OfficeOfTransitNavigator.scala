@@ -26,7 +26,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class OfficeOfTransitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends OfficeOfTransitNavigatorProvider {
 
-  def apply(mode: Mode, index: Index, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
+  def apply(mode: Mode, index: Index): UserAnswersNavigator =
     mode match {
       case NormalMode =>
         new OfficeOfTransitNavigator(mode, index)
@@ -37,7 +37,7 @@ class OfficeOfTransitNavigatorProviderImpl @Inject() (implicit config: FrontendA
 
 trait OfficeOfTransitNavigatorProvider {
 
-  def apply(mode: Mode, index: Index, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
+  def apply(mode: Mode, index: Index): UserAnswersNavigator
 }
 
 class OfficeOfTransitNavigator(

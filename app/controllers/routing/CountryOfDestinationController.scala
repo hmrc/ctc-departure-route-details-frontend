@@ -75,18 +75,12 @@ class CountryOfDestinationController @Inject() (
               value =>
                 customsOfficesService.getCustomsOfficesOfDestinationForCountry(value.code).flatMap {
                   case x if x.customsOffices.nonEmpty =>
-                    for {
-                      ctcCountries                          <- countriesService.getCountryCodesCTC()
-                      customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                      result <- {
-                        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                        CountryOfDestinationPage
-                          .writeToUserAnswers(value)
-                          .updateTask()
-                          .writeToSession()
-                          .navigate()
-                      }
-                    } yield result
+                    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                    CountryOfDestinationPage
+                      .writeToUserAnswers(value)
+                      .updateTask()
+                      .writeToSession()
+                      .navigate()
                   case _ =>
                     val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
                     Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, mode)))

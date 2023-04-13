@@ -19,14 +19,14 @@ package navigation
 import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.transit.TransitDomain
-import models.{CheckMode, CountryList, Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class TransitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends TransitNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
+  def apply(mode: Mode): UserAnswersNavigator =
     mode match {
       case NormalMode =>
         new TransitNavigator(mode)
@@ -37,7 +37,7 @@ class TransitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig
 
 trait TransitNavigatorProvider {
 
-  def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator
+  def apply(mode: Mode): UserAnswersNavigator
 }
 
 class TransitNavigator(

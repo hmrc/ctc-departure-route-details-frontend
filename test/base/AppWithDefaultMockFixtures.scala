@@ -75,7 +75,7 @@ trait AppWithDefaultMockFixtures extends BeforeAndAfterEach with GuiceOneAppPerS
     (mode: Mode) => new FakeExitNavigator(onwardRoute, mode)
 
   protected val fakeOfficeOfExitNavigatorProvider: OfficeOfExitNavigatorProvider =
-    (mode: Mode, index: Index, _: CountryList, _: CountryList) => new FakeOfficeOfExitNavigator(onwardRoute, mode, index)
+    (mode: Mode, index: Index) => new FakeOfficeOfExitNavigator(onwardRoute, mode, index)
 
   protected val fakeLoadingNavigatorProvider: LoadingAndUnloadingNavigatorProvider =
     (mode: Mode) => new FakeLoadingAndUnloadingNavigator(onwardRoute, mode)
@@ -84,16 +84,16 @@ trait AppWithDefaultMockFixtures extends BeforeAndAfterEach with GuiceOneAppPerS
     (mode: Mode) => new FakeLocationOfGoodsNavigator(onwardRoute, mode)
 
   protected val fakeRoutingNavigatorProvider: RoutingNavigatorProvider =
-    (mode: Mode, _: CountryList, _: CountryList) => new FakeRoutingNavigator(onwardRoute, mode)
+    (mode: Mode) => new FakeRoutingNavigator(onwardRoute, mode)
 
   protected val fakeCountryOfRoutingNavigatorProvider: CountryOfRoutingNavigatorProvider =
     (mode: Mode, index: Index) => new FakeCountryOfRoutingNavigator(onwardRoute, mode, index)
 
   protected val fakeTransitNavigatorProvider: TransitNavigatorProvider =
-    (mode: Mode, _: CountryList, _: CountryList) => new FakeTransitNavigator(onwardRoute, mode)
+    (mode: Mode) => new FakeTransitNavigator(onwardRoute, mode)
 
   protected val fakeOfficeOfTransitNavigatorProvider: OfficeOfTransitNavigatorProvider =
-    (mode: Mode, index: Index, _: CountryList, _: CountryList) => new FakeOfficeOfTransitNavigator(onwardRoute, mode, index)
+    (mode: Mode, index: Index) => new FakeOfficeOfTransitNavigator(onwardRoute, mode, index)
 
   def guiceApplicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
