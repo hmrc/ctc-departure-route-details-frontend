@@ -86,18 +86,10 @@ trait ModelGenerators {
   implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] =
     Arbitrary {
       for {
-        countryCode   <- arbitrary[CountryCode].map(_.code)
-        customsOffice <- arbitrary[CustomsOffice](arbitraryCustomsOffice(countryCode))
-      } yield customsOffice
-    }
-
-  def arbitraryCustomsOffice(countryCode: String): Arbitrary[CustomsOffice] =
-    Arbitrary {
-      for {
         id          <- nonEmptyString
         name        <- nonEmptyString
         phoneNumber <- Gen.option(Gen.alphaNumStr)
-      } yield CustomsOffice(countryCode + id, name, phoneNumber)
+      } yield CustomsOffice(id, name, phoneNumber)
     }
 
   implicit lazy val arbitraryUnLocode: Arbitrary[UnLocode] =
