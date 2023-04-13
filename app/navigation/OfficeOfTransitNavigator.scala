@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import models._
 import models.domain.UserAnswersReader
 import models.journeyDomain.transit.OfficeOfTransitDomain
-import navigation.UserAnswersNavigator
 
 import javax.inject.{Inject, Singleton}
 
@@ -52,5 +51,5 @@ class OfficeOfTransitNavigator(
   override type T = OfficeOfTransitDomain
 
   implicit override val reader: UserAnswersReader[OfficeOfTransitDomain] =
-    OfficeOfTransitDomain.userAnswersReader(index, ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes)
+    OfficeOfTransitDomain.userAnswersReader(index)
 }

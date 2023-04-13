@@ -26,8 +26,8 @@ import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.external.{OfficeOfDeparturePage, SecurityDetailsTypePage}
-import pages.routing.OfficeOfDestinationPage
+import pages.external.{OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
+import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import pages.sections.transit.OfficeOfTransitSection
 import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitPage}
 import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
@@ -146,7 +146,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
           forAll(arbitraryOfficeOfTransitAnswers(emptyUserAnswers, index), arbitrary[Mode]) {
             (userAnswers, mode) =>
               val officeOfExit = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index, ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+                OfficeOfTransitDomain.userAnswersReader(index)
               ).run(userAnswers).value
 
               val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
@@ -210,8 +210,10 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
 
           val answers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOffice)
+            .setValue(OfficeOfDepartureInCL112Page, true)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice1)
+            .setValue(OfficeOfDestinationInCL112Page, true)
             .setValue(OfficeOfTransitCountryPage(Index(0)), country1)
             .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
             .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
@@ -260,8 +262,10 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
 
           val answers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOffice1)
+            .setValue(OfficeOfDepartureInCL112Page, true)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice1)
+            .setValue(OfficeOfDestinationInCL112Page, true)
             .setValue(AddOfficeOfTransitYesNoPage, true)
             .setValue(OfficeOfTransitCountryPage(Index(0)), country1)
             .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)

@@ -19,10 +19,10 @@ package pages.routing.index
 import controllers.routing.index.routes
 import models.reference.Country
 import models.{Index, Mode, UserAnswers}
-import pages.QuestionPage
 import pages.sections.exit.ExitSection
 import pages.sections.routing.CountryOfRoutingSection
 import pages.sections.transit.TransitSection
+import pages.{QuestionPage, ReadOnlyPage}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
@@ -42,4 +42,18 @@ case class CountryOfRoutingPage(index: Index) extends QuestionPage[Country] {
       case Some(_) => userAnswers.remove(TransitSection).flatMap(_.remove(ExitSection))
       case None    => super.cleanup(value, userAnswers)
     }
+}
+
+case class CountryOfRoutingInCL112Page(index: Index) extends ReadOnlyPage[Boolean] {
+
+  override def path: JsPath = CountryOfRoutingPage(index).path \ toString
+
+  override def toString: String = "isInCL112"
+}
+
+case class CountryOfRoutingInCL147Page(index: Index) extends ReadOnlyPage[Boolean] {
+
+  override def path: JsPath = CountryOfRoutingPage(index).path \ toString
+
+  override def toString: String = "isInCL147"
 }

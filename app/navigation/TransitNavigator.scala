@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.transit.TransitDomain
 import models.{CheckMode, CountryList, Mode, NormalMode}
-import navigation.UserAnswersNavigator
 
 import javax.inject.{Inject, Singleton}
 
@@ -51,5 +50,5 @@ class TransitNavigator(
   override type T = TransitDomain
 
   implicit override val reader: UserAnswersReader[TransitDomain] =
-    TransitDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes)
+    TransitDomain.userAnswersReader
 }

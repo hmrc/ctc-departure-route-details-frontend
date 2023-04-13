@@ -68,14 +68,8 @@ object RouteDetailsDomain {
     customsSecurityAgreementAreaCountryCodes: Seq[String]
   ): UserAnswersReader[Option[TransitDomain]] =
     DeclarationTypePage.reader.flatMap {
-      case Option4 =>
-        none[TransitDomain].pure[UserAnswersReader]
-      case _ =>
-        implicit val reads: UserAnswersReader[TransitDomain] = TransitDomain.userAnswersReader(
-          ctcCountryCodes,
-          customsSecurityAgreementAreaCountryCodes
-        )
-        UserAnswersReader[TransitDomain].map(Some(_))
+      case Option4 => none[TransitDomain].pure[UserAnswersReader]
+      case _       => UserAnswersReader[TransitDomain].map(Some(_))
     }
 
   implicit def exitReader(transit: Option[TransitDomain]): UserAnswersReader[Option[ExitDomain]] =
@@ -91,10 +85,11 @@ object RouteDetailsDomain {
       }
     } yield result
 
-  private def exitRequired(declarationType: DeclarationType,
-                           securityDetails: SecurityDetailsType,
-                           isInSecurityAgreementArea: Option[Boolean],
-                           transit: Option[TransitDomain]
+  private def exitRequired(
+    declarationType: DeclarationType,
+    securityDetails: SecurityDetailsType,
+    isInSecurityAgreementArea: Option[Boolean],
+    transit: Option[TransitDomain]
   ): Boolean =
     (declarationType, securityDetails, isInSecurityAgreementArea, transit) match {
       case (Option4, _, _, _)                                                    => false

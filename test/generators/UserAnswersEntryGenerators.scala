@@ -16,8 +16,8 @@
 
 package generators
 
-import models.{Coordinates, DateTime, DeclarationType, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress, SecurityDetailsType}
 import models.reference.{Country, CustomsOffice, UnLocode}
+import models.{Coordinates, DateTime, DeclarationType, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress, SecurityDetailsType}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import play.api.libs.json._
@@ -39,9 +39,10 @@ trait UserAnswersEntryGenerators {
   private def generateExternalAnswer: PartialFunction[Gettable[_], Gen[JsValue]] = {
     import pages.external._
     {
-      case OfficeOfDeparturePage   => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
-      case DeclarationTypePage     => arbitrary[DeclarationType].map(Json.toJson(_))
-      case SecurityDetailsTypePage => arbitrary[SecurityDetailsType].map(Json.toJson(_))
+      case OfficeOfDeparturePage        => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
+      case OfficeOfDepartureInCL112Page => arbitrary[Boolean].map(JsBoolean)
+      case DeclarationTypePage          => arbitrary[DeclarationType].map(Json.toJson(_))
+      case SecurityDetailsTypePage      => arbitrary[SecurityDetailsType].map(Json.toJson(_))
     }
   }
 
@@ -49,11 +50,14 @@ trait UserAnswersEntryGenerators {
     import pages.routing._
     import pages.routing.index._
     {
-      case CountryOfDestinationPage     => arbitrary[Country].map(Json.toJson(_))
-      case OfficeOfDestinationPage      => arbitrary[CustomsOffice].map(Json.toJson(_))
-      case BindingItineraryPage         => arbitrary[Boolean].map(JsBoolean)
-      case AddCountryOfRoutingYesNoPage => arbitrary[Boolean].map(JsBoolean)
-      case CountryOfRoutingPage(_)      => arbitrary[Country].map(Json.toJson(_))
+      case CountryOfDestinationPage       => arbitrary[Country].map(Json.toJson(_))
+      case OfficeOfDestinationPage        => arbitrary[CustomsOffice].map(Json.toJson(_))
+      case OfficeOfDestinationInCL112Page => arbitrary[Boolean].map(JsBoolean)
+      case BindingItineraryPage           => arbitrary[Boolean].map(JsBoolean)
+      case AddCountryOfRoutingYesNoPage   => arbitrary[Boolean].map(JsBoolean)
+      case CountryOfRoutingPage(_)        => arbitrary[Country].map(Json.toJson(_))
+      case CountryOfRoutingInCL112Page(_) => arbitrary[Boolean].map(JsBoolean)
+      case CountryOfRoutingInCL147Page(_) => arbitrary[Boolean].map(JsBoolean)
     }
   }
 
@@ -65,6 +69,7 @@ trait UserAnswersEntryGenerators {
       case AddOfficeOfTransitYesNoPage       => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfTransitCountryPage(_)     => arbitrary[Country].map(Json.toJson(_))
       case OfficeOfTransitPage(_)            => arbitrary[CustomsOffice].map(Json.toJson(_))
+      case OfficeOfTransitInCL147Page(_)     => arbitrary[Boolean].map(JsBoolean)
       case AddOfficeOfTransitETAYesNoPage(_) => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfTransitETAPage(_)         => arbitrary[DateTime].map(Json.toJson(_))
     }
