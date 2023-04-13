@@ -80,7 +80,7 @@ class AddOfficeOfTransitETAYesNoController @Inject() (
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
                     AddOfficeOfTransitETAYesNoPage(index)
                       .writeToUserAnswers(value)
-                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                      .updateTask()
                       .writeToSession()
                       .navigate()
                   }

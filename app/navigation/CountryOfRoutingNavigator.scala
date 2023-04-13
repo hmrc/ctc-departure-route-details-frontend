@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import models._
 import models.domain.UserAnswersReader
 import models.journeyDomain.routing.CountryOfRoutingDomain
-import navigation.UserAnswersNavigator
 
 import javax.inject.{Inject, Singleton}
 
@@ -32,7 +31,7 @@ class CountryOfRoutingNavigatorProviderImpl @Inject() (implicit config: Frontend
       case NormalMode =>
         new CountryOfRoutingNavigator(mode, index)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 

@@ -23,12 +23,9 @@ import models.{LocalReferenceNumber, Mode}
 import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.loadingAndUnloading.LoadingAndUnloadingAnswersViewModel.LoadingAndUnloadingAnswersViewModelProvider
 import views.html.loadingAndUnloading.LoadingAndUnloadingAnswersView
-
-import scala.concurrent.ExecutionContext
 
 class LoadingAndUnloadingAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -36,9 +33,8 @@ class LoadingAndUnloadingAnswersController @Inject() (
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
   view: LoadingAndUnloadingAnswersView,
-  viewModelProvider: LoadingAndUnloadingAnswersViewModelProvider,
-  countriesService: CountriesService
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+  viewModelProvider: LoadingAndUnloadingAnswersViewModelProvider
+)(implicit config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -48,15 +44,10 @@ class LoadingAndUnloadingAnswersController @Inject() (
       Ok(view(lrn, mode, sections))
   }
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
-      for {
-        ctcCountries                          <- countriesService.getCountryCodesCTC()
-        customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-      } yield {
-        val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-        Redirect(navigator.nextPage(request.userAnswers))
-      }
+      val navigator: UserAnswersNavigator = navigatorProvider(mode)
+      Redirect(navigator.nextPage(request.userAnswers))
   }
 
 }

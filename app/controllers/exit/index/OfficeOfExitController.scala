@@ -86,7 +86,7 @@ class OfficeOfExitController @Inject() (
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
                       OfficeOfExitPage(index)
                         .writeToUserAnswers(value)
-                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                        .updateTask()
                         .writeToSession()
                         .navigate()
                     }

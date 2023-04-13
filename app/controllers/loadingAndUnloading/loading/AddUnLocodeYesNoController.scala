@@ -71,7 +71,7 @@ class AddUnLocodeYesNoController @Inject() (
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                 AddUnLocodeYesNoPage
                   .writeToUserAnswers(value)
-                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                  .updateTask()
                   .writeToSession()
                   .navigate()
               }

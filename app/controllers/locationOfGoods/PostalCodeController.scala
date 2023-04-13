@@ -82,7 +82,7 @@ class PostalCodeController @Inject() (
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                       PostalCodePage
                         .writeToUserAnswers(value)
-                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                        .updateTask()
                         .writeToSession()
                         .navigate()
                     }

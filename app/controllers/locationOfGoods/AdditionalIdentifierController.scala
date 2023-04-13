@@ -70,7 +70,7 @@ class AdditionalIdentifierController @Inject() (
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                 AdditionalIdentifierPage
                   .writeToUserAnswers(value)
-                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                  .updateTask()
                   .writeToSession()
                   .navigate()
               }

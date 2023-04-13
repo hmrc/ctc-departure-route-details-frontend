@@ -29,9 +29,9 @@ class OfficeOfTransitNavigatorProviderImpl @Inject() (implicit config: FrontendA
   def apply(mode: Mode, index: Index, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
     mode match {
       case NormalMode =>
-        new OfficeOfTransitNavigator(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
+        new OfficeOfTransitNavigator(mode, index)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 
@@ -42,9 +42,7 @@ trait OfficeOfTransitNavigatorProvider {
 
 class OfficeOfTransitNavigator(
   override val mode: Mode,
-  index: Index,
-  ctcCountries: CountryList,
-  customsSecurityAgreementAreaCountries: CountryList
+  index: Index
 )(implicit override val config: FrontendAppConfig)
     extends UserAnswersNavigator {
 

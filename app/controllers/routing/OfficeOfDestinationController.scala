@@ -89,7 +89,7 @@ class OfficeOfDestinationController @Inject() (
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                       OfficeOfDestinationPage
                         .writeToUserAnswers(value)
-                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                        .updateTask()
                         .writeToSession()
                         .navigate()
                     }

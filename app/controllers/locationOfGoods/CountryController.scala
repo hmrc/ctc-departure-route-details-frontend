@@ -76,7 +76,7 @@ class CountryController @Inject() (
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                     CountryPage
                       .writeToUserAnswers(value)
-                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                      .updateTask()
                       .writeToSession()
                       .navigate()
                   }

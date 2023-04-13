@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import models._
 import models.domain.UserAnswersReader
 import models.journeyDomain.exit.OfficeOfExitDomain
-import navigation.UserAnswersNavigator
 
 import javax.inject.{Inject, Singleton}
 
@@ -32,7 +31,7 @@ class OfficeOfExitNavigatorProviderImpl @Inject() (implicit config: FrontendAppC
       case NormalMode =>
         new OfficeOfExitNavigator(mode, index)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 

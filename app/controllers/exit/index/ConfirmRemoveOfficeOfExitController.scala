@@ -84,7 +84,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
                     customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
                     result <- OfficeOfExitSection(index)
                       .removeFromUserAnswers()
-                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                      .updateTask()
                       .writeToSession()
                       .navigateTo(exitRoutes.AddAnotherOfficeOfExitController.onPageLoad(lrn, mode))
                   } yield result

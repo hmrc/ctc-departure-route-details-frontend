@@ -33,7 +33,7 @@ class AddAnotherOfficeOfTransitViewModelSpec extends SpecBase with Generators wi
         mode =>
           val userAnswers = arbitraryOfficeOfTransitAnswers(emptyUserAnswers, index).sample.value
 
-          val result = new AddAnotherOfficeOfTransitViewModelProvider()(userAnswers, mode, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+          val result = new AddAnotherOfficeOfTransitViewModelProvider()(userAnswers, mode)
 
           result.listItems.length mustBe 1
           result.title mustBe "You have added 1 office of transit"
@@ -53,7 +53,7 @@ class AddAnotherOfficeOfTransitViewModelSpec extends SpecBase with Generators wi
               arbitraryOfficeOfTransitAnswers(acc, Index(i)).sample.value
           }
 
-          val result = new AddAnotherOfficeOfTransitViewModelProvider()(userAnswers, mode, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+          val result = new AddAnotherOfficeOfTransitViewModelProvider()(userAnswers, mode)
 
           result.listItems.length mustBe count
           result.title mustBe s"You have added ${formatter.format(count)} offices of transit"

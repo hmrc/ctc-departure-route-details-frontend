@@ -86,7 +86,7 @@ class AddAnotherCountryOfRoutingController @Inject() (
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                       CountriesOfRoutingInSecurityAgreement
                         .writeToUserAnswers(inSecurityAgreement)
-                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                        .updateTask()
                         .writeToSession()
                         .navigate()
                     }

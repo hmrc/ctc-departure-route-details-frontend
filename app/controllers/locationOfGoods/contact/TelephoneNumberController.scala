@@ -78,7 +78,7 @@ class TelephoneNumberController @Inject() (
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                   TelephoneNumberPage
                     .writeToUserAnswers(value)
-                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                    .updateTask()
                     .writeToSession()
                     .navigate()
                 }

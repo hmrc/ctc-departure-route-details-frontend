@@ -32,7 +32,7 @@ class RouteDetailsNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         forAll(arbitraryRouteDetailsAnswers(emptyUserAnswers), arbitrary[Mode]) {
           (answers, mode) =>
             val navigatorProvider = new RouteDetailsNavigatorProviderImpl()
-            val navigator         = navigatorProvider.apply(mode, ctcCountriesList, customsSecurityAgreementAreaCountriesList)
+            val navigator         = navigatorProvider.apply(mode)
 
             navigator
               .nextPage(answers)

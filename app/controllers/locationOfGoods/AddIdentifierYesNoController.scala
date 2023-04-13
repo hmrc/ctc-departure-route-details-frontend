@@ -71,7 +71,7 @@ class AddIdentifierYesNoController @Inject() (
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                 AddIdentifierYesNoPage
                   .writeToUserAnswers(value)
-                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                  .updateTask()
                   .writeToSession()
                   .navigate()
               }

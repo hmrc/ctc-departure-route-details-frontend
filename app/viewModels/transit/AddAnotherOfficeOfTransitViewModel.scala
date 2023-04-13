@@ -18,7 +18,7 @@ package viewModels.transit
 
 import config.FrontendAppConfig
 import controllers.transit.routes
-import models.{CountryList, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import utils.cyaHelpers.transit.TransitCheckYourAnswersHelper
@@ -41,14 +41,9 @@ object AddAnotherOfficeOfTransitViewModel {
 
     def apply(
       userAnswers: UserAnswers,
-      mode: Mode,
-      ctcCountries: CountryList,
-      customsSecurityAgreementAreaCountries: CountryList
+      mode: Mode
     )(implicit messages: Messages, config: FrontendAppConfig): AddAnotherOfficeOfTransitViewModel = {
-      val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)(
-        ctcCountries.countryCodes,
-        customsSecurityAgreementAreaCountries.countryCodes
-      )
+      val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)
 
       val listItems = helper.listItems.collect {
         case Left(value)  => value

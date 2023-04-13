@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.exit.ExitDomain
 import models.{CheckMode, CountryList, Mode, NormalMode}
-import navigation.UserAnswersNavigator
 
 import javax.inject.{Inject, Singleton}
 
@@ -32,7 +31,7 @@ class ExitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) e
       case NormalMode =>
         new ExitNavigator(mode)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 

@@ -30,12 +30,9 @@ object TransitAnswersViewModel {
 
   class TransitAnswersViewModelProvider @Inject() () {
 
-    def apply(userAnswers: UserAnswers, mode: Mode)(
-      ctcCountryCodes: Seq[String],
-      customsSecurityAgreementAreaCountryCodes: Seq[String]
-    )(implicit messages: Messages, config: FrontendAppConfig): TransitAnswersViewModel = {
+    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig): TransitAnswersViewModel = {
 
-      val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
+      val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)
 
       val preSection = Section(
         rows = Seq(

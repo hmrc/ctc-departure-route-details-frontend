@@ -79,7 +79,7 @@ class CountryOfRoutingController @Inject() (
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index, ctcCountries, customsSecurityAgreementAreaCountries)
                     CountryOfRoutingPage(index)
                       .writeToUserAnswers(value)
-                      .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                      .updateTask()
                       .writeToSession()
                       .navigate()
                   }

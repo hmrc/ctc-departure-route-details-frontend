@@ -71,7 +71,7 @@ class AddContactYesNoController @Inject() (
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                 AddContactYesNoPage
                   .writeToUserAnswers(value)
-                  .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                  .updateTask()
                   .writeToSession()
                   .navigate()
               }

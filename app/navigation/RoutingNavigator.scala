@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.routing.RoutingDomain
 import models.{CheckMode, CountryList, Mode, NormalMode}
-import navigation.UserAnswersNavigator
 
 import javax.inject.{Inject, Singleton}
 
@@ -32,7 +31,7 @@ class RoutingNavigatorProviderImpl @Inject() (implicit val config: FrontendAppCo
       case NormalMode =>
         new RoutingNavigator(mode)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 

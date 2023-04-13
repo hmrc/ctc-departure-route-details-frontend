@@ -75,7 +75,7 @@ class LocationTypeController @Inject() (
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                   LocationTypePage
                     .writeToUserAnswers(value)
-                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                    .updateTask()
                     .writeToSession()
                     .navigate()
                 }

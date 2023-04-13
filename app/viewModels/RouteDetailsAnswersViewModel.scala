@@ -40,14 +40,11 @@ object RouteDetailsAnswersViewModel {
     loadingAndUnloadingAnswersViewModelProvider: LoadingAndUnloadingAnswersViewModelProvider
   ) {
 
-    def apply(userAnswers: UserAnswers)(
-      ctcCountryCodes: Seq[String],
-      customsSecurityAgreementAreaCountryCodes: Seq[String]
-    )(implicit messages: Messages, config: FrontendAppConfig): RouteDetailsAnswersViewModel = {
+    def apply(userAnswers: UserAnswers)(implicit messages: Messages, config: FrontendAppConfig): RouteDetailsAnswersViewModel = {
       val mode = CheckMode
       new RouteDetailsAnswersViewModel(
         routingAnswersViewModelProvider.apply(userAnswers, mode).sections ++
-          transitAnswersViewModelProvider.apply(userAnswers, mode)(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes).sections ++
+          transitAnswersViewModelProvider.apply(userAnswers, mode).sections ++
           exitAnswersViewModelProvider.apply(userAnswers, mode).sections ++
           locationOfGoodsAnswersViewModelProvider.apply(userAnswers, mode).section.toSeq ++
           loadingAndUnloadingAnswersViewModelProvider.apply(userAnswers, mode).sections

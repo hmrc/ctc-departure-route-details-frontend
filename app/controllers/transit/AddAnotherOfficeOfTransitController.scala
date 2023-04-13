@@ -26,14 +26,12 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.transit.AddAnotherOfficeOfTransitViewModel
 import viewModels.transit.AddAnotherOfficeOfTransitViewModel.AddAnotherOfficeOfTransitViewModelProvider
 import views.html.transit.AddAnotherOfficeOfTransitView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class AddAnotherOfficeOfTransitController @Inject() (
   override val messagesApi: MessagesApi,
@@ -43,47 +41,36 @@ class AddAnotherOfficeOfTransitController @Inject() (
   formProvider: AddAnotherFormProvider,
   viewModelProvider: AddAnotherOfficeOfTransitViewModelProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AddAnotherOfficeOfTransitView,
-  countriesService: CountriesService
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+  view: AddAnotherOfficeOfTransitView
+)(implicit config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   private def form(viewModel: AddAnotherOfficeOfTransitViewModel): Form[Boolean] =
     formProvider(viewModel.prefix, viewModel.allowMore)
 
-  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
+  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
-      for {
-        ctcCountries                          <- countriesService.getCountryCodesCTC()
-        customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-      } yield {
-        val viewModel = viewModelProvider(request.userAnswers, mode, ctcCountries, customsSecurityAgreementAreaCountries)
-        viewModel.count match {
-          case 0 => Redirect(routes.AddOfficeOfTransitYesNoController.onPageLoad(lrn, mode))
-          case _ => Ok(view(form(viewModel), lrn, viewModel))
-        }
+      val viewModel = viewModelProvider(request.userAnswers, mode)
+      viewModel.count match {
+        case 0 => Redirect(routes.AddOfficeOfTransitYesNoController.onPageLoad(lrn, mode))
+        case _ => Ok(view(form(viewModel), lrn, viewModel))
       }
   }
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
-      for {
-        ctcCountries                          <- countriesService.getCountryCodesCTC()
-        customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-      } yield {
-        val viewModel = viewModelProvider(request.userAnswers, mode, ctcCountries, customsSecurityAgreementAreaCountries)
-        form(viewModel)
-          .bindFromRequest()
-          .fold(
-            formWithErrors => BadRequest(view(formWithErrors, lrn, viewModel)),
-            {
-              case true => Redirect(indexRoutes.OfficeOfTransitCountryController.onPageLoad(lrn, mode, viewModel.nextIndex))
-              case false =>
-                val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
-                Redirect(navigator.nextPage(request.userAnswers))
-            }
-          )
-      }
+      val viewModel = viewModelProvider(request.userAnswers, mode)
+      form(viewModel)
+        .bindFromRequest()
+        .fold(
+          formWithErrors => BadRequest(view(formWithErrors, lrn, viewModel)),
+          {
+            case true => Redirect(indexRoutes.OfficeOfTransitCountryController.onPageLoad(lrn, mode, viewModel.nextIndex))
+            case false =>
+              val navigator: UserAnswersNavigator = navigatorProvider(mode)
+              Redirect(navigator.nextPage(request.userAnswers))
+          }
+        )
   }
 }

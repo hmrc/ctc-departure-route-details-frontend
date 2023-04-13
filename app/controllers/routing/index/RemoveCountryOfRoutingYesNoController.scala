@@ -77,7 +77,7 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
                   customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
                   result <- CountryOfRoutingSection(index)
                     .removeFromUserAnswers()
-                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                    .updateTask()
                     .writeToSession()
                     .navigateTo(routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode))
                 } yield result

@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.{CheckMode, CountryList, Mode, NormalMode}
-import navigation.UserAnswersNavigator
 
 import javax.inject.{Inject, Singleton}
 
@@ -32,7 +31,7 @@ class LoadingAndUnloadingNavigatorProviderImpl @Inject() (implicit config: Front
       case NormalMode =>
         new LoadingAndUnloadingNavigator(mode)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 

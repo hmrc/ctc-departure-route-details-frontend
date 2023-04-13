@@ -29,9 +29,9 @@ class TransitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig
   def apply(mode: Mode, ctcCountries: CountryList, customsSecurityAgreementAreaCountries: CountryList): UserAnswersNavigator =
     mode match {
       case NormalMode =>
-        new TransitNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new TransitNavigator(mode)
       case CheckMode =>
-        new RouteDetailsNavigator(mode, ctcCountries, customsSecurityAgreementAreaCountries)
+        new RouteDetailsNavigator(mode)
     }
 }
 
@@ -41,9 +41,7 @@ trait TransitNavigatorProvider {
 }
 
 class TransitNavigator(
-  override val mode: Mode,
-  ctcCountries: CountryList,
-  customsSecurityAgreementAreaCountries: CountryList
+  override val mode: Mode
 )(implicit override val config: FrontendAppConfig)
     extends UserAnswersNavigator {
 

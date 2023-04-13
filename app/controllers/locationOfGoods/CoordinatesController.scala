@@ -73,7 +73,7 @@ class CoordinatesController @Inject() (
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                   CoordinatesPage
                     .writeToUserAnswers(value)
-                    .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                    .updateTask()
                     .writeToSession()
                     .navigate()
                 }

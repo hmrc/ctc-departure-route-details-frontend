@@ -18,7 +18,7 @@ package base
 
 import controllers.actions._
 import models.{CountryList, Index, Mode, UserAnswers}
-import navigation.{FakeCountryOfRoutingNavigator, FakeLocationOfGoodsNavigator, FakeOfficeOfTransitNavigator, FakeRoutingNavigator, FakeTransitNavigator, _}
+import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
@@ -69,7 +69,7 @@ trait AppWithDefaultMockFixtures extends BeforeAndAfterEach with GuiceOneAppPerS
   protected val fakeNavigator: Navigator = new FakeNavigator(onwardRoute)
 
   protected val fakeRouteDetailsNavigatorProvider: RouteDetailsNavigatorProvider =
-    (mode: Mode, _: CountryList, _: CountryList) => new FakeRouteDetailsNavigator(onwardRoute, mode)
+    (mode: Mode) => new FakeRouteDetailsNavigator(onwardRoute, mode)
 
   protected val fakeExitNavigatorProvider: ExitNavigatorProvider =
     (mode: Mode, _: CountryList, _: CountryList) => new FakeExitNavigator(onwardRoute, mode)

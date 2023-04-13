@@ -86,7 +86,7 @@ class IdentificationController @Inject() (
         implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
         page
           .writeToUserAnswers(value)
-          .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+          .updateTask()
           .writeToSession()
           .navigate()
       }

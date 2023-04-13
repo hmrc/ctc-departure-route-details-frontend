@@ -92,7 +92,7 @@ class AddressController @Inject() (
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, ctcCountries, customsSecurityAgreementAreaCountries)
                       AddressPage
                         .writeToUserAnswers(value)
-                        .updateTask(ctcCountries, customsSecurityAgreementAreaCountries)
+                        .updateTask()
                         .writeToSession()
                         .navigate()
                     }

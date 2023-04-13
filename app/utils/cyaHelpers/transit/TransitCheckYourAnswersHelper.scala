@@ -33,9 +33,6 @@ import viewModels.{Link, ListItem}
 class TransitCheckYourAnswersHelper(
   userAnswers: UserAnswers,
   mode: Mode
-)(
-  ctcCountryCodes: Seq[String],
-  customsSecurityAgreementAreaCountryCodes: Seq[String]
 )(implicit messages: Messages, config: FrontendAppConfig)
     extends AnswersHelper(userAnswers, mode) {
 

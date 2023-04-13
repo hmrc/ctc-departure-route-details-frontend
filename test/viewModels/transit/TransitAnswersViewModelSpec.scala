@@ -35,7 +35,7 @@ class TransitAnswersViewModelSpec extends SpecBase with Generators {
     val userAnswers = arbitraryOfficeOfTransitAnswers(initialAnswers, index).sample.value
 
     val viewModelProvider = injector.instanceOf[TransitAnswersViewModelProvider]
-    val sections          = viewModelProvider.apply(userAnswers, mode)(Nil, Nil).sections
+    val sections          = viewModelProvider.apply(userAnswers, mode).sections
 
     sections.size mustBe 2
 
