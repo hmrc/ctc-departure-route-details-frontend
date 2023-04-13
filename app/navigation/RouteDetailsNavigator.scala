@@ -59,5 +59,5 @@ class RouteDetailsNavigator(
   override type T = RouteDetailsDomain
 
   implicit override val reader: UserAnswersReader[RouteDetailsDomain] =
-    RouteDetailsDomain.userAnswersReader(ctcCountries.countryCodes, customsSecurityAgreementAreaCountries.countryCodes)
+    RouteDetailsDomain.userAnswersReader
 }

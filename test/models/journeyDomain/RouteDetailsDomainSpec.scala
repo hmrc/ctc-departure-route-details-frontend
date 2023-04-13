@@ -29,10 +29,10 @@ import models.{DeclarationType, SecurityDetailsType}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.external.{DeclarationTypePage, OfficeOfDeparturePage, SecurityDetailsTypePage}
+import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL147Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
+import pages.routing.BindingItineraryPage
 import pages.routing.index.{CountryOfRoutingInCL147Page, CountryOfRoutingPage}
-import pages.routing.{BindingItineraryPage, CountriesOfRoutingInSecurityAgreement}
 
 class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -180,10 +180,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           "and not adding a location of goods type" in {
             val userAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOfficeInCL147)
+              .setValue(OfficeOfDepartureInCL147Page, true)
               .setValue(AddLocationOfGoodsPage, false)
 
             val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-              RouteDetailsDomain.locationOfGoodsReader(customsSecurityAgreementAreaCountryCodes)
+              RouteDetailsDomain.locationOfGoodsReader
             ).run(userAnswers)
 
             result.value must not be defined
@@ -192,12 +193,13 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           "and adding a location of goods type" in {
             val initialAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOfficeInCL147)
+              .setValue(OfficeOfDepartureInCL147Page, true)
               .setValue(AddLocationOfGoodsPage, true)
 
             forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
               answers =>
                 val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                  RouteDetailsDomain.locationOfGoodsReader(customsSecurityAgreementAreaCountryCodes)
+                  RouteDetailsDomain.locationOfGoodsReader
                 ).run(answers)
 
                 result.value mustBe defined
@@ -216,11 +218,12 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
           val initialAnswers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOfficeNotInCL147)
+            .setValue(OfficeOfDepartureInCL147Page, false)
 
           forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
             answers =>
               val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                RouteDetailsDomain.locationOfGoodsReader(customsSecurityAgreementAreaCountryCodes)
+                RouteDetailsDomain.locationOfGoodsReader
               ).run(answers)
 
               result.value mustBe defined

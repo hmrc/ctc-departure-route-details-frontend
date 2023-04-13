@@ -26,7 +26,7 @@ import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
 import models.{DeclarationType, Mode, SecurityDetailsType, UserAnswers}
-import pages.external.{DeclarationTypePage, OfficeOfDeparturePage, SecurityDetailsTypePage}
+import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.sections.routing.CountriesOfRoutingSection
 import play.api.mvc.Call
@@ -45,15 +45,12 @@ case class RouteDetailsDomain(
 
 object RouteDetailsDomain {
 
-  implicit def userAnswersReader(
-    ctcCountryCodes: Seq[String],
-    customsSecurityAgreementAreaCountryCodes: Seq[String]
-  ): UserAnswersReader[RouteDetailsDomain] =
+  implicit val userAnswersReader: UserAnswersReader[RouteDetailsDomain] =
     for {
       routing             <- UserAnswersReader[RoutingDomain]
       transit             <- UserAnswersReader[Option[TransitDomain]]
       exit                <- UserAnswersReader[Option[ExitDomain]](exitReader(transit))
-      locationOfGoods     <- UserAnswersReader[Option[LocationOfGoodsDomain]](locationOfGoodsReader(customsSecurityAgreementAreaCountryCodes))
+      locationOfGoods     <- UserAnswersReader[Option[LocationOfGoodsDomain]]
       loadingAndUnloading <- UserAnswersReader[LoadingAndUnloadingDomain]
     } yield RouteDetailsDomain(
       routing,
@@ -75,9 +72,10 @@ object RouteDetailsDomain {
       securityDetails              <- SecurityDetailsTypePage.reader
       allCountriesOfRoutingInCL147 <- CountriesOfRoutingSection.allCountriesOfRoutingInCL147
       reader <- {
-        exitRequired(declarationType, securityDetails, allCountriesOfRoutingInCL147, transit) match {
-          case true => UserAnswersReader[ExitDomain].map(Some(_))
-          case _    => none[ExitDomain].pure[UserAnswersReader]
+        if (exitRequired(declarationType, securityDetails, allCountriesOfRoutingInCL147, transit)) {
+          UserAnswersReader[ExitDomain].map(Some(_))
+        } else {
+          none[ExitDomain].pure[UserAnswersReader]
         }
       }
     } yield reader
@@ -95,11 +93,10 @@ object RouteDetailsDomain {
       case _                                                                     => true
     }
 
-  implicit def locationOfGoodsReader(customsSecurityAgreementAreaCountryCodes: Seq[String]): UserAnswersReader[Option[LocationOfGoodsDomain]] =
+  implicit val locationOfGoodsReader: UserAnswersReader[Option[LocationOfGoodsDomain]] =
     // additional declaration type is currently always normal (A) as we aren't doing pre-lodge (D) yet
-    OfficeOfDeparturePage.reader.flatMap {
-      case x if customsSecurityAgreementAreaCountryCodes.contains(x.countryCode) =>
-        AddLocationOfGoodsPage.filterOptionalDependent(identity)(UserAnswersReader[LocationOfGoodsDomain])
-      case _ => UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
+    OfficeOfDepartureInCL147Page.reader.flatMap {
+      case true  => AddLocationOfGoodsPage.filterOptionalDependent(identity)(UserAnswersReader[LocationOfGoodsDomain])
+      case false => UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
     }
 }

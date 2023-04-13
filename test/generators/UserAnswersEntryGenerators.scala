@@ -41,6 +41,7 @@ trait UserAnswersEntryGenerators {
     {
       case OfficeOfDeparturePage        => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
       case OfficeOfDepartureInCL112Page => arbitrary[Boolean].map(JsBoolean)
+      case OfficeOfDepartureInCL147Page => arbitrary[Boolean].map(JsBoolean)
       case DeclarationTypePage          => arbitrary[DeclarationType].map(Json.toJson(_))
       case SecurityDetailsTypePage      => arbitrary[SecurityDetailsType].map(Json.toJson(_))
     }

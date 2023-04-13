@@ -31,9 +31,7 @@ trait RouteDetailsUserAnswersGenerator {
   self: UserAnswersGenerator =>
 
   def arbitraryRouteDetailsAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
-    buildUserAnswers[RouteDetailsDomain](userAnswers)(
-      RouteDetailsDomain.userAnswersReader(ctcCountryCodes, customsSecurityAgreementAreaCountryCodes)
-    )
+    buildUserAnswers[RouteDetailsDomain](userAnswers)
 
   def arbitraryRoutingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
     buildUserAnswers[RoutingDomain](userAnswers)
