@@ -19,8 +19,8 @@ package pages.transit.index
 import controllers.transit.index.routes
 import models.reference.CustomsOffice
 import models.{Index, Mode, UserAnswers}
+import pages.QuestionPage
 import pages.sections.transit.OfficeOfTransitSection
-import pages.{QuestionPage, ReadOnlyPage}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
@@ -34,7 +34,7 @@ case class OfficeOfTransitPage(index: Index) extends QuestionPage[CustomsOffice]
     Some(routes.OfficeOfTransitController.onPageLoad(userAnswers.lrn, mode, index))
 }
 
-case class OfficeOfTransitInCL147Page(index: Index) extends ReadOnlyPage[Boolean] {
+case class OfficeOfTransitInCL147Page(index: Index) extends QuestionPage[Boolean] {
 
   override def path: JsPath = OfficeOfTransitPage(index).path \ toString
 

@@ -22,11 +22,11 @@ import forms.CustomsOfficeForCountryFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
 import pages.routing.CountryOfDestinationPage
-import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage, OfficeOfTransitPage}
+import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage, OfficeOfTransitInCL147Page, OfficeOfTransitPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CustomsOfficesService
+import services.{CountriesService, CustomsOfficesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.transit.index.OfficeOfTransitView
 
@@ -40,6 +40,7 @@ class OfficeOfTransitController @Inject() (
   actions: Actions,
   formProvider: CustomsOfficeForCountryFormProvider,
   customsOfficesService: CustomsOfficesService,
+  countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   view: OfficeOfTransitView,
   getMandatoryPage: SpecificDataRequiredActionProvider
@@ -77,14 +78,20 @@ class OfficeOfTransitController @Inject() (
               .bindFromRequest()
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, country.description, mode, index))),
-                value => {
-                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
-                  OfficeOfTransitPage(index)
-                    .writeToUserAnswers(value)
-                    .updateTask()
-                    .writeToSession()
-                    .navigate()
-                }
+                value =>
+                  for {
+                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.countries)
+                    isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.countryCode)
+                    result <- {
+                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                      OfficeOfTransitPage(index)
+                        .writeToUserAnswers(value)
+                        .appendValue(OfficeOfTransitInCL147Page(index), isInCL147)
+                        .updateTask()
+                        .writeToSession()
+                        .navigate()
+                    }
+                  } yield result
               )
         }
     }

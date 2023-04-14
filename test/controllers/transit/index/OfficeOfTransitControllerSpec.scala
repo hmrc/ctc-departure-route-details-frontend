@@ -19,16 +19,18 @@ package controllers.transit.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.CustomsOfficeForCountryFormProvider
 import generators.Generators
-import models.reference.{Country, CustomsOffice}
-import models.{reference, CustomsOfficeList, NormalMode}
+import models.reference.{Country, CountryCode, CustomsOffice}
+import models.{reference, CountryList, CustomsOfficeList, NormalMode, UserAnswers}
 import navigation.OfficeOfTransitNavigatorProvider
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.routing.CountryOfDestinationPage
-import pages.transit.index.OfficeOfTransitPage
+import pages.transit.index.{OfficeOfTransitCountryPage, OfficeOfTransitPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.CustomsOfficesService
@@ -190,19 +192,50 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any())).thenReturn(Future.successful(customsOfficeList))
+      val country       = Country(CountryCode("FR"), "France")
+      val customsOffice = CustomsOffice("FR123", "name", None)
+
+      when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
+        .thenReturn(Future.successful(CustomsOfficeList(Seq(customsOffice))))
+      when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any()))
+        .thenReturn(Future.successful(CountryList(Seq(country))))
+
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
-      setExistingUserAnswers(emptyUserAnswers.setOfficeOfTransitCountry(country))
+      setExistingUserAnswers(emptyUserAnswers.setValue(OfficeOfTransitCountryPage(index), country))
 
       val request = FakeRequest(POST, officeOfTransitRoute)
-        .withFormUrlEncodedBody(("value", customsOffice1.id))
+        .withFormUrlEncodedBody(("value", customsOffice.id))
 
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
+
+      val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+      userAnswersCaptor.getValue.data mustBe Json.parse(s"""
+          |{
+          |  "routeDetails" : {
+          |    "transit" : {
+          |      "officesOfTransit" : [
+          |        {
+          |          "officeOfTransitCountry" : {
+          |            "code" : "FR",
+          |            "description" : "France"
+          |          },
+          |          "officeOfTransit" : {
+          |            "id" : "${customsOffice.id}",
+          |            "name" : "${customsOffice.name}",
+          |            "isInCL147" : true
+          |          }
+          |        }
+          |      ]
+          |    }
+          |  }
+          |}
+          |""".stripMargin)
     }
 
     "must return a Bad Request and errors when invalid data is submitted" - {
