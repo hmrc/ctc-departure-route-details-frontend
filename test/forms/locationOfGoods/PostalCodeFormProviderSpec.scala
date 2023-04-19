@@ -20,7 +20,7 @@ import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import models.AddressLine._
 import models.reference.{Country, CountryCode}
-import models.{AddressLine, CountryList}
+import models.{AddressLine, SelectableList}
 import org.scalacheck.Gen
 import play.api.data.FormError
 
@@ -29,7 +29,7 @@ class PostalCodeFormProviderSpec extends StringFieldBehaviours with SpecBase {
   private val prefix = Gen.alphaNumStr.sample.value
 
   private val country   = Country(CountryCode("GB"), "United Kingdom")
-  private val countries = CountryList(Seq(country))
+  private val countries = SelectableList(Seq(country))
 
   private val requiredKey = s"$prefix.error.required"
   private val lengthKey   = s"$prefix.error.length"

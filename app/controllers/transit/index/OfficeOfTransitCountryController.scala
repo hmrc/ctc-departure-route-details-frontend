@@ -18,10 +18,10 @@ package controllers.transit.index
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.CountryFormProvider
+import forms.SelectableFormProvider
 import models.reference.Country
 import models.requests.DataRequest
-import models.{CountryList, Index, LocalReferenceNumber, Mode}
+import models.{Index, LocalReferenceNumber, Mode, SelectableList}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
 import pages.QuestionPage
 import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage}
@@ -41,7 +41,7 @@ class OfficeOfTransitCountryController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfTransitNavigatorProvider,
   actions: Actions,
-  formProvider: CountryFormProvider,
+  formProvider: SelectableFormProvider,
   countriesService: CountriesService,
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
@@ -55,7 +55,7 @@ class OfficeOfTransitCountryController @Inject() (
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
       countriesService.getOfficeOfTransitCountries(request.userAnswers).flatMap {
-        case CountryList(country :: Nil) =>
+        case SelectableList(country :: Nil) =>
           redirect(mode, index, InferredOfficeOfTransitCountryPage, country)
         case countryList =>
           val form = formProvider(prefix, countryList)
@@ -64,7 +64,7 @@ class OfficeOfTransitCountryController @Inject() (
             case Some(value) => form.fill(value)
           }
 
-          Future.successful(Ok(view(preparedForm, lrn, countryList.countries, mode, index)))
+          Future.successful(Ok(view(preparedForm, lrn, countryList.values, mode, index)))
       }
   }
 
@@ -76,14 +76,14 @@ class OfficeOfTransitCountryController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, mode, index))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))),
               value =>
                 customsOfficesService.getCustomsOfficesOfTransitForCountry(value.code).flatMap {
                   case x if x.customsOffices.nonEmpty =>
                     redirect(mode, index, OfficeOfTransitCountryPage, value)
                   case _ =>
                     val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
-                    Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, mode, index)))
+                    Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index)))
                 }
             )
       }

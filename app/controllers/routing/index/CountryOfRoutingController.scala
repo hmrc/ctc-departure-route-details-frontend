@@ -18,9 +18,9 @@ package controllers.routing.index
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.CountryFormProvider
+import forms.SelectableFormProvider
 import models.reference.Country
-import models.{CountryList, Index, LocalReferenceNumber, Mode}
+import models.{Index, LocalReferenceNumber, Mode, SelectableList}
 import navigation.{CountryOfRoutingNavigatorProvider, UserAnswersNavigator}
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page, CountryOfRoutingPage}
 import play.api.data.Form
@@ -39,7 +39,7 @@ class CountryOfRoutingController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: CountryOfRoutingNavigatorProvider,
   actions: Actions,
-  formProvider: CountryFormProvider,
+  formProvider: SelectableFormProvider,
   countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   view: CountryOfRoutingView
@@ -47,7 +47,7 @@ class CountryOfRoutingController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private def form(countryList: CountryList): Form[Country] =
+  private def form(countryList: SelectableList[Country]): Form[Country] =
     formProvider("routing.index.countryOfRouting", countryList)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
@@ -59,7 +59,7 @@ class CountryOfRoutingController @Inject() (
             case Some(value) => form(countryList).fill(value)
           }
 
-          Ok(view(preparedForm, lrn, countryList.countries, mode, index))
+          Ok(view(preparedForm, lrn, countryList.values, mode, index))
       }
   }
 
@@ -70,12 +70,12 @@ class CountryOfRoutingController @Inject() (
           form(countryList)
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, mode, index))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))),
               value =>
                 for {
-                  ctcCountries <- countriesService.getCountryCodesCTC().map(_.countries)
+                  ctcCountries <- countriesService.getCountryCodesCTC().map(_.values)
                   isInCL112 = ctcCountries.map(_.code.code).contains(value.code.code)
-                  customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.countries)
+                  customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
                   isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.code.code)
                   result <- {
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)

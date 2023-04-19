@@ -17,9 +17,9 @@
 package controllers.routing.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.CountryFormProvider
+import forms.SelectableFormProvider
 import generators.Generators
-import models.{CountryList, NormalMode, UserAnswers}
+import models.{NormalMode, SelectableList, UserAnswers}
 import navigation.CountryOfRoutingNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -38,9 +38,9 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
 
   private val country1    = arbitraryCountry.arbitrary.sample.get
   private val country2    = arbitraryCountry.arbitrary.sample.get
-  private val countryList = CountryList(Seq(country1, country2))
+  private val countryList = SelectableList(Seq(country1, country2))
 
-  private val formProvider = new CountryFormProvider()
+  private val formProvider = new SelectableFormProvider()
   private val form         = formProvider("routing.index.countryOfRouting", countryList)
   private val mode         = NormalMode
 
@@ -67,7 +67,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, countryList.countries, mode, index)(request, messages).toString
+        view(form, lrn, countryList.values, mode, index)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -87,7 +87,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, countryList.countries, mode, index)(request, messages).toString
+        view(filledForm, lrn, countryList.values, mode, index)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -145,7 +145,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, countryList.countries, mode, index)(request, messages).toString
+        view(boundForm, lrn, countryList.values, mode, index)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

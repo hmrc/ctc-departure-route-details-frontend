@@ -19,7 +19,7 @@ package controllers.locationOfGoods
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.locationOfGoods.PostalCodeFormProvider
 import generators.Generators
-import models.{CountryList, NormalMode, PostalCodeAddress}
+import models.{NormalMode, PostalCodeAddress, SelectableList}
 import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class PostalCodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
   private val testAddress = arbitrary[PostalCodeAddress].sample.value
-  private val countryList = CountryList(Seq(testAddress.country))
+  private val countryList = SelectableList(Seq(testAddress.country))
 
   private val formProvider = new PostalCodeFormProvider()
   private val form         = formProvider("locationOfGoods.postalCode", countryList)
@@ -65,7 +65,7 @@ class PostalCodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, mode, countryList.countries)(request, messages).toString
+        view(form, lrn, mode, countryList.values)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -94,7 +94,7 @@ class PostalCodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, mode, countryList.countries)(request, messages).toString
+        view(filledForm, lrn, mode, countryList.values)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -134,7 +134,7 @@ class PostalCodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
       val view = injector.instanceOf[PostalCodeView]
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, mode, countryList.countries)(request, messages).toString
+        view(boundForm, lrn, mode, countryList.values)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

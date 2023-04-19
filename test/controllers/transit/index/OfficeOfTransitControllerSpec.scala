@@ -20,7 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.CustomsOfficeForCountryFormProvider
 import generators.Generators
 import models.reference.{Country, CountryCode, CustomsOffice}
-import models.{reference, CountryList, CustomsOfficeList, NormalMode, UserAnswers}
+import models.{reference, CustomsOfficeList, NormalMode, SelectableList, UserAnswers}
 import navigation.OfficeOfTransitNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -198,7 +198,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
       when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
         .thenReturn(Future.successful(CustomsOfficeList(Seq(customsOffice))))
       when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any()))
-        .thenReturn(Future.successful(CountryList(Seq(country))))
+        .thenReturn(Future.successful(SelectableList(Seq(country))))
 
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 

@@ -16,8 +16,8 @@
 
 package forms.mappings
 
-import models.{CountryList, CustomsOfficeList, Enumerable, Selectable, SelectableList, UnLocodeList}
-import models.reference.{Country, CustomsOffice, UnLocode}
+import models.reference.{CustomsOffice, UnLocode}
+import models.{CustomsOfficeList, Enumerable, Selectable, SelectableList, UnLocodeList}
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
 import play.api.data.format.Formats.ignoredFormat
@@ -55,13 +55,6 @@ trait Mappings extends Formatters with Constraints {
     args: Seq[Any] = Seq.empty
   ): FieldMapping[CustomsOffice] =
     of(customsOfficeFormatter(customsOfficeList, errorKey, args))
-
-  protected def country(
-    countryList: CountryList,
-    errorKey: String = "error.required",
-    args: Seq[Any] = Seq.empty
-  ): FieldMapping[Country] =
-    of(countryFormatter(countryList, errorKey, args))
 
   protected def unLocode(
     unLocodeList: UnLocodeList,

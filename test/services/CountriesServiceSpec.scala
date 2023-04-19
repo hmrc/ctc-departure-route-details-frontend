@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.ReferenceDataConnector
 import generators.Generators
 import models.reference.{Country, CountryCode}
-import models.{CountryList, DeclarationType, Index}
+import models.{DeclarationType, Index, SelectableList}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -61,7 +61,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getDestinationCountries(userAnswers).futureValue mustBe
-          CountryList(sortedCountries)
+          SelectableList(sortedCountries)
 
         val expectedQueryParameters = Seq(
           "membership" -> "eu"
@@ -79,7 +79,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getDestinationCountries(userAnswers).futureValue mustBe
-          CountryList(sortedCountries)
+          SelectableList(sortedCountries)
 
         val expectedQueryParameters = Seq(
           "membership" -> "ctc"
@@ -96,7 +96,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getCountries().futureValue mustBe
-          CountryList(sortedCountries)
+          SelectableList(sortedCountries)
 
         verify(mockRefDataConnector).getCountries(eqTo(Nil))(any(), any())
       }
@@ -109,7 +109,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getTransitCountries().futureValue mustBe
-          CountryList(sortedCountries)
+          SelectableList(sortedCountries)
 
         val expectedQueryParameters = Seq(
           "membership" -> "ctc"
@@ -126,7 +126,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getNonEuTransitCountries().futureValue mustBe
-          CountryList(sortedCountries)
+          SelectableList(sortedCountries)
 
         val expectedQueryParameters = Seq(
           "membership" -> "non_eu"
@@ -143,7 +143,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getCommunityCountries().futureValue mustBe
-          CountryList(sortedCountries)
+          SelectableList(sortedCountries)
 
         val expectedQueryParameters = Seq(
           "membership" -> "eu"
@@ -160,7 +160,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getCustomsSecurityAgreementAreaCountries().futureValue mustBe
-          CountryList(sortedCountries)
+          SelectableList(sortedCountries)
 
         verify(mockRefDataConnector).getCustomsSecurityAgreementAreaCountries()(any(), any())
       }
@@ -173,7 +173,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getCountryCodesCTC().futureValue mustBe
-          CountryList(sortedCountries)
+          SelectableList(sortedCountries)
 
         verify(mockRefDataConnector).getCountryCodesCTC()(any(), any())
       }
@@ -199,7 +199,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .thenReturn(Future.successful(countries))
 
         service.getAddressPostcodeBasedCountries().futureValue mustBe
-          CountryList(sortedCountries)
+          SelectableList(sortedCountries)
 
         verify(mockRefDataConnector).getAddressPostcodeBasedCountries()(any(), any())
       }
@@ -216,7 +216,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
               }
               val result = service.getOfficeOfTransitCountries(userAnswers).futureValue
 
-              result.countries mustBe Seq.fill(numberOfCountries)(country1)
+              result.values mustBe Seq.fill(numberOfCountries)(country1)
 
               verify(mockRefDataConnector, never()).getCountries(any())(any(), any())
           }
@@ -230,7 +230,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
           val result = service.getOfficeOfTransitCountries(emptyUserAnswers).futureValue
 
-          result.countries mustBe sortedCountries
+          result.values mustBe sortedCountries
 
           verify(mockRefDataConnector).getCountries(any())(any(), any())
         }
@@ -253,7 +253,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
           val result = service.getOfficeOfExitCountries(userAnswers, country3).futureValue
 
-          result.countries mustBe Seq(country1, country2)
+          result.values mustBe Seq(country1, country2)
 
           verify(mockRefDataConnector, never()).getCountries(any())(any(), any())
         }
@@ -270,7 +270,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               val result = service.getOfficeOfExitCountries(emptyUserAnswers, countryOfDestination).futureValue
 
-              result.countries mustBe sortedCountries
+              result.values mustBe sortedCountries
 
               verify(mockRefDataConnector).getCountries(any())(any(), any())
           }

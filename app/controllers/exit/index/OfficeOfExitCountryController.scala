@@ -18,10 +18,10 @@ package controllers.exit.index
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.CountryFormProvider
+import forms.SelectableFormProvider
 import models.reference.Country
 import models.requests.SpecificDataRequestProvider1
-import models.{CountryList, Index, LocalReferenceNumber, Mode}
+import models.{Index, LocalReferenceNumber, Mode, SelectableList}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
 import pages.QuestionPage
 import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage}
@@ -42,7 +42,7 @@ class OfficeOfExitCountryController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfExitNavigatorProvider,
   actions: Actions,
-  formProvider: CountryFormProvider,
+  formProvider: SelectableFormProvider,
   countriesService: CountriesService,
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
@@ -62,7 +62,7 @@ class OfficeOfExitCountryController @Inject() (
     .async {
       implicit request =>
         countriesService.getOfficeOfExitCountries(request.userAnswers, request.arg).flatMap {
-          case CountryList(country :: Nil) =>
+          case SelectableList(country :: Nil) =>
             redirect(mode, index, InferredOfficeOfExitCountryPage, country)
           case countryList =>
             val form = formProvider(prefix, countryList)
@@ -71,7 +71,7 @@ class OfficeOfExitCountryController @Inject() (
               case Some(value) => form.fill(value)
             }
 
-            Future.successful(Ok(view(preparedForm, lrn, countryList.countries, index, mode)))
+            Future.successful(Ok(view(preparedForm, lrn, countryList.values, index, mode)))
         }
     }
 
@@ -86,14 +86,14 @@ class OfficeOfExitCountryController @Inject() (
             form
               .bindFromRequest()
               .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, index, mode))),
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, index, mode))),
                 value =>
                   customsOfficesService.getCustomsOfficesOfExitForCountry(value.code).flatMap {
                     case x if x.customsOffices.nonEmpty =>
                       redirect(mode, index, OfficeOfExitCountryPage, value)
                     case _ =>
                       val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
-                      Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, index, mode)))
+                      Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, index, mode)))
                   }
               )
         }

@@ -20,7 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.CustomsOfficeFormProvider
 import generators.Generators
 import models.reference.{Country, CountryCode, CustomsOffice}
-import models.{CountryList, CustomsOfficeList, NormalMode, UserAnswers}
+import models.{CustomsOfficeList, NormalMode, SelectableList, UserAnswers}
 import navigation.RoutingNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -104,7 +104,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
       val customsOffice = CustomsOffice("FR123", "name", None)
       when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
         .thenReturn(Future.successful(CustomsOfficeList(Seq(customsOffice))))
-      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(CountryList(Seq(country))))
+      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(SelectableList(Seq(country))))
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers.setValue(CountryOfDestinationPage, country)

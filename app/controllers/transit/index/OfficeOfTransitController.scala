@@ -80,7 +80,7 @@ class OfficeOfTransitController @Inject() (
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, country.description, mode, index))),
                 value =>
                   for {
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.countries)
+                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
                     isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.countryCode)
                     result <- {
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)

@@ -19,7 +19,8 @@ package forms.locationOfGoods
 import forms.StopOnFirstFail
 import forms.mappings.Mappings
 import models.AddressLine._
-import models.{CountryList, PostalCodeAddress}
+import models.reference.Country
+import models.{AddressLine, PostalCodeAddress, SelectableList}
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages
@@ -28,7 +29,7 @@ import javax.inject.Inject
 
 class PostalCodeFormProvider @Inject() extends Mappings {
 
-  def apply(prefix: String, countryList: CountryList)(implicit messages: Messages): Form[PostalCodeAddress] =
+  def apply(prefix: String, countryList: SelectableList[Country])(implicit messages: Messages): Form[PostalCodeAddress] =
     Form(
       mapping(
         StreetNumber.field -> {
@@ -49,8 +50,8 @@ class PostalCodeFormProvider @Inject() extends Mappings {
               )
             )
         },
-        Country.field -> {
-          country(countryList, s"$prefix.error.required", Seq(Country.arg))
+        AddressLine.Country.field -> {
+          selectable(countryList, s"$prefix.error.required", Seq(AddressLine.Country.arg))
         }
       )(PostalCodeAddress.apply)(PostalCodeAddress.unapply)
     )

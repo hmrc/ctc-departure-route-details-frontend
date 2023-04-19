@@ -18,7 +18,8 @@ package views.locationOfGoods
 
 import forms.locationOfGoods.PostalCodeFormProvider
 import generators.Generators
-import models.{CountryList, NormalMode, PostalCodeAddress}
+import models.reference.Country
+import models.{NormalMode, PostalCodeAddress, SelectableList}
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -27,14 +28,14 @@ import views.html.locationOfGoods.PostalCodeView
 
 class PostalCodeViewSpec extends PostalCodeAddressViewBehaviours with Generators {
 
-  private val countryList = arbitrary[CountryList].sample.value
+  private val countryList = arbitrary[SelectableList[Country]].sample.value
 
   override val prefix: String = "locationOfGoods.postalCode"
 
   override def form: Form[PostalCodeAddress] = new PostalCodeFormProvider()(prefix, countryList)
 
   def applyView(form: Form[PostalCodeAddress]): HtmlFormat.Appendable =
-    injector.instanceOf[PostalCodeView].apply(form, lrn, NormalMode, countryList.countries)(fakeRequest, messages)
+    injector.instanceOf[PostalCodeView].apply(form, lrn, NormalMode, countryList.values)(fakeRequest, messages)
 
   behave like pageWithTitle()
 
