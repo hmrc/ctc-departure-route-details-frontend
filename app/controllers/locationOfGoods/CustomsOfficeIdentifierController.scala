@@ -18,7 +18,7 @@ package controllers.locationOfGoods
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.CustomsOfficeFormProvider
+import forms.SelectableFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
 import pages.external.OfficeOfDeparturePage
@@ -38,7 +38,7 @@ class CustomsOfficeIdentifierController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
-  formProvider: CustomsOfficeFormProvider,
+  formProvider: SelectableFormProvider,
   customsOfficesService: CustomsOfficesService,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   val controllerComponents: MessagesControllerComponents,
@@ -61,7 +61,7 @@ class CustomsOfficeIdentifierController @Inject() (
               case Some(value) => form.fill(value)
             }
 
-            Ok(view(preparedForm, lrn, customsOfficeList.customsOffices, mode))
+            Ok(view(preparedForm, lrn, customsOfficeList.values, mode))
         }
     }
 
@@ -77,7 +77,7 @@ class CustomsOfficeIdentifierController @Inject() (
             form
               .bindFromRequest()
               .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, mode))),
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.values, mode))),
                 value => {
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                   CustomsOfficeIdentifierPage

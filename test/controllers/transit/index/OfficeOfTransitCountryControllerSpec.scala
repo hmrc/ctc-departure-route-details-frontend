@@ -19,7 +19,8 @@ package controllers.transit.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.SelectableFormProvider
 import generators.Generators
-import models.{CustomsOfficeList, NormalMode, SelectableList, UserAnswers}
+import models.reference.CustomsOffice
+import models.{NormalMode, SelectableList, UserAnswers}
 import navigation.OfficeOfTransitNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -135,7 +136,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
         .thenReturn(Future.successful(countryList))
 
       when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
-        .thenReturn(Future.successful(arbitrary[CustomsOfficeList].sample.value))
+        .thenReturn(Future.successful(arbitrary[SelectableList[CustomsOffice]].sample.value))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -176,7 +177,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
       when(mockCountriesService.getCountries()(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
-        .thenReturn(Future.successful(CustomsOfficeList(Nil)))
+        .thenReturn(Future.successful(SelectableList(Nil)))
 
       setExistingUserAnswers(emptyUserAnswers)
 

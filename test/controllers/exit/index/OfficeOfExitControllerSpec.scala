@@ -17,9 +17,9 @@
 package controllers.exit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.CustomsOfficeForCountryFormProvider
+import forms.SelectableFormProvider
 import generators.Generators
-import models.{CustomsOfficeList, NormalMode}
+import models.{NormalMode, SelectableList}
 import navigation.OfficeOfExitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -37,10 +37,10 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
   private val customsOffice1    = arbitraryCustomsOffice.arbitrary.sample.get
   private val customsOffice2    = arbitraryCustomsOffice.arbitrary.sample.get
-  private val customsOfficeList = CustomsOfficeList(Seq(customsOffice1, customsOffice2))
+  private val customsOfficeList = SelectableList(Seq(customsOffice1, customsOffice2))
   private val country           = arbitraryCountry.arbitrary.sample.get
 
-  private val formProvider = new CustomsOfficeForCountryFormProvider()
+  private val formProvider = new SelectableFormProvider()
   private val form         = formProvider("exit.index.officeOfExit", customsOfficeList, country.description)
   private val mode         = NormalMode
 
@@ -72,7 +72,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, customsOfficeList.customsOffices, country.description, index, mode)(request, messages).toString
+        view(form, lrn, customsOfficeList.values, country.description, index, mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -93,7 +93,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, customsOfficeList.customsOffices, country.description, index, mode)(request, messages).toString
+        view(filledForm, lrn, customsOfficeList.values, country.description, index, mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -129,7 +129,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, customsOfficeList.customsOffices, country.description, index, mode)(request, messages).toString
+        view(boundForm, lrn, customsOfficeList.values, country.description, index, mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

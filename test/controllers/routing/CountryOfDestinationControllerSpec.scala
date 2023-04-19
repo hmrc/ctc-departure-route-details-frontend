@@ -19,7 +19,8 @@ package controllers.routing
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.SelectableFormProvider
 import generators.Generators
-import models.{CustomsOfficeList, NormalMode, SelectableList}
+import models.reference.CustomsOffice
+import models.{NormalMode, SelectableList}
 import navigation.RoutingNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -110,7 +111,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       when(mockCountriesService.getDestinationCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
-        .thenReturn(Future.successful(arbitrary[CustomsOfficeList].sample.value))
+        .thenReturn(Future.successful(arbitrary[SelectableList[CustomsOffice]].sample.value))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -151,7 +152,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       when(mockCountriesService.getDestinationCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
-        .thenReturn(Future.successful(CustomsOfficeList(Nil)))
+        .thenReturn(Future.successful(SelectableList(Nil)))
 
       setExistingUserAnswers(emptyUserAnswers)
 

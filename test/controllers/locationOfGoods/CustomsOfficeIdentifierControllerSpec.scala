@@ -17,9 +17,9 @@
 package controllers.locationOfGoods
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.CustomsOfficeFormProvider
+import forms.SelectableFormProvider
 import generators.Generators
-import models.{CustomsOfficeList, NormalMode}
+import models.{NormalMode, SelectableList}
 import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -38,9 +38,9 @@ class CustomsOfficeIdentifierControllerSpec extends SpecBase with AppWithDefault
 
   private val customsOffice1    = arbitraryCustomsOffice.arbitrary.sample.get
   private val customsOffice2    = arbitraryCustomsOffice.arbitrary.sample.get
-  private val customsOfficeList = CustomsOfficeList(Seq(customsOffice1, customsOffice2))
+  private val customsOfficeList = SelectableList(Seq(customsOffice1, customsOffice2))
 
-  private val formProvider = new CustomsOfficeFormProvider()
+  private val formProvider = new SelectableFormProvider()
   private val form         = formProvider("locationOfGoods.customsOfficeIdentifier", customsOfficeList)
   private val mode         = NormalMode
 
@@ -70,7 +70,7 @@ class CustomsOfficeIdentifierControllerSpec extends SpecBase with AppWithDefault
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, customsOfficeList.customsOffices, mode)(request, messages).toString
+        view(form, lrn, customsOfficeList.values, mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -93,7 +93,7 @@ class CustomsOfficeIdentifierControllerSpec extends SpecBase with AppWithDefault
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, customsOfficeList.customsOffices, mode)(request, messages).toString
+        view(filledForm, lrn, customsOfficeList.values, mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -130,7 +130,7 @@ class CustomsOfficeIdentifierControllerSpec extends SpecBase with AppWithDefault
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, customsOfficeList.customsOffices, mode)(request, messages).toString
+        view(boundForm, lrn, customsOfficeList.values, mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

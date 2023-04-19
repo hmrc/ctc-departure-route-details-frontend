@@ -18,9 +18,9 @@ package controllers.routing
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.CustomsOfficeFormProvider
+import forms.SelectableFormProvider
 import models.reference.CustomsOffice
-import models.{CustomsOfficeList, LocalReferenceNumber, Mode}
+import models.{LocalReferenceNumber, Mode, SelectableList}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
 import pages.routing.{CountryOfDestinationPage, OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import play.api.data.Form
@@ -39,7 +39,7 @@ class OfficeOfDestinationController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: RoutingNavigatorProvider,
   actions: Actions,
-  formProvider: CustomsOfficeFormProvider,
+  formProvider: SelectableFormProvider,
   customsOfficesService: CustomsOfficesService,
   countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
@@ -49,7 +49,7 @@ class OfficeOfDestinationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private def form(customsOfficeList: CustomsOfficeList): Form[CustomsOffice] =
+  private def form(customsOfficeList: SelectableList[CustomsOffice]): Form[CustomsOffice] =
     formProvider("routing.officeOfDestination", customsOfficeList)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
@@ -65,7 +65,7 @@ class OfficeOfDestinationController @Inject() (
               case Some(value) => form(customsOfficeList).fill(value)
             }
 
-            Ok(view(preparedForm, lrn, customsOfficeList.customsOffices, mode))
+            Ok(view(preparedForm, lrn, customsOfficeList.values, mode))
         }
     }
 
@@ -80,7 +80,7 @@ class OfficeOfDestinationController @Inject() (
             form(customsOfficeList)
               .bindFromRequest()
               .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, mode))),
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.values, mode))),
                 value =>
                   for {
                     ctcCountries <- countriesService.getCountryCodesCTC().map(_.values)

@@ -89,7 +89,7 @@ class OfficeOfExitCountryController @Inject() (
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, index, mode))),
                 value =>
                   customsOfficesService.getCustomsOfficesOfExitForCountry(value.code).flatMap {
-                    case x if x.customsOffices.nonEmpty =>
+                    case x if x.values.nonEmpty =>
                       redirect(mode, index, OfficeOfExitCountryPage, value)
                     case _ =>
                       val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))

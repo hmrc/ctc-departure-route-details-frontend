@@ -74,7 +74,7 @@ class CountryOfDestinationController @Inject() (
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode))),
               value =>
                 customsOfficesService.getCustomsOfficesOfDestinationForCountry(value.code).flatMap {
-                  case x if x.customsOffices.nonEmpty =>
+                  case x if x.values.nonEmpty =>
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                     CountryOfDestinationPage
                       .writeToUserAnswers(value)

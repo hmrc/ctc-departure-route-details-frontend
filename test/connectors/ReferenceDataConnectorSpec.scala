@@ -18,7 +18,6 @@ package connectors
 
 import base.{AppWithDefaultMockFixtures, SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
-import models.CustomsOfficeList
 import models.reference._
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -88,13 +87,10 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             .willReturn(okJson(customsOfficeDestinationResponseJson))
         )
 
-        val expectedResult =
-          CustomsOfficeList(
-            Seq(
-              CustomsOffice("GB1", "testName1", None),
-              CustomsOffice("GB2", "testName2", None)
-            )
-          )
+        val expectedResult = Seq(
+          CustomsOffice("GB1", "testName1", None),
+          CustomsOffice("GB2", "testName2", None)
+        )
 
         connector.getCustomsOfficesOfTransitForCountry(CountryCode("GB")).futureValue mustBe expectedResult
       }
@@ -108,8 +104,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
           )
         )
 
-        val expectedResult =
-          CustomsOfficeList(Nil)
+        val expectedResult = Nil
 
         connector.getCustomsOfficesOfTransitForCountry(CountryCode("AR")).futureValue mustBe expectedResult
       }
@@ -126,13 +121,10 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             .willReturn(okJson(customsOfficeDestinationResponseJson))
         )
 
-        val expectedResult =
-          CustomsOfficeList(
-            Seq(
-              CustomsOffice("GB1", "testName1", None),
-              CustomsOffice("GB2", "testName2", None)
-            )
-          )
+        val expectedResult = Seq(
+          CustomsOffice("GB1", "testName1", None),
+          CustomsOffice("GB2", "testName2", None)
+        )
 
         connector.getCustomsOfficesOfDestinationForCountry(CountryCode("GB")).futureValue mustBe expectedResult
       }
@@ -146,8 +138,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
           )
         )
 
-        val expectedResult =
-          CustomsOfficeList(Nil)
+        val expectedResult = Nil
 
         connector.getCustomsOfficesOfDestinationForCountry(CountryCode("AR")).futureValue mustBe expectedResult
       }

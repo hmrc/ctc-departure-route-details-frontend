@@ -18,7 +18,7 @@ package controllers.transit.index
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.CustomsOfficeForCountryFormProvider
+import forms.SelectableFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
 import pages.routing.CountryOfDestinationPage
@@ -38,7 +38,7 @@ class OfficeOfTransitController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfTransitNavigatorProvider,
   actions: Actions,
-  formProvider: CustomsOfficeForCountryFormProvider,
+  formProvider: SelectableFormProvider,
   customsOfficesService: CustomsOfficesService,
   countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
@@ -61,7 +61,7 @@ class OfficeOfTransitController @Inject() (
               case None        => form
               case Some(value) => form.fill(value)
             }
-            Ok(view(preparedForm, lrn, customsOfficeList.customsOffices, country.description, mode, index))
+            Ok(view(preparedForm, lrn, customsOfficeList.values, country.description, mode, index))
         }
     }
 
@@ -77,7 +77,7 @@ class OfficeOfTransitController @Inject() (
             form
               .bindFromRequest()
               .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, country.description, mode, index))),
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.values, country.description, mode, index))),
                 value =>
                   for {
                     customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)

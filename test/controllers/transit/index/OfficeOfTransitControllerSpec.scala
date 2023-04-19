@@ -17,10 +17,10 @@
 package controllers.transit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.CustomsOfficeForCountryFormProvider
+import forms.SelectableFormProvider
 import generators.Generators
 import models.reference.{Country, CountryCode, CustomsOffice}
-import models.{reference, CustomsOfficeList, NormalMode, SelectableList, UserAnswers}
+import models.{reference, NormalMode, SelectableList, UserAnswers}
 import navigation.OfficeOfTransitNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -42,11 +42,11 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
 
   private val customsOffice1     = arbitrary[reference.CustomsOffice].sample.value
   private val customsOffice2     = arbitrary[CustomsOffice].sample.value
-  private val customsOfficeList  = CustomsOfficeList(Seq(customsOffice1, customsOffice2))
+  private val customsOfficeList  = SelectableList(Seq(customsOffice1, customsOffice2))
   private val country            = arbitrary[Country].sample.value
   private val destinationCountry = arbitrary[Country].sample.value
 
-  private val formProvider           = new CustomsOfficeForCountryFormProvider()
+  private val formProvider           = new SelectableFormProvider()
   private def form(country: Country) = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
   private val mode                   = NormalMode
 
@@ -76,7 +76,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form(country), lrn, customsOfficeList.customsOffices, country.description, mode, index)(request, messages).toString
+          view(form(country), lrn, customsOfficeList.values, country.description, mode, index)(request, messages).toString
       }
 
       "when only country of destination defined" in {
@@ -94,7 +94,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form(destinationCountry), lrn, customsOfficeList.customsOffices, destinationCountry.description, mode, index)(request, messages).toString
+          view(form(destinationCountry), lrn, customsOfficeList.values, destinationCountry.description, mode, index)(request, messages).toString
       }
 
       "when country defined at index and country of destination defined" in {
@@ -115,7 +115,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form(country), lrn, customsOfficeList.customsOffices, country.description, mode, index)(request, messages).toString
+          view(form(country), lrn, customsOfficeList.values, country.description, mode, index)(request, messages).toString
       }
     }
 
@@ -140,7 +140,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(filledForm, lrn, customsOfficeList.customsOffices, country.description, mode, index)(request, messages).toString
+          view(filledForm, lrn, customsOfficeList.values, country.description, mode, index)(request, messages).toString
       }
 
       "when only country of destination defined" in {
@@ -163,7 +163,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(filledForm, lrn, customsOfficeList.customsOffices, destinationCountry.description, mode, index)(request, messages).toString
+          view(filledForm, lrn, customsOfficeList.values, destinationCountry.description, mode, index)(request, messages).toString
       }
 
       "when country defined at index and country of destination defined" in {
@@ -187,7 +187,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(filledForm, lrn, customsOfficeList.customsOffices, country.description, mode, index)(request, messages).toString
+          view(filledForm, lrn, customsOfficeList.values, country.description, mode, index)(request, messages).toString
       }
     }
 
@@ -196,7 +196,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
       val customsOffice = CustomsOffice("FR123", "name", None)
 
       when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
-        .thenReturn(Future.successful(CustomsOfficeList(Seq(customsOffice))))
+        .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))
       when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any()))
         .thenReturn(Future.successful(SelectableList(Seq(country))))
 
@@ -254,7 +254,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, lrn, customsOfficeList.customsOffices, country.description, mode, index)(request, messages).toString
+          view(boundForm, lrn, customsOfficeList.values, country.description, mode, index)(request, messages).toString
       }
 
       "when only country of destination defined" in {
@@ -273,7 +273,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, lrn, customsOfficeList.customsOffices, destinationCountry.description, mode, index)(request, messages).toString
+          view(boundForm, lrn, customsOfficeList.values, destinationCountry.description, mode, index)(request, messages).toString
       }
 
       "when country defined at index and country of destination defined" in {
@@ -295,7 +295,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, lrn, customsOfficeList.customsOffices, country.description, mode, index)(request, messages).toString
+          view(boundForm, lrn, customsOfficeList.values, country.description, mode, index)(request, messages).toString
       }
     }
 

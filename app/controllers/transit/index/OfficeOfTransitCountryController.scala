@@ -79,7 +79,7 @@ class OfficeOfTransitCountryController @Inject() (
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))),
               value =>
                 customsOfficesService.getCustomsOfficesOfTransitForCountry(value.code).flatMap {
-                  case x if x.customsOffices.nonEmpty =>
+                  case x if x.values.nonEmpty =>
                     redirect(mode, index, OfficeOfTransitCountryPage, value)
                   case _ =>
                     val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))

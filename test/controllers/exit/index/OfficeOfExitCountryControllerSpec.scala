@@ -19,7 +19,8 @@ package controllers.exit.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.SelectableFormProvider
 import generators.Generators
-import models.{CustomsOfficeList, NormalMode, SelectableList, UserAnswers}
+import models.reference.CustomsOffice
+import models.{NormalMode, SelectableList, UserAnswers}
 import navigation.OfficeOfExitNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -138,7 +139,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
         .thenReturn(Future.successful(countryList))
 
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any()))
-        .thenReturn(Future.successful(arbitrary[CustomsOfficeList].sample.value))
+        .thenReturn(Future.successful(arbitrary[SelectableList[CustomsOffice]].sample.value))
 
       setExistingUserAnswers(baseAnswers)
 
@@ -180,7 +181,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
         .thenReturn(Future.successful(countryList))
 
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any()))
-        .thenReturn(Future.successful(CustomsOfficeList(Nil)))
+        .thenReturn(Future.successful(SelectableList(Nil)))
 
       setExistingUserAnswers(baseAnswers)
 

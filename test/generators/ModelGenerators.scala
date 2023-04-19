@@ -118,13 +118,6 @@ trait ModelGenerators {
       } yield Coordinates(latitude, longitude)
     }
 
-  implicit lazy val arbitraryCustomsOfficeList: Arbitrary[CustomsOfficeList] =
-    Arbitrary {
-      for {
-        customsOffices <- listWithMaxLength[CustomsOffice]()
-      } yield CustomsOfficeList(customsOffices)
-    }
-
   implicit lazy val arbitraryDynamicAddress: Arbitrary[DynamicAddress] =
     Arbitrary {
       for {
