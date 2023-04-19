@@ -17,10 +17,10 @@
 package controllers.routing
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.CustomsOfficeFormProvider
+import forms.SelectableFormProvider
 import generators.Generators
 import models.reference.{Country, CountryCode, CustomsOffice}
-import models.{CountryList, CustomsOfficeList, NormalMode, UserAnswers}
+import models.{NormalMode, SelectableList, UserAnswers}
 import navigation.RoutingNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -40,10 +40,10 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
 
   private val customsOffice1    = arbitraryCustomsOffice.arbitrary.sample.get
   private val customsOffice2    = arbitraryCustomsOffice.arbitrary.sample.get
-  private val customsOfficeList = CustomsOfficeList(Seq(customsOffice1, customsOffice2))
+  private val customsOfficeList = SelectableList(Seq(customsOffice1, customsOffice2))
   private val country           = Country(CountryCode("FR"), "France")
 
-  private val formProvider = new CustomsOfficeFormProvider()
+  private val formProvider = new SelectableFormProvider()
   private val form         = formProvider("routing.officeOfDestination", customsOfficeList)
   private val mode         = NormalMode
 
@@ -73,7 +73,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, customsOfficeList.customsOffices, mode)(request, messages).toString
+        view(form, lrn, customsOfficeList.values, mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -96,15 +96,15 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, customsOfficeList.customsOffices, mode)(request, messages).toString
+        view(filledForm, lrn, customsOfficeList.values, mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
       val customsOffice = CustomsOffice("FR123", "name", None)
       when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
-        .thenReturn(Future.successful(CustomsOfficeList(Seq(customsOffice))))
-      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(CountryList(Seq(country))))
+        .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))
+      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(SelectableList(Seq(country))))
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers.setValue(CountryOfDestinationPage, country)
@@ -159,7 +159,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, customsOfficeList.customsOffices, mode)(request, messages).toString
+        view(boundForm, lrn, customsOfficeList.values, mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

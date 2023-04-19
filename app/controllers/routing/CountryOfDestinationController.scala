@@ -18,7 +18,7 @@ package controllers.routing
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.CountryFormProvider
+import forms.SelectableFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
 import pages.routing.CountryOfDestinationPage
@@ -38,7 +38,7 @@ class CountryOfDestinationController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: RoutingNavigatorProvider,
   actions: Actions,
-  formProvider: CountryFormProvider,
+  formProvider: SelectableFormProvider,
   countriesService: CountriesService,
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
@@ -59,7 +59,7 @@ class CountryOfDestinationController @Inject() (
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, lrn, countryList.countries, mode))
+          Ok(view(preparedForm, lrn, countryList.values, mode))
       }
   }
 
@@ -71,10 +71,10 @@ class CountryOfDestinationController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, mode))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode))),
               value =>
                 customsOfficesService.getCustomsOfficesOfDestinationForCountry(value.code).flatMap {
-                  case x if x.customsOffices.nonEmpty =>
+                  case x if x.values.nonEmpty =>
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                     CountryOfDestinationPage
                       .writeToUserAnswers(value)
@@ -83,7 +83,7 @@ class CountryOfDestinationController @Inject() (
                       .navigate()
                   case _ =>
                     val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
-                    Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, mode)))
+                    Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode)))
                 }
             )
       }

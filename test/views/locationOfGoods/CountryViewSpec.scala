@@ -16,9 +16,9 @@
 
 package views.locationOfGoods
 
-import forms.CountryFormProvider
+import forms.SelectableFormProvider
 import models.reference.Country
-import models.{CountryList, NormalMode}
+import models.{NormalMode, SelectableList}
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -27,7 +27,7 @@ import views.html.locationOfGoods.CountryView
 
 class CountryViewSpec extends InputSelectViewBehaviours[Country] {
 
-  override def form: Form[Country] = new CountryFormProvider()(prefix, CountryList(values))
+  override def form: Form[Country] = new SelectableFormProvider()(prefix, SelectableList(values))
 
   override def applyView(form: Form[Country]): HtmlFormat.Appendable =
     injector.instanceOf[CountryView].apply(form, lrn, values, NormalMode)(fakeRequest, messages)

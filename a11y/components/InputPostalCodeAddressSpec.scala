@@ -18,7 +18,8 @@ package components
 
 import a11ySpecBase.A11ySpecBase
 import forms.locationOfGoods.PostalCodeFormProvider
-import models.CountryList
+import models.SelectableList
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import views.html.components.InputPostalCodeAddress
@@ -31,14 +32,14 @@ class InputPostalCodeAddressSpec extends A11ySpecBase {
     val component = app.injector.instanceOf[InputPostalCodeAddress]
 
     val prefix      = Gen.alphaNumStr.sample.value
-    val countries   = arbitrary[CountryList].sample.value
+    val countries   = arbitrary[SelectableList[Country]].sample.value
     val title       = nonEmptyString.sample.value
     val caption     = Gen.option(nonEmptyString).sample.value
     val headingArgs = listWithMaxLength[Any]().sample.value
     val form        = new PostalCodeFormProvider()(prefix, countries)
 
     val content = template.apply(title, lrn = lrn) {
-      component.apply(form, prefix, caption, countries.countries, headingArgs)
+      component.apply(form, prefix, caption, countries.values, headingArgs)
     }
 
     "pass accessibility checks" in {

@@ -17,9 +17,9 @@
 package services
 
 import connectors.ReferenceDataConnector
-import models.CountryList.countriesOfRoutingReads
+import models.SelectableList.countriesOfRoutingReads
 import models.reference.{Country, CountryCode}
-import models.{CountryList, DeclarationType, RichOptionalJsArray, UserAnswers}
+import models.{DeclarationType, RichOptionalJsArray, SelectableList, UserAnswers}
 import pages.external.DeclarationTypePage
 import pages.sections.routing.CountriesOfRoutingSection
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,41 +29,41 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
-  def getDestinationCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[CountryList] =
+  def getDestinationCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     userAnswers.get(DeclarationTypePage) match {
       case Some(DeclarationType.Option4) => getCommunityCountries()
       case _                             => getTransitCountries()
     }
 
-  def getCountries()(implicit hc: HeaderCarrier): Future[CountryList] =
+  def getCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries(Nil)
 
-  def getTransitCountries()(implicit hc: HeaderCarrier): Future[CountryList] = {
+  def getTransitCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
     val queryParameters = Seq("membership" -> "ctc")
     getCountries(queryParameters)
   }
 
-  def getNonEuTransitCountries()(implicit hc: HeaderCarrier): Future[CountryList] = {
+  def getNonEuTransitCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
     val queryParameters = Seq("membership" -> "non_eu")
     getCountries(queryParameters)
   }
 
-  def getAddressPostcodeBasedCountries()(implicit hc: HeaderCarrier): Future[CountryList] =
+  def getAddressPostcodeBasedCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     referenceDataConnector
       .getAddressPostcodeBasedCountries()
       .map(sort)
 
-  def getCommunityCountries()(implicit hc: HeaderCarrier): Future[CountryList] = {
+  def getCommunityCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
     val queryParameters = Seq("membership" -> "eu")
     getCountries(queryParameters)
   }
 
-  def getCustomsSecurityAgreementAreaCountries()(implicit hc: HeaderCarrier): Future[CountryList] =
+  def getCustomsSecurityAgreementAreaCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     referenceDataConnector
       .getCustomsSecurityAgreementAreaCountries()
       .map(sort)
 
-  def getCountryCodesCTC()(implicit hc: HeaderCarrier): Future[CountryList] =
+  def getCountryCodesCTC()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     referenceDataConnector
       .getCountryCodesCTC()
       .map(sort)
@@ -72,23 +72,23 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
     referenceDataConnector
       .getCountriesWithoutZip()
 
-  def getOfficeOfTransitCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[CountryList] =
+  def getOfficeOfTransitCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads) match {
-      case Some(x) if x.countries.nonEmpty => Future.successful(x)
-      case _                               => getCountries()
+      case Some(x) if x.values.nonEmpty => Future.successful(x)
+      case _                            => getCountries()
     }
 
-  def getOfficeOfExitCountries(userAnswers: UserAnswers, countryOfDestination: Country)(implicit hc: HeaderCarrier): Future[CountryList] =
-    userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads).map(_.countries) match {
+  def getOfficeOfExitCountries(userAnswers: UserAnswers, countryOfDestination: Country)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
+    userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads).map(_.values) match {
       case Some(countries) if countries.nonEmpty =>
         getCustomsSecurityAgreementAreaCountries()
-          .map(_.countries)
+          .map(_.values)
           .map(countries.filterNot(_ == countryOfDestination).intersect(_))
-          .map(CountryList(_))
+          .map(SelectableList(_))
       case _ => getCountries()
     }
 
-  private def getCountries(queryParameters: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[CountryList] =
+  private def getCountries(queryParameters: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     referenceDataConnector
       .getCountries(queryParameters)
       .map(sort)
@@ -96,6 +96,6 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
   def doesCountryRequireZip(country: Country)(implicit hc: HeaderCarrier): Future[Boolean] =
     getCountriesWithoutZip().map(!_.contains(country.code))
 
-  private def sort(countries: Seq[Country]): CountryList =
-    CountryList(countries.sortBy(_.description.toLowerCase))
+  private def sort(countries: Seq[Country]): SelectableList[Country] =
+    SelectableList(countries.sortBy(_.description.toLowerCase))
 }

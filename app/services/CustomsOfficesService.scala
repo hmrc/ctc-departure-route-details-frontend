@@ -16,14 +16,9 @@
 
 package services
 
-import config.Constants._
 import connectors.ReferenceDataConnector
-import models.CustomsOfficeList.{officesOfExitReads, officesOfTransitReads}
+import models.SelectableList
 import models.reference.{CountryCode, CustomsOffice}
-import models.{CustomsOfficeList, RichOptionalJsArray, UserAnswers}
-import pages.routing.OfficeOfDestinationPage
-import pages.sections.exit.OfficesOfExitSection
-import pages.sections.transit.OfficesOfTransitSection
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -33,58 +28,35 @@ class CustomsOfficesService @Inject() (
   referenceDataConnector: ReferenceDataConnector
 )(implicit ec: ExecutionContext) {
 
-  def getCustomsOfficesOfDeparture(implicit hc: HeaderCarrier): Future[CustomsOfficeList] = {
-
-    def getCustomsOffices(countryCode: String): Future[CustomsOfficeList] =
-      referenceDataConnector.getCustomsOfficesOfDepartureForCountry(countryCode)
-
-    for {
-      gbOffices <- getCustomsOffices(GB)
-      niOffices <- getCustomsOffices(XI)
-      offices = sort(gbOffices.getAll ++ niOffices.getAll)
-    } yield offices
-  }
-
   def getCustomsOfficesOfTransitForCountry(
     countryCode: CountryCode
-  )(implicit hc: HeaderCarrier): Future[CustomsOfficeList] =
+  )(implicit hc: HeaderCarrier): Future[SelectableList[CustomsOffice]] =
     referenceDataConnector
       .getCustomsOfficesOfTransitForCountry(countryCode)
       .map(sort)
 
   def getCustomsOfficesOfDestinationForCountry(
     countryCode: CountryCode
-  )(implicit hc: HeaderCarrier): Future[CustomsOfficeList] =
+  )(implicit hc: HeaderCarrier): Future[SelectableList[CustomsOffice]] =
     referenceDataConnector
       .getCustomsOfficesOfDestinationForCountry(countryCode)
       .map(sort)
 
   def getCustomsOfficesOfExitForCountry(
     countryCode: CountryCode
-  )(implicit hc: HeaderCarrier): Future[CustomsOfficeList] =
+  )(implicit hc: HeaderCarrier): Future[SelectableList[CustomsOffice]] =
     referenceDataConnector
       .getCustomsOfficesOfExitForCountry(countryCode)
       .map(sort)
 
   def getCustomsOfficesOfDepartureForCountry(
     countryCode: String
-  )(implicit hc: HeaderCarrier): Future[CustomsOfficeList] =
+  )(implicit hc: HeaderCarrier): Future[SelectableList[CustomsOffice]] =
     referenceDataConnector
       .getCustomsOfficesOfDepartureForCountry(countryCode)
       .map(sort)
 
-  private def sort(customsOfficeList: CustomsOfficeList): CustomsOfficeList =
-    sort(customsOfficeList.customsOffices)
-
-  private def sort(customsOffices: Seq[CustomsOffice]): CustomsOfficeList =
-    CustomsOfficeList(customsOffices.sortBy(_.name.toLowerCase))
-
-  def getCustomsOffices(userAnswers: UserAnswers): CustomsOfficeList = {
-    val officesOfExit       = userAnswers.get(OfficesOfExitSection).validate(officesOfExitReads).getCustomsOffices
-    val officesOfTransit    = userAnswers.get(OfficesOfTransitSection).validate(officesOfTransitReads).getCustomsOffices
-    val officeOfDestination = userAnswers.get(OfficeOfDestinationPage).toList
-
-    sort(officesOfExit ++ officesOfTransit ++ officeOfDestination)
-  }
+  private def sort(customsOffices: Seq[CustomsOffice]): SelectableList[CustomsOffice] =
+    SelectableList(customsOffices.sortBy(_.name.toLowerCase))
 
 }

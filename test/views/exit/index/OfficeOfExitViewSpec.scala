@@ -16,9 +16,9 @@
 
 package views.exit.index
 
-import forms.CustomsOfficeForCountryFormProvider
-import models.{CustomsOfficeList, NormalMode}
+import forms.SelectableFormProvider
 import models.reference.CustomsOffice
+import models.{NormalMode, SelectableList}
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -29,7 +29,7 @@ class OfficeOfExitViewSpec extends InputSelectViewBehaviours[CustomsOffice] {
 
   private lazy val countryName = arbitraryCountry.arbitrary.sample.value.description
 
-  override def form: Form[CustomsOffice] = new CustomsOfficeForCountryFormProvider()(prefix, CustomsOfficeList(values), countryName)
+  override def form: Form[CustomsOffice] = new SelectableFormProvider()(prefix, SelectableList(values), countryName)
 
   override def applyView(form: Form[CustomsOffice]): HtmlFormat.Appendable =
     injector.instanceOf[OfficeOfExitView].apply(form, lrn, values, countryName, index, NormalMode)(fakeRequest, messages)

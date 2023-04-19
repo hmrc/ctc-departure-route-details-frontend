@@ -16,8 +16,7 @@
 
 package forms.mappings
 
-import models.{CountryList, CustomsOfficeList, Enumerable, UnLocodeList}
-import models.reference.{Country, CustomsOffice, UnLocode}
+import models.{Enumerable, Selectable, SelectableList}
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
 import play.api.data.format.Formats.ignoredFormat
@@ -49,27 +48,6 @@ trait Mappings extends Formatters with Constraints {
   protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid")(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
 
-  protected def customsOffice(
-    customsOfficeList: CustomsOfficeList,
-    errorKey: String = "error.required",
-    args: Seq[Any] = Seq.empty
-  ): FieldMapping[CustomsOffice] =
-    of(customsOfficeFormatter(customsOfficeList, errorKey, args))
-
-  protected def country(
-    countryList: CountryList,
-    errorKey: String = "error.required",
-    args: Seq[Any] = Seq.empty
-  ): FieldMapping[Country] =
-    of(countryFormatter(countryList, errorKey, args))
-
-  protected def unLocode(
-    unLocodeList: UnLocodeList,
-    errorKey: String = "error.required",
-    args: Seq[Any] = Seq.empty
-  ): FieldMapping[UnLocode] =
-    of(unLocodeFormatter(unLocodeList, errorKey, args))
-
   protected def localDate(
     invalidKey: String,
     allRequiredKey: String,
@@ -87,4 +65,10 @@ trait Mappings extends Formatters with Constraints {
   ): FieldMapping[LocalTime] =
     of(new LocalTimeFormatter(invalidKey, allRequiredKey, requiredKey, args))
 
+  protected def selectable[T <: Selectable](
+    selectableList: SelectableList[T],
+    errorKey: String = "error.required",
+    args: Seq[Any] = Seq.empty
+  ): FieldMapping[T] =
+    of(selectableFormatter[T](selectableList, errorKey, args))
 }

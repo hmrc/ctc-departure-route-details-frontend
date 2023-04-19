@@ -18,7 +18,7 @@ package controllers.exit.index
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.CustomsOfficeForCountryFormProvider
+import forms.SelectableFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
 import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage, OfficeOfExitPage}
@@ -37,7 +37,7 @@ class OfficeOfExitController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfExitNavigatorProvider,
   actions: Actions,
-  formProvider: CustomsOfficeForCountryFormProvider,
+  formProvider: SelectableFormProvider,
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
@@ -60,7 +60,7 @@ class OfficeOfExitController @Inject() (
               case Some(value) => form.fill(value)
             }
 
-            Ok(view(preparedForm, lrn, customsOfficeList.customsOffices, country.description, index, mode))
+            Ok(view(preparedForm, lrn, customsOfficeList.values, country.description, index, mode))
         }
     }
 
@@ -76,7 +76,7 @@ class OfficeOfExitController @Inject() (
             form
               .bindFromRequest()
               .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.customsOffices, country.description, index, mode))),
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.values, country.description, index, mode))),
                 value => {
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                   OfficeOfExitPage(index)

@@ -18,7 +18,7 @@ package controllers.locationOfGoods
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.UnLocodeFormProvider
+import forms.SelectableFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
 import pages.locationOfGoods.UnLocodePage
@@ -37,7 +37,7 @@ class UnLocodeController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
-  formProvider: UnLocodeFormProvider,
+  formProvider: SelectableFormProvider,
   unLocodesService: UnLocodesService,
   val controllerComponents: MessagesControllerComponents,
   view: UnLocodeView
@@ -52,14 +52,11 @@ class UnLocodeController @Inject() (
         unLocodesService.getUnLocodes().map {
           unLocodeList =>
             val form = formProvider("locationOfGoods.unLocode", unLocodeList)
-            val preparedForm = request.userAnswers
-              .get(UnLocodePage)
-              .flatMap(
-                x => unLocodeList.getUnLocode(x.unLocodeExtendedCode)
-              )
-              .map(form.fill)
-              .getOrElse(form)
-            Ok(view(preparedForm, lrn, unLocodeList.unLocodes, mode))
+            val preparedForm = request.userAnswers.get(UnLocodePage) match {
+              case None        => form
+              case Some(value) => form.fill(value)
+            }
+            Ok(view(preparedForm, lrn, unLocodeList.values, mode))
         }
     }
 
@@ -73,7 +70,7 @@ class UnLocodeController @Inject() (
             form
               .bindFromRequest()
               .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, unLocodeList.unLocodes, mode))),
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, unLocodeList.values, mode))),
                 value => {
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                   UnLocodePage

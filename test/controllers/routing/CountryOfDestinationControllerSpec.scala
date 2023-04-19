@@ -17,9 +17,10 @@
 package controllers.routing
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.CountryFormProvider
+import forms.SelectableFormProvider
 import generators.Generators
-import models.{CountryList, CustomsOfficeList, NormalMode}
+import models.reference.CustomsOffice
+import models.{NormalMode, SelectableList}
 import navigation.RoutingNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -39,9 +40,9 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
 
   private val country1    = arbitraryCountry.arbitrary.sample.get
   private val country2    = arbitraryCountry.arbitrary.sample.get
-  private val countryList = CountryList(Seq(country1, country2))
+  private val countryList = SelectableList(Seq(country1, country2))
 
-  private val formProvider = new CountryFormProvider()
+  private val formProvider = new SelectableFormProvider()
   private val form         = formProvider("routing.countryOfDestination", countryList)
   private val mode         = NormalMode
 
@@ -78,7 +79,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, countryList.countries, mode)(request, messages).toString
+        view(form, lrn, countryList.values, mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -100,7 +101,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, countryList.countries, mode)(request, messages).toString
+        view(filledForm, lrn, countryList.values, mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -110,7 +111,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       when(mockCountriesService.getDestinationCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
-        .thenReturn(Future.successful(arbitrary[CustomsOfficeList].sample.value))
+        .thenReturn(Future.successful(arbitrary[SelectableList[CustomsOffice]].sample.value))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -141,7 +142,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, countryList.countries, mode)(request, messages).toString
+        view(boundForm, lrn, countryList.values, mode)(request, messages).toString
     }
 
     "must return a Bad Request and errors when submitted country has no corresponding customs offices" in {
@@ -151,7 +152,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       when(mockCountriesService.getDestinationCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
-        .thenReturn(Future.successful(CustomsOfficeList(Nil)))
+        .thenReturn(Future.successful(SelectableList(Nil)))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -167,7 +168,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, countryList.countries, mode)(request, messages).toString
+        view(boundForm, lrn, countryList.values, mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

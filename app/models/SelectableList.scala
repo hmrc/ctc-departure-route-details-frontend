@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package forms
+package models
 
-import forms.mappings.Mappings
-import models.CountryList
 import models.reference.Country
-import play.api.data.Form
+import play.api.libs.json.{JsArray, JsError, JsSuccess, Reads}
 
-import javax.inject.Inject
+case class SelectableList[T <: Selectable](values: Seq[T])
 
-class CountryFormProvider @Inject() extends Mappings {
+object SelectableList {
 
-  def apply(prefix: String, countryList: CountryList, args: Any*): Form[Country] =
-    Form(
-      "value" -> country(countryList, s"$prefix.error.required", args)
-    )
+  val countriesOfRoutingReads: Reads[SelectableList[Country]] = Reads[SelectableList[Country]] {
+    case JsArray(values) =>
+      JsSuccess(
+        SelectableList(
+          values.flatMap {
+            value => (value \ "countryOfRouting").validate[Country].asOpt
+          }.toSeq
+        )
+      )
+    case _ => JsError("SelectableList::countriesOfRoutingReads: Failed to read countries of routing from cache")
+  }
 }

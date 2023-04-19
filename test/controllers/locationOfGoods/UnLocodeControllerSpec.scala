@@ -17,9 +17,9 @@
 package controllers.locationOfGoods
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.UnLocodeFormProvider
+import forms.SelectableFormProvider
 import generators.Generators
-import models.{NormalMode, UnLocodeList}
+import models.{NormalMode, SelectableList}
 import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -37,9 +37,9 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
   private val unLocode1    = arbitraryUnLocode.arbitrary.sample.get
   private val unLocode2    = arbitraryUnLocode.arbitrary.sample.get
-  private val unLocodeList = UnLocodeList(Seq(unLocode1, unLocode2))
+  private val unLocodeList = SelectableList(Seq(unLocode1, unLocode2))
 
-  private val formProvider = new UnLocodeFormProvider()
+  private val formProvider = new SelectableFormProvider()
   private val form         = formProvider("locationOfGoods.unLocode", unLocodeList)
   private val mode         = NormalMode
 
@@ -68,7 +68,7 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, unLocodeList.unLocodes, mode)(request, messages).toString
+        view(form, lrn, unLocodeList.values, mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -88,7 +88,7 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, unLocodeList.unLocodes, mode)(request, messages).toString
+        view(filledForm, lrn, unLocodeList.values, mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -123,7 +123,7 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, unLocodeList.unLocodes, mode)(request, messages).toString
+        view(boundForm, lrn, unLocodeList.values, mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

@@ -18,7 +18,7 @@ package controllers.loadingAndUnloading.loading
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.UnLocodeFormProvider
+import forms.SelectableFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LoadingAndUnloadingNavigatorProvider, UserAnswersNavigator}
 import pages.loadingAndUnloading.loading.UnLocodePage
@@ -36,7 +36,7 @@ class UnLocodeController @Inject() (
   override val messagesApi: MessagesApi,
   implicit val sessionRepository: SessionRepository,
   actions: Actions,
-  formProvider: UnLocodeFormProvider,
+  formProvider: SelectableFormProvider,
   unLocodesService: UnLocodesService,
   navigatorProvider: LoadingAndUnloadingNavigatorProvider,
   val controllerComponents: MessagesControllerComponents,
@@ -55,7 +55,7 @@ class UnLocodeController @Inject() (
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, lrn, unLocodeList.unLocodes, mode))
+          Ok(view(preparedForm, lrn, unLocodeList.values, mode))
       }
   }
 
@@ -67,7 +67,7 @@ class UnLocodeController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, unLocodeList.unLocodes, mode))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, unLocodeList.values, mode))),
               value => {
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                 UnLocodePage

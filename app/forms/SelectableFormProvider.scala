@@ -14,27 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-import models.reference.UnLocode
+import forms.mappings.Mappings
+import models.{Selectable, SelectableList}
+import play.api.data.Form
 
-case class UnLocodeList(unLocodes: Seq[UnLocode]) {
+import javax.inject.Inject
 
-  def getAll: Seq[UnLocode] =
-    unLocodes
+class SelectableFormProvider @Inject() extends Mappings {
 
-  def getUnLocode(unLocodeExtendedCode: String): Option[UnLocode] =
-    unLocodes.find(_.unLocodeExtendedCode == unLocodeExtendedCode)
-
-  override def equals(obj: Any): Boolean = obj match {
-    case x: UnLocodeList => x.getAll == getAll
-    case _               => false
-  }
-
-}
-
-object UnLocodeList {
-
-  def apply(unLocodes: Seq[UnLocode]): UnLocodeList =
-    new UnLocodeList(unLocodes)
+  def apply[T <: Selectable](prefix: String, selectableList: SelectableList[T], args: Any*): Form[T] =
+    Form(
+      "value" -> selectable[T](selectableList, s"$prefix.error.required", args)
+    )
 }

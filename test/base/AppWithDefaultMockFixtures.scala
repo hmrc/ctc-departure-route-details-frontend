@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.{CountryList, Index, Mode, UserAnswers}
+import models.{Index, Mode, SelectableList, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -40,8 +40,8 @@ trait AppWithDefaultMockFixtures extends BeforeAndAfterEach with GuiceOneAppPerS
     reset(mockSessionRepository); reset(mockDataRetrievalActionProvider); reset(mockLockService)
 
     when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
-    when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(CountryList(Nil)))
-    when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(CountryList(Nil)))
+    when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(SelectableList(Nil)))
+    when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(SelectableList(Nil)))
     when(mockLockService.checkLock(any())(any())).thenReturn(Future.successful(true))
   }
 

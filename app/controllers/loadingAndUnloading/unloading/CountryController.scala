@@ -18,7 +18,7 @@ package controllers.loadingAndUnloading.unloading
 
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.CountryFormProvider
+import forms.SelectableFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LoadingAndUnloadingNavigatorProvider, UserAnswersNavigator}
 import pages.loadingAndUnloading.unloading.CountryPage
@@ -37,7 +37,7 @@ class CountryController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: LoadingAndUnloadingNavigatorProvider,
   actions: Actions,
-  formProvider: CountryFormProvider,
+  formProvider: SelectableFormProvider,
   countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   view: CountryView
@@ -55,7 +55,7 @@ class CountryController @Inject() (
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, lrn, countryList.countries, mode))
+          Ok(view(preparedForm, lrn, countryList.values, mode))
       }
   }
 
@@ -67,7 +67,7 @@ class CountryController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.countries, mode))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode))),
               value => {
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                 CountryPage

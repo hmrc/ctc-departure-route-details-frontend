@@ -17,7 +17,7 @@
 package services
 
 import connectors.ReferenceDataConnector
-import models.UnLocodeList
+import models.SelectableList
 import models.reference.UnLocode
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -28,12 +28,12 @@ class UnLocodesService @Inject() (
   referenceDataConnector: ReferenceDataConnector
 )(implicit ec: ExecutionContext) {
 
-  def getUnLocodes()(implicit hc: HeaderCarrier): Future[UnLocodeList] =
+  def getUnLocodes()(implicit hc: HeaderCarrier): Future[SelectableList[UnLocode]] =
     referenceDataConnector
       .getUnLocodes()
       .map(sort)
 
-  private def sort(unLocodes: Seq[UnLocode]): UnLocodeList =
-    UnLocodeList(unLocodes.sortBy(_.name.toLowerCase))
+  private def sort(unLocodes: Seq[UnLocode]): SelectableList[UnLocode] =
+    SelectableList(unLocodes.sortBy(_.name.toLowerCase))
 
 }

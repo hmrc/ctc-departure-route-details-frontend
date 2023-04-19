@@ -77,10 +77,10 @@ trait ModelGenerators {
       } yield Country(code, name)
     }
 
-  implicit lazy val arbitraryCountryList: Arbitrary[CountryList] = Arbitrary {
+  implicit def arbitrarySelectableList[T <: Selectable](implicit arbitrary: Arbitrary[T]): Arbitrary[SelectableList[T]] = Arbitrary {
     for {
-      countries <- listWithMaxLength[Country]()
-    } yield CountryList(countries.distinctBy(_.code))
+      values <- listWithMaxLength[T]()
+    } yield SelectableList(values.distinctBy(_.value))
   }
 
   implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] =
@@ -116,13 +116,6 @@ trait ModelGenerators {
         latitude  <- RegexpGen.from(coordinatesLatitudeMaxRegex)
         longitude <- RegexpGen.from(coordinatesLongitudeMaxRegex)
       } yield Coordinates(latitude, longitude)
-    }
-
-  implicit lazy val arbitraryCustomsOfficeList: Arbitrary[CustomsOfficeList] =
-    Arbitrary {
-      for {
-        customsOffices <- listWithMaxLength[CustomsOffice]()
-      } yield CustomsOfficeList(customsOffices)
     }
 
   implicit lazy val arbitraryDynamicAddress: Arbitrary[DynamicAddress] =

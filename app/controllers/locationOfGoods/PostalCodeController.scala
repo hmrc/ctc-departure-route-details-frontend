@@ -59,7 +59,7 @@ class PostalCodeController @Inject() (
               case Some(value) => form.fill(value)
             }
 
-            Ok(view(preparedForm, lrn, mode, countryList.countries))
+            Ok(view(preparedForm, lrn, mode, countryList.values))
         }
     }
 
@@ -73,7 +73,7 @@ class PostalCodeController @Inject() (
             form
               .bindFromRequest()
               .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, countryList.countries))),
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, countryList.values))),
                 value => {
                   implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                   PostalCodePage
