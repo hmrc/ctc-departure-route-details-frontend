@@ -16,8 +16,7 @@
 
 package forms.mappings
 
-import models.reference.UnLocode
-import models.{Enumerable, Selectable, SelectableList, UnLocodeList}
+import models.{Enumerable, Selectable, SelectableList}
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
 import play.api.data.format.Formats.ignoredFormat
@@ -48,13 +47,6 @@ trait Mappings extends Formatters with Constraints {
 
   protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid")(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
-
-  protected def unLocode(
-    unLocodeList: UnLocodeList,
-    errorKey: String = "error.required",
-    args: Seq[Any] = Seq.empty
-  ): FieldMapping[UnLocode] =
-    of(unLocodeFormatter(unLocodeList, errorKey, args))
 
   protected def localDate(
     invalidKey: String,
