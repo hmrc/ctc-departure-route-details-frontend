@@ -25,7 +25,7 @@ import play.api.libs.json.Json
 class SelectableListSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "countriesOfRoutingReads" - {
-    "must read countries of routing as CountryList" in {
+    "must read countries of routing as SelectableList" in {
       val json = Json.parse("""
           |[
           |  {
