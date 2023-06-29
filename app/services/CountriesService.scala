@@ -43,11 +43,6 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
     getCountries(queryParameters)
   }
 
-  def getNonEuTransitCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
-    val queryParameters = Seq("membership" -> "non_eu")
-    getCountries(queryParameters)
-  }
-
   def getAddressPostcodeBasedCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     referenceDataConnector
       .getAddressPostcodeBasedCountries()

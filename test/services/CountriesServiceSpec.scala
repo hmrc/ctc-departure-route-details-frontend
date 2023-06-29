@@ -119,23 +119,6 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
       }
     }
 
-    "getNonEuTransitCountries" - {
-      "must return a list of sorted non-EU transit countries" in {
-
-        when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
-
-        service.getNonEuTransitCountries().futureValue mustBe
-          SelectableList(sortedCountries)
-
-        val expectedQueryParameters = Seq(
-          "membership" -> "non_eu"
-        )
-
-        verify(mockRefDataConnector).getCountries(eqTo(expectedQueryParameters))(any(), any())
-      }
-    }
-
     "getCommunityCountries" - {
       "must return a list of sorted EU transit countries" in {
 
