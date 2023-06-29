@@ -19,6 +19,7 @@ package controllers.locationOfGoods
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.locationOfGoods.PostalCodeFormProvider
 import generators.Generators
+import models.reference.Country
 import models.{NormalMode, PostalCodeAddress, SelectableList}
 import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +36,8 @@ import scala.concurrent.Future
 
 class PostalCodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
-  private val testAddress = arbitrary[PostalCodeAddress].sample.value
+  private val country     = arbitrary[Country].sample.value
+  private val testAddress = PostalCodeAddress("10", "TE2 2ST", country)
   private val countryList = SelectableList(Seq(testAddress.country))
 
   private val formProvider = new PostalCodeFormProvider()

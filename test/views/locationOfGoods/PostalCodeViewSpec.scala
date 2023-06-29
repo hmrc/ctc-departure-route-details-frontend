@@ -28,11 +28,13 @@ import views.html.locationOfGoods.PostalCodeView
 
 class PostalCodeViewSpec extends PostalCodeAddressViewBehaviours with Generators {
 
+  private val formProvider = new PostalCodeFormProvider()(phaseConfig)
+
   private val countryList = arbitrary[SelectableList[Country]].sample.value
 
   override val prefix: String = "locationOfGoods.postalCode"
 
-  override def form: Form[PostalCodeAddress] = new PostalCodeFormProvider()(prefix, countryList)
+  override def form: Form[PostalCodeAddress] = formProvider(prefix, countryList)
 
   def applyView(form: Form[PostalCodeAddress]): HtmlFormat.Appendable =
     injector.instanceOf[PostalCodeView].apply(form, lrn, NormalMode, countryList.values)(fakeRequest, messages)
