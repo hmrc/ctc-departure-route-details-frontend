@@ -38,7 +38,7 @@ class TransitionConfig() extends PhaseConfig {
 
   override val maxNumberAndStreetLength: Int = 35
   override val maxPostcodeLength: Int        = 9
-  override lazy val locationMaxLength: Int   = 17
+  override val locationMaxLength: Int        = 17
 }
 
 class PostTransitionConfig() extends PhaseConfig {
@@ -48,5 +48,5 @@ class PostTransitionConfig() extends PhaseConfig {
 
   override val maxNumberAndStreetLength: Int = 70
   override val maxPostcodeLength: Int        = 17
-  override lazy val locationMaxLength: Int   = 35
+  override val locationMaxLength: Int        = 35
 }

@@ -36,7 +36,7 @@ class LocationViewSpec extends InputTextViewBehaviours[String] {
   override def form: Form[String] = formProvider(prefix, phaseConfig)
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
-    injector.instanceOf[LocationView].apply(form, lrn, countryName, NormalMode)(fakeRequest, messages)
+    injector.instanceOf[LocationView].apply(form, lrn, countryName, phaseConfig.locationMaxLength, NormalMode)(fakeRequest, messages)
 
   implicit override val arbitraryT: Arbitrary[String] = Arbitrary(Gen.alphaStr)
 
@@ -49,7 +49,7 @@ class LocationViewSpec extends InputTextViewBehaviours[String] {
   behave like pageWithHeading(countryName)
 
   behave like pageWithHint(
-    "Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 35 characters long."
+    s"Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to ${phaseConfig.locationMaxLength} characters long."
   )
 
   behave like pageWithInputText(Some(InputSize.Width20))

@@ -55,7 +55,7 @@ class LocationController @Inject() (
           case None        => form
           case Some(value) => form.fill(value)
         }
-        Ok(view(preparedForm, lrn, countryName, mode))
+        Ok(view(preparedForm, lrn, countryName, phaseConfig.locationMaxLength, mode))
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
@@ -68,7 +68,7 @@ class LocationController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryName, mode))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryName, phaseConfig.locationMaxLength, mode))),
             value => {
               implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
               LocationPage
