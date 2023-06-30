@@ -22,18 +22,12 @@ import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, NO_CONTENT, OK}
 import play.api.libs.json.Reads
 import sttp.model.HeaderNames
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClient) extends Logging {
-
-  def getCountries(queryParameters: Seq[(String, String)])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/countries"
-    http.GET[Seq[Country]](serviceUrl, queryParameters, headers = version2Header)
-  }
 
   def getCountries(listName: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
     val serviceUrl = s"${config.referenceDataUrl}/lists/$listName"
@@ -43,53 +37,45 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   def getCustomsOfficesOfTransitForCountry(
     countryCode: CountryCode
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] =
-    //val serviceUrl = s"${config.referenceDataUrl}/customs-offices/${countryCode.code}?role=TRA"
-    //http.GET[Seq[CustomsOffice]](serviceUrl, headers = version2Header)
     getCustomsOfficesForCountryAndRole(countryCode.code, "TRA")
 
   def getCustomsOfficesOfDestinationForCountry(
     countryCode: CountryCode
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] =
-    //val serviceUrl = s"${config.referenceDataUrl}/customs-offices/${countryCode.code}?role=DES"
-    //http.GET[Seq[CustomsOffice]](serviceUrl, headers = version2Header)
     getCustomsOfficesForCountryAndRole(countryCode.code, "DES")
 
   def getCustomsOfficesOfExitForCountry(
     countryCode: CountryCode
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] =
-    //val serviceUrl = s"${config.referenceDataUrl}/customs-offices/${countryCode.code}?role=EXT"
-    //http.GET[Seq[CustomsOffice]](serviceUrl, headers = version2Header)
     getCustomsOfficesForCountryAndRole(countryCode.code, "EXT")
 
   def getCustomsOfficesOfDepartureForCountry(
     countryCode: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] =
-    //val serviceUrl = s"${config.referenceDataUrl}/customs-offices/$countryCode?role=DEP"
-    //http.GET[Seq[CustomsOffice]](serviceUrl, headers = version2Header)
     getCustomsOfficesForCountryAndRole(countryCode, "DEP")
 
   def getCustomsSecurityAgreementAreaCountries()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/country-customs-office-security-agreement-area"
+    val serviceUrl = s"${config.referenceDataUrl}/lists/CountryCustomsSecurityAgreementArea"
     http.GET[Seq[Country]](serviceUrl, headers = version2Header)
   }
 
   def getCountryCodesCTC()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/country-codes-ctc"
+    val serviceUrl = s"${config.referenceDataUrl}/lists/CountryCodesCommonTransit"
     http.GET[Seq[Country]](serviceUrl, headers = version2Header)
   }
 
   def getAddressPostcodeBasedCountries()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/country-address-postcode-based"
+    val serviceUrl = s"${config.referenceDataUrl}/lists/CountryAddressPostcodeBased"
     http.GET[Seq[Country]](serviceUrl, headers = version2Header)
   }
 
   def getCountriesWithoutZip()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CountryCode]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/country-without-zip"
+    val serviceUrl = s"${config.referenceDataUrl}/lists/CountryWithoutZip"
     http.GET[Seq[CountryCode]](serviceUrl, headers = version2Header)
   }
 
   def getUnLocodes()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[UnLocode]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/un-locodes"
+    val serviceUrl = s"${config.referenceDataUrl}/lists/UnLocodeExtended"
     http.GET[Seq[UnLocode]](serviceUrl, headers = version2Header)
   }
 
