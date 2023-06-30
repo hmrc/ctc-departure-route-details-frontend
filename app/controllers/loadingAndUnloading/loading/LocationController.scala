@@ -16,6 +16,7 @@
 
 package controllers.loadingAndUnloading.loading
 
+import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.LocationFormProvider
@@ -40,7 +41,7 @@ class LocationController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   view: LocationView
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -49,7 +50,7 @@ class LocationController @Inject() (
     .andThen(getMandatoryPage(CountryPage)) {
       implicit request =>
         val countryName = request.arg.description
-        val form        = formProvider("loadingAndUnloading.loading.location", countryName)
+        val form        = formProvider("loadingAndUnloading.loading.location", phaseConfig, countryName)
         val preparedForm = request.userAnswers.get(LocationPage) match {
           case None        => form
           case Some(value) => form.fill(value)
@@ -63,7 +64,7 @@ class LocationController @Inject() (
     .async {
       implicit request =>
         val countryName = request.arg.description
-        val form        = formProvider("loadingAndUnloading.loading.location", countryName)
+        val form        = formProvider("loadingAndUnloading.loading.location", phaseConfig, countryName)
         form
           .bindFromRequest()
           .fold(

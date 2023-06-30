@@ -31,7 +31,9 @@ class LocationViewSpec extends InputTextViewBehaviours[String] {
 
   private val location = nonEmptyString.sample.value
 
-  override def form: Form[String] = new LocationFormProvider()(prefix)
+  private val formProvider = new LocationFormProvider()
+
+  override def form: Form[String] = formProvider(prefix, phaseConfig)
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
     injector.instanceOf[LocationView].apply(form, lrn, location, NormalMode)(fakeRequest, messages)

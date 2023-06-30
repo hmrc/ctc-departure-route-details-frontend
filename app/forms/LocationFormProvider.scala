@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Constants.locationMaxLength
+import config.PhaseConfig
 import forms.mappings.Mappings
 import models.domain.StringFieldRegex.stringFieldRegex
 import play.api.data.Form
@@ -25,12 +25,12 @@ import javax.inject.Inject
 
 class LocationFormProvider @Inject() extends Mappings {
 
-  def apply(prefix: String, args: String*): Form[String] =
+  def apply(prefix: String, phaseConfig: PhaseConfig, args: String*): Form[String] =
     Form(
       "value" -> text(s"$prefix.error.required", args)
         .verifying(
           StopOnFirstFail[String](
-            maxLength(locationMaxLength, s"$prefix.error.length"),
+            maxLength(phaseConfig.locationMaxLength, s"$prefix.error.length"),
             regexp(stringFieldRegex, s"$prefix.error.invalid")
           )
         )

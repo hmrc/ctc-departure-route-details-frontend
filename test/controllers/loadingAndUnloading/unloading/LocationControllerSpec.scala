@@ -17,6 +17,7 @@
 package controllers.loadingAndUnloading.unloading
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import config.PostTransitionConfig
 import forms.LocationFormProvider
 import generators.Generators
 import models.NormalMode
@@ -36,10 +37,11 @@ import scala.concurrent.Future
 
 class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
+  override val phaseConfig       = new PostTransitionConfig
   private val country            = arbitrary[Country].sample.value
   private val location           = country.description
   private val formProvider       = new LocationFormProvider()
-  private val form               = formProvider("loadingAndUnloading.unloading.location", location)
+  private val form               = formProvider("loadingAndUnloading.unloading.location", phaseConfig, location)
   private val mode               = NormalMode
   private lazy val locationRoute = routes.LocationController.onPageLoad(lrn, mode).url
 
