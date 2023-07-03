@@ -19,7 +19,7 @@ package models.journeyDomain.routing
 import cats.implicits._
 import config.PhaseConfig
 import models.SecurityDetailsType.NoSecurityDetails
-import models.{Index, RichJsArray}
+import models.{Index, Phase, RichJsArray}
 import models.domain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
 import pages.external.SecurityDetailsTypePage
 import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage}
@@ -38,8 +38,9 @@ object CountriesOfRoutingDomain {
     for {
       securityDetailsType       <- SecurityDetailsTypePage.reader
       followingBindingItinerary <- BindingItineraryPage.reader
-      reader <- (securityDetailsType, followingBindingItinerary) match {
-        case (NoSecurityDetails, false) =>
+      reader <- (securityDetailsType, followingBindingItinerary, phaseConfig.phase) match {
+        case (NoSecurityDetails, _, Phase.Transition) => UserAnswersReader(Seq.empty[CountryOfRoutingDomain])
+        case (NoSecurityDetails, false, Phase.PostTransition) =>
           AddCountryOfRoutingYesNoPage.reader.flatMap {
             case true  => arrayReader
             case false => UserAnswersReader(Seq.empty[CountryOfRoutingDomain])
