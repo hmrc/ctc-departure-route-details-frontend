@@ -16,27 +16,42 @@
 
 package views.loadingAndUnloading.loading
 
+import base.AppWithDefaultMockFixtures
+import config.{PhaseConfig, PostTransitionConfig, TransitionConfig}
 import forms.LocationFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
+import play.api.Application
 import play.api.data.Form
+import play.api.test.Helpers.running
 import play.twirl.api.HtmlFormat
 import viewModels.InputSize
 import views.behaviours.InputTextViewBehaviours
 import views.html.loadingAndUnloading.loading.LocationView
 
-class LocationViewSpec extends InputTextViewBehaviours[String] {
+class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefaultMockFixtures {
 
   override val prefix: String = "loadingAndUnloading.loading.location"
 
   private val countryName = nonEmptyString.sample.value
+
+  private val transitionConfig     = new TransitionConfig()
+  private val postTransitionConfig = new PostTransitionConfig()
 
   private val formProvider = new LocationFormProvider()
 
   override def form: Form[String] = formProvider(prefix, phaseConfig)
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
-    injector.instanceOf[LocationView].apply(form, lrn, countryName, phaseConfig.locationMaxLength, NormalMode)(fakeRequest, messages)
+    applyView(app, form, phaseConfig)
+
+  private def applyView(app: Application, phaseConfig: PhaseConfig): HtmlFormat.Appendable = {
+    val form = app.injector.instanceOf[LocationFormProvider].apply(prefix, phaseConfig, countryName)
+    applyView(app, form, phaseConfig)
+  }
+
+  private def applyView(app: Application, form: Form[String], phaseConfig: PhaseConfig): HtmlFormat.Appendable =
+    app.injector.instanceOf[LocationView].apply(form, lrn, countryName, phaseConfig.locationMaxLength, NormalMode)(fakeRequest, messages)
 
   implicit override val arbitraryT: Arbitrary[String] = Arbitrary(Gen.alphaStr)
 
@@ -48,11 +63,29 @@ class LocationViewSpec extends InputTextViewBehaviours[String] {
 
   behave like pageWithHeading(countryName)
 
-  behave like pageWithHint(
-    s"Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to ${phaseConfig.locationMaxLength} characters long."
-  )
-
   behave like pageWithInputText(Some(InputSize.Width20))
 
   behave like pageWithSubmitButton("Save and continue")
+
+  "when during transition" - {
+    val app = transitionApplicationBuilder().build()
+    running(app) {
+      val doc = parseView(applyView(app, transitionConfig))
+      behave like pageWithHint(
+        doc,
+        "Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 17 characters long."
+      )
+    }
+  }
+
+  "when post transition" - {
+    val app = postTransitionApplicationBuilder().build()
+    running(app) {
+      val doc = parseView(applyView(app, postTransitionConfig))
+      behave like pageWithHint(
+        doc,
+        "Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 35 characters long."
+      )
+    }
+  }
 }
