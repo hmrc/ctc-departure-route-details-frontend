@@ -119,26 +119,6 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       |}
       |""".stripMargin
 
-  private val countriesWithoutZipResponseJson: String =
-    """
-      |{
-      |  "_links": {
-      |    "self": {
-      |      "href": "/customs-reference-data/lists/CountryWithoutZip"
-      |    }
-      |  },
-      |  "meta": {
-      |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
-      |    "snapshotDate": "2023-01-01"
-      |  },
-      |  "id": "CountryWithoutZip",
-      |  "data": [
-      |    "AE",
-      |    "AG"
-      |  ]
-      |}
-      |""".stripMargin
-
   def queryParams(role: String): Seq[(String, StringValuePattern)] = Seq(
     "data.countryId"  -> equalTo("GB"),
     "data.roles.role" -> equalTo(role)
@@ -301,12 +281,12 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       "must return Seq of Country when successful" in {
         server.stubFor(
           get(urlEqualTo(s"/$baseUrl/lists/CountryWithoutZip"))
-            .willReturn(okJson(countriesWithoutZipResponseJson))
+            .willReturn(okJson(countriesResponseJson("CountryWithoutZip")))
         )
 
         val expectedResult: Seq[CountryCode] = Seq(
-          CountryCode("AE"),
-          CountryCode("AG")
+          CountryCode("GB"),
+          CountryCode("AD")
         )
 
         connector.getCountriesWithoutZip().futureValue mustEqual expectedResult
