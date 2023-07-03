@@ -17,7 +17,7 @@
 package views.loadingAndUnloading.loading
 
 import base.AppWithDefaultMockFixtures
-import config.{PhaseConfig, PostTransitionConfig, TransitionConfig}
+import config.PhaseConfig
 import forms.LocationFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
@@ -35,9 +35,6 @@ class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefau
 
   private val countryName = nonEmptyString.sample.value
 
-  private val transitionConfig     = new TransitionConfig()
-  private val postTransitionConfig = new PostTransitionConfig()
-
   private val formProvider = new LocationFormProvider()
 
   override def form: Form[String] = formProvider(prefix, phaseConfig)
@@ -45,8 +42,9 @@ class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefau
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
     applyView(app, form, phaseConfig)
 
-  private def applyView(app: Application, phaseConfig: PhaseConfig): HtmlFormat.Appendable = {
-    val form = app.injector.instanceOf[LocationFormProvider].apply(prefix, phaseConfig, countryName)
+  private def applyView(app: Application): HtmlFormat.Appendable = {
+    val phaseConfig = app.injector.instanceOf[PhaseConfig]
+    val form        = app.injector.instanceOf[LocationFormProvider].apply(prefix, phaseConfig, countryName)
     applyView(app, form, phaseConfig)
   }
 
@@ -70,7 +68,7 @@ class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefau
   "when during transition" - {
     val app = transitionApplicationBuilder().build()
     running(app) {
-      val doc = parseView(applyView(app, transitionConfig))
+      val doc = parseView(applyView(app))
       behave like pageWithHint(
         doc,
         "Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 17 characters long."
@@ -81,7 +79,7 @@ class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefau
   "when post transition" - {
     val app = postTransitionApplicationBuilder().build()
     running(app) {
-      val doc = parseView(applyView(app, postTransitionConfig))
+      val doc = parseView(applyView(app))
       behave like pageWithHint(
         doc,
         "Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 35 characters long."
