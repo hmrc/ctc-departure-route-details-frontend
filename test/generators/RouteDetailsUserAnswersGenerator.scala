@@ -16,6 +16,7 @@
 
 package generators
 
+import config.PhaseConfig
 import models.journeyDomain.RouteDetailsDomain
 import models.journeyDomain.exit.{ExitDomain, OfficeOfExitDomain}
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
@@ -30,10 +31,10 @@ import org.scalacheck.Gen
 trait RouteDetailsUserAnswersGenerator {
   self: UserAnswersGenerator =>
 
-  def arbitraryRouteDetailsAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
+  def arbitraryRouteDetailsAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[RouteDetailsDomain](userAnswers)
 
-  def arbitraryRoutingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
+  def arbitraryRoutingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[RoutingDomain](userAnswers)
 
   def arbitraryCountryOfRoutingAnswers(userAnswers: UserAnswers, index: Index): Gen[UserAnswers] =

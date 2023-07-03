@@ -16,7 +16,7 @@
 
 package controllers.exit.index
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PhaseConfig}
 import controllers.actions._
 import controllers.exit.{routes => exitRoutes}
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
@@ -44,7 +44,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: ConfirmRemoveOfficeOfExitView,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 

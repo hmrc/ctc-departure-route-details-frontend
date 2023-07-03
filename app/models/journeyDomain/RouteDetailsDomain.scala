@@ -17,6 +17,7 @@
 package models.journeyDomain
 
 import cats.implicits._
+import config.PhaseConfig
 import models.DeclarationType.Option4
 import models.SecurityDetailsType._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
@@ -45,7 +46,7 @@ case class RouteDetailsDomain(
 
 object RouteDetailsDomain {
 
-  implicit val userAnswersReader: UserAnswersReader[RouteDetailsDomain] =
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[RouteDetailsDomain] =
     for {
       routing             <- UserAnswersReader[RoutingDomain]
       transit             <- UserAnswersReader[Option[TransitDomain]]

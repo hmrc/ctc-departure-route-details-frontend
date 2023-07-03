@@ -16,6 +16,7 @@
 
 package controllers.locationOfGoods
 
+import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
@@ -41,7 +42,7 @@ class AddIdentifierYesNoController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: AddIdentifierYesNoView,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 

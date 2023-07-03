@@ -17,6 +17,7 @@
 package models.journeyDomain.routing
 
 import cats.implicits._
+import config.PhaseConfig
 import models.SecurityDetailsType.NoSecurityDetails
 import models.{Index, RichJsArray}
 import models.domain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
@@ -26,7 +27,7 @@ import pages.sections.routing.CountriesOfRoutingSection
 
 object CountriesOfRoutingDomain {
 
-  implicit val userAnswersReader: UserAnswersReader[Seq[CountryOfRoutingDomain]] = {
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Seq[CountryOfRoutingDomain]] = {
     val arrayReader: UserAnswersReader[Seq[CountryOfRoutingDomain]] = CountriesOfRoutingSection.arrayReader.flatMap {
       case x if x.isEmpty =>
         UserAnswersReader[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(Index(0))).map(Seq(_))

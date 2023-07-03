@@ -16,6 +16,7 @@
 
 package generators
 
+import config.PhaseConfig
 import models.domain.UserAnswersReader
 import models.journeyDomain.OpsError.ReaderError
 import models.journeyDomain.RouteDetailsDomain
@@ -26,7 +27,7 @@ import org.scalacheck.{Arbitrary, Gen}
 trait UserAnswersGenerator extends UserAnswersEntryGenerators with RouteDetailsUserAnswersGenerator {
   self: Generators =>
 
-  implicit lazy val arbitraryUserAnswers: Arbitrary[UserAnswers] =
+  implicit def arbitraryUserAnswers(implicit phaseConfig: PhaseConfig): Arbitrary[UserAnswers] =
     Arbitrary {
       for {
         lrn        <- arbitrary[LocalReferenceNumber]

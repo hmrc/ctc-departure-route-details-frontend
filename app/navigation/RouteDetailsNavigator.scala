@@ -16,7 +16,7 @@
 
 package navigation
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PhaseConfig}
 import models.Mode
 import models.domain.UserAnswersReader
 import models.journeyDomain.RouteDetailsDomain
@@ -24,7 +24,7 @@ import models.journeyDomain.RouteDetailsDomain
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RouteDetailsNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends RouteDetailsNavigatorProvider {
+class RouteDetailsNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig, phaseConfig: PhaseConfig) extends RouteDetailsNavigatorProvider {
 
   def apply(mode: Mode): UserAnswersNavigator =
     new RouteDetailsNavigator(mode)
@@ -37,7 +37,7 @@ trait RouteDetailsNavigatorProvider {
 
 class RouteDetailsNavigator(
   override val mode: Mode
-)(implicit override val config: FrontendAppConfig)
+)(implicit override val config: FrontendAppConfig, implicit override val phaseConfig: PhaseConfig)
     extends UserAnswersNavigator {
 
   override type T = RouteDetailsDomain
