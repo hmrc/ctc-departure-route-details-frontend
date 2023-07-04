@@ -40,10 +40,10 @@ trait RouteDetailsUserAnswersGenerator {
   def arbitraryCountryOfRoutingAnswers(userAnswers: UserAnswers, index: Index): Gen[UserAnswers] =
     buildUserAnswers[CountryOfRoutingDomain](userAnswers)(CountryOfRoutingDomain.userAnswersReader(index))
 
-  def arbitraryTransitAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
+  def arbitraryTransitAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[TransitDomain](userAnswers)
 
-  def arbitraryOfficeOfTransitAnswers(userAnswers: UserAnswers, index: Index): Gen[UserAnswers] =
+  def arbitraryOfficeOfTransitAnswers(userAnswers: UserAnswers, index: Index)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[OfficeOfTransitDomain](userAnswers)(
       OfficeOfTransitDomain.userAnswersReader(index)
     )

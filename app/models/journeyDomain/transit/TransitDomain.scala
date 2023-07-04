@@ -16,6 +16,7 @@
 
 package models.journeyDomain.transit
 
+import config.PhaseConfig
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.transit.TransitDomain.OfficesOfTransit
 import models.journeyDomain.{JourneyDomainModel, Stage}
@@ -42,7 +43,7 @@ object TransitDomain {
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
-  implicit val userAnswersReader: UserAnswersReader[TransitDomain] = {
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[TransitDomain] = {
 
     implicit val officesOfTransitReader: UserAnswersReader[OfficesOfTransit] =
       OfficesOfTransitSection.arrayReader.flatMap {

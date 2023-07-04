@@ -61,7 +61,7 @@ object RouteDetailsDomain {
       loadingAndUnloading
     )
 
-  implicit val transitReader: UserAnswersReader[Option[TransitDomain]] =
+  implicit def transitReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[TransitDomain]] =
     DeclarationTypePage.reader.flatMap {
       case Option4 => none[TransitDomain].pure[UserAnswersReader]
       case _       => UserAnswersReader[TransitDomain].map(Some(_))

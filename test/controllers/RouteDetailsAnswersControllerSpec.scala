@@ -44,7 +44,7 @@ class RouteDetailsAnswersControllerSpec extends SpecBase with AppWithDefaultMock
     "must return OK and the correct view for a GET" in {
       val sampleSections = arbitrary[List[Section]].sample.value
 
-      when(mockViewModelProvider.apply(any())(any(), any())).thenReturn(RouteDetailsAnswersViewModel(sampleSections))
+      when(mockViewModelProvider.apply(any())(any(), any(), any())).thenReturn(RouteDetailsAnswersViewModel(sampleSections))
 
       setExistingUserAnswers(emptyUserAnswers)
 
