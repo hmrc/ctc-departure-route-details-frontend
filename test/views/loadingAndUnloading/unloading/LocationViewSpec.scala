@@ -16,7 +16,7 @@
 
 package views.loadingAndUnloading.unloading
 
-import forms.LocationFormProvider
+import forms.UnloadingLocationFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.Form
@@ -31,9 +31,9 @@ class LocationViewSpec extends InputTextViewBehaviours[String] {
 
   private val location = nonEmptyString.sample.value
 
-  private val formProvider = new LocationFormProvider()
+  private val formProvider = new UnloadingLocationFormProvider()
 
-  override def form: Form[String] = formProvider(prefix, phaseConfig)
+  override def form: Form[String] = formProvider(prefix)
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
     injector.instanceOf[LocationView].apply(form, lrn, location, NormalMode)(fakeRequest, messages)

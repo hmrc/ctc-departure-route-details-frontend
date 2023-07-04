@@ -17,20 +17,21 @@
 package forms
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.Constants.unloadingLocationMaxLength
 import forms.behaviours.StringFieldBehaviours
 import models.domain.StringFieldRegex.stringFieldRegex
 import org.scalacheck.Gen
 import play.api.data.{Form, FormError}
 
-class LocationFormProviderSpec extends StringFieldBehaviours with SpecBase with AppWithDefaultMockFixtures {
+class UnloadingLocationFormProviderSpec extends StringFieldBehaviours with SpecBase with AppWithDefaultMockFixtures {
 
   private val prefix = Gen.alphaNumStr.sample.value
   val requiredKey    = s"$prefix.error.required"
   val lengthKey      = s"$prefix.error.length"
   val invalidKey     = s"$prefix.error.invalid"
 
-  private val formProvider       = new LocationFormProvider()
-  private val form: Form[String] = formProvider(prefix, phaseConfig)
+  private val formProvider       = new UnloadingLocationFormProvider()
+  private val form: Form[String] = formProvider(prefix)
 
   ".value" - {
 
@@ -39,14 +40,14 @@ class LocationFormProviderSpec extends StringFieldBehaviours with SpecBase with 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(phaseConfig.locationMaxLength)
+      stringsWithMaxLength(unloadingLocationMaxLength)
     )
 
     behave like fieldWithMaxLength(
       form,
       fieldName,
-      maxLength = phaseConfig.locationMaxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(phaseConfig.locationMaxLength))
+      maxLength = unloadingLocationMaxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(unloadingLocationMaxLength))
     )
 
     behave like mandatoryField(
@@ -59,7 +60,7 @@ class LocationFormProviderSpec extends StringFieldBehaviours with SpecBase with 
       form,
       fieldName,
       error = FormError(fieldName, invalidKey, Seq(stringFieldRegex.regex)),
-      phaseConfig.locationMaxLength
+      unloadingLocationMaxLength
     )
   }
 }

@@ -18,7 +18,7 @@ package views.loadingAndUnloading.loading
 
 import base.AppWithDefaultMockFixtures
 import config.PhaseConfig
-import forms.LocationFormProvider
+import forms.LoadingLocationFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.Application
@@ -35,21 +35,21 @@ class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefau
 
   private val countryName = nonEmptyString.sample.value
 
-  private val formProvider = new LocationFormProvider()
+  private val formProvider = new LoadingLocationFormProvider()
 
-  override def form: Form[String] = formProvider(prefix, phaseConfig)
+  override def form: Form[String] = formProvider(prefix)
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
     applyView(app, form, phaseConfig)
 
   private def applyView(app: Application): HtmlFormat.Appendable = {
     val phaseConfig = app.injector.instanceOf[PhaseConfig]
-    val form        = app.injector.instanceOf[LocationFormProvider].apply(prefix, phaseConfig, countryName)
+    val form        = app.injector.instanceOf[LoadingLocationFormProvider].apply(prefix, countryName)
     applyView(app, form, phaseConfig)
   }
 
   private def applyView(app: Application, form: Form[String], phaseConfig: PhaseConfig): HtmlFormat.Appendable =
-    app.injector.instanceOf[LocationView].apply(form, lrn, countryName, phaseConfig.locationMaxLength, NormalMode)(fakeRequest, messages)
+    app.injector.instanceOf[LocationView].apply(form, lrn, countryName, phaseConfig.loadingLocationMaxLength, NormalMode)(fakeRequest, messages)
 
   implicit override val arbitraryT: Arbitrary[String] = Arbitrary(Gen.alphaStr)
 

@@ -16,10 +16,9 @@
 
 package controllers.loadingAndUnloading.unloading
 
-import config.PostTransitionConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.LocationFormProvider
+import forms.UnloadingLocationFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LoadingAndUnloadingNavigatorProvider, UserAnswersNavigator}
 import pages.loadingAndUnloading.unloading.{CountryPage, LocationPage}
@@ -36,7 +35,7 @@ class LocationController @Inject() (
   override val messagesApi: MessagesApi,
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: LoadingAndUnloadingNavigatorProvider,
-  formProvider: LocationFormProvider,
+  formProvider: UnloadingLocationFormProvider,
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
@@ -45,14 +44,12 @@ class LocationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val phaseConfig = new PostTransitionConfig()
-
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
     .andThen(getMandatoryPage(CountryPage)) {
       implicit request =>
         val location = request.arg.description
-        val form     = formProvider("loadingAndUnloading.unloading.location", phaseConfig, location)
+        val form     = formProvider("loadingAndUnloading.unloading.location", location)
         val preparedForm = request.userAnswers.get(LocationPage) match {
           case None        => form
           case Some(value) => form.fill(value)
@@ -66,7 +63,7 @@ class LocationController @Inject() (
     .async {
       implicit request =>
         val location = request.arg.description
-        val form     = formProvider("loadingAndUnloading.unloading.location", phaseConfig, location)
+        val form     = formProvider("loadingAndUnloading.unloading.location", location)
         form
           .bindFromRequest()
           .fold(
