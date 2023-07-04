@@ -40,11 +40,12 @@ class IdentificationPageSpec extends PageBehaviours {
               forAll(arbitrary[LocationOfGoodsIdentification].retryUntil(_ != qualifierOfIdentification)) {
                 differentQualifierOfIdentification =>
                   val preChange = emptyUserAnswers
-                    .setValue(IdentificationPage, qualifierOfIdentification)
+                    .setValue(InferredIdentificationPage, qualifierOfIdentification)
                     .setValue(LocationOfGoodsIdentifierSection, Json.obj("foo" -> "bar"))
 
                   val postChange = preChange.setValue(IdentificationPage, differentQualifierOfIdentification)
 
+                  postChange.get(InferredIdentificationPage) mustNot be(defined)
                   postChange.get(LocationOfGoodsIdentifierSection) mustNot be(defined)
               }
           }
@@ -56,11 +57,12 @@ class IdentificationPageSpec extends PageBehaviours {
           forAll(arbitrary[LocationOfGoodsIdentification]) {
             qualifierOfIdentification =>
               val preChange = emptyUserAnswers
-                .setValue(IdentificationPage, qualifierOfIdentification)
+                .setValue(InferredIdentificationPage, qualifierOfIdentification)
                 .setValue(LocationOfGoodsIdentifierSection, Json.obj("foo" -> "bar"))
 
               val postChange = preChange.setValue(IdentificationPage, qualifierOfIdentification)
 
+              postChange.get(InferredIdentificationPage) must be(defined)
               postChange.get(LocationOfGoodsIdentifierSection) must be(defined)
           }
         }

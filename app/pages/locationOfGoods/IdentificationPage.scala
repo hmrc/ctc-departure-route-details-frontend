@@ -33,14 +33,14 @@ trait BaseIdentificationPage extends QuestionPage[LocationOfGoodsIdentification]
     Some(routes.IdentificationController.onPageLoad(userAnswers.lrn, mode))
 
   override def cleanup(value: Option[LocationOfGoodsIdentification], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(_) => userAnswers.remove(LocationOfGoodsIdentifierSection)
-      case None    => super.cleanup(value, userAnswers)
-    }
+    userAnswers.remove(LocationOfGoodsIdentifierSection)
 }
 
 case object IdentificationPage extends BaseIdentificationPage {
   override def toString: String = "qualifierOfIdentification"
+
+  override def cleanup(value: Option[LocationOfGoodsIdentification], userAnswers: UserAnswers): Try[UserAnswers] =
+    super.cleanup(value, userAnswers).flatMap(_.remove(InferredIdentificationPage))
 }
 
 case object InferredIdentificationPage extends BaseIdentificationPage {

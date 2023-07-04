@@ -42,6 +42,9 @@ abstract class BaseOfficeOfTransitCountryPage(index: Index) extends QuestionPage
 
 case class OfficeOfTransitCountryPage(index: Index) extends BaseOfficeOfTransitCountryPage(index) {
   override def toString: String = "officeOfTransitCountry"
+
+  override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
+    super.cleanup(value, userAnswers).flatMap(_.remove(InferredOfficeOfTransitCountryPage(index)))
 }
 
 case class InferredOfficeOfTransitCountryPage(index: Index) extends BaseOfficeOfTransitCountryPage(index) {
