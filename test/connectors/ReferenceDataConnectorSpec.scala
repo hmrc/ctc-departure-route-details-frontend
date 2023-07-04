@@ -46,7 +46,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
   private val customsOfficeDestinationResponseJson: String =
     """
-    {
+      | {
       |  "_links": {
       |    "self": {
       |      "href": "/customs-reference-data/lists/CustomsOffices"
@@ -158,7 +158,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       }
 
       "must return an exception when an error response is returned" in {
-        checkErrorResponse(s"/$baseUrl/customs-offices/GB?role=TRA", connector.getCustomsOfficesOfTransitForCountry(CountryCode("GB")))
+        checkErrorResponse(s"/$baseUrl/filtered-lists/CustomsOffices", connector.getCustomsOfficesOfTransitForCountry(CountryCode("GB")))
       }
     }
 
@@ -193,7 +193,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       }
 
       "must return an exception when an error response is returned" in {
-        checkErrorResponse(s"/$baseUrl/customs-offices/GB?role=DES", connector.getCustomsOfficesOfDestinationForCountry(CountryCode("GB")))
+        checkErrorResponse(s"/$baseUrl/filtered-lists/CustomsOffices", connector.getCustomsOfficesOfDestinationForCountry(CountryCode("GB")))
       }
     }
 
@@ -213,7 +213,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       }
 
       "must return an exception when an error response is returned" in {
-        checkErrorResponse(s"/$baseUrl/countries?customsOfficeRole=ANY", connector.getCountries("CountryCodesFullList"))
+        checkErrorResponse(s"/$baseUrl/lists/CountryCodesFullList", connector.getCountries("CountryCodesFullList"))
       }
     }
 
@@ -233,7 +233,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       }
 
       "must return an exception when an error response is returned" in {
-        checkErrorResponse(s"/$baseUrl/country-customs-office-security-agreement-area", connector.getCustomsSecurityAgreementAreaCountries())
+        checkErrorResponse(s"/$baseUrl/lists/CountryCustomsSecurityAgreementArea", connector.getCustomsSecurityAgreementAreaCountries())
       }
     }
 
@@ -253,7 +253,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       }
 
       "must return an exception when an error response is returned" in {
-        checkErrorResponse(s"/$baseUrl/country-codes-ctc", connector.getCountryCodesCTC())
+        checkErrorResponse(s"/$baseUrl/lists/CountryCodesCommonTransit", connector.getCountryCodesCTC())
       }
     }
 
@@ -273,7 +273,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       }
 
       "must return an exception when an error response is returned" in {
-        checkErrorResponse(s"/$baseUrl/country-address-postcode-based", connector.getAddressPostcodeBasedCountries())
+        checkErrorResponse(s"/$baseUrl/lists/CountryAddressPostcodeBased", connector.getAddressPostcodeBasedCountries())
       }
     }
 
@@ -293,7 +293,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       }
 
       "must return an exception when an error response is returned" in {
-        checkErrorResponse(s"/$baseUrl/country-without-zip", connector.getCountriesWithoutZip())
+        checkErrorResponse(s"/$baseUrl/lists/CountryWithoutZip", connector.getCountriesWithoutZip())
       }
     }
   }
