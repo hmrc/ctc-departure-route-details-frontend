@@ -30,23 +30,28 @@ abstract class BaseOfficeOfTransitCountryPage(index: Index) extends QuestionPage
 
   override def path: JsPath = OfficeOfTransitSection(index).path \ toString
 
-  override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(_) => userAnswers.remove(OfficeOfTransitPage(index))
-      case None    => super.cleanup(value, userAnswers)
-    }
-
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.OfficeOfTransitCountryController.onPageLoad(userAnswers.lrn, mode, index))
+
+  def cleanup(userAnswers: UserAnswers): Try[UserAnswers]
+
+  override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(_) => userAnswers.remove(OfficeOfTransitPage(index)).flatMap(cleanup)
+      case None    => super.cleanup(value, userAnswers)
+    }
 }
 
 case class OfficeOfTransitCountryPage(index: Index) extends BaseOfficeOfTransitCountryPage(index) {
   override def toString: String = "officeOfTransitCountry"
 
-  override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
-    super.cleanup(value, userAnswers).flatMap(_.remove(InferredOfficeOfTransitCountryPage(index)))
+  override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers.remove(InferredOfficeOfTransitCountryPage(index))
 }
 
 case class InferredOfficeOfTransitCountryPage(index: Index) extends BaseOfficeOfTransitCountryPage(index) {
   override def toString: String = "inferredOfficeOfTransitCountry"
+
+  override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers.remove(OfficeOfTransitCountryPage(index))
 }

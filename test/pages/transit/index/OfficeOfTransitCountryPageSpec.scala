@@ -16,7 +16,8 @@
 
 package pages.transit.index
 
-import models.reference.{Country, CountryCode}
+import models.reference.{Country, CustomsOffice}
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
 class OfficeOfTransitCountryPageSpec extends PageBehaviours {
@@ -31,33 +32,49 @@ class OfficeOfTransitCountryPageSpec extends PageBehaviours {
   }
 
   "cleanup" - {
-    val transitCountry       = Country(CountryCode("IT"), "Italy")
-    val updatedCountry       = Country(CountryCode("GB"), "United Kingdom")
-    val transitCustomsOffice = arbitraryCustomsOffice.arbitrary.sample.get
 
-    "when value changes" - {
-      "must clean up Office Of Transit page" in {
-        val preChange = emptyUserAnswers
-          .setValue(InferredOfficeOfTransitCountryPage(index), transitCountry)
-          .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
+    "must clean up Office Of Transit page and inferred value" in {
+      forAll(arbitrary[Country], arbitrary[CustomsOffice]) {
+        (country, customsOffice) =>
+          val userAnswers = emptyUserAnswers
+            .setValue(InferredOfficeOfTransitCountryPage(index), country)
+            .setValue(OfficeOfTransitPage(index), customsOffice)
 
-        val postChange = preChange.setValue(OfficeOfTransitCountryPage(index), updatedCountry)
+          val result = userAnswers.setValue(OfficeOfTransitCountryPage(index), country)
 
-        postChange.get(InferredOfficeOfTransitCountryPage(index)) mustNot be(defined)
-        postChange.get(OfficeOfTransitPage(index)) mustNot be(defined)
+          result.get(OfficeOfTransitCountryPage(index)) mustBe defined
+          result.get(InferredOfficeOfTransitCountryPage(index)) must not be defined
+          result.get(OfficeOfTransitPage(index)) must not be defined
       }
     }
+  }
+}
 
-    "when value has not changed" - {
-      "must not clean up Office Of Transit page" in {
-        val preChange = emptyUserAnswers
-          .setValue(InferredOfficeOfTransitCountryPage(index), transitCountry)
-          .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
+class InferredOfficeOfTransitCountryPageSpec extends PageBehaviours {
 
-        val postChange = preChange.setValue(OfficeOfTransitCountryPage(index), transitCountry)
+  "InferredOfficeOfTransitCountryPage" - {
 
-        postChange.get(InferredOfficeOfTransitCountryPage(index)) mustBe defined
-        postChange.get(OfficeOfTransitPage(index)) mustBe defined
+    beRetrievable[Country](InferredOfficeOfTransitCountryPage(index))
+
+    beSettable[Country](InferredOfficeOfTransitCountryPage(index))
+
+    beRemovable[Country](InferredOfficeOfTransitCountryPage(index))
+  }
+
+  "cleanup" - {
+
+    "must clean up Office Of Transit page and non-inferred value" in {
+      forAll(arbitrary[Country], arbitrary[CustomsOffice]) {
+        (country, customsOffice) =>
+          val userAnswers = emptyUserAnswers
+            .setValue(OfficeOfTransitCountryPage(index), country)
+            .setValue(OfficeOfTransitPage(index), customsOffice)
+
+          val result = userAnswers.setValue(InferredOfficeOfTransitCountryPage(index), country)
+
+          result.get(InferredOfficeOfTransitCountryPage(index)) mustBe defined
+          result.get(OfficeOfTransitCountryPage(index)) must not be defined
+          result.get(OfficeOfTransitPage(index)) must not be defined
       }
     }
   }

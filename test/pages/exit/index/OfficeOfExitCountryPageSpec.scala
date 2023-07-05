@@ -19,7 +19,6 @@ package pages.exit.index
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
-import pages.exit
 
 class OfficeOfExitCountryPageSpec extends PageBehaviours {
 
@@ -27,9 +26,9 @@ class OfficeOfExitCountryPageSpec extends PageBehaviours {
 
     beRetrievable[Country](OfficeOfExitCountryPage(index))
 
-    beSettable[Country](exit.index.OfficeOfExitCountryPage(index))
+    beSettable[Country](OfficeOfExitCountryPage(index))
 
-    beRemovable[Country](exit.index.OfficeOfExitCountryPage(index))
+    beRemovable[Country](OfficeOfExitCountryPage(index))
 
     "cleanup" - {
       "must remove inferred value" in {
@@ -41,7 +40,37 @@ class OfficeOfExitCountryPageSpec extends PageBehaviours {
 
             val result = userAnswers.setValue(OfficeOfExitCountryPage(index), country)
 
+            result.get(OfficeOfExitCountryPage(index)) mustBe defined
             result.get(InferredOfficeOfExitCountryPage(index)) must not be defined
+            result.get(OfficeOfExitPage(index)) must not be defined
+        }
+      }
+    }
+  }
+}
+
+class InferredOfficeOfExitCountryPageSpec extends PageBehaviours {
+
+  "InferredOfficeOfExitCountryPage" - {
+
+    beRetrievable[Country](InferredOfficeOfExitCountryPage(index))
+
+    beSettable[Country](InferredOfficeOfExitCountryPage(index))
+
+    beRemovable[Country](InferredOfficeOfExitCountryPage(index))
+
+    "cleanup" - {
+      "must remove non-inferred value" in {
+        forAll(arbitrary[Country], arbitrary[CustomsOffice]) {
+          (country, customsOffice) =>
+            val userAnswers = emptyUserAnswers
+              .setValue(OfficeOfExitCountryPage(index), country)
+              .setValue(OfficeOfExitPage(index), customsOffice)
+
+            val result = userAnswers.setValue(InferredOfficeOfExitCountryPage(index), country)
+
+            result.get(InferredOfficeOfExitCountryPage(index)) mustBe defined
+            result.get(OfficeOfExitCountryPage(index)) must not be defined
             result.get(OfficeOfExitPage(index)) must not be defined
         }
       }

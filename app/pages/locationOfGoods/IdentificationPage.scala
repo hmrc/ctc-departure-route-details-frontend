@@ -32,17 +32,25 @@ trait BaseIdentificationPage extends QuestionPage[LocationOfGoodsIdentification]
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.IdentificationController.onPageLoad(userAnswers.lrn, mode))
 
+  def cleanup(userAnswers: UserAnswers): Try[UserAnswers]
+
   override def cleanup(value: Option[LocationOfGoodsIdentification], userAnswers: UserAnswers): Try[UserAnswers] =
-    userAnswers.remove(LocationOfGoodsIdentifierSection)
+    value match {
+      case Some(_) => userAnswers.remove(LocationOfGoodsIdentifierSection).flatMap(cleanup)
+      case None    => super.cleanup(value, userAnswers)
+    }
 }
 
 case object IdentificationPage extends BaseIdentificationPage {
   override def toString: String = "qualifierOfIdentification"
 
-  override def cleanup(value: Option[LocationOfGoodsIdentification], userAnswers: UserAnswers): Try[UserAnswers] =
-    super.cleanup(value, userAnswers).flatMap(_.remove(InferredIdentificationPage))
+  override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers.remove(InferredIdentificationPage)
 }
 
 case object InferredIdentificationPage extends BaseIdentificationPage {
   override def toString: String = "inferredQualifierOfIdentification"
+
+  override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers.remove(IdentificationPage)
 }

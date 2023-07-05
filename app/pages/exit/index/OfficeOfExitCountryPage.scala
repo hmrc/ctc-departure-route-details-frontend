@@ -33,17 +33,25 @@ abstract class BaseOfficeOfExitCountryPage(index: Index) extends QuestionPage[Co
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.OfficeOfExitCountryController.onPageLoad(userAnswers.lrn, index, mode))
 
+  def cleanup(userAnswers: UserAnswers): Try[UserAnswers]
+
   override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
-    userAnswers.remove(OfficeOfExitPage(index))
+    value match {
+      case Some(_) => userAnswers.remove(OfficeOfExitPage(index)).flatMap(cleanup)
+      case None    => super.cleanup(value, userAnswers)
+    }
 }
 
 case class OfficeOfExitCountryPage(index: Index) extends BaseOfficeOfExitCountryPage(index) {
   override def toString: String = "officeOfExitCountry"
 
-  override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
-    super.cleanup(value, userAnswers).flatMap(_.remove(InferredOfficeOfExitCountryPage(index)))
+  override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers.remove(InferredOfficeOfExitCountryPage(index))
 }
 
 case class InferredOfficeOfExitCountryPage(index: Index) extends BaseOfficeOfExitCountryPage(index) {
   override def toString: String = "inferredOfficeOfExitCountry"
+
+  override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers.remove(OfficeOfExitCountryPage(index))
 }
