@@ -56,15 +56,23 @@ object LoadingAndUnloadingDomain {
         UserAnswersReader[LoadingDomain].map(Some(_))
     }
 
-  implicit val unloadingReader: UserAnswersReader[Option[UnloadingDomain]] =
-    SecurityDetailsTypePage.reader.flatMap {
-      case ExitSummaryDeclarationSecurityDetails =>
-        AddPlaceOfUnloadingPage.filterOptionalDependent(identity)(UserAnswersReader[UnloadingDomain])
-      case EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
-        UserAnswersReader[UnloadingDomain].map(Some(_))
-      case _ =>
-        none[UnloadingDomain].pure[UserAnswersReader]
+  implicit def unloadingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[UnloadingDomain]] = {
+    lazy val mandatoryReader: UserAnswersReader[Option[UnloadingDomain]] = UserAnswersReader[UnloadingDomain].map(Some(_))
+    phaseConfig.phase match {
+      case Phase.Transition =>
+        // specific circumstance indicator is currently undefined, so draw.io condition is always false
+        mandatoryReader
+      case Phase.PostTransition =>
+        SecurityDetailsTypePage.reader.flatMap {
+          case ExitSummaryDeclarationSecurityDetails =>
+            AddPlaceOfUnloadingPage.filterOptionalDependent(identity)(UserAnswersReader[UnloadingDomain])
+          case EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
+            mandatoryReader
+          case _ =>
+            none[UnloadingDomain].pure[UserAnswersReader]
+        }
     }
+  }
 
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[LoadingAndUnloadingDomain] =
     (

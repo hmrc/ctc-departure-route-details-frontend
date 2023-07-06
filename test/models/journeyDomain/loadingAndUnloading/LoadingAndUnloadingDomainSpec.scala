@@ -30,7 +30,8 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
-import pages.loadingAndUnloading.loading.AddUnLocodeYesNoPage
+import pages.loadingAndUnloading.loading
+import pages.loadingAndUnloading.unloading
 
 class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -38,58 +39,77 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
 
     "unloadingReader" - {
       "can be parsed from UserAnswers" - {
-        "when SecurityType is in Set{1, 3}" in {
-          val securityType   = Gen.oneOf(EntrySummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
-          val initialAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityType)
+        "when post transition" - {
+          val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+          when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
-          forAll(arbitraryUnloadingAnswers(initialAnswers)) {
-            answers =>
-              val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-                LoadingAndUnloadingDomain.unloadingReader
-              ).run(answers)
-
-              result.value mustBe defined
-          }
-        }
-
-        "when SecurityType is in Set{0}" in {
-          val initialAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, NoSecurityDetails)
-
-          val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-            LoadingAndUnloadingDomain.unloadingReader
-          ).run(initialAnswers)
-
-          result.value must not be defined
-        }
-
-        "when SecurityType is in Set{2}" - {
-          "And adding a place of unloading" in {
-            val initialAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, ExitSummaryDeclarationSecurityDetails)
-              .setValue(AddPlaceOfUnloadingPage, true)
+          "when SecurityType is in Set{1, 3}" in {
+            val securityType   = Gen.oneOf(EntrySummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
+            val initialAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityType)
 
             forAll(arbitraryUnloadingAnswers(initialAnswers)) {
               answers =>
                 val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-                  LoadingAndUnloadingDomain.unloadingReader
+                  LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
                 ).run(answers)
 
                 result.value mustBe defined
             }
           }
 
-          "And not adding a place of unloading" in {
-            val initialAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, ExitSummaryDeclarationSecurityDetails)
-              .setValue(AddPlaceOfUnloadingPage, false)
+          "when SecurityType is in Set{0}" in {
+            val initialAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, NoSecurityDetails)
 
             val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-              LoadingAndUnloadingDomain.unloadingReader
+              LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
             ).run(initialAnswers)
 
             result.value must not be defined
           }
 
+          "when SecurityType is in Set{2}" - {
+            "And adding a place of unloading" in {
+              val initialAnswers = emptyUserAnswers
+                .setValue(SecurityDetailsTypePage, ExitSummaryDeclarationSecurityDetails)
+                .setValue(AddPlaceOfUnloadingPage, true)
+
+              forAll(arbitraryUnloadingAnswers(initialAnswers)) {
+                answers =>
+                  val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
+                    LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+                  ).run(answers)
+
+                  result.value mustBe defined
+              }
+            }
+
+            "And not adding a place of unloading" in {
+              val initialAnswers = emptyUserAnswers
+                .setValue(SecurityDetailsTypePage, ExitSummaryDeclarationSecurityDetails)
+                .setValue(AddPlaceOfUnloadingPage, false)
+
+              val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
+                LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+              ).run(initialAnswers)
+
+              result.value must not be defined
+            }
+          }
+        }
+      }
+
+      "cannot be parsed from user answers" - {
+        "when transition" - {
+          val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+          when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
+
+          "and add unloading UN/LOCODE is unanswered" in {
+            val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
+              LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+            ).run(emptyUserAnswers)
+
+            result.left.value.page mustBe unloading.UnLocodeYesNoPage
+          }
         }
       }
     }
@@ -143,7 +163,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                     LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
                   ).run(userAnswers)
 
-                  result.left.value.page mustBe AddUnLocodeYesNoPage
+                  result.left.value.page mustBe loading.AddUnLocodeYesNoPage
               }
             }
           }
@@ -162,7 +182,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                   LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
                 ).run(userAnswers)
 
-                result.left.value.page mustBe AddUnLocodeYesNoPage
+                result.left.value.page mustBe loading.AddUnLocodeYesNoPage
             }
           }
         }
