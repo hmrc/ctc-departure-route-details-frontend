@@ -17,14 +17,20 @@
 package models.journeyDomain.loadingAndUnloading
 
 import base.SpecBase
+import config.PhaseConfig
 import generators.Generators
 import models.SecurityDetailsType._
 import models.domain.{EitherType, UserAnswersReader}
+import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
+import models.{Phase, SecurityDetailsType}
+import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
+import pages.loadingAndUnloading.loading.AddUnLocodeYesNoPage
 
 class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -85,9 +91,82 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
           }
 
         }
-
       }
     }
 
+    "loadingReader" - {
+      "can be parsed from user answers" - {
+        "when transition" - {
+          val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+          when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
+
+          "and no security" in {
+            val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, NoSecurityDetails)
+
+            val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
+              LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+            ).run(userAnswers)
+
+            result.value mustBe None
+          }
+        }
+
+        "when post transition" - {
+          val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+          when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
+
+          "and not pre-lodge" in {
+            forAll(arbitraryLoadingAnswers(emptyUserAnswers)) {
+              answers =>
+                val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
+                  LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+                ).run(answers)
+
+                result.value mustBe defined
+            }
+          }
+        }
+      }
+
+      "cannot be parsed from user answers" - {
+        "when transition" - {
+          val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+          when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
+
+          "and security is not 0" - {
+            "and add place of loading UN/LOCODE yes/no is unanswered" in {
+              forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType)) {
+                security =>
+                  val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, security)
+
+                  val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
+                    LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+                  ).run(userAnswers)
+
+                  result.left.value.page mustBe AddUnLocodeYesNoPage
+              }
+            }
+          }
+        }
+
+        "when post-transition" - {
+          val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+          when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
+
+          "and add place of loading UN/LOCODE yes/no is unanswered" in {
+            forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType)) {
+              security =>
+                val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, security)
+
+                val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
+                  LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+                ).run(userAnswers)
+
+                result.left.value.page mustBe AddUnLocodeYesNoPage
+            }
+          }
+        }
+      }
+    }
   }
 }

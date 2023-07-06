@@ -235,15 +235,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
           "and add location of goods type yes/no is unanswered" in {
-            forAll(arbitrary[Boolean]) {
-              bool =>
-                val userAnswers = emptyUserAnswers.setValue(OfficeOfDepartureInCL147Page, bool)
-                val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                  RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
-                ).run(userAnswers)
+            val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
+              RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
+            ).run(emptyUserAnswers)
 
-                result.left.value.page mustBe AddLocationOfGoodsPage
-            }
+            result.left.value.page mustBe AddLocationOfGoodsPage
           }
         }
       }

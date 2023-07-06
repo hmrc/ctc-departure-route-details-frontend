@@ -17,12 +17,18 @@
 package models.journeyDomain.loadingAndUnloading
 
 import cats.implicits._
-import models.SecurityDetailsType.{EntryAndExitSummaryDeclarationSecurityDetails, EntrySummaryDeclarationSecurityDetails, ExitSummaryDeclarationSecurityDetails}
+import config.PhaseConfig
+import models.SecurityDetailsType.{
+  EntryAndExitSummaryDeclarationSecurityDetails,
+  EntrySummaryDeclarationSecurityDetails,
+  ExitSummaryDeclarationSecurityDetails,
+  NoSecurityDetails
+}
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.{Mode, UserAnswers}
+import models.{Mode, Phase, UserAnswers}
 import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
 import play.api.mvc.Call
@@ -38,22 +44,31 @@ case class LoadingAndUnloadingDomain(
 
 object LoadingAndUnloadingDomain {
 
-  // When pre-lodge is in, add a loadingReader to handle nav logic if additional declaration type is A or D
+  implicit def loadingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[LoadingDomain]] =
+    phaseConfig.phase match {
+      case Phase.Transition =>
+        SecurityDetailsTypePage.reader.flatMap {
+          case NoSecurityDetails => none[LoadingDomain].pure[UserAnswersReader]
+          case _                 => UserAnswersReader[LoadingDomain].map(Some(_))
+        }
+      case Phase.PostTransition =>
+        // additional declaration type is currently always normal (A) as we aren't doing pre-lodge (D) yet
+        UserAnswersReader[LoadingDomain].map(Some(_))
+    }
 
   implicit val unloadingReader: UserAnswersReader[Option[UnloadingDomain]] =
     SecurityDetailsTypePage.reader.flatMap {
       case ExitSummaryDeclarationSecurityDetails =>
-        AddPlaceOfUnloadingPage
-          .filterOptionalDependent(identity)(UserAnswersReader[UnloadingDomain])
+        AddPlaceOfUnloadingPage.filterOptionalDependent(identity)(UserAnswersReader[UnloadingDomain])
       case EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
         UserAnswersReader[UnloadingDomain].map(Some(_))
       case _ =>
         none[UnloadingDomain].pure[UserAnswersReader]
     }
 
-  implicit val userAnswersReader: UserAnswersReader[LoadingAndUnloadingDomain] =
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[LoadingAndUnloadingDomain] =
     (
-      UserAnswersReader[LoadingDomain].map(Some(_)),
+      UserAnswersReader[Option[LoadingDomain]],
       UserAnswersReader[Option[UnloadingDomain]]
     ).tupled.map((LoadingAndUnloadingDomain.apply _).tupled)
 }
