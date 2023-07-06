@@ -17,6 +17,7 @@
 package models.journeyDomain
 
 import base.SpecBase
+import config.PhaseConfig
 import generators.Generators
 import models.DeclarationType.Option4
 import models.SecurityDetailsType._
@@ -25,7 +26,8 @@ import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.{Country, CustomsOffice}
-import models.{DeclarationType, SecurityDetailsType}
+import models.{DeclarationType, Phase, SecurityDetailsType}
+import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -171,53 +173,77 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
     "locationOfGoodsReader" - {
       "can be parsed from UserAnswers" - {
-        "when office of departure is in set CL147" - {
-          val customsOffice = arbitrary[CustomsOffice].sample.value
+        "when post-transition" - {
+          val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+          when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
-          "and not adding a location of goods type" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, arbitrary[CustomsOffice].sample.value)
-              .setValue(OfficeOfDepartureInCL147Page, true)
-              .setValue(AddLocationOfGoodsPage, false)
+          "when office of departure is in set CL147" - {
+            val customsOffice = arbitrary[CustomsOffice].sample.value
 
-            val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-              RouteDetailsDomain.locationOfGoodsReader
-            ).run(userAnswers)
+            "and not adding a location of goods type" in {
+              val userAnswers = emptyUserAnswers
+                .setValue(OfficeOfDeparturePage, arbitrary[CustomsOffice].sample.value)
+                .setValue(OfficeOfDepartureInCL147Page, true)
+                .setValue(AddLocationOfGoodsPage, false)
 
-            result.value must not be defined
+              val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
+              ).run(userAnswers)
+
+              result.value must not be defined
+            }
+
+            "and adding a location of goods type" in {
+              val initialAnswers = emptyUserAnswers
+                .setValue(OfficeOfDeparturePage, customsOffice)
+                .setValue(OfficeOfDepartureInCL147Page, true)
+                .setValue(AddLocationOfGoodsPage, true)
+
+              forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
+                answers =>
+                  val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                    RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
+                  ).run(answers)
+
+                  result.value mustBe defined
+              }
+            }
           }
 
-          "and adding a location of goods type" in {
+          "when office of departure is not in set CL147" in {
+            val customsOffice = arbitrary[CustomsOffice].sample.value
+
             val initialAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOffice)
-              .setValue(OfficeOfDepartureInCL147Page, true)
-              .setValue(AddLocationOfGoodsPage, true)
+              .setValue(OfficeOfDepartureInCL147Page, false)
 
             forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
               answers =>
                 val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                  RouteDetailsDomain.locationOfGoodsReader
+                  RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
                 ).run(answers)
 
                 result.value mustBe defined
             }
           }
         }
+      }
 
-        "when office of departure is not in set CL147" in {
-          val customsOffice = arbitrary[CustomsOffice].sample.value
+      "can not be parsed from user answers" - {
+        "when transition" - {
+          val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+          when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
-          val initialAnswers = emptyUserAnswers
-            .setValue(OfficeOfDeparturePage, customsOffice)
-            .setValue(OfficeOfDepartureInCL147Page, false)
+          "and add location of goods type yes/no is unanswered" in {
+            forAll(arbitrary[Boolean]) {
+              bool =>
+                val userAnswers = emptyUserAnswers.setValue(OfficeOfDepartureInCL147Page, bool)
+                val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                  RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
+                ).run(userAnswers)
 
-          forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
-            answers =>
-              val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                RouteDetailsDomain.locationOfGoodsReader
-              ).run(answers)
-
-              result.value mustBe defined
+                result.left.value.page mustBe AddLocationOfGoodsPage
+            }
           }
         }
       }
