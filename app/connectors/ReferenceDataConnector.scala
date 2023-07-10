@@ -54,20 +54,14 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] =
     getCustomsOfficesForCountryAndRole(countryCode, "DEP")
 
-  def getCustomsSecurityAgreementAreaCountries()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/lists/CountryCustomsSecurityAgreementArea"
-    http.GET[Seq[Country]](serviceUrl, headers = version2Header)
-  }
+  def getCustomsSecurityAgreementAreaCountries()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] =
+    getCountries("CountryCustomsSecurityAgreementArea")
 
-  def getCountryCodesCTC()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/lists/CountryCodesCTC"
-    http.GET[Seq[Country]](serviceUrl, headers = version2Header)
-  }
+  def getCountryCodesCTC()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] =
+    getCountries("CountryCodesCTC")
 
-  def getAddressPostcodeBasedCountries()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/lists/CountryAddressPostcodeBased"
-    http.GET[Seq[Country]](serviceUrl, headers = version2Header)
-  }
+  def getAddressPostcodeBasedCountries()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] =
+    getCountries("CountryAddressPostcodeBased")
 
   def getCountriesWithoutZip()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CountryCode]] = {
     val serviceUrl = s"${config.referenceDataUrl}/lists/CountryWithoutZip"
