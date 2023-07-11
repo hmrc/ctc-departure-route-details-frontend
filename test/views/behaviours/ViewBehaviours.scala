@@ -130,6 +130,9 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
     }
 
   def pageWithHint(expectedText: String): Unit =
+    pageWithHint(doc, expectedText)
+
+  def pageWithHint(doc: Document, expectedText: String): Unit =
     "must render hint" in {
       val hint = getElementByClass(doc, "govuk-hint")
       assertElementContainsText(hint, expectedText)

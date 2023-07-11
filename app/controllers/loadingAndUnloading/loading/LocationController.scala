@@ -16,9 +16,10 @@
 
 package controllers.loadingAndUnloading.loading
 
+import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.LocationFormProvider
+import forms.LoadingLocationFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LoadingAndUnloadingNavigatorProvider, UserAnswersNavigator}
 import pages.loadingAndUnloading.loading.{CountryPage, LocationPage}
@@ -35,12 +36,12 @@ class LocationController @Inject() (
   override val messagesApi: MessagesApi,
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: LoadingAndUnloadingNavigatorProvider,
-  formProvider: LocationFormProvider,
+  formProvider: LoadingLocationFormProvider,
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   view: LocationView
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -54,7 +55,7 @@ class LocationController @Inject() (
           case None        => form
           case Some(value) => form.fill(value)
         }
-        Ok(view(preparedForm, lrn, countryName, mode))
+        Ok(view(preparedForm, lrn, countryName, phaseConfig.loadingLocationMaxLength, mode))
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
@@ -67,7 +68,7 @@ class LocationController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryName, mode))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryName, phaseConfig.loadingLocationMaxLength, mode))),
             value => {
               implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
               LocationPage
