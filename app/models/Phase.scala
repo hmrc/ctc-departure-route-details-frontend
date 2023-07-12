@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package models
 
-object Constants {
-  lazy val maxAuthorisationNumberLength: Int  = 35
-  lazy val maxEoriNumberLength: Int           = 17
-  lazy val maxNameLength: Int                 = 70
-  lazy val maxTelephoneNumberLength: Int      = 35
-  lazy val minTelephoneNumberLength: Int      = 6
-  lazy val additionalIdentifierMaxLength: Int = 4
-  lazy val unloadingLocationMaxLength: Int    = 35
+sealed trait Phase
+
+object Phase {
+
+  case object Transition extends Phase
+  case object PostTransition extends Phase
 }
