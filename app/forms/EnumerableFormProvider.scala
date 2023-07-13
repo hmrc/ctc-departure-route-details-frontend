@@ -29,6 +29,6 @@ class EnumerableFormProvider @Inject() extends Mappings {
       "value" -> enumerable[T](s"$prefix.error.required")
     )
 
-  def apply[T](prefix: String, ts: Seq[T])(implicit et: Seq[T] => Enumerable[T]): Form[T] =
-    apply(prefix)(et(ts))
+  def apply[T](prefix: String, values: Seq[T])(implicit et: Seq[T] => Enumerable[T]): Form[T] =
+    apply(prefix)(et(values))
 }
