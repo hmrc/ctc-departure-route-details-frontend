@@ -16,23 +16,33 @@
 
 package forms
 
-import forms.Constants.locationMaxLength
+import com.google.inject.Inject
+import config.PhaseConfig
+import forms.Constants.unloadingLocationMaxLength
 import forms.mappings.Mappings
 import models.domain.StringFieldRegex.stringFieldRegex
 import play.api.data.Form
 
-import javax.inject.Inject
+sealed trait LocationFormProvider extends Mappings {
 
-class LocationFormProvider @Inject() extends Mappings {
+  val locationMaxLength: Int
 
   def apply(prefix: String, args: String*): Form[String] =
     Form(
       "value" -> text(s"$prefix.error.required", args)
         .verifying(
           StopOnFirstFail[String](
-            maxLength(locationMaxLength, s"$prefix.error.length"),
+            maxLength(locationMaxLength, s"$prefix.error.length", Seq(locationMaxLength)),
             regexp(stringFieldRegex, s"$prefix.error.invalid")
           )
         )
     )
+}
+
+class LoadingLocationFormProvider @Inject() (implicit phaseConfig: PhaseConfig) extends LocationFormProvider {
+  override val locationMaxLength: Int = phaseConfig.loadingLocationMaxLength
+}
+
+class UnloadingLocationFormProvider extends LocationFormProvider {
+  override val locationMaxLength: Int = unloadingLocationMaxLength
 }

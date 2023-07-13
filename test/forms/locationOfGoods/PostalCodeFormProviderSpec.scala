@@ -34,7 +34,9 @@ class PostalCodeFormProviderSpec extends StringFieldBehaviours with SpecBase {
   private val requiredKey = s"$prefix.error.required"
   private val lengthKey   = s"$prefix.error.length"
 
-  private val form = new PostalCodeFormProvider()(prefix, countries)
+  private val formProvider = new PostalCodeFormProvider()(phaseConfig)
+
+  private val form = formProvider(prefix, countries)
 
   ".streetNumber" - {
 

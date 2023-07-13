@@ -53,7 +53,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
     "getDestinationCountries" - {
 
-      "must call EU membership list if TIR is selection" in {
+      "must call EU membership list (community countries) if TIR is selection" in {
 
         val userAnswers = emptyUserAnswers.setValue(DeclarationTypePage, DeclarationType.Option4)
 
@@ -63,14 +63,10 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         service.getDestinationCountries(userAnswers).futureValue mustBe
           SelectableList(sortedCountries)
 
-        val expectedQueryParameters = Seq(
-          "membership" -> "eu"
-        )
-
-        verify(mockRefDataConnector).getCountries(eqTo(expectedQueryParameters))(any(), any())
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommunity"))(any(), any())
       }
 
-      "must call CTC membership list if TIR is not selection" in {
+      "must call CTC membership list (country common transit) if TIR is not selection" in {
 
         val generatedOption = Gen.oneOf(DeclarationType.Option1, DeclarationType.Option2, DeclarationType.Option3).sample.value
         val userAnswers     = emptyUserAnswers.setValue(DeclarationTypePage, generatedOption)
@@ -81,11 +77,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         service.getDestinationCountries(userAnswers).futureValue mustBe
           SelectableList(sortedCountries)
 
-        val expectedQueryParameters = Seq(
-          "membership" -> "ctc"
-        )
-
-        verify(mockRefDataConnector).getCountries(eqTo(expectedQueryParameters))(any(), any())
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommonTransit"))(any(), any())
       }
     }
 
@@ -98,7 +90,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         service.getCountries().futureValue mustBe
           SelectableList(sortedCountries)
 
-        verify(mockRefDataConnector).getCountries(eqTo(Nil))(any(), any())
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
       }
     }
 
@@ -111,28 +103,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         service.getTransitCountries().futureValue mustBe
           SelectableList(sortedCountries)
 
-        val expectedQueryParameters = Seq(
-          "membership" -> "ctc"
-        )
-
-        verify(mockRefDataConnector).getCountries(eqTo(expectedQueryParameters))(any(), any())
-      }
-    }
-
-    "getNonEuTransitCountries" - {
-      "must return a list of sorted non-EU transit countries" in {
-
-        when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
-
-        service.getNonEuTransitCountries().futureValue mustBe
-          SelectableList(sortedCountries)
-
-        val expectedQueryParameters = Seq(
-          "membership" -> "non_eu"
-        )
-
-        verify(mockRefDataConnector).getCountries(eqTo(expectedQueryParameters))(any(), any())
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommonTransit"))(any(), any())
       }
     }
 
@@ -145,11 +116,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         service.getCommunityCountries().futureValue mustBe
           SelectableList(sortedCountries)
 
-        val expectedQueryParameters = Seq(
-          "membership" -> "eu"
-        )
-
-        verify(mockRefDataConnector).getCountries(eqTo(expectedQueryParameters))(any(), any())
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommunity"))(any(), any())
       }
     }
 

@@ -20,14 +20,33 @@ import models.Phase
 import models.Phase.{PostTransition, Transition}
 
 trait PhaseConfig {
-  // we can put things like form validation values in here (regex, length etc.)
   val phase: Phase
+
+  def amendMessageKey(key: String): String
+
+  def lengthError(prefix: String): String = amendMessageKey(s"$prefix.error.length")
+
+  val maxNumberAndStreetLength: Int
+  val maxPostcodeLength: Int
+  val loadingLocationMaxLength: Int
 }
 
 class TransitionConfig() extends PhaseConfig {
   override val phase: Phase = Transition
+
+  override def amendMessageKey(key: String): String = s"$key.transition"
+
+  override val maxNumberAndStreetLength: Int = 35
+  override val maxPostcodeLength: Int        = 9
+  override val loadingLocationMaxLength: Int = 17
 }
 
 class PostTransitionConfig() extends PhaseConfig {
   override val phase: Phase = PostTransition
+
+  override def amendMessageKey(key: String): String = s"$key.postTransition"
+
+  override val maxNumberAndStreetLength: Int = 70
+  override val maxPostcodeLength: Int        = 17
+  override val loadingLocationMaxLength: Int = 35
 }

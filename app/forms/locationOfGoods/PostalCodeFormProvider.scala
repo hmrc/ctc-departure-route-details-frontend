@@ -16,6 +16,7 @@
 
 package forms.locationOfGoods
 
+import config.PhaseConfig
 import forms.StopOnFirstFail
 import forms.mappings.Mappings
 import models.AddressLine._
@@ -27,7 +28,7 @@ import play.api.i18n.Messages
 
 import javax.inject.Inject
 
-class PostalCodeFormProvider @Inject() extends Mappings {
+class PostalCodeFormProvider @Inject() (implicit phaseConfig: PhaseConfig) extends Mappings {
 
   def apply(prefix: String, countryList: SelectableList[Country])(implicit messages: Messages): Form[PostalCodeAddress] =
     Form(

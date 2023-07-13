@@ -38,7 +38,7 @@ class AddressControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
 
   private val addressHolderName = "location of goods"
 
-  private val testAddress = arbitrary[DynamicAddress].sample.value
+  private val testAddress = DynamicAddress("21 Test Lane", "Test Town", Some("TE1 1ST"))
   private val country     = arbitrary[Country].sample.value
 
   private val formProvider                        = new DynamicAddressFormProvider()
@@ -107,7 +107,6 @@ class AddressControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
       "when postcode is required" in {
 
         val isPostalCodeRequired = true
-        val testAddress          = arbitrary[DynamicAddress](arbitraryDynamicAddressWithRequiredPostalCode).sample.value
 
         when(mockCountriesService.doesCountryRequireZip(any())(any())).thenReturn(Future.successful(isPostalCodeRequired))
 

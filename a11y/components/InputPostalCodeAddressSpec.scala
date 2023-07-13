@@ -31,12 +31,13 @@ class InputPostalCodeAddressSpec extends A11ySpecBase {
     val template  = app.injector.instanceOf[MainTemplate]
     val component = app.injector.instanceOf[InputPostalCodeAddress]
 
-    val prefix      = Gen.alphaNumStr.sample.value
-    val countries   = arbitrary[SelectableList[Country]].sample.value
-    val title       = nonEmptyString.sample.value
-    val caption     = Gen.option(nonEmptyString).sample.value
-    val headingArgs = listWithMaxLength[Any]().sample.value
-    val form        = new PostalCodeFormProvider()(prefix, countries)
+    val prefix       = Gen.alphaNumStr.sample.value
+    val countries    = arbitrary[SelectableList[Country]].sample.value
+    val title        = nonEmptyString.sample.value
+    val caption      = Gen.option(nonEmptyString).sample.value
+    val headingArgs  = listWithMaxLength[Any]().sample.value
+    val formProvider = new PostalCodeFormProvider()(phaseConfig)
+    val form         = formProvider(prefix, countries)
 
     val content = template.apply(title, lrn = lrn) {
       component.apply(form, prefix, caption, countries.values, headingArgs)

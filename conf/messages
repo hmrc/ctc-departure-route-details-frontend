@@ -52,6 +52,10 @@ checkYourAnswers.exit.addOrRemove = Add or remove offices of exit
 checkYourAnswers.exit.officeOfExit.label = Office of exit {0}
 checkYourAnswers.exit.officeOfExit.change.hidden = office of exit {0}
 
+specificCircumstanceIndicator.title = Which specific circumstance indicator do you want to add?
+specificCircumstanceIndicator.heading = Which specific circumstance indicator do you want to add?
+specificCircumstanceIndicator.error.required = Select which specific circumstance indicator you want to add
+
 # Route details - Routing
 
 routing.countryOfDestination.title = What is the country of destination?
@@ -311,7 +315,7 @@ locationOfGoods.postalCode.country = Country
 locationOfGoods.postalCode.checkYourAnswersLabel = What is the address for the location of goods?
 locationOfGoods.postalCode.change.hidden = the address for the location of goods
 locationOfGoods.postalCode.error.streetNumber.invalid = The street number must only include numbers 0 to 9 and letters a to z
-locationOfGoods.postalCode.error.postalCode.invalid = The postcode of address must only include letters a to z, numbers 0 to 9 and spaces
+locationOfGoods.postalCode.error.postalCode.invalid = The postal code must only include letters a to z, numbers 0 to 9 and spaces
 locationOfGoods.postalCode.error.length = The {0} must be {1} characters or less
 locationOfGoods.postalCode.error.required = Enter the {0} for the location of goods
 
@@ -440,9 +444,9 @@ loadingAndUnloading.loading.location.title = Where in {0} is the place of loadin
 loadingAndUnloading.loading.location.heading = Where in {0} is the place of loading?
 loadingAndUnloading.loading.location.checkYourAnswersLabel = Location
 loadingAndUnloading.loading.location.change.hidden = location for the place of loading
-loadingAndUnloading.loading.location.hint = Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 35 characters long.
+loadingAndUnloading.loading.location.hint = Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to {0} characters long.
 loadingAndUnloading.loading.location.error.required = Enter the place of loading in {0}
-loadingAndUnloading.loading.location.error.length = The place of loading must be 35 characters or less
+loadingAndUnloading.loading.location.error.length = The place of loading must be {0} characters or less
 loadingAndUnloading.loading.location.error.invalid = The place of loading must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
 
 # Route details - Loading and unloading - Unloading

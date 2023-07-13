@@ -16,25 +16,21 @@
 
 package models.reference
 
-import play.api.libs.json._
+import models.{DynamicEnumerableType, Radioable}
+import play.api.libs.json.{Format, Json}
 
-case class CountryCode(code: String)
+case class SpecificCircumstanceIndicator(
+  code: String,
+  description: String
+) extends Radioable[SpecificCircumstanceIndicator] {
 
-object CountryCode {
+  override def toString: String = s"$code - $description"
 
-  object Constants {
-    val countryCodeLength = 2
-  }
+  override val messageKeyPrefix: String = SpecificCircumstanceIndicator.messageKeyPrefix
+}
 
-  implicit val format: Format[CountryCode] =
-    new Format[CountryCode] {
-      override def writes(o: CountryCode): JsValue = JsString(o.code)
+object SpecificCircumstanceIndicator extends DynamicEnumerableType[SpecificCircumstanceIndicator] {
+  implicit val format: Format[SpecificCircumstanceIndicator] = Json.format[SpecificCircumstanceIndicator]
 
-      override def reads(json: JsValue): JsResult[CountryCode] = json match {
-        case JsObject(mapping) => JsSuccess(CountryCode(mapping("code").as[String]))
-        case JsString(code)    => JsSuccess(CountryCode(code))
-        case x                 => JsError(s"Expected a string, got a ${x.getClass}")
-      }
-    }
-
+  val messageKeyPrefix = "specificCircumstanceIndicator"
 }

@@ -17,7 +17,7 @@
 package controllers.loadingAndUnloading.loading
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.LocationFormProvider
+import forms.LoadingLocationFormProvider
 import generators.Generators
 import models.NormalMode
 import models.reference.Country
@@ -38,7 +38,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
   private val country            = arbitrary[Country].sample.value
   private val countryName        = country.description
-  private val formProvider       = new LocationFormProvider()
+  private val formProvider       = new LoadingLocationFormProvider()
   private val form               = formProvider("loadingAndUnloading.loading.location", countryName)
   private val mode               = NormalMode
   private lazy val locationRoute = routes.LocationController.onPageLoad(lrn, mode).url
@@ -63,7 +63,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, country.description, mode)(request, messages).toString
+        view(form, lrn, country.description, phaseConfig.loadingLocationMaxLength, mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -85,7 +85,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, country.description, mode)(request, messages).toString
+        view(filledForm, lrn, country.description, phaseConfig.loadingLocationMaxLength, mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -122,7 +122,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       val view = injector.instanceOf[LocationView]
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, countryName, mode)(request, messages).toString
+        view(filledForm, lrn, countryName, phaseConfig.loadingLocationMaxLength, mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

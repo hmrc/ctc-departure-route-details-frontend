@@ -16,9 +16,9 @@
 
 package generators
 
-import models.AddressLine.{City, NumberAndStreet, PostalCode, StreetNumber}
+import models.AddressLine.{Country => _}
 import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
-import models.reference.{Country, CountryCode, CustomsOffice, UnLocode}
+import models.reference._
 import models.{PostalCodeAddress, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -100,6 +100,14 @@ trait ModelGenerators {
       } yield UnLocode(unLocodeExtendedCode, name)
     }
 
+  implicit lazy val arbitrarySpecificCircumstanceIndicator: Arbitrary[SpecificCircumstanceIndicator] =
+    Arbitrary {
+      for {
+        code        <- nonEmptyString
+        description <- nonEmptyString
+      } yield SpecificCircumstanceIndicator(code, description)
+    }
+
   implicit lazy val arbitraryLocationType: Arbitrary[LocationType] =
     Arbitrary {
       Gen.oneOf(LocationType.values)
@@ -121,26 +129,26 @@ trait ModelGenerators {
   implicit lazy val arbitraryDynamicAddress: Arbitrary[DynamicAddress] =
     Arbitrary {
       for {
-        numberAndStreet <- stringsWithMaxLength(NumberAndStreet.length, Gen.alphaNumChar)
-        city            <- stringsWithMaxLength(City.length, Gen.alphaNumChar)
-        postalCode      <- Gen.option(stringsWithMaxLength(PostalCode.length, Gen.alphaNumChar))
+        numberAndStreet <- nonEmptyString
+        city            <- nonEmptyString
+        postalCode      <- Gen.option(nonEmptyString)
       } yield DynamicAddress(numberAndStreet, city, postalCode)
     }
 
   lazy val arbitraryDynamicAddressWithRequiredPostalCode: Arbitrary[DynamicAddress] =
     Arbitrary {
       for {
-        numberAndStreet <- stringsWithMaxLength(NumberAndStreet.length, Gen.alphaNumChar)
-        city            <- stringsWithMaxLength(City.length, Gen.alphaNumChar)
-        postalCode      <- stringsWithMaxLength(PostalCode.length, Gen.alphaNumChar)
+        numberAndStreet <- nonEmptyString
+        city            <- nonEmptyString
+        postalCode      <- nonEmptyString
       } yield DynamicAddress(numberAndStreet, city, Some(postalCode))
     }
 
   implicit lazy val arbitraryPostalCodeAddress: Arbitrary[PostalCodeAddress] =
     Arbitrary {
       for {
-        streetNumber <- stringsWithMaxLength(StreetNumber.length, Gen.alphaNumChar)
-        postalCode   <- stringsWithMaxLength(PostalCode.length, Gen.alphaNumChar)
+        streetNumber <- nonEmptyString
+        postalCode   <- nonEmptyString
         country      <- arbitrary[Country]
       } yield PostalCodeAddress(streetNumber, postalCode, country)
     }

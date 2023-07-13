@@ -24,7 +24,7 @@ import play.api.libs.json.Json
 
 class IdentificationPageSpec extends PageBehaviours {
 
-  "LocationOfGoodsIdentificationPage" - {
+  "IdentificationPage" - {
 
     beRetrievable[LocationOfGoodsIdentification](IdentificationPage)
 
@@ -33,36 +33,47 @@ class IdentificationPageSpec extends PageBehaviours {
     beRemovable[LocationOfGoodsIdentification](IdentificationPage)
 
     "cleanup" - {
-      "when answer has changed" - {
-        "must clean up LocationOfGoodsIdentifierSection" in {
-          forAll(arbitrary[LocationOfGoodsIdentification]) {
-            qualifierOfIdentification =>
-              forAll(arbitrary[LocationOfGoodsIdentification].retryUntil(_ != qualifierOfIdentification)) {
-                differentQualifierOfIdentification =>
-                  val preChange = emptyUserAnswers
-                    .setValue(IdentificationPage, qualifierOfIdentification)
-                    .setValue(LocationOfGoodsIdentifierSection, Json.obj("foo" -> "bar"))
+      "must clean up LocationOfGoodsIdentifierSection and inferred value" in {
+        forAll(arbitrary[LocationOfGoodsIdentification]) {
+          qualifierOfIdentification =>
+            val userAnswers = emptyUserAnswers
+              .setValue(InferredIdentificationPage, qualifierOfIdentification)
+              .setValue(LocationOfGoodsIdentifierSection, Json.obj("foo" -> "bar"))
 
-                  val postChange = preChange.setValue(IdentificationPage, differentQualifierOfIdentification)
+            val result = userAnswers.setValue(IdentificationPage, qualifierOfIdentification)
 
-                  postChange.get(LocationOfGoodsIdentifierSection) mustNot be(defined)
-              }
-          }
+            result.get(IdentificationPage) mustBe defined
+            result.get(InferredIdentificationPage) must not be defined
+            result.get(LocationOfGoodsIdentifierSection) must not be defined
         }
       }
+    }
+  }
+}
 
-      "when answer has not changed" - {
-        "must do nothing" in {
-          forAll(arbitrary[LocationOfGoodsIdentification]) {
-            qualifierOfIdentification =>
-              val preChange = emptyUserAnswers
-                .setValue(IdentificationPage, qualifierOfIdentification)
-                .setValue(LocationOfGoodsIdentifierSection, Json.obj("foo" -> "bar"))
+class InferredIdentificationPageSpec extends PageBehaviours {
 
-              val postChange = preChange.setValue(IdentificationPage, qualifierOfIdentification)
+  "InferredIdentificationPage" - {
 
-              postChange.get(LocationOfGoodsIdentifierSection) must be(defined)
-          }
+    beRetrievable[LocationOfGoodsIdentification](InferredIdentificationPage)
+
+    beSettable[LocationOfGoodsIdentification](InferredIdentificationPage)
+
+    beRemovable[LocationOfGoodsIdentification](InferredIdentificationPage)
+
+    "cleanup" - {
+      "must clean up LocationOfGoodsIdentifierSection and non-inferred value" in {
+        forAll(arbitrary[LocationOfGoodsIdentification]) {
+          qualifierOfIdentification =>
+            val userAnswers = emptyUserAnswers
+              .setValue(IdentificationPage, qualifierOfIdentification)
+              .setValue(LocationOfGoodsIdentifierSection, Json.obj("foo" -> "bar"))
+
+            val result = userAnswers.setValue(InferredIdentificationPage, qualifierOfIdentification)
+
+            result.get(InferredIdentificationPage) mustBe defined
+            result.get(IdentificationPage) must not be defined
+            result.get(LocationOfGoodsIdentifierSection) must not be defined
         }
       }
     }
