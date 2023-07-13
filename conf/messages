@@ -52,12 +52,12 @@ checkYourAnswers.exit.addOrRemove = Add or remove offices of exit
 checkYourAnswers.exit.officeOfExit.label = Office of exit {0}
 checkYourAnswers.exit.officeOfExit.change.hidden = office of exit {0}
 
-# Route details - Routing
+specificCircumstanceIndicator.title = Which specific circumstance indicator do you want to add?
+specificCircumstanceIndicator.heading = Which specific circumstance indicator do you want to add?
+specificCircumstanceIndicator.placeholder = Select a specific circumstance indicator
+specificCircumstanceIndicator.error.required = Select which specific circumstance indicator you want to add
 
-routing.specificCircumstanceIndicator.title = Which specific circumstance indicator do you want to add?
-routing.specificCircumstanceIndicator.heading = Which specific circumstance indicator do you want to add?
-routing.specificCircumstanceIndicator.placeholder = Select a specific circumstance indicator
-routing.specificCircumstanceIndicator.error.required = Select which specific circumstance indicator you want to add
+# Route details - Routing
 
 routing.countryOfDestination.title = What is the country of destination?
 routing.countryOfDestination.heading = What is the country of destination?

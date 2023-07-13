@@ -34,5 +34,5 @@ case class SpecificCircumstanceIndicator(
 object SpecificCircumstanceIndicator {
   implicit val format: Format[SpecificCircumstanceIndicator] = Json.format[SpecificCircumstanceIndicator]
 
-  val messageKeyPrefix = "routing.specificCircumstanceIndicator"
+  val messageKeyPrefix = "specificCircumstanceIndicator"
 }
