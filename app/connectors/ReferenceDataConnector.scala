@@ -73,6 +73,11 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http.GET[Seq[UnLocode]](serviceUrl, headers = version2Header)
   }
 
+  def getSpecificCircumstanceIndicators()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[SpecificCircumstanceIndicator]] = {
+    val serviceUrl = s"${config.referenceDataUrl}/lists/SpecificCircumstanceIndicatorCode"
+    http.GET[Seq[SpecificCircumstanceIndicator]](serviceUrl, headers = version2Header)
+  }
+
   private def version2Header: Seq[(String, String)] = Seq(
     HeaderNames.Accept -> "application/vnd.hmrc.2.0+json"
   )
@@ -96,11 +101,11 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     (_: String, _: String, response: HttpResponse) => {
       response.status match {
         case OK =>
-          val referenceData = (response.json \ "data").getOrElse(
-            throw new IllegalStateException("[ReferenceDataConnector][responseHandlerGeneric] Reference data could not be parsed")
-          )
-
-          referenceData.as[Seq[A]]
+          (response.json \ "data")
+            .validate[Seq[A]]
+            .getOrElse(
+              throw new IllegalStateException("[ReferenceDataConnector][responseHandlerGeneric] Reference data could not be parsed")
+            )
         case NO_CONTENT =>
           Nil
         case NOT_FOUND =>

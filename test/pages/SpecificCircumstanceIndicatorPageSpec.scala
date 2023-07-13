@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import models.Enumerable
-import play.api.data.Form
+import models.reference.SpecificCircumstanceIndicator
+import pages.behaviours.PageBehaviours
 
-import javax.inject.Inject
+class SpecificCircumstanceIndicatorPageSpec extends PageBehaviours {
 
-class EnumerableFormProvider @Inject() extends Mappings {
+  "SpecificCircumstanceIndicatorPage" - {
 
-  def apply[T](prefix: String)(implicit et: Enumerable[T]): Form[T] =
-    Form(
-      "value" -> enumerable[T](s"$prefix.error.required")
-    )
+    beRetrievable[SpecificCircumstanceIndicator](SpecificCircumstanceIndicatorPage)
 
-  def apply[T](prefix: String, values: Seq[T])(implicit et: Seq[T] => Enumerable[T]): Form[T] =
-    apply(prefix)(et(values))
+    beSettable[SpecificCircumstanceIndicator](SpecificCircumstanceIndicatorPage)
+
+    beRemovable[SpecificCircumstanceIndicator](SpecificCircumstanceIndicatorPage)
+  }
 }
