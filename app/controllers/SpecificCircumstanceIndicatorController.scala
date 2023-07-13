@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions._
-import forms.SelectableFormProvider
+import forms.EnumerableFormProvider
 import models.reference.SpecificCircumstanceIndicator
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
@@ -38,7 +38,7 @@ class SpecificCircumstanceIndicatorController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: RouteDetailsNavigatorProvider,
   actions: Actions,
-  formProvider: SelectableFormProvider,
+  formProvider: EnumerableFormProvider,
   specificCircumstanceIndicatorsService: SpecificCircumstanceIndicatorsService,
   val controllerComponents: MessagesControllerComponents,
   view: SpecificCircumstanceIndicatorView

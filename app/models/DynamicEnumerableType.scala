@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package models
 
-import forms.mappings.Mappings
-import models.{Selectable, SelectableList}
-import play.api.data.Form
+trait DynamicEnumerableType[T] extends Enumerable.Implicits {
 
-import javax.inject.Inject
-
-class SelectableFormProvider @Inject() extends Mappings {
-
-  def apply[T <: Selectable](prefix: String, selectableList: SelectableList[T], args: Any*): Form[T] =
-    Form(
-      "value" -> selectable[T](selectableList, s"$prefix.error.required", args)
+  implicit def enumerable(values: Seq[T]): Enumerable[T] =
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
     )
 }

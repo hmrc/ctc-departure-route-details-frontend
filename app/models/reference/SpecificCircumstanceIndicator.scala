@@ -16,22 +16,20 @@
 
 package models.reference
 
-import models.{Radioable, Selectable}
+import models.{DynamicEnumerableType, Radioable}
 import play.api.libs.json.{Format, Json}
 
 case class SpecificCircumstanceIndicator(
   code: String,
   description: String
-) extends Selectable
-    with Radioable[SpecificCircumstanceIndicator] {
+) extends Radioable[SpecificCircumstanceIndicator] {
 
   override def toString: String = s"$code - $description"
 
-  override val value: String            = code
   override val messageKeyPrefix: String = SpecificCircumstanceIndicator.messageKeyPrefix
 }
 
-object SpecificCircumstanceIndicator {
+object SpecificCircumstanceIndicator extends DynamicEnumerableType[SpecificCircumstanceIndicator] {
   implicit val format: Format[SpecificCircumstanceIndicator] = Json.format[SpecificCircumstanceIndicator]
 
   val messageKeyPrefix = "specificCircumstanceIndicator"

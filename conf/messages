@@ -54,7 +54,6 @@ checkYourAnswers.exit.officeOfExit.change.hidden = office of exit {0}
 
 specificCircumstanceIndicator.title = Which specific circumstance indicator do you want to add?
 specificCircumstanceIndicator.heading = Which specific circumstance indicator do you want to add?
-specificCircumstanceIndicator.placeholder = Select a specific circumstance indicator
 specificCircumstanceIndicator.error.required = Select which specific circumstance indicator you want to add
 
 # Route details - Routing

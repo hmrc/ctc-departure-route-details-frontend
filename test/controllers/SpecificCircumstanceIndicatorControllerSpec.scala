@@ -17,7 +17,7 @@
 package controllers
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.SelectableFormProvider
+import forms.EnumerableFormProvider
 import generators.Generators
 import models.NormalMode
 import models.reference.SpecificCircumstanceIndicator
@@ -41,7 +41,7 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
   private val sci2 = arbitrary[SpecificCircumstanceIndicator].sample.value
   private val scis = Seq(sci1, sci2)
 
-  private val formProvider = new SelectableFormProvider()
+  private val formProvider = new EnumerableFormProvider()
   private val form         = formProvider("specificCircumstanceIndicator", scis)
   private val mode         = NormalMode
 
@@ -83,7 +83,7 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
 
       val result = route(app, request).value
 
-      val filledForm = form.bind(Map("value" -> sci1.value))
+      val filledForm = form.bind(Map("value" -> sci1.toString))
 
       val view = injector.instanceOf[SpecificCircumstanceIndicatorView]
 
@@ -101,7 +101,7 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
       setExistingUserAnswers(emptyUserAnswers)
 
       val request = FakeRequest(POST, specificCircumstanceIndicatorRoute)
-        .withFormUrlEncodedBody(("value", sci1.value))
+        .withFormUrlEncodedBody(("value", sci1.toString))
 
       val result = route(app, request).value
 
@@ -145,7 +145,7 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
       setNoExistingUserAnswers()
 
       val request = FakeRequest(POST, specificCircumstanceIndicatorRoute)
-        .withFormUrlEncodedBody(("value", sci1.value))
+        .withFormUrlEncodedBody(("value", sci1.toString))
 
       val result = route(app, request).value
 

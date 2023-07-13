@@ -17,11 +17,9 @@
 package models.reference
 
 import base.SpecBase
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
-import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckPropertyChecks {
 
@@ -52,14 +50,6 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
               |}
               |""".stripMargin)
             .as[SpecificCircumstanceIndicator] mustBe specificCircumstanceIndicator
-      }
-    }
-
-    "must convert to select item" in {
-      forAll(Gen.alphaNumStr, Gen.alphaNumStr, arbitrary[Boolean]) {
-        (code, description, selected) =>
-          val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
-          specificCircumstanceIndicator.toSelectItem(selected) mustBe SelectItem(Some(code), s"$code - $description", selected)
       }
     }
 
