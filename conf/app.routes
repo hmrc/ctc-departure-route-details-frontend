@@ -11,10 +11,10 @@ GET        /assets/*file                                              controller
 
 GET        /:lrn                                                      controllers.RedirectController.redirect(lrn: LocalReferenceNumber)
 
-#GET        /specific-circumstance-indicator/:lrn                      controllers.SpecificCircumstanceIndicatorController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-#POST       /specific-circumstance-indicator/:lrn                      controllers.SpecificCircumstanceIndicatorController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-#GET        /change-specific-circumstance-indicator/:lrn               controllers.SpecificCircumstanceIndicatorController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
-#POST       /change-specific-circumstance-indicator/:lrn               controllers.SpecificCircumstanceIndicatorController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+GET        /specific-circumstance-indicator/:lrn                      controllers.SpecificCircumstanceIndicatorController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /specific-circumstance-indicator/:lrn                      controllers.SpecificCircumstanceIndicatorController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /change-specific-circumstance-indicator/:lrn               controllers.SpecificCircumstanceIndicatorController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /change-specific-circumstance-indicator/:lrn               controllers.SpecificCircumstanceIndicatorController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
 
 GET        /check-answers/:lrn                                        controllers.RouteDetailsAnswersController.onPageLoad(lrn: LocalReferenceNumber)
 POST       /check-answers/:lrn                                        controllers.RouteDetailsAnswersController.onSubmit(lrn: LocalReferenceNumber)

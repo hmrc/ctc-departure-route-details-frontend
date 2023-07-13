@@ -100,6 +100,14 @@ trait ModelGenerators {
       } yield UnLocode(unLocodeExtendedCode, name)
     }
 
+  implicit lazy val arbitrarySpecificCircumstanceIndicator: Arbitrary[SpecificCircumstanceIndicator] =
+    Arbitrary {
+      for {
+        code        <- nonEmptyString
+        description <- nonEmptyString
+      } yield SpecificCircumstanceIndicator(code, description)
+    }
+
   implicit lazy val arbitraryLocationType: Arbitrary[LocationType] =
     Arbitrary {
       Gen.oneOf(LocationType.values)

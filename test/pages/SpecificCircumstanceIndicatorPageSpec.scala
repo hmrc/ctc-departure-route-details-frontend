@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import models.{Selectable, SelectableList}
-import play.api.data.Form
+import models.reference.SpecificCircumstanceIndicator
+import pages.behaviours.PageBehaviours
 
-import javax.inject.Inject
+class SpecificCircumstanceIndicatorPageSpec extends PageBehaviours {
 
-class SelectableFormProvider @Inject() extends Mappings {
+  "SpecificCircumstanceIndicatorPage" - {
 
-  def apply[T <: Selectable](prefix: String, selectableList: SelectableList[T], args: Any*): Form[T] =
-    Form(
-      "value" -> selectable[T](selectableList, s"$prefix.error.required", args)
-    )
+    beRetrievable[SpecificCircumstanceIndicator](SpecificCircumstanceIndicatorPage)
 
-  def apply[T <: Selectable](prefix: String, ts: Seq[T], args: Any*): Form[T] =
-    apply(prefix, SelectableList(ts), args: _*)
+    beSettable[SpecificCircumstanceIndicator](SpecificCircumstanceIndicatorPage)
+
+    beRemovable[SpecificCircumstanceIndicator](SpecificCircumstanceIndicatorPage)
+  }
 }
