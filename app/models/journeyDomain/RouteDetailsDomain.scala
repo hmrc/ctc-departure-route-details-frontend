@@ -48,6 +48,13 @@ case class RouteDetailsDomain(
 
 object RouteDetailsDomain {
 
+  implicit val specificCircumstanceIndicatorReader: UserAnswersReader[Option[SpecificCircumstanceIndicator]] =
+    SecurityDetailsTypePage.reader.flatMap {
+      case EntrySummaryDeclarationSecurityDetails | ExitSummaryDeclarationSecurityDetails =>
+        AddSpecificCircumstanceIndicatorYesNoPage.filterOptionalDependent(identity)(SpecificCircumstanceIndicatorPage.reader)
+      case _ => none[SpecificCircumstanceIndicator].pure[UserAnswersReader]
+    }
+
   implicit val userAnswersReader: UserAnswersReader[RouteDetailsDomain] =
     for {
       specificCircumstanceIndicator <- UserAnswersReader[Option[SpecificCircumstanceIndicator]]
@@ -64,13 +71,6 @@ object RouteDetailsDomain {
       locationOfGoods,
       loadingAndUnloading
     )
-
-  implicit val specificCircumstanceIndicatorReader: UserAnswersReader[Option[SpecificCircumstanceIndicator]] =
-    SecurityDetailsTypePage.reader.flatMap {
-      case EntrySummaryDeclarationSecurityDetails | ExitSummaryDeclarationSecurityDetails =>
-        AddSpecificCircumstanceIndicatorYesNoPage.filterOptionalDependent(identity)(SpecificCircumstanceIndicatorPage.reader)
-      case _ => none[SpecificCircumstanceIndicator].pure[UserAnswersReader]
-    }
 
   implicit val transitReader: UserAnswersReader[Option[TransitDomain]] =
     DeclarationTypePage.reader.flatMap {

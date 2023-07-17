@@ -24,11 +24,12 @@ import models.domain.{EitherType, UserAnswersReader}
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.transit.TransitDomain
-import models.reference.{Country, CustomsOffice}
+import models.reference.{Country, CustomsOffice, SpecificCircumstanceIndicator}
 import models.{DeclarationType, SecurityDetailsType}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL147Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.routing.BindingItineraryPage
@@ -37,6 +38,45 @@ import pages.routing.index.{CountryOfRoutingInCL147Page, CountryOfRoutingPage}
 class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "RouteDetailsDomain" - {
+
+    "specificCircumstanceIndicatorReader" - {
+      "can be parsed from UserAnswers" - {
+        "when security is 2 or 3 " in {
+          forAll(Gen.oneOf(EntrySummaryDeclarationSecurityDetails, ExitSummaryDeclarationSecurityDetails).sample.value,
+                 arbitrary[SpecificCircumstanceIndicator]
+          ) {
+            (securityDetailType, specificCircumstanceIndicator) =>
+              val userAnswers = emptyUserAnswers
+                .setValue(SecurityDetailsTypePage, securityDetailType)
+                .setValue(AddSpecificCircumstanceIndicatorYesNoPage, true)
+                .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
+
+              val result: EitherType[Option[SpecificCircumstanceIndicator]] = UserAnswersReader[Option[SpecificCircumstanceIndicator]](
+                RouteDetailsDomain.specificCircumstanceIndicatorReader
+              ).run(userAnswers)
+
+              result.value mustBe defined
+
+          }
+        }
+
+        "when security is not 2 or 3 " in {
+
+          forAll(Gen.oneOf(NoSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value) {
+            securityDetailType =>
+              val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityDetailType)
+
+              val result: EitherType[Option[SpecificCircumstanceIndicator]] = UserAnswersReader[Option[SpecificCircumstanceIndicator]](
+                RouteDetailsDomain.specificCircumstanceIndicatorReader
+              ).run(userAnswers)
+
+              result.value must not be defined
+
+          }
+
+        }
+      }
+    }
 
     "transitReader" - {
       "can be parsed from UserAnswers" - {

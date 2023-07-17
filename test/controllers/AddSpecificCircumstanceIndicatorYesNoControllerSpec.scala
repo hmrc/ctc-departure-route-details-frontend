@@ -19,18 +19,16 @@ package controllers
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.YesNoFormProvider
 import models.NormalMode
-import navigation.{RouteDetailsNavigatorProvider, RoutingNavigatorProvider}
+import navigation.RouteDetailsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AddSpecificCircumstanceIndicatorYesNoPage
-import pages.routing.AddCountryOfRoutingYesNoPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.AddSpecificCircumstanceIndicatorYesNoView
-import views.html.routing.AddCountryOfRoutingYesNoView
 
 import scala.concurrent.Future
 

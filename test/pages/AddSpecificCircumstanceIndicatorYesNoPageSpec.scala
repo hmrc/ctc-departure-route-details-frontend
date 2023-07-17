@@ -16,11 +16,9 @@
 
 package pages
 
-import models.Index
-import models.reference.{Country, SpecificCircumstanceIndicator}
+import models.reference.SpecificCircumstanceIndicator
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
-import pages.routing.AddCountryOfRoutingYesNoPage
 
 class AddSpecificCircumstanceIndicatorYesNoPageSpec extends PageBehaviours {
 
