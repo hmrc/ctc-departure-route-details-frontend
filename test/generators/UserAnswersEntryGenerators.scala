@@ -16,7 +16,7 @@
 
 package generators
 
-import models.reference.{Country, CustomsOffice, UnLocode}
+import models.reference.{Country, CustomsOffice, SpecificCircumstanceIndicator, UnLocode}
 import models.{Coordinates, DateTime, DeclarationType, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress, SecurityDetailsType}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -30,6 +30,7 @@ trait UserAnswersEntryGenerators {
 
   private def generateRouteDetailsAnswer: PartialFunction[Gettable[_], Gen[JsValue]] =
     generateExternalAnswer orElse
+      generateSpecificCircumstanceIndicatorAnswer orElse
       generateRoutingAnswer orElse
       generateTransitAnswer orElse
       generateExitAnswer orElse
@@ -44,6 +45,14 @@ trait UserAnswersEntryGenerators {
       case OfficeOfDepartureInCL147Page => arbitrary[Boolean].map(JsBoolean)
       case DeclarationTypePage          => arbitrary[DeclarationType].map(Json.toJson(_))
       case SecurityDetailsTypePage      => arbitrary[SecurityDetailsType].map(Json.toJson(_))
+    }
+  }
+
+  private def generateSpecificCircumstanceIndicatorAnswer: PartialFunction[Gettable[_], Gen[JsValue]] = {
+    import pages._
+    {
+      case AddSpecificCircumstanceIndicatorYesNoPage => arbitrary[Boolean].map(JsBoolean)
+      case SpecificCircumstanceIndicatorPage         => arbitrary[SpecificCircumstanceIndicator].map(Json.toJson(_))
     }
   }
 
