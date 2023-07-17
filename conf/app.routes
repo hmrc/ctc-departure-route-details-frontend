@@ -11,6 +11,11 @@ GET        /assets/*file                                              controller
 
 GET        /:lrn                                                      controllers.RedirectController.redirect(lrn: LocalReferenceNumber)
 
+GET        /add-specific-circumstance-indicator/:lrn                  controllers.AddSpecificCircumstanceIndicatorYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /add-specific-circumstance-indicator/:lrn                  controllers.AddSpecificCircumstanceIndicatorYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /change-add-specific-circumstance-indicator/:lrn           controllers.AddSpecificCircumstanceIndicatorYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /change-add-specific-circumstance-indicator/:lrn           controllers.AddSpecificCircumstanceIndicatorYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
 GET        /specific-circumstance-indicator/:lrn                      controllers.SpecificCircumstanceIndicatorController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 POST       /specific-circumstance-indicator/:lrn                      controllers.SpecificCircumstanceIndicatorController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 GET        /change-specific-circumstance-indicator/:lrn               controllers.SpecificCircumstanceIndicatorController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
