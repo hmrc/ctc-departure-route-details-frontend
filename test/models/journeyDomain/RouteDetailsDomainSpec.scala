@@ -42,7 +42,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
     "specificCircumstanceIndicatorReader" - {
       "can be parsed from UserAnswers" - {
         "when security is 2 or 3 " in {
-          forAll(Gen.oneOf(EntrySummaryDeclarationSecurityDetails, ExitSummaryDeclarationSecurityDetails).sample.value,
+          forAll(Gen.oneOf(ExitSummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value,
                  arbitrary[SpecificCircumstanceIndicator]
           ) {
             (securityDetailType, specificCircumstanceIndicator) =>
@@ -62,7 +62,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
         "when security is not 2 or 3 " in {
 
-          forAll(Gen.oneOf(NoSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value) {
+          forAll(Gen.oneOf(NoSecurityDetails, EntrySummaryDeclarationSecurityDetails).sample.value) {
             securityDetailType =>
               val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityDetailType)
 

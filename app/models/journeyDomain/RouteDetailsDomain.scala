@@ -50,7 +50,7 @@ object RouteDetailsDomain {
 
   implicit val specificCircumstanceIndicatorReader: UserAnswersReader[Option[SpecificCircumstanceIndicator]] =
     SecurityDetailsTypePage.reader.flatMap {
-      case EntrySummaryDeclarationSecurityDetails | ExitSummaryDeclarationSecurityDetails =>
+      case ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
         AddSpecificCircumstanceIndicatorYesNoPage.filterOptionalDependent(identity)(SpecificCircumstanceIndicatorPage.reader)
       case _ => none[SpecificCircumstanceIndicator].pure[UserAnswersReader]
     }
