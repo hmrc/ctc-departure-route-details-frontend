@@ -55,10 +55,14 @@ checkYourAnswers.exit.officeOfExit.change.hidden = office of exit {0}
 addSpecificCircumstanceIndicatorYesNo.title = Do you want to add a specific circumstance indicator?
 addSpecificCircumstanceIndicatorYesNo.heading = Do you want to add a specific circumstance indicator?
 addSpecificCircumstanceIndicatorYesNo.paragraph = This means you are an Authorised Economic Operator or use express consignments for exit summary declarations (EXS).
+addSpecificCircumstanceIndicatorYesNo.change.hidden = if you want to add a specific circumstance indicator
+addSpecificCircumstanceIndicatorYesNo.checkYourAnswersLabel = Do you want to add a specific circumstance indicator?
 addSpecificCircumstanceIndicatorYesNo.error.required = Select yes if you want to add a specific circumstance indicator
 
 specificCircumstanceIndicator.title = Which specific circumstance indicator do you want to add?
 specificCircumstanceIndicator.heading = Which specific circumstance indicator do you want to add?
+specificCircumstanceIndicator.change.hidden = specific circumstance indicator
+specificCircumstanceIndicator.checkYourAnswersLabel = Specific circumstance indicator
 specificCircumstanceIndicator.error.required = Select which specific circumstance indicator you want to add
 
 # Route details - Routing

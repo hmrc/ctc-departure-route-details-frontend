@@ -36,6 +36,8 @@ object RoutingAnswersViewModel {
 
       val preQuestionsSection = Section(
         rows = Seq(
+          helper.addSpecificCircumstanceIndicatorYesNo,
+          helper.specificCircumstanceIndicator,
           helper.countryOfDestination,
           helper.officeOfDestination,
           helper.bindingItinerary,
