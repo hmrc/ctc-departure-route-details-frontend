@@ -17,7 +17,14 @@
 package config
 
 object Constants {
-  val GB = "GB"
-  val XI = "XI"
   val AD = "AD"
+
+  val TIR = "TIR"
+  val T2  = "T2"
+  val T   = "T"
+
+  val NoSecurityDetails                             = "0"
+  val EntrySummaryDeclarationSecurityDetails        = "1"
+  val ExitSummaryDeclarationSecurityDetails         = "2"
+  val EntryAndExitSummaryDeclarationSecurityDetails = "3"
 }

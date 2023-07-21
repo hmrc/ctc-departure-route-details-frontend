@@ -19,7 +19,6 @@ package models.journeyDomain.transit
 import base.SpecBase
 import config.Constants._
 import generators.Generators
-import models.SecurityDetailsType._
 import models.domain.{EitherType, UserAnswersReader}
 import models.reference.{Country, CustomsOffice}
 import models.{DateTime, Index}

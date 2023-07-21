@@ -17,10 +17,11 @@
 package services
 
 import base.SpecBase
+import config.Constants.TIR
 import connectors.ReferenceDataConnector
 import generators.Generators
 import models.reference.{Country, CountryCode}
-import models.{DeclarationType, Index, SelectableList}
+import models.{Index, SelectableList}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -55,7 +56,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
       "must call EU membership list (community countries) if TIR is selection" in {
 
-        val userAnswers = emptyUserAnswers.setValue(DeclarationTypePage, DeclarationType.Option4)
+        val userAnswers = emptyUserAnswers.setValue(DeclarationTypePage, TIR)
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
           .thenReturn(Future.successful(countries))
@@ -68,7 +69,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
       "must call CTC membership list (country common transit) if TIR is not selection" in {
 
-        val generatedOption = Gen.oneOf(DeclarationType.Option1, DeclarationType.Option2, DeclarationType.Option3).sample.value
+        val generatedOption = arbitrary[String](arbitraryNonTIRDeclarationType).sample.value
         val userAnswers     = emptyUserAnswers.setValue(DeclarationTypePage, generatedOption)
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))

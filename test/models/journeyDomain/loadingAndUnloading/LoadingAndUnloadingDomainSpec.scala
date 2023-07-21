@@ -17,8 +17,8 @@
 package models.journeyDomain.loadingAndUnloading
 
 import base.SpecBase
+import config.Constants._
 import generators.Generators
-import models.SecurityDetailsType._
 import models.domain.{EitherType, UserAnswersReader}
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import org.scalacheck.Gen

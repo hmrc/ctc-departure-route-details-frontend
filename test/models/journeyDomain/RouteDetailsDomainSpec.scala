@@ -17,15 +17,13 @@
 package models.journeyDomain
 
 import base.SpecBase
+import config.Constants._
 import generators.Generators
-import models.DeclarationType.Option4
-import models.SecurityDetailsType._
 import models.domain.{EitherType, UserAnswersReader}
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.{Country, CustomsOffice}
-import models.{DeclarationType, SecurityDetailsType}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -41,7 +39,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
     "transitReader" - {
       "can be parsed from UserAnswers" - {
         "when TIR declaration type" in {
-          val userAnswers = emptyUserAnswers.setValue(DeclarationTypePage, Option4)
+          val userAnswers = emptyUserAnswers.setValue(DeclarationTypePage, TIR)
 
           val result: EitherType[Option[TransitDomain]] = UserAnswersReader[Option[TransitDomain]](
             RouteDetailsDomain.transitReader
@@ -51,7 +49,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
 
         "when not a TIR declaration type" in {
-          forAll(arbitrary[DeclarationType](arbitraryNonOption4DeclarationType)) {
+          forAll(arbitrary[String](arbitraryNonTIRDeclarationType)) {
             declarationType =>
               val initialAnswers = emptyUserAnswers.setValue(DeclarationTypePage, declarationType)
 
@@ -72,10 +70,10 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
       "can be parsed from UserAnswers" - {
         "when TIR declaration type" in {
 
-          forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType)) {
+          forAll(arbitrary[String](arbitrarySomeSecurityDetailsType)) {
             security =>
               val userAnswers = emptyUserAnswers
-                .setValue(DeclarationTypePage, Option4)
+                .setValue(DeclarationTypePage, TIR)
                 .setValue(SecurityDetailsTypePage, security)
 
               val result: EitherType[Option[ExitDomain]] = UserAnswersReader[Option[ExitDomain]](
@@ -87,7 +85,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
 
         "when not a TIR declaration type" - {
-          val declarationType = arbitrary[DeclarationType](arbitraryNonOption4DeclarationType).sample.value
+          val declarationType = arbitrary[String](arbitraryNonTIRDeclarationType).sample.value
 
           "and security is in set {0,1}" in {
             val security = Gen.oneOf(NoSecurityDetails, EntrySummaryDeclarationSecurityDetails).sample.value

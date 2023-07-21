@@ -16,10 +16,11 @@
 
 package services
 
+import config.Constants.TIR
 import connectors.ReferenceDataConnector
 import models.SelectableList.countriesOfRoutingReads
 import models.reference.{Country, CountryCode}
-import models.{DeclarationType, RichOptionalJsArray, SelectableList, UserAnswers}
+import models.{RichOptionalJsArray, SelectableList, UserAnswers}
 import pages.external.DeclarationTypePage
 import pages.sections.routing.CountriesOfRoutingSection
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,8 +32,8 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
 
   def getDestinationCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     userAnswers.get(DeclarationTypePage) match {
-      case Some(DeclarationType.Option4) => getCommunityCountries()
-      case _                             => getTransitCountries()
+      case Some(TIR) => getCommunityCountries()
+      case _         => getTransitCountries()
     }
 
   def getCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =

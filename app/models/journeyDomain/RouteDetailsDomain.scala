@@ -17,15 +17,14 @@
 package models.journeyDomain
 
 import cats.implicits._
-import models.DeclarationType.Option4
-import models.SecurityDetailsType._
+import config.Constants._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
-import models.{DeclarationType, Mode, SecurityDetailsType, UserAnswers}
+import models.{Mode, UserAnswers}
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.sections.routing.CountriesOfRoutingSection
@@ -62,8 +61,8 @@ object RouteDetailsDomain {
 
   implicit val transitReader: UserAnswersReader[Option[TransitDomain]] =
     DeclarationTypePage.reader.flatMap {
-      case Option4 => none[TransitDomain].pure[UserAnswersReader]
-      case _       => UserAnswersReader[TransitDomain].map(Some(_))
+      case TIR => none[TransitDomain].pure[UserAnswersReader]
+      case _   => UserAnswersReader[TransitDomain].map(Some(_))
     }
 
   implicit def exitReader(transit: Option[TransitDomain]): UserAnswersReader[Option[ExitDomain]] =
@@ -81,13 +80,13 @@ object RouteDetailsDomain {
     } yield reader
 
   private def exitRequired(
-    declarationType: DeclarationType,
-    securityDetails: SecurityDetailsType,
+    declarationType: String,
+    securityDetails: String,
     atLeastOneCountryOfRoutingNotInCL147: Boolean,
     transit: Option[TransitDomain]
   ): Boolean =
     (declarationType, securityDetails, atLeastOneCountryOfRoutingNotInCL147, transit) match {
-      case (Option4, _, _, _)                                                    => false
+      case (TIR, _, _, _)                                                        => false
       case (_, NoSecurityDetails | EntrySummaryDeclarationSecurityDetails, _, _) => false
       case (_, _, true, Some(TransitDomain(_, _ :: _)))                          => false
       case _                                                                     => true

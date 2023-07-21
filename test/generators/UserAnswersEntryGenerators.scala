@@ -17,7 +17,7 @@
 package generators
 
 import models.reference.{Country, CustomsOffice, UnLocode}
-import models.{Coordinates, DateTime, DeclarationType, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress, SecurityDetailsType}
+import models.{Coordinates, DateTime, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import play.api.libs.json._
@@ -42,8 +42,8 @@ trait UserAnswersEntryGenerators {
       case OfficeOfDeparturePage        => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
       case OfficeOfDepartureInCL112Page => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfDepartureInCL147Page => arbitrary[Boolean].map(JsBoolean)
-      case DeclarationTypePage          => arbitrary[DeclarationType].map(Json.toJson(_))
-      case SecurityDetailsTypePage      => arbitrary[SecurityDetailsType].map(Json.toJson(_))
+      case DeclarationTypePage          => arbitrary[String](arbitraryDeclarationType).map(Json.toJson(_))
+      case SecurityDetailsTypePage      => arbitrary[String](arbitrarySecurityDetailsType).map(Json.toJson(_))
     }
   }
 

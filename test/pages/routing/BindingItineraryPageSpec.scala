@@ -16,7 +16,7 @@
 
 package pages.routing
 
-import models.SecurityDetailsType
+import config.Constants.NoSecurityDetails
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.external.SecurityDetailsTypePage
@@ -50,7 +50,7 @@ class BindingItineraryPageSpec extends PageBehaviours {
 
           "then must remove AddCountryOfRoutingYesNo" in {
 
-            forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType)) {
+            forAll(arbitrary[String](arbitrarySomeSecurityDetailsType)) {
               security =>
                 val preChange = emptyUserAnswers
                   .setValue(AddCountryOfRoutingYesNoPage, true)
@@ -69,7 +69,7 @@ class BindingItineraryPageSpec extends PageBehaviours {
 
             val preChange = emptyUserAnswers
               .setValue(AddCountryOfRoutingYesNoPage, true)
-              .setValue(SecurityDetailsTypePage, SecurityDetailsType.NoSecurityDetails)
+              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
 
             val postChange = preChange.setValue(BindingItineraryPage, false)
 

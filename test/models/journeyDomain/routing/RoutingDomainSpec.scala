@@ -17,11 +17,11 @@
 package models.journeyDomain.routing
 
 import base.SpecBase
+import config.Constants._
 import generators.Generators
-import models.SecurityDetailsType._
+import models.Index
 import models.domain.{EitherType, UserAnswersReader}
 import models.reference.{Country, CustomsOffice}
-import models.{Index, SecurityDetailsType}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.external.SecurityDetailsTypePage
 import pages.routing._
@@ -87,7 +87,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
 
       "when there is security" - {
 
-        val securityType = arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType).sample.value
+        val securityType = arbitrary[String](arbitrarySomeSecurityDetailsType).sample.value
 
         "and following binding itinerary" in {
 
@@ -141,7 +141,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
 
       "when country of destination page is missing" in {
 
-        val securityType = arbitrary[SecurityDetailsType].sample.value
+        val securityType = arbitrary[String](arbitrarySecurityDetailsType).sample.value
         val userAnswers  = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityType)
 
         val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
@@ -151,7 +151,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
 
       "when office of destination page is missing" in {
 
-        val securityType = arbitrary[SecurityDetailsType].sample.value
+        val securityType = arbitrary[String](arbitrarySecurityDetailsType).sample.value
         val userAnswers = emptyUserAnswers
           .setValue(SecurityDetailsTypePage, securityType)
           .setValue(CountryOfDestinationPage, country)
@@ -163,7 +163,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
 
       "when binding itinerary page is missing" in {
 
-        val securityType = arbitrary[SecurityDetailsType].sample.value
+        val securityType = arbitrary[String](arbitrarySecurityDetailsType).sample.value
         val userAnswers = emptyUserAnswers
           .setValue(SecurityDetailsTypePage, securityType)
           .setValue(CountryOfDestinationPage, country)
@@ -189,7 +189,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
 
       "when binding itinerary is true and no countries added" in {
 
-        val securityType = arbitrary[SecurityDetailsType].sample.value
+        val securityType = arbitrary[String](arbitrarySecurityDetailsType).sample.value
         val userAnswers = emptyUserAnswers
           .setValue(SecurityDetailsTypePage, securityType)
           .setValue(CountryOfDestinationPage, country)
@@ -203,7 +203,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
 
       "when there's security and no countries added" in {
 
-        val securityType     = arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType).sample.value
+        val securityType     = arbitrary[String](arbitrarySomeSecurityDetailsType).sample.value
         val bindingItinerary = arbitrary[Boolean].sample.value
         val userAnswers = emptyUserAnswers
           .setValue(SecurityDetailsTypePage, securityType)
