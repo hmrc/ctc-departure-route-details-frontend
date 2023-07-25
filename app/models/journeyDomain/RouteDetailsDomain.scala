@@ -25,13 +25,16 @@ import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
+import models.reference.SpecificCircumstanceIndicator
 import models.{DeclarationType, Mode, SecurityDetailsType, UserAnswers}
+import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.sections.routing.CountriesOfRoutingSection
 import play.api.mvc.Call
 
 case class RouteDetailsDomain(
+  specificCircumstanceIndicator: Option[SpecificCircumstanceIndicator],
   routing: RoutingDomain,
   transit: Option[TransitDomain],
   exit: Option[ExitDomain],
@@ -45,14 +48,23 @@ case class RouteDetailsDomain(
 
 object RouteDetailsDomain {
 
+  implicit val specificCircumstanceIndicatorReader: UserAnswersReader[Option[SpecificCircumstanceIndicator]] =
+    SecurityDetailsTypePage.reader.flatMap {
+      case ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
+        AddSpecificCircumstanceIndicatorYesNoPage.filterOptionalDependent(identity)(SpecificCircumstanceIndicatorPage.reader)
+      case _ => none[SpecificCircumstanceIndicator].pure[UserAnswersReader]
+    }
+
   implicit val userAnswersReader: UserAnswersReader[RouteDetailsDomain] =
     for {
-      routing             <- UserAnswersReader[RoutingDomain]
-      transit             <- UserAnswersReader[Option[TransitDomain]]
-      exit                <- UserAnswersReader[Option[ExitDomain]](exitReader(transit))
-      locationOfGoods     <- UserAnswersReader[Option[LocationOfGoodsDomain]]
-      loadingAndUnloading <- UserAnswersReader[LoadingAndUnloadingDomain]
+      specificCircumstanceIndicator <- UserAnswersReader[Option[SpecificCircumstanceIndicator]]
+      routing                       <- UserAnswersReader[RoutingDomain]
+      transit                       <- UserAnswersReader[Option[TransitDomain]]
+      exit                          <- UserAnswersReader[Option[ExitDomain]](exitReader(transit))
+      locationOfGoods               <- UserAnswersReader[Option[LocationOfGoodsDomain]]
+      loadingAndUnloading           <- UserAnswersReader[LoadingAndUnloadingDomain]
     } yield RouteDetailsDomain(
+      specificCircumstanceIndicator,
       routing,
       transit,
       exit,
