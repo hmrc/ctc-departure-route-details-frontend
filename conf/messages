@@ -95,6 +95,7 @@ routing.bindingItinerary.change.hidden = if you are using a binding itinerary
 
 routing.addCountryOfRoutingYesNo.title = Do you want to add a country to the transit route?
 routing.addCountryOfRoutingYesNo.heading = Do you want to add a country to the transit route?
+routing.addCountryOfRoutingYesNo.paragraph = This can be any country the transit passes through, not just the places it stops.
 routing.addCountryOfRoutingYesNo.checkYourAnswersLabel = Do you want to add a country to the transit route?
 routing.addCountryOfRoutingYesNo.error.required = Select yes if you want to add a country to the transit route
 routing.addCountryOfRoutingYesNo.change.hidden = if you want to add a country to the transit route
