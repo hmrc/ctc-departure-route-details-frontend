@@ -67,14 +67,14 @@ specificCircumstanceIndicator.error.required = Select which specific circumstanc
 
 # Route details - Routing
 
-routing.countryOfDestination.title = What is the country of destination?
-routing.countryOfDestination.heading = What is the country of destination?
+routing.countryOfDestination.title = What country is the office of destination in?
+routing.countryOfDestination.heading = What country is the office of destination in?
 routing.countryOfDestination.hint = Enter the country, like Italy or Spain.
-routing.countryOfDestination.paragraph = This is the final CTC country of the transit route. It may not be where the transit movement ends.
+routing.countryOfDestination.paragraph = This is the final country of the transit movement. It may not be where the goods complete their journey.
 routing.countryOfDestination.placeholder = Select a country
 routing.countryOfDestination.change.hidden = country of destination
 routing.countryOfDestination.checkYourAnswersLabel = Country of destination
-routing.countryOfDestination.error.required = Enter the country of destination
+routing.countryOfDestination.error.required = Enter the country the office of destination is in
 routing.countryOfDestination.error.noOffices = You cannot use this country as it does not have any offices of destination
 
 routing.officeOfDestination.title = Where is the office of destination?

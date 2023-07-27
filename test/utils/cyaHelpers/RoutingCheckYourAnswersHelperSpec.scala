@@ -161,7 +161,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                           content = "Change".toText,
                           href = routingRoutes.CountryOfDestinationController.onPageLoad(answers.lrn, mode).url,
                           visuallyHiddenText = Some("country of destination"),
-                          attributes = Map("id" -> "change-country-of-destination")
+                          attributes = Map("id" -> "change-office-of-destination-country")
                         )
                       )
                     )

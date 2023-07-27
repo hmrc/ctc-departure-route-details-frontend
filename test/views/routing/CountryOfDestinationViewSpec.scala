@@ -48,7 +48,7 @@ class CountryOfDestinationViewSpec extends InputSelectViewBehaviours[Country] {
 
   behave like pageWithHint("Enter the country, like Italy or Spain.")
 
-  behave like pageWithContent("p", "This is the final CTC country of the transit route. It may not be where the transit movement ends.")
+  behave like pageWithContent("p", "This is the final country of the transit movement. It may not be where the goods complete their journey.")
 
   behave like pageWithSubmitButton("Save and continue")
 }
