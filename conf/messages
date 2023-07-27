@@ -39,8 +39,8 @@ checkYourAnswers.heading = Check your answers
 
 checkYourAnswers.routing.subheading = Transit route countries
 checkYourAnswers.routing.addOrRemove = Add or remove transit route countries
-checkYourAnswers.routing.countryOfRouting.label = Country of routing {0}
-checkYourAnswers.routing.countryOfRouting.change.hidden = country of routing {0}
+checkYourAnswers.routing.countryOfRouting.label = Country {0}
+checkYourAnswers.routing.countryOfRouting.change.hidden = country {0} in the transit route
 
 checkYourAnswers.transit.subheading = Offices of transit
 checkYourAnswers.transit.addOrRemove = Add or remove offices of transit
@@ -72,8 +72,8 @@ routing.countryOfDestination.heading = What country is the office of destination
 routing.countryOfDestination.hint = Enter the country, like Italy or Spain.
 routing.countryOfDestination.paragraph = This is the final country of the transit movement. It may not be where the goods complete their journey.
 routing.countryOfDestination.placeholder = Select a country
-routing.countryOfDestination.change.hidden = country of destination
-routing.countryOfDestination.checkYourAnswersLabel = Country of destination
+routing.countryOfDestination.change.hidden = office of destination’s country
+routing.countryOfDestination.checkYourAnswersLabel = Office of destination’s country
 routing.countryOfDestination.error.required = Enter the country the office of destination is in
 routing.countryOfDestination.error.noOffices = You cannot use this country as it does not have any offices of destination
 
