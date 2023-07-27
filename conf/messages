@@ -77,11 +77,10 @@ routing.countryOfDestination.checkYourAnswersLabel = Country of destination
 routing.countryOfDestination.error.required = Enter the country the office of destination is in
 routing.countryOfDestination.error.noOffices = You cannot use this country as it does not have any offices of destination
 
-routing.officeOfDestination.title = Where is the office of destination?
-routing.officeOfDestination.heading = Where is the office of destination?
-routing.officeOfDestination.hint = Enter the office location or code, like Dover or GB000060.
-routing.officeOfDestination.paragraph = This is the customs office where the CTC transit ends.
-routing.officeOfDestination.placeholder = Select a customs office
+routing.officeOfDestination.title = Where in {0} is the office of destination?
+routing.officeOfDestination.heading = Where in {0} is the office of destination?
+routing.officeOfDestination.hint = Enter the office location or code, like Wien-Flughafen or AT330200.
+routing.officeOfDestination.paragraph = This is the customs office where the transit movement ends.
 routing.officeOfDestination.placeholder = Select a customs office
 routing.officeOfDestination.change.hidden = office of destination
 routing.officeOfDestination.checkYourAnswersLabel = Office of destination
