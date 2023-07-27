@@ -136,7 +136,7 @@ transit.addOfficeOfTransitYesNo.title = Do you want to add an office of transit?
 transit.addOfficeOfTransitYesNo.heading = Do you want to add an office of transit?
 transit.addOfficeOfTransitYesNo.checkYourAnswersLabel = Do you want to add an office of transit?
 transit.addOfficeOfTransitYesNo.change.hidden = if you want to add an office of transit
-transit.addOfficeOfTransitYesNo.paragraph = This is the first arrival point for goods entering a new customs territory.
+transit.addOfficeOfTransitYesNo.paragraph = You must add an office of transit every time your goods enter a new customs territory.
 transit.addOfficeOfTransitYesNo.error.required = Select yes if you want to add an office of transit
 
 transit.addAnotherOfficeOfTransit.singular.title = You have added {0} office of transit
