@@ -376,6 +376,7 @@ locationOfGoods.unLocode.paragraph = This is a 5-character code used to identify
 
 locationOfGoods.addContactLocationOfGoods.title = Do you want to add a contact for the location of goods?
 locationOfGoods.addContactLocationOfGoods.heading = Do you want to add a contact for the location of goods?
+locationOfGoods.addContactLocationOfGoods.paragraph = This is additional contact information for if Customs have any queries.
 locationOfGoods.addContactLocationOfGoods.checkYourAnswersLabel = Do you want to add a contact for the location of goods?
 locationOfGoods.addContactLocationOfGoods.change.hidden = if you want to add a contact for the location of goods
 locationOfGoods.addContactLocationOfGoods.error.required = Select yes if you want to add a contact for the location of goods.

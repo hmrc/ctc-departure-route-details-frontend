@@ -37,6 +37,8 @@ class AddContactYesNoViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithHeading()
 
+  behave like pageWithContent("p", "This is additional contact information for if Customs have any queries.")
+
   behave like pageWithRadioItems()
 
   behave like pageWithSubmitButton("Save and continue")
