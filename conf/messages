@@ -431,7 +431,7 @@ loadingAndUnloading.loading.addUnLocodeYesNo.paragraph = This is a 5-character c
 
 loadingAndUnloading.loading.unLocode.title = What is the UN/LOCODE for the place of loading?
 loadingAndUnloading.loading.unLocode.heading = What is the UN/LOCODE for the place of loading?
-loadingAndUnloading.loading.unLocode.hint = Enter the code, like GB BRS or GB MNC.
+loadingAndUnloading.loading.unLocode.hint = Enter the code, like GBBRS or GBMNC.
 loadingAndUnloading.loading.unLocode.placeholder = Select a UN/LOCODE.
 loadingAndUnloading.loading.unLocode.change.hidden = UN/LOCODE for the place of loading
 loadingAndUnloading.loading.unLocode.checkYourAnswersLabel = UN/LOCODE

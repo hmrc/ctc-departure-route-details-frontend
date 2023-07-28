@@ -46,7 +46,7 @@ class UnLocodeViewSpec extends InputSelectViewBehaviours[UnLocode] {
 
   behave like pageWithSelect()
 
-  behave like pageWithHint("Enter the code, like GB BRS or GB MNC.")
+  behave like pageWithHint("Enter the code, like GBBRS or GBMNC.")
 
   behave like pageWithSubmitButton("Save and continue")
 }
