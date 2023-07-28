@@ -389,6 +389,7 @@ locationOfGoods.checkYourAnswers.subHeading = Location of goods
 
 locationOfGoods.contact.name.title = Who is the contact for the location of goods?
 locationOfGoods.contact.name.heading = Who is the contact for the location of goods?
+locationOfGoods.contact.name.hint = Enter the full name of the individual or organisation.
 locationOfGoods.contact.name.checkYourAnswersLabel = Who is the contact for the location of goods?
 locationOfGoods.contact.name.change.hidden = the contact for the location of goods
 locationOfGoods.contact.name.error.required = Enter the contact for the location of goods
