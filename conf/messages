@@ -411,6 +411,7 @@ locationOfGoods.contact.telephoneNumber.error.minLength = {0}’s phone number m
 
 loadingAndUnloading.addPlaceOfUnloading.title = Do you want to add a place of unloading?
 loadingAndUnloading.addPlaceOfUnloading.heading = Do you want to add a place of unloading?
+loadingAndUnloading.addPlaceOfUnloading.paragraph = This is where the goods are unloaded.
 loadingAndUnloading.addPlaceOfUnloading.checkYourAnswersLabel = Do you want to add a place of unloading?
 loadingAndUnloading.addPlaceOfUnloading.change.hidden = if you want to add a place of unloading
 loadingAndUnloading.addPlaceOfUnloading.error.required = Select yes if you want to add a place of unloading
