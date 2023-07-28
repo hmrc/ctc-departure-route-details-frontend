@@ -45,7 +45,7 @@ class TelephoneNumberViewSpec extends TelephoneNumberViewBehaviours {
 
   behave like pageWithSectionCaption("Route details - Location of goods")
 
-  behave like pageWithHint("This has to include the country code, like +44 808 157 0192.")
+  behave like pageWithHint("Include the country code, for example +44 808 157 0192.")
 
   behave like pageWithTelephoneNumberInput()
 

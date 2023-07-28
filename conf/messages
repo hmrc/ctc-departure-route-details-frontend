@@ -396,16 +396,16 @@ locationOfGoods.contact.name.error.required = Enter the contact for the location
 locationOfGoods.contact.name.error.invalid = The contact must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
 locationOfGoods.contact.name.error.length = The contact must be 70 characters or less
 
-locationOfGoods.contact.telephoneNumber.title = What is the contact for the location of goods’ telephone number?
-locationOfGoods.contact.telephoneNumber.heading = What is {0}’s telephone number?
-locationOfGoods.contact.telephoneNumber.hint = This has to include the country code, like +44 808 157 0192.
-locationOfGoods.contact.telephoneNumber.checkYourAnswersLabel = What is the contact for the location of goods’ telephone number?
-locationOfGoods.contact.telephoneNumber.change.hidden = the contact for the location of goods’ telephone number
-locationOfGoods.contact.telephoneNumber.error.required = Enter {0}’s telephone number.
-locationOfGoods.contact.telephoneNumber.error.invalidCharacters = {0}’s telephone number must only include numbers 0 to 9 and a plus sign
-locationOfGoods.contact.telephoneNumber.error.invalidFormat = {0}’s telephone number must start with a plus sign
-locationOfGoods.contact.telephoneNumber.error.maxLength = {0}’s telephone number must be {1} characters or less
-locationOfGoods.contact.telephoneNumber.error.minLength = {0}’s telephone number must be {1} characters or more
+locationOfGoods.contact.telephoneNumber.title = What is the phone number for the location of goods’ contact?
+locationOfGoods.contact.telephoneNumber.heading = What is {0} phone number?
+locationOfGoods.contact.telephoneNumber.hint = Include the country code, for example +44 808 157 0192.
+locationOfGoods.contact.telephoneNumber.checkYourAnswersLabel = Contact’s phone number
+locationOfGoods.contact.telephoneNumber.change.hidden = contact’s phone number for the location of goods
+locationOfGoods.contact.telephoneNumber.error.required = Enter {0}’s phone number.
+locationOfGoods.contact.telephoneNumber.error.invalidCharacters = {0}’s phone number must only include numbers 0 to 9 and a plus sign
+locationOfGoods.contact.telephoneNumber.error.invalidFormat = {0}’s phone number must start with a plus sign
+locationOfGoods.contact.telephoneNumber.error.maxLength = {0}’s phone number must be {1} characters or less
+locationOfGoods.contact.telephoneNumber.error.minLength = {0}’s phone number must be {1} characters or more
 
 # Route details - Loading and unloading
 

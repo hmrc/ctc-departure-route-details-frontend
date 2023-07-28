@@ -708,7 +708,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
 
               result mustBe Some(
                 SummaryListRow(
-                  key = Key("What is the contact for the location of goods’ telephone number?".toText),
+                  key = Key("Contact’s phone number".toText),
                   value = Value(contactPhoneNumber.toText),
                   actions = Some(
                     Actions(
@@ -716,8 +716,8 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                         ActionItem(
                           content = "Change".toText,
                           href = contact.routes.TelephoneNumberController.onPageLoad(answers.lrn, mode).url,
-                          visuallyHiddenText = Some("the contact for the location of goods’ telephone number"),
-                          attributes = Map("id" -> "change-location-of-goods-contact-telephone-number")
+                          visuallyHiddenText = Some("contact’s phone number for the location of goods"),
+                          attributes = Map("id" -> "change-location-of-goods-contact-phone-number")
                         )
                       )
                     )
