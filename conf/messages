@@ -351,7 +351,7 @@ locationOfGoods.address.error.length = The {0} must be {1} characters or less
 
 locationOfGoods.additionalIdentifier.title = What is the additional identifier for the location of goods?
 locationOfGoods.additionalIdentifier.heading = What is the additional identifier for the location of goods?
-locationOfGoods.additionalIdentifier.hint = This can be up to 4 characters long, for example 0000 or X9X9.
+locationOfGoods.additionalIdentifier.hint = This can be up to 4 characters long and include both letters and numbers, for example 0000 or X9X9.
 locationOfGoods.additionalIdentifier.checkYourAnswersLabel = Additional identifier
 locationOfGoods.additionalIdentifier.change.hidden = additional identifier
 locationOfGoods.additionalIdentifier.error.required = Enter the additional identifier for the location of goods
