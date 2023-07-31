@@ -35,8 +35,6 @@ case class AddAnotherOfficeOfExitViewModel(
   override val prefix: String = "exit.addAnotherOfficeOfExit"
 
   override def maxCount(implicit config: FrontendAppConfig): Int = config.maxOfficesOfExit
-
-  def hint(implicit messages: Messages): Content = messages(s"$prefix.hint").toText
 }
 
 object AddAnotherOfficeOfExitViewModel {

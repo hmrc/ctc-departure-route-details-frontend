@@ -55,7 +55,8 @@
                 field = form("value"),
                 yesNoType = YesNoWithLegend(
                     legend = viewModel.legend
-                )
+                ),
+                hint = Some(HtmlContent(messages("transit.addAnotherOfficeOfTransit.paragraph").toParagraph))
             )
         } else {
             <p class="govuk-body" data-testId="maxLimit">@viewModel.maxLimitLabel</p>

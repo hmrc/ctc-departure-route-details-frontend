@@ -143,6 +143,7 @@ transit.addAnotherOfficeOfTransit.singular.title = You have added {0} office of 
 transit.addAnotherOfficeOfTransit.singular.heading = You have added {0} office of transit
 transit.addAnotherOfficeOfTransit.plural.title = You have added {0} offices of transit
 transit.addAnotherOfficeOfTransit.plural.heading = You have added {0} offices of transit
+transit.addAnotherOfficeOfTransit.paragraph = You must add an office of transit every time your goods enter a new customs territory.
 transit.addAnotherOfficeOfTransit.error.required = Select yes if you want to add another office of transit
 transit.addAnotherOfficeOfTransit.label = Do you want to add another office of transit?
 transit.addAnotherOfficeOfTransit.maxLimit.label = You cannot add any more offices of transit. To add another office, you need to remove one first.
@@ -208,9 +209,9 @@ exit.addAnotherOfficeOfExit.singular.title = You have added {0} office of exit
 exit.addAnotherOfficeOfExit.singular.heading = You have added {0} office of exit
 exit.addAnotherOfficeOfExit.plural.title = You have added {0} offices of exit
 exit.addAnotherOfficeOfExit.plural.heading = You have added {0} offices of exit
+exit.addAnotherOfficeOfExit.paragraph = You must add an office of exit every time your goods leave a customs territory.
 exit.addAnotherOfficeOfExit.error.required =  Select yes if you want to add another office of exit
 exit.addAnotherOfficeOfExit.label = Do you want to add another office of exit?
-exit.addAnotherOfficeOfExit.hint = You can add up to 9 offices.
 exit.addAnotherOfficeOfExit.maxLimit.label = You cannot add any more offices of exit. To add another office, you need to remove one first.
 
 # Route details - Exit - Index

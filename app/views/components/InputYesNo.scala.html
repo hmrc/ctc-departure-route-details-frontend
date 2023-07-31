@@ -63,4 +63,7 @@
     case YesNoWithLegend(legend) => {
         @govukRadios(radios.withLegend(legend))
     }
+    case YesNoWithLegendAndAdditionalHtml(legend, additionalHtml) => {
+        @govukRadios(radios.withLegend(legend))
+    }
 }
