@@ -398,7 +398,7 @@ locationOfGoods.contact.name.error.invalid = The contact must only include lette
 locationOfGoods.contact.name.error.length = The contact must be 70 characters or less
 
 locationOfGoods.contact.telephoneNumber.title = What is the phone number for the location of goods’ contact?
-locationOfGoods.contact.telephoneNumber.heading = What is {0} phone number?
+locationOfGoods.contact.telephoneNumber.heading = What is {0}’s phone number?
 locationOfGoods.contact.telephoneNumber.hint = Include the country code, for example +44 808 157 0192.
 locationOfGoods.contact.telephoneNumber.checkYourAnswersLabel = Contact’s phone number
 locationOfGoods.contact.telephoneNumber.change.hidden = contact’s phone number for the location of goods
