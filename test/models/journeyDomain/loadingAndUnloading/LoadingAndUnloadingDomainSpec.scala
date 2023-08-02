@@ -23,11 +23,13 @@ import models.SecurityDetailsType._
 import models.domain.{EitherType, UserAnswersReader}
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
+import models.reference.SpecificCircumstanceIndicator
 import models.{Phase, SecurityDetailsType}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.SpecificCircumstanceIndicatorPage
 import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
 import pages.loadingAndUnloading.loading
@@ -103,12 +105,36 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
           val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
           when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
-          "and add unloading UN/LOCODE is unanswered" in {
-            val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-              LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
-            ).run(emptyUserAnswers)
+          "and specific circumstance indicator is XXX" - {
+            "and add place of unloading is unanswered" in {
+              forAll(arbitrary[SpecificCircumstanceIndicator](arbitraryXXXSpecificCircumstanceIndicator)) {
+                specificCircumstanceIndicator =>
+                  val userAnswers = emptyUserAnswers
+                    .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
 
-            result.left.value.page mustBe unloading.UnLocodeYesNoPage
+                  val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
+                    LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+                  ).run(userAnswers)
+
+                  result.left.value.page mustBe AddPlaceOfUnloadingPage
+              }
+            }
+          }
+
+          "and specific circumstance indicator is not XXX or undefined" - {
+            "and add unloading UN/LOCODE is unanswered" in {
+              forAll(Gen.option(arbitrary[SpecificCircumstanceIndicator])) {
+                specificCircumstanceIndicator =>
+                  val userAnswers = emptyUserAnswers
+                    .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
+
+                  val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
+                    LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+                  ).run(userAnswers)
+
+                  result.left.value.page mustBe unloading.UnLocodeYesNoPage
+              }
+            }
           }
         }
       }

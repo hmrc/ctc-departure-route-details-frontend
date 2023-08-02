@@ -17,18 +17,16 @@
 package models.journeyDomain.loadingAndUnloading
 
 import cats.implicits._
+import config.Constants.XXX
 import config.PhaseConfig
-import models.SecurityDetailsType.{
-  EntryAndExitSummaryDeclarationSecurityDetails,
-  EntrySummaryDeclarationSecurityDetails,
-  ExitSummaryDeclarationSecurityDetails,
-  NoSecurityDetails
-}
+import models.SecurityDetailsType._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.reference.SpecificCircumstanceIndicator
 import models.{Mode, Phase, UserAnswers}
+import pages.SpecificCircumstanceIndicatorPage
 import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
 import play.api.mvc.Call
@@ -57,19 +55,23 @@ object LoadingAndUnloadingDomain {
     }
 
   implicit def unloadingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[UnloadingDomain]] = {
-    lazy val mandatoryReader: UserAnswersReader[Option[UnloadingDomain]] = UserAnswersReader[UnloadingDomain].map(Some(_))
+    lazy val mandatoryReader: UserAnswersReader[Option[UnloadingDomain]] =
+      UserAnswersReader[UnloadingDomain].map(Some(_))
+
+    lazy val optionalReader: UserAnswersReader[Option[UnloadingDomain]] =
+      AddPlaceOfUnloadingPage.filterOptionalDependent(identity)(UserAnswersReader[UnloadingDomain])
+
     phaseConfig.phase match {
       case Phase.Transition =>
-        // specific circumstance indicator is currently undefined, so draw.io condition is always false
-        mandatoryReader
+        SpecificCircumstanceIndicatorPage.optionalReader.flatMap {
+          case Some(SpecificCircumstanceIndicator(XXX, _)) => optionalReader
+          case _                                           => mandatoryReader
+        }
       case Phase.PostTransition =>
         SecurityDetailsTypePage.reader.flatMap {
-          case ExitSummaryDeclarationSecurityDetails =>
-            AddPlaceOfUnloadingPage.filterOptionalDependent(identity)(UserAnswersReader[UnloadingDomain])
-          case EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
-            mandatoryReader
-          case _ =>
-            none[UnloadingDomain].pure[UserAnswersReader]
+          case NoSecurityDetails                     => none[UnloadingDomain].pure[UserAnswersReader]
+          case ExitSummaryDeclarationSecurityDetails => optionalReader
+          case _                                     => mandatoryReader
         }
     }
   }

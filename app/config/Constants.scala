@@ -17,7 +17,8 @@
 package config
 
 object Constants {
-  val GB = "GB"
-  val XI = "XI"
-  val AD = "AD"
+  val GB  = "GB"
+  val XI  = "XI"
+  val AD  = "AD"
+  val XXX = "XXX"
 }
