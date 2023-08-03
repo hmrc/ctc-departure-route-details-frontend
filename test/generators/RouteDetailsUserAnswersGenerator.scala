@@ -62,7 +62,7 @@ trait RouteDetailsUserAnswersGenerator {
   def arbitraryLoadingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
     buildUserAnswers[LoadingDomain](userAnswers)
 
-  def arbitraryUnloadingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
+  def arbitraryUnloadingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[UnloadingDomain](userAnswers)
 
   def arbitraryLoadingAndUnloadingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =

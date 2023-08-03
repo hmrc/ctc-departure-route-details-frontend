@@ -17,9 +17,13 @@
 package models.journeyDomain.loadingAndUnloading.unloading
 
 import cats.implicits._
+import config.PhaseConfig
+import models.Phase
+import models.SecurityDetailsType.NoSecurityDetails
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.JourneyDomainModel
 import models.reference.UnLocode
+import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.unloading.{AddExtraInformationYesNoPage, UnLocodePage, UnLocodeYesNoPage}
 
 case class UnloadingDomain(
@@ -29,20 +33,26 @@ case class UnloadingDomain(
 
 object UnloadingDomain {
 
-  implicit val userAnswersReader: UserAnswersReader[UnloadingDomain] = {
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[UnloadingDomain] = {
+    lazy val unLocodeAndAdditionalInformationReader = UnLocodeYesNoPage.reader.flatMap {
+      case true =>
+        (UnLocodePage.reader.map(Option(_)), optionalAdditionalInformationReader).tupled
+      case false =>
+        (none[UnLocode].pure[UserAnswersReader], UserAnswersReader[AdditionalInformationDomain].map(Option(_))).tupled
+    }
 
-    implicit val unLocodeReads: UserAnswersReader[Option[UnLocode]] =
-      UnLocodeYesNoPage.filterOptionalDependent(identity)(UnLocodePage.reader)
+    lazy val optionalAdditionalInformationReader =
+      AddExtraInformationYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalInformationDomain])
 
-    implicit val additionalInformationReads: UserAnswersReader[Option[AdditionalInformationDomain]] =
-      UnLocodeYesNoPage.reader.flatMap {
-        case true  => AddExtraInformationYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalInformationDomain])
-        case false => UserAnswersReader[AdditionalInformationDomain].map(Some(_))
-      }
+    val reader = phaseConfig.phase match {
+      case Phase.Transition =>
+        SecurityDetailsTypePage.reader.flatMap {
+          case NoSecurityDetails => (none[UnLocode].pure[UserAnswersReader], optionalAdditionalInformationReader).tupled
+          case _                 => unLocodeAndAdditionalInformationReader
+        }
+      case Phase.PostTransition => unLocodeAndAdditionalInformationReader
+    }
 
-    (
-      UserAnswersReader[Option[UnLocode]],
-      UserAnswersReader[Option[AdditionalInformationDomain]]
-    ).tupled.map((UnloadingDomain.apply _).tupled)
+    reader.map((UnloadingDomain.apply _).tupled)
   }
 }

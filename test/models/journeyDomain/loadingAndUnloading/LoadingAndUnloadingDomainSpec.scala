@@ -39,6 +39,25 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
 
   "LoadingAndUnloadingDomain" - {
 
+    "userAnswersReader" - {
+      "when during transition" - {
+        val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+        when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
+
+        "and security is 0" - {
+          "and add country and location yes/no is unanswered" in {
+            val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, SecurityDetailsType.NoSecurityDetails)
+
+            val result: EitherType[LoadingAndUnloadingDomain] = UserAnswersReader[LoadingAndUnloadingDomain](
+              LoadingAndUnloadingDomain.userAnswersReader(mockPhaseConfig)
+            ).run(userAnswers)
+
+            result.left.value.page mustBe unloading.AddExtraInformationYesNoPage
+          }
+        }
+      }
+    }
+
     "unloadingReader" - {
       "can be parsed from UserAnswers" - {
         "when post transition" - {
@@ -123,9 +142,10 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
 
           "and specific circumstance indicator is not XXX or undefined" - {
             "and add unloading UN/LOCODE is unanswered" in {
-              forAll(Gen.option(arbitrary[SpecificCircumstanceIndicator])) {
-                specificCircumstanceIndicator =>
+              forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType), Gen.option(arbitrary[SpecificCircumstanceIndicator])) {
+                (securityType, specificCircumstanceIndicator) =>
                   val userAnswers = emptyUserAnswers
+                    .setValue(SecurityDetailsTypePage, securityType)
                     .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
 
                   val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
