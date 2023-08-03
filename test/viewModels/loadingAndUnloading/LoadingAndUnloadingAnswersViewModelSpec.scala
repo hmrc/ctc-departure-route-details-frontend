@@ -19,15 +19,12 @@ package viewModels.loadingAndUnloading
 import base.SpecBase
 import config.PhaseConfig
 import generators.Generators
-import models.reference.SpecificCircumstanceIndicator
-import models.{Mode, Phase, SecurityDetailsType}
+import models.{Mode, Phase}
 import org.mockito.Mockito.when
-import pages.{loadingAndUnloading, SpecificCircumstanceIndicatorPage}
-import pages.loadingAndUnloading.loading
-import pages.loadingAndUnloading.unloading
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.external.SecurityDetailsTypePage
+import pages.loadingAndUnloading
+import pages.loadingAndUnloading.{loading, unloading}
 import viewModels.loadingAndUnloading.LoadingAndUnloadingAnswersViewModel.LoadingAndUnloadingAnswersViewModelProvider
 
 class LoadingAndUnloadingAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
