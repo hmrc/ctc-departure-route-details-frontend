@@ -199,6 +199,8 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))
       when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any()))
         .thenReturn(Future.successful(SelectableList(Seq(country))))
+      when(mockCountriesService.getCommunityCountries()(any()))
+        .thenReturn(Future.successful(SelectableList(Seq(country))))
 
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
@@ -228,7 +230,8 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
           |          "officeOfTransit" : {
           |            "id" : "${customsOffice.id}",
           |            "name" : "${customsOffice.name}",
-          |            "isInCL147" : true
+          |            "isInCL147" : true,
+          |            "isInCL010" : true
           |          }
           |        }
           |      ]

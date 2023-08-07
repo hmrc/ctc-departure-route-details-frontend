@@ -16,7 +16,7 @@
 
 package navigation
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PhaseConfig}
 import models.domain.UserAnswersReader
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.{CheckMode, Mode, NormalMode}
@@ -24,7 +24,8 @@ import models.{CheckMode, Mode, NormalMode}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class LoadingAndUnloadingNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends LoadingAndUnloadingNavigatorProvider {
+class LoadingAndUnloadingNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig, phaseConfig: PhaseConfig)
+    extends LoadingAndUnloadingNavigatorProvider {
 
   def apply(mode: Mode): UserAnswersNavigator =
     mode match {
@@ -40,7 +41,8 @@ trait LoadingAndUnloadingNavigatorProvider {
   def apply(mode: Mode): UserAnswersNavigator
 }
 
-class LoadingAndUnloadingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig) extends UserAnswersNavigator {
+class LoadingAndUnloadingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig, implicit override val phaseConfig: PhaseConfig)
+    extends UserAnswersNavigator {
 
   override type T = LoadingAndUnloadingDomain
 

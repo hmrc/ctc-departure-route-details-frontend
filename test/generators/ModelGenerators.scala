@@ -16,6 +16,7 @@
 
 package generators
 
+import config.Constants.XXX
 import models.AddressLine.{Country => _}
 import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
 import models.reference._
@@ -106,6 +107,13 @@ trait ModelGenerators {
         code        <- nonEmptyString
         description <- nonEmptyString
       } yield SpecificCircumstanceIndicator(code, description)
+    }
+
+  lazy val arbitraryXXXSpecificCircumstanceIndicator: Arbitrary[SpecificCircumstanceIndicator] =
+    Arbitrary {
+      for {
+        description <- nonEmptyString
+      } yield SpecificCircumstanceIndicator(XXX, description)
     }
 
   implicit lazy val arbitraryLocationType: Arbitrary[LocationType] =

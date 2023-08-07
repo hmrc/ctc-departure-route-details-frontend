@@ -15,6 +15,7 @@
  */
 
 import cats.data.ReaderT
+import config.PhaseConfig
 import models.TaskStatus.{Completed, InProgress}
 import models.UserAnswers
 import models.domain.UserAnswersReader
@@ -71,7 +72,7 @@ package object controllers {
           }
       }
 
-    def updateTask(): UserAnswersWriter[Write[A]] =
+    def updateTask()(implicit phaseConfig: PhaseConfig): UserAnswersWriter[Write[A]] =
       userAnswersWriter.flatMapF {
         case (page, userAnswers) =>
           page.path.path.headOption.map(_.toJsonString) match {

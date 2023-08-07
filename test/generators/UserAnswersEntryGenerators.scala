@@ -43,6 +43,7 @@ trait UserAnswersEntryGenerators {
       case OfficeOfDeparturePage        => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
       case OfficeOfDepartureInCL112Page => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfDepartureInCL147Page => arbitrary[Boolean].map(JsBoolean)
+      case OfficeOfDepartureInCL010Page => arbitrary[Boolean].map(JsBoolean)
       case DeclarationTypePage          => arbitrary[DeclarationType].map(Json.toJson(_))
       case SecurityDetailsTypePage      => arbitrary[SecurityDetailsType].map(Json.toJson(_))
     }
@@ -80,6 +81,7 @@ trait UserAnswersEntryGenerators {
       case OfficeOfTransitCountryPage(_)     => arbitrary[Country].map(Json.toJson(_))
       case OfficeOfTransitPage(_)            => arbitrary[CustomsOffice].map(Json.toJson(_))
       case OfficeOfTransitInCL147Page(_)     => arbitrary[Boolean].map(JsBoolean)
+      case OfficeOfTransitInCL010Page(_)     => arbitrary[Boolean].map(JsBoolean)
       case AddOfficeOfTransitETAYesNoPage(_) => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfTransitETAPage(_)         => arbitrary[DateTime].map(Json.toJson(_))
     }

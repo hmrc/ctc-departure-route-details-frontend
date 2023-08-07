@@ -16,7 +16,7 @@
 
 package viewModels.transit
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PhaseConfig}
 import controllers.transit.routes
 import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
@@ -42,7 +42,7 @@ object AddAnotherOfficeOfTransitViewModel {
     def apply(
       userAnswers: UserAnswers,
       mode: Mode
-    )(implicit messages: Messages, config: FrontendAppConfig): AddAnotherOfficeOfTransitViewModel = {
+    )(implicit messages: Messages, config: FrontendAppConfig, phaseConfig: PhaseConfig): AddAnotherOfficeOfTransitViewModel = {
       val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)
 
       val listItems = helper.listItems.collect {

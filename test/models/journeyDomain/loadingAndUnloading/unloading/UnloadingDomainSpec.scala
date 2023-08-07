@@ -17,13 +17,18 @@
 package models.journeyDomain.loadingAndUnloading.unloading
 
 import base.SpecBase
+import config.PhaseConfig
 import generators.Generators
 import models.domain.{EitherType, UserAnswersReader}
 import models.reference.{Country, UnLocode}
+import models.{Phase, SecurityDetailsType}
+import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.unloading._
 
-class UnloadingDomainSpec extends SpecBase with Generators {
+class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private val country  = arbitrary[Country].sample.value
   private val unlocode = arbitrary[UnLocode].sample.value
@@ -31,55 +36,101 @@ class UnloadingDomainSpec extends SpecBase with Generators {
   "UnloadingDomain" - {
 
     "can be parsed from UserAnswers" - {
+      "when post-transition" - {
 
-      "when add a place of unloading UN/LOCODE is yes and additional information is yes" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(UnLocodeYesNoPage, true)
-          .setValue(UnLocodePage, unlocode)
-          .setValue(AddExtraInformationYesNoPage, true)
-          .setValue(CountryPage, country)
-          .setValue(LocationPage, country.description)
+        val mockPhaseConfig = mock[PhaseConfig]
+        when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
-        val expectedResult = UnloadingDomain(
-          unLocode = Some(unlocode),
-          additionalInformation = Some(AdditionalInformationDomain(country, country.description))
-        )
+        "when add a place of unloading UN/LOCODE is yes and additional information is yes" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(UnLocodeYesNoPage, true)
+            .setValue(UnLocodePage, unlocode)
+            .setValue(AddExtraInformationYesNoPage, true)
+            .setValue(CountryPage, country)
+            .setValue(LocationPage, country.description)
 
-        val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain].run(userAnswers)
+          val expectedResult = UnloadingDomain(
+            unLocode = Some(unlocode),
+            additionalInformation = Some(AdditionalInformationDomain(country, country.description))
+          )
 
-        result.value mustBe expectedResult
+          val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
+            UnloadingDomain.userAnswersReader(mockPhaseConfig)
+          ).run(userAnswers)
+
+          result.value mustBe expectedResult
+        }
+
+        "when add a place of unloading UN/LOCODE is yes and additional information is no" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(UnLocodeYesNoPage, true)
+            .setValue(UnLocodePage, unlocode)
+            .setValue(AddExtraInformationYesNoPage, false)
+
+          val expectedResult = UnloadingDomain(
+            unLocode = Some(unlocode),
+            additionalInformation = None
+          )
+
+          val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
+            UnloadingDomain.userAnswersReader(mockPhaseConfig)
+          ).run(userAnswers)
+
+          result.value mustBe expectedResult
+        }
+
+        "when add a place of unloading UN/LOCODE is no" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(UnLocodeYesNoPage, false)
+            .setValue(CountryPage, country)
+            .setValue(LocationPage, country.description)
+
+          val expectedResult = UnloadingDomain(
+            unLocode = None,
+            additionalInformation = Some(AdditionalInformationDomain(country, country.description))
+          )
+
+          val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
+            UnloadingDomain.userAnswersReader(mockPhaseConfig)
+          ).run(userAnswers)
+
+          result.value mustBe expectedResult
+        }
       }
+    }
 
-      "when add a place of unloading UN/LOCODE is yes and additional information is no" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(UnLocodeYesNoPage, true)
-          .setValue(UnLocodePage, unlocode)
-          .setValue(AddExtraInformationYesNoPage, false)
+    "can not be parsed from user answers" - {
+      "when during transition" - {
 
-        val expectedResult = UnloadingDomain(
-          unLocode = Some(unlocode),
-          additionalInformation = None
-        )
+        val mockPhaseConfig = mock[PhaseConfig]
+        when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
-        val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain].run(userAnswers)
+        "when security is 0" - {
+          "and add country and location yes/no is unanswered" in {
+            val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, SecurityDetailsType.NoSecurityDetails)
 
-        result.value mustBe expectedResult
-      }
+            val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
+              UnloadingDomain.userAnswersReader(mockPhaseConfig)
+            ).run(userAnswers)
 
-      "when add a place of unloading UN/LOCODE is no" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(UnLocodeYesNoPage, false)
-          .setValue(CountryPage, country)
-          .setValue(LocationPage, country.description)
+            result.left.value.page mustBe AddExtraInformationYesNoPage
+          }
+        }
 
-        val expectedResult = UnloadingDomain(
-          unLocode = None,
-          additionalInformation = Some(AdditionalInformationDomain(country, country.description))
-        )
+        "when security is not 0" - {
+          "and add unloading UN/LOCODE yes/no is unanswered" in {
+            forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType)) {
+              securityDetails =>
+                val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityDetails)
 
-        val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain].run(userAnswers)
+                val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
+                  UnloadingDomain.userAnswersReader(mockPhaseConfig)
+                ).run(userAnswers)
 
-        result.value mustBe expectedResult
+                result.left.value.page mustBe UnLocodeYesNoPage
+            }
+          }
+        }
       }
     }
   }

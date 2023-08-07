@@ -16,6 +16,7 @@
 
 package controllers.transit.index
 
+import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
@@ -40,7 +41,7 @@ class AddOfficeOfTransitETAYesNoController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: AddOfficeOfTransitETAYesNoView,
   getMandatoryPage: SpecificDataRequiredActionProvider
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 

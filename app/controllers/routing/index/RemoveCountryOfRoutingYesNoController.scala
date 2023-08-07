@@ -16,6 +16,7 @@
 
 package controllers.routing.index
 
+import config.PhaseConfig
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
 import controllers.routing.{routes => routingRoutes}
@@ -45,7 +46,7 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: RemoveCountryOfRoutingYesNoView,
   countriesService: CountriesService
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 

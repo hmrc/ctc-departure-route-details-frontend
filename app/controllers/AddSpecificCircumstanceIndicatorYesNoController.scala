@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.PhaseConfig
 import controllers.actions._
 import forms.YesNoFormProvider
 import models.{LocalReferenceNumber, Mode}
@@ -38,7 +39,7 @@ class AddSpecificCircumstanceIndicatorYesNoController @Inject() (
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AddSpecificCircumstanceIndicatorYesNoView
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
