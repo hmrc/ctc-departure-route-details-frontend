@@ -74,10 +74,10 @@ POST       /location-of-goods/contact-name/:lrn                             cont
 GET        /location-of-goods/change-contact-name/:lrn                      controllers.locationOfGoods.contact.NameController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
 POST       /location-of-goods/change-contact-name/:lrn                      controllers.locationOfGoods.contact.NameController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
 
-GET        /location-of-goods/contact-telephone-number/:lrn                 controllers.locationOfGoods.contact.TelephoneNumberController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-POST       /location-of-goods/contact-telephone-number/:lrn                 controllers.locationOfGoods.contact.TelephoneNumberController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-GET        /location-of-goods/change-contact-telephone-number/:lrn          controllers.locationOfGoods.contact.TelephoneNumberController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
-POST       /location-of-goods/change-contact-telephone-number/:lrn          controllers.locationOfGoods.contact.TelephoneNumberController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+GET        /location-of-goods/contact-phone-number/:lrn                     controllers.locationOfGoods.contact.TelephoneNumberController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /location-of-goods/contact-phone-number/:lrn                     controllers.locationOfGoods.contact.TelephoneNumberController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /location-of-goods/change-contact-phone-number/:lrn              controllers.locationOfGoods.contact.TelephoneNumberController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /location-of-goods/change-contact-phone-number/:lrn              controllers.locationOfGoods.contact.TelephoneNumberController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
 
 GET        /location-of-goods/check-answers/:lrn                            controllers.locationOfGoods.CheckYourAnswersController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 POST       /location-of-goods/check-answers/:lrn                            controllers.locationOfGoods.CheckYourAnswersController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)

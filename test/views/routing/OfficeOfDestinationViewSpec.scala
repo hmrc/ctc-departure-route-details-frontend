@@ -27,28 +27,30 @@ import views.html.routing.OfficeOfDestinationView
 
 class OfficeOfDestinationViewSpec extends InputSelectViewBehaviours[CustomsOffice] {
 
+  private val country = arbitraryCountry.arbitrary.sample.value
+
   override def form: Form[CustomsOffice] = new SelectableFormProvider()(prefix, SelectableList(values))
 
   override def applyView(form: Form[CustomsOffice]): HtmlFormat.Appendable =
-    injector.instanceOf[OfficeOfDestinationView].apply(form, lrn, values, NormalMode)(fakeRequest, messages)
+    injector.instanceOf[OfficeOfDestinationView].apply(form, lrn, country.description, values, NormalMode)(fakeRequest, messages)
 
   implicit override val arbitraryT: Arbitrary[CustomsOffice] = arbitraryCustomsOffice
 
   override val prefix: String = "routing.officeOfDestination"
 
-  behave like pageWithTitle()
+  behave like pageWithTitle(country.description)
 
   behave like pageWithBackLink()
 
   behave like pageWithSectionCaption("Route details - Transit route")
 
-  behave like pageWithHeading()
+  behave like pageWithHeading(country.description)
 
   behave like pageWithSelect()
 
-  behave like pageWithHint("Enter the office location or code, like Dover or GB000060.")
+  behave like pageWithHint("Enter the office location or code, like Wien-Flughafen or AT330200.")
 
-  behave like pageWithContent("p", "This is the customs office where the CTC transit ends.")
+  behave like pageWithContent("p", "This is the customs office where the transit movement ends.")
 
   behave like pageWithSubmitButton("Save and continue")
 }

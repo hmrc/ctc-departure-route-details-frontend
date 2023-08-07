@@ -152,6 +152,6 @@ class LocationOfGoodsCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode
     page = TelephoneNumberPage,
     formatAnswer = formatAsText,
     prefix = "locationOfGoods.contact.telephoneNumber",
-    id = Some("change-location-of-goods-contact-telephone-number")
+    id = Some("change-location-of-goods-contact-phone-number")
   )
 }

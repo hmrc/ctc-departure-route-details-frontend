@@ -55,7 +55,7 @@ class AddAnotherOfficeOfExitViewSpec extends ListWithActionsViewBehaviours {
 
   behave like pageWithSectionCaption("Route details - Office of exit")
 
-  behave like pageWithHint("You can add up to 9 offices.")
+  behave like pageWithContent("p", "You must add an office of exit every time your goods leave a customs territory.")
 
   behave like pageWithMoreItemsAllowed(notMaxedOutViewModel.count)()
 

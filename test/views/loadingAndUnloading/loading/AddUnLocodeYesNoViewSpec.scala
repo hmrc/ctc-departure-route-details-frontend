@@ -37,7 +37,7 @@ class AddUnLocodeYesNoViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithHeading()
 
-  behave like pageWithContent("p", "This is a 5-character code used to identify a transit-related location, like a port or clearance depot.")
+  behave like pageWithContent("p", "This is a 5-character code used to identify where the goods are loaded, such as a port or clearance depot.")
 
   behave like pageWithRadioItems()
 

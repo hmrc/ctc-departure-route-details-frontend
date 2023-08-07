@@ -39,8 +39,8 @@ checkYourAnswers.heading = Check your answers
 
 checkYourAnswers.routing.subheading = Transit route countries
 checkYourAnswers.routing.addOrRemove = Add or remove transit route countries
-checkYourAnswers.routing.countryOfRouting.label = Country of routing {0}
-checkYourAnswers.routing.countryOfRouting.change.hidden = country of routing {0}
+checkYourAnswers.routing.countryOfRouting.label = Country {0}
+checkYourAnswers.routing.countryOfRouting.change.hidden = country {0} in the transit route
 
 checkYourAnswers.transit.subheading = Offices of transit
 checkYourAnswers.transit.addOrRemove = Add or remove offices of transit
@@ -67,21 +67,20 @@ specificCircumstanceIndicator.error.required = Select which specific circumstanc
 
 # Route details - Routing
 
-routing.countryOfDestination.title = What is the country of destination?
-routing.countryOfDestination.heading = What is the country of destination?
+routing.countryOfDestination.title = What country is the office of destination in?
+routing.countryOfDestination.heading = What country is the office of destination in?
 routing.countryOfDestination.hint = Enter the country, like Italy or Spain.
-routing.countryOfDestination.paragraph = This is the final CTC country of the transit route. It may not be where the transit movement ends.
+routing.countryOfDestination.paragraph = This is the final country of the transit movement. It may not be where the goods complete their journey.
 routing.countryOfDestination.placeholder = Select a country
-routing.countryOfDestination.change.hidden = country of destination
-routing.countryOfDestination.checkYourAnswersLabel = Country of destination
-routing.countryOfDestination.error.required = Enter the country of destination
+routing.countryOfDestination.change.hidden = office of destination’s country
+routing.countryOfDestination.checkYourAnswersLabel = Office of destination’s country
+routing.countryOfDestination.error.required = Enter the country the office of destination is in
 routing.countryOfDestination.error.noOffices = You cannot use this country as it does not have any offices of destination
 
-routing.officeOfDestination.title = Where is the office of destination?
-routing.officeOfDestination.heading = Where is the office of destination?
-routing.officeOfDestination.hint = Enter the office location or code, like Dover or GB000060.
-routing.officeOfDestination.paragraph = This is the customs office where the CTC transit ends.
-routing.officeOfDestination.placeholder = Select a customs office
+routing.officeOfDestination.title = Where in {0} is the office of destination?
+routing.officeOfDestination.heading = Where in {0} is the office of destination?
+routing.officeOfDestination.hint = Enter the office location or code, like Wien-Flughafen or AT330200.
+routing.officeOfDestination.paragraph = This is the customs office where the transit movement ends.
 routing.officeOfDestination.placeholder = Select a customs office
 routing.officeOfDestination.change.hidden = office of destination
 routing.officeOfDestination.checkYourAnswersLabel = Office of destination
@@ -96,6 +95,7 @@ routing.bindingItinerary.change.hidden = if you are using a binding itinerary
 
 routing.addCountryOfRoutingYesNo.title = Do you want to add a country to the transit route?
 routing.addCountryOfRoutingYesNo.heading = Do you want to add a country to the transit route?
+routing.addCountryOfRoutingYesNo.paragraph = This can be any country the transit passes through, not just the places it stops.
 routing.addCountryOfRoutingYesNo.checkYourAnswersLabel = Do you want to add a country to the transit route?
 routing.addCountryOfRoutingYesNo.error.required = Select yes if you want to add a country to the transit route
 routing.addCountryOfRoutingYesNo.change.hidden = if you want to add a country to the transit route
@@ -136,13 +136,14 @@ transit.addOfficeOfTransitYesNo.title = Do you want to add an office of transit?
 transit.addOfficeOfTransitYesNo.heading = Do you want to add an office of transit?
 transit.addOfficeOfTransitYesNo.checkYourAnswersLabel = Do you want to add an office of transit?
 transit.addOfficeOfTransitYesNo.change.hidden = if you want to add an office of transit
-transit.addOfficeOfTransitYesNo.paragraph = This is the first arrival point for goods entering a new customs territory.
+transit.addOfficeOfTransitYesNo.paragraph = You must add an office of transit every time your goods enter a new customs territory.
 transit.addOfficeOfTransitYesNo.error.required = Select yes if you want to add an office of transit
 
 transit.addAnotherOfficeOfTransit.singular.title = You have added {0} office of transit
 transit.addAnotherOfficeOfTransit.singular.heading = You have added {0} office of transit
 transit.addAnotherOfficeOfTransit.plural.title = You have added {0} offices of transit
 transit.addAnotherOfficeOfTransit.plural.heading = You have added {0} offices of transit
+transit.addAnotherOfficeOfTransit.paragraph = You must add an office of transit every time your goods enter a new customs territory.
 transit.addAnotherOfficeOfTransit.error.required = Select yes if you want to add another office of transit
 transit.addAnotherOfficeOfTransit.label = Do you want to add another office of transit?
 transit.addAnotherOfficeOfTransit.maxLimit.label = You cannot add any more offices of transit. To add another office, you need to remove one first.
@@ -208,9 +209,9 @@ exit.addAnotherOfficeOfExit.singular.title = You have added {0} office of exit
 exit.addAnotherOfficeOfExit.singular.heading = You have added {0} office of exit
 exit.addAnotherOfficeOfExit.plural.title = You have added {0} offices of exit
 exit.addAnotherOfficeOfExit.plural.heading = You have added {0} offices of exit
+exit.addAnotherOfficeOfExit.paragraph = You must add an office of exit every time your goods leave a customs territory.
 exit.addAnotherOfficeOfExit.error.required =  Select yes if you want to add another office of exit
 exit.addAnotherOfficeOfExit.label = Do you want to add another office of exit?
-exit.addAnotherOfficeOfExit.hint = You can add up to 9 offices.
 exit.addAnotherOfficeOfExit.maxLimit.label = You cannot add any more offices of exit. To add another office, you need to remove one first.
 
 # Route details - Exit - Index
@@ -227,7 +228,7 @@ exit.index.officeOfExitCountry.error.noOffices = You cannot use this country as 
 
 exit.index.officeOfExit.title = Where in {0} is the office of exit?
 exit.index.officeOfExit.heading = Where in {0} is the office of exit?
-exit.index.officeOfExit.hint = Enter the office location or code, like Dover or GB000060.
+exit.index.officeOfExit.hint = Enter the office location or code, like Basel or CH001454.
 exit.index.officeOfExit.placeholder = Select a customs office
 exit.index.officeOfExit.change.hidden = office of exit’s location
 exit.index.officeOfExit.checkYourAnswersLabel = Office location
@@ -248,7 +249,7 @@ exit.index.checkOfficeOfExitAnswers.heading = Check your answers
 locationOfGoods.addLocationOfGoods.title = Do you want to add a location of goods?
 locationOfGoods.addLocationOfGoods.heading = Do you want to add a location of goods?
 locationOfGoods.addLocationOfGoods.paragraph1 = This is where Customs will carry out any physical checks.
-locationOfGoods.addLocationOfGoods.paragraph2 = For goods not present at a customs office, this is their location at the time they’re declared.
+locationOfGoods.addLocationOfGoods.paragraph2 = For goods not present at a customs office, this is their location at the time they are declared.
 locationOfGoods.addLocationOfGoods.checkYourAnswersLabel = Do you want to add a location of goods?
 locationOfGoods.addLocationOfGoods.change.hidden = if you want to add a location of goods
 locationOfGoods.addLocationOfGoods.error.required = Select yes if you want to add a location of goods
@@ -301,7 +302,7 @@ locationOfGoods.coordinates.longitude = Longitude
 locationOfGoods.coordinates.hint = These numbers can be positive or negative and need between 5 and 7 decimal places. For example, 50.96622 or 1.86201.
 locationOfGoods.coordinates.checkYourAnswersLabel = Coordinates
 locationOfGoods.coordinates.change.hidden = coordinates
-locationOfGoods.coordinates.error.invalid = The {0} coordinates must only include numbers 0 to 9, a decimal place and a minus sign
+locationOfGoods.coordinates.error.invalid = The {0} coordinates must only include numbers 0 to 9, a decimal point and a plus or minus sign
 locationOfGoods.coordinates.error.latitude.maximum = The latitude coordinates must be between -90 and 90
 locationOfGoods.coordinates.error.longitude.maximum = The longitude coordinates must be between -180 and 180
 locationOfGoods.coordinates.error.required = Enter the {0} coordinates for the location of goods
@@ -351,18 +352,19 @@ locationOfGoods.address.error.length = The {0} must be {1} characters or less
 
 locationOfGoods.additionalIdentifier.title = What is the additional identifier for the location of goods?
 locationOfGoods.additionalIdentifier.heading = What is the additional identifier for the location of goods?
-locationOfGoods.additionalIdentifier.hint = This can be up to 4 characters long, for example 0000 or X9X9.
+locationOfGoods.additionalIdentifier.hint = This can be up to 4 characters long and include both letters and numbers, for example 0000 or X9X9.
 locationOfGoods.additionalIdentifier.checkYourAnswersLabel = Additional identifier
 locationOfGoods.additionalIdentifier.change.hidden = additional identifier
 locationOfGoods.additionalIdentifier.error.required = Enter the additional identifier for the location of goods
 locationOfGoods.additionalIdentifier.error.length = The additional identifier must be no more than 4 characters long
 locationOfGoods.additionalIdentifier.error.invalid = The additional identifier must only include the letters a to z and numbers 0 to 9
 
-locationOfGoods.addIdentifierYesNo.title = Do you want to add another identifier for the location of goods?
-locationOfGoods.addIdentifierYesNo.heading = Do you want to add another identifier for the location of goods?
+locationOfGoods.addIdentifierYesNo.title = Do you want to add an additional identifier for the location of goods?
+locationOfGoods.addIdentifierYesNo.heading = Do you want to add an additional identifier for the location of goods?
+locationOfGoods.addIdentifierYesNo.paragraph = This is an alternative reference number to identify the location.
 locationOfGoods.addIdentifierYesNo.checkYourAnswersLabel = Do you want to add another identifier for the location of goods?
 locationOfGoods.addIdentifierYesNo.change.hidden = if you want to add another identifier for the location of goods
-locationOfGoods.addIdentifierYesNo.error.required = Select yes if you want to add another identifier for the location of goods
+locationOfGoods.addIdentifierYesNo.error.required = Select yes if you want to add an additional identifier for the location of goods
 
 locationOfGoods.unLocode.title = What is the UN/LOCODE for the location of goods?
 locationOfGoods.unLocode.heading = What is the UN/LOCODE for the location of goods?
@@ -375,6 +377,7 @@ locationOfGoods.unLocode.paragraph = This is a 5-character code used to identify
 
 locationOfGoods.addContactLocationOfGoods.title = Do you want to add a contact for the location of goods?
 locationOfGoods.addContactLocationOfGoods.heading = Do you want to add a contact for the location of goods?
+locationOfGoods.addContactLocationOfGoods.paragraph = This is additional contact information for if Customs have any queries.
 locationOfGoods.addContactLocationOfGoods.checkYourAnswersLabel = Do you want to add a contact for the location of goods?
 locationOfGoods.addContactLocationOfGoods.change.hidden = if you want to add a contact for the location of goods
 locationOfGoods.addContactLocationOfGoods.error.required = Select yes if you want to add a contact for the location of goods.
@@ -387,27 +390,29 @@ locationOfGoods.checkYourAnswers.subHeading = Location of goods
 
 locationOfGoods.contact.name.title = Who is the contact for the location of goods?
 locationOfGoods.contact.name.heading = Who is the contact for the location of goods?
-locationOfGoods.contact.name.checkYourAnswersLabel = Who is the contact for the location of goods?
-locationOfGoods.contact.name.change.hidden = the contact for the location of goods
+locationOfGoods.contact.name.hint = Enter the full name of the individual or organisation.
+locationOfGoods.contact.name.checkYourAnswersLabel = Contact’s name
+locationOfGoods.contact.name.change.hidden = contact’s name for the location of goods
 locationOfGoods.contact.name.error.required = Enter the contact for the location of goods
 locationOfGoods.contact.name.error.invalid = The contact must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
 locationOfGoods.contact.name.error.length = The contact must be 70 characters or less
 
-locationOfGoods.contact.telephoneNumber.title = What is the contact for the location of goods’ telephone number?
-locationOfGoods.contact.telephoneNumber.heading = What is {0}’s telephone number?
-locationOfGoods.contact.telephoneNumber.hint = This has to include the country code, like +44 808 157 0192.
-locationOfGoods.contact.telephoneNumber.checkYourAnswersLabel = What is the contact for the location of goods’ telephone number?
-locationOfGoods.contact.telephoneNumber.change.hidden = the contact for the location of goods’ telephone number
-locationOfGoods.contact.telephoneNumber.error.required = Enter {0}’s telephone number.
-locationOfGoods.contact.telephoneNumber.error.invalidCharacters = {0}’s telephone number must only include numbers 0 to 9 and a plus sign
-locationOfGoods.contact.telephoneNumber.error.invalidFormat = {0}’s telephone number must start with a plus sign
-locationOfGoods.contact.telephoneNumber.error.maxLength = {0}’s telephone number must be {1} characters or less
-locationOfGoods.contact.telephoneNumber.error.minLength = {0}’s telephone number must be {1} characters or more
+locationOfGoods.contact.telephoneNumber.title = What is the phone number for the location of goods’ contact?
+locationOfGoods.contact.telephoneNumber.heading = What is {0}’s phone number?
+locationOfGoods.contact.telephoneNumber.hint = Include the country code, for example +44 808 157 0192.
+locationOfGoods.contact.telephoneNumber.checkYourAnswersLabel = Contact’s phone number
+locationOfGoods.contact.telephoneNumber.change.hidden = contact’s phone number for the location of goods
+locationOfGoods.contact.telephoneNumber.error.required = Enter {0}’s phone number.
+locationOfGoods.contact.telephoneNumber.error.invalidCharacters = {0}’s phone number must only include numbers 0 to 9 and a plus sign
+locationOfGoods.contact.telephoneNumber.error.invalidFormat = {0}’s phone number must start with a plus sign
+locationOfGoods.contact.telephoneNumber.error.maxLength = {0}’s phone number must be {1} characters or less
+locationOfGoods.contact.telephoneNumber.error.minLength = {0}’s phone number must be {1} characters or more
 
 # Route details - Loading and unloading
 
 loadingAndUnloading.addPlaceOfUnloading.title = Do you want to add a place of unloading?
 loadingAndUnloading.addPlaceOfUnloading.heading = Do you want to add a place of unloading?
+loadingAndUnloading.addPlaceOfUnloading.paragraph = This is where the goods are unloaded.
 loadingAndUnloading.addPlaceOfUnloading.checkYourAnswersLabel = Do you want to add a place of unloading?
 loadingAndUnloading.addPlaceOfUnloading.change.hidden = if you want to add a place of unloading
 loadingAndUnloading.addPlaceOfUnloading.error.required = Select yes if you want to add a place of unloading
@@ -424,11 +429,11 @@ loadingAndUnloading.loading.addUnLocodeYesNo.heading = Do you want to add a UN/L
 loadingAndUnloading.loading.addUnLocodeYesNo.checkYourAnswersLabel = Do you want to add a UN/LOCODE for the place of loading?
 loadingAndUnloading.loading.addUnLocodeYesNo.change.hidden = if you want a UN/LOCODE for the place of loading
 loadingAndUnloading.loading.addUnLocodeYesNo.error.required = Select yes if you want to add a UN/LOCODE for the place of loading
-loadingAndUnloading.loading.addUnLocodeYesNo.paragraph = This is a 5-character code used to identify a transit-related location, like a port or clearance depot.
+loadingAndUnloading.loading.addUnLocodeYesNo.paragraph = This is a 5-character code used to identify where the goods are loaded, such as a port or clearance depot.
 
 loadingAndUnloading.loading.unLocode.title = What is the UN/LOCODE for the place of loading?
 loadingAndUnloading.loading.unLocode.heading = What is the UN/LOCODE for the place of loading?
-loadingAndUnloading.loading.unLocode.hint = Enter the code, like GB BRS or GB MNC.
+loadingAndUnloading.loading.unLocode.hint = Enter the code, like GBBRS or GBMNC.
 loadingAndUnloading.loading.unLocode.placeholder = Select a UN/LOCODE.
 loadingAndUnloading.loading.unLocode.change.hidden = UN/LOCODE for the place of loading
 loadingAndUnloading.loading.unLocode.checkYourAnswersLabel = UN/LOCODE
@@ -465,7 +470,7 @@ loadingAndUnloading.unloading.addUnLocodeYesNo.heading = Do you want to add a UN
 loadingAndUnloading.unloading.addUnLocodeYesNo.checkYourAnswersLabel = Do you want to add a UN/LOCODE for the place of unloading?
 loadingAndUnloading.unloading.addUnLocodeYesNo.change.hidden = if you want to add a UN/LOCODE for the place of unloading
 loadingAndUnloading.unloading.addUnLocodeYesNo.error.required = Select yes if you want to add a UN/LOCODE for the place of unloading
-loadingAndUnloading.unloading.addUnLocodeYesNo.paragraph = This is a 5-character code used to identify a transit-related location, like a port or clearance depot.
+loadingAndUnloading.unloading.addUnLocodeYesNo.paragraph = This is a 5-character code used to identify where the goods are unloaded, such as a port or clearance depot.
 
 loadingAndUnloading.unloading.unLocode.title = What is the UN/LOCODE for the place of unloading?
 loadingAndUnloading.unloading.unLocode.heading = What is the UN/LOCODE for the place of unloading?

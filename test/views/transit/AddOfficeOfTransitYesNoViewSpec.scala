@@ -37,7 +37,7 @@ class AddOfficeOfTransitYesNoViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithHeading()
 
-  behave like pageWithContent("p", "This is the first arrival point for goods entering a new customs territory.")
+  behave like pageWithContent("p", "You must add an office of transit every time your goods enter a new customs territory.")
 
   behave like pageWithRadioItems()
 

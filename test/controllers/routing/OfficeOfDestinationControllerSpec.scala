@@ -73,7 +73,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, customsOfficeList.values, mode)(request, messages).toString
+        view(form, lrn, country.description, customsOfficeList.values, mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -96,7 +96,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, customsOfficeList.values, mode)(request, messages).toString
+        view(filledForm, lrn, country.description, customsOfficeList.values, mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -159,7 +159,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, lrn, customsOfficeList.values, mode)(request, messages).toString
+        view(boundForm, lrn, country.description, customsOfficeList.values, mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
