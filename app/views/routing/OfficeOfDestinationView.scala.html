@@ -50,7 +50,7 @@
                 caption = Some(messages("routing.caption")),
                 additionalHtml = messages("routing.officeOfDestination.paragraph").toParagraph
             ),
-            hint = Some(messages("routing.officeOfDestination.hint", customsOffices.head.name, customsOffices.head.value) ),
+            hint = Some(messages("routing.officeOfDestination.hint", customsOffices.head.name.replace("CUSTOMS OFFICE", ""), customsOffices.head.value) ),
             selectItems = customsOffices.toSelectItems(form.value),
             placeholder = messages("routing.officeOfDestination.placeholder")
         )

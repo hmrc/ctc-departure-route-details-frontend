@@ -48,7 +48,7 @@ class OfficeOfDestinationViewSpec extends InputSelectViewBehaviours[CustomsOffic
 
   behave like pageWithSelect()
 
-  behave like pageWithHint(s"Enter the office location or code, like ${values.head.name} or ${values.head.value}.")
+  behave like pageWithHint(s"Enter the office location or code, like ${values.head.name.replace("CUSTOMS OFFICE", "")} or ${values.head.value}.")
 
   behave like pageWithContent("p", "This is the customs office where the transit movement ends.")
 
