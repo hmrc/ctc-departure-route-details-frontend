@@ -49,7 +49,7 @@
                 heading = messages("locationOfGoods.customsOfficeIdentifier.heading"),
                 caption = Some(messages("locationOfGoods.caption"))
             ),
-            hint = Some(messages("locationOfGoods.customsOfficeIdentifier.hint")),
+            hint = Some(messages("locationOfGoods.customsOfficeIdentifier.hint", customsOfficeList.head.name.replace("CUSTOMS OFFICE", ""), customsOfficeList.head.value)),
             selectItems = customsOfficeList.toSelectItems(form.value),
             placeholder = messages("locationOfGoods.customsOfficeIdentifier.placeholder")
         )

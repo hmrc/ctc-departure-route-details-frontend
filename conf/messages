@@ -280,7 +280,7 @@ locationOfGoods.identification.error.required = Select how you want to identify 
 
 locationOfGoods.customsOfficeIdentifier.title = What is the customs office identifier for the location of goods?
 locationOfGoods.customsOfficeIdentifier.heading = What is the customs office identifier for the location of goods?
-locationOfGoods.customsOfficeIdentifier.hint = Enter the office location or code, like Dover or GB000060.
+locationOfGoods.customsOfficeIdentifier.hint = Enter the office location or code, like {0} or {1}.
 locationOfGoods.customsOfficeIdentifier.placeholder = Select a customsOffice
 locationOfGoods.customsOfficeIdentifier.change.hidden = the customs office identifier for the location of goods
 locationOfGoods.customsOfficeIdentifier.checkYourAnswersLabel = What is the customs office identifier for the location of goods?

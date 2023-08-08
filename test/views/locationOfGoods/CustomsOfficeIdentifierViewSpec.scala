@@ -46,7 +46,7 @@ class CustomsOfficeIdentifierViewSpec extends InputSelectViewBehaviours[CustomsO
 
   behave like pageWithSelect()
 
-  behave like pageWithHint("Enter the office location or code, like Dover or GB000060.")
+  behave like pageWithHint(s"Enter the office location or code, like ${values.head.name} or ${values.head.value}.")
 
   behave like pageWithSubmitButton("Save and continue")
 }
