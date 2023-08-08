@@ -49,7 +49,7 @@
                 heading = messages("exit.index.officeOfExit.heading", countryName),
                 caption = Some(messages("exit.caption"))
             ),
-            hint = Some(messages("exit.index.officeOfExit.hint")),
+            hint = Some(messages("exit.index.officeOfExit.hint", customsOffices.head.name, customsOffices.head.value)),
             selectItems = customsOffices.toSelectItems(form.value),
             placeholder = messages("exit.index.officeOfExit.placeholder")
         )

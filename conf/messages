@@ -79,7 +79,7 @@ routing.countryOfDestination.error.noOffices = You cannot use this country as it
 
 routing.officeOfDestination.title = Where in {0} is the office of destination?
 routing.officeOfDestination.heading = Where in {0} is the office of destination?
-routing.officeOfDestination.hint = Enter the office location or code, like {0} or {1}
+routing.officeOfDestination.hint = Enter the office location or code, like {0} or {1}.
 routing.officeOfDestination.paragraph = This is the customs office where the transit movement ends.
 routing.officeOfDestination.placeholder = Select a customs office
 routing.officeOfDestination.change.hidden = office of destination
@@ -161,7 +161,7 @@ transit.index.officeOfTransitCountry.error.noOffices = You cannot use this count
 
 transit.index.officeOfTransit.title = Where in {0} is the office of transit?
 transit.index.officeOfTransit.heading = Where in {0} is the office of transit?
-transit.index.officeOfTransit.hint = Enter the office location or code, like Calais or FR620001.
+transit.index.officeOfTransit.hint = Enter the office location or code, like {0} or {1}.
 transit.index.officeOfTransit.placeholder = Select a customs office
 transit.index.officeOfTransit.change.hidden = office of transit
 transit.index.officeOfTransit.checkYourAnswersLabel = Office of transit
@@ -228,7 +228,7 @@ exit.index.officeOfExitCountry.error.noOffices = You cannot use this country as 
 
 exit.index.officeOfExit.title = Where in {0} is the office of exit?
 exit.index.officeOfExit.heading = Where in {0} is the office of exit?
-exit.index.officeOfExit.hint = Enter the office location or code, like Basel or CH001454.
+exit.index.officeOfExit.hint = Enter the office location or code, like {0} or {1}.
 exit.index.officeOfExit.placeholder = Select a customs office
 exit.index.officeOfExit.change.hidden = office of exit’s location
 exit.index.officeOfExit.checkYourAnswersLabel = Office location

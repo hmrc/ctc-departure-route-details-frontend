@@ -48,7 +48,7 @@ class OfficeOfTransitViewSpec extends InputSelectViewBehaviours[CustomsOffice] {
 
   behave like pageWithSelect()
 
-  behave like pageWithHint("Enter the office location or code, like Calais or FR620001.")
+  behave like pageWithHint(s"Enter the office location or code, like ${values.head.name} or ${values.head.value}.")
 
   behave like pageWithSubmitButton("Save and continue")
 }

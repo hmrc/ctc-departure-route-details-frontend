@@ -49,7 +49,7 @@
                 heading = messages("transit.index.officeOfTransit.heading", countryName),
                 caption = Some(messages("transit.caption"))
             ),
-            hint = Some(messages("transit.index.officeOfTransit.hint")),
+            hint = Some(messages("transit.index.officeOfTransit.hint", customsOffices.head.name, customsOffices.head.value)),
             selectItems = customsOffices.toSelectItems(form.value),
             placeholder = messages("transit.index.officeOfTransit.placeholder")
         )
