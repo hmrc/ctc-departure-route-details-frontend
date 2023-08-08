@@ -79,7 +79,7 @@ routing.countryOfDestination.error.noOffices = You cannot use this country as it
 
 routing.officeOfDestination.title = Where in {0} is the office of destination?
 routing.officeOfDestination.heading = Where in {0} is the office of destination?
-routing.officeOfDestination.hint = Enter the office location or code, like Wien-Flughafen or AT330200.
+routing.officeOfDestination.hint = Enter the office location or code, like {0} or {1}
 routing.officeOfDestination.paragraph = This is the customs office where the transit movement ends.
 routing.officeOfDestination.placeholder = Select a customs office
 routing.officeOfDestination.change.hidden = office of destination
