@@ -288,7 +288,7 @@ locationOfGoods.customsOfficeIdentifier.error.required = Enter the customs offic
 
 locationOfGoods.authorisationNumber.title = What is the authorisation number for the location of goods?
 locationOfGoods.authorisationNumber.heading = What is the authorisation number for the location of goods?
-locationOfGoods.authorisationNumber.checkYourAnswersLabel = What is the authorisation number for the location of goods?
+locationOfGoods.authorisationNumber.checkYourAnswersLabel = Authorisation number
 locationOfGoods.authorisationNumber.change.hidden = the authorisation number for the location of goods
 locationOfGoods.authorisationNumber.error.required = Enter the authorisation number for the location of goods.
 locationOfGoods.authorisationNumber.error.length = The authorisation number must be 35 characters or less.

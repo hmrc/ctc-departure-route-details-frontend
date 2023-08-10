@@ -278,7 +278,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
 
               result mustBe Some(
                 SummaryListRow(
-                  key = Key("What is the authorisation number for the location of goods?".toText),
+                  key = Key("Authorisation number".toText),
                   value = Value(authorisationNumber.toText),
                   actions = Some(
                     Actions(
