@@ -14,7 +14,7 @@ POST       /office-of-exit-for-transit/:index/check-answers/:lrn      controller
 GET        /office-of-exit/:index/change-check-answers/:lrn           controllers.exit.index.CheckOfficeOfExitAnswersController.onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode = CheckMode)
 POST       /office-of-exit/:index/change-check-answers/:lrn           controllers.exit.index.CheckOfficeOfExitAnswersController.onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode = CheckMode)
 
-GET        /office-of-exit/:index/remove/:lrn                         controllers.exit.index.ConfirmRemoveOfficeOfExitController.onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode = NormalMode)
-POST       /office-of-exit/:index/remove/:lrn                         controllers.exit.index.ConfirmRemoveOfficeOfExitController.onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode = NormalMode)
+GET        /office-of-exit-for-transit/:index/remove/:lrn             controllers.exit.index.ConfirmRemoveOfficeOfExitController.onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode = NormalMode)
+POST       /office-of-exit-for-transit/:index/remove/:lrn             controllers.exit.index.ConfirmRemoveOfficeOfExitController.onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode = NormalMode)
 GET        /office-of-exit/:index/change-remove/:lrn                  controllers.exit.index.ConfirmRemoveOfficeOfExitController.onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode = CheckMode)
 POST       /office-of-exit/:index/change-remove/:lrn                  controllers.exit.index.ConfirmRemoveOfficeOfExitController.onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode = CheckMode)
