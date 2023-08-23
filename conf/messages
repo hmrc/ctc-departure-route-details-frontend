@@ -28,7 +28,7 @@ date.minute.capitalized = Minute
 caption = Route details
 routing.caption = Route details - Transit route
 transit.caption = Route details - Office of transit
-exit.caption = Route details - Office of exit
+exit.caption = Route details - Office of exit for transit
 locationOfGoods.caption = Route details - Location of goods
 loadingAndUnloading.caption = Route details - Places of loading and unloading
 loadingAndUnloading.unloading.caption = Route details - Place of unloading
@@ -205,14 +205,14 @@ transit.index.checkOfficeOfTransitAnswers.heading = Check your answers
 
 # Route details - Exit
 
-exit.addAnotherOfficeOfExit.singular.title = You have added {0} office of exit
-exit.addAnotherOfficeOfExit.singular.heading = You have added {0} office of exit
-exit.addAnotherOfficeOfExit.plural.title = You have added {0} offices of exit
-exit.addAnotherOfficeOfExit.plural.heading = You have added {0} offices of exit
+exit.addAnotherOfficeOfExit.singular.title = You have added {0} office of exit for transit
+exit.addAnotherOfficeOfExit.singular.heading = You have added {0} office of exit for transit
+exit.addAnotherOfficeOfExit.plural.title = You have added {0} offices of exit for transit
+exit.addAnotherOfficeOfExit.plural.heading = You have added {0} offices of exit for transit
 exit.addAnotherOfficeOfExit.paragraph = You must add an office of exit every time your goods leave a customs territory.
-exit.addAnotherOfficeOfExit.error.required =  Select yes if you want to add another office of exit
-exit.addAnotherOfficeOfExit.label = Do you want to add another office of exit?
-exit.addAnotherOfficeOfExit.maxLimit.label = You cannot add any more offices of exit. To add another office, you need to remove one first.
+exit.addAnotherOfficeOfExit.error.required =  Select yes if you want to add another office of exit for transit
+exit.addAnotherOfficeOfExit.label = Do you want to add another office of exit for transit?
+exit.addAnotherOfficeOfExit.maxLimit.label = You cannot add any more offices of exit for transit. To add another office, you need to remove one first.
 
 # Route details - Exit - Index
 
