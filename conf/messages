@@ -216,14 +216,15 @@ exit.addAnotherOfficeOfExit.maxLimit.label = You cannot add any more offices of 
 
 # Route details - Exit - Index
 
-exit.index.officeOfExitCountry.title = Which country is the office of exit in?
-exit.index.officeOfExitCountry.heading = Which country is the office of exit in?
+exit.index.officeOfExitCountry.title = In which country is the office of exit for transit?
+exit.index.officeOfExitCountry.heading = In which country is the office of exit for transit?
+exit.index.officeOfExitCountry.subHeading = Route details - Office of exit for transit
 exit.index.officeOfExitCountry.paragraph = This is the exit point for goods leaving a customs territory.
 exit.index.officeOfExitCountry.hint = Enter the country, like France or Portugal.
 exit.index.officeOfExitCountry.placeholder = Select a country
 exit.index.officeOfExitCountry.change.hidden = office of exit’s country
 exit.index.officeOfExitCountry.checkYourAnswersLabel = Country
-exit.index.officeOfExitCountry.error.required = Enter the country the office of exit is in
+exit.index.officeOfExitCountry.error.required = Enter the country the office of exit for transit is in
 exit.index.officeOfExitCountry.error.noOffices = You cannot use this country as it does not have any offices of exit
 
 exit.index.officeOfExit.title = Where in {0} is the office of exit?

@@ -1,6 +1,6 @@
 
-GET        /office-of-exit/:index/country/:lrn                        controllers.exit.index.OfficeOfExitCountryController.onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode = NormalMode)
-POST       /office-of-exit/:index/country/:lrn                        controllers.exit.index.OfficeOfExitCountryController.onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode = NormalMode)
+GET        /office-of-exit-for-transit/:index/country/:lrn                        controllers.exit.index.OfficeOfExitCountryController.onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode = NormalMode)
+POST       /office-of-exit-for-transit/:index/country/:lrn                        controllers.exit.index.OfficeOfExitCountryController.onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode = NormalMode)
 GET        /office-of-exit/:index/change-country/:lrn                 controllers.exit.index.OfficeOfExitCountryController.onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode = CheckMode)
 POST       /office-of-exit/:index/change-country/:lrn                 controllers.exit.index.OfficeOfExitCountryController.onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode = CheckMode)
 
