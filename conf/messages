@@ -234,7 +234,7 @@ exit.index.officeOfExit.hint = Enter the office location or code, like Basel or 
 exit.index.officeOfExit.placeholder = Select a customs office
 exit.index.officeOfExit.change.hidden = office of exit’s location
 exit.index.officeOfExit.checkYourAnswersLabel = Office location
-exit.index.officeOfExit.error.required = Enter where the office of exit is in {0}
+exit.index.officeOfExit.error.required = Enter where the office of exit is in {0} for transit
 
 exit.index.confirmRemoveOfficeOfExit.title = Are you sure you want to remove {0} as an office of exit?
 exit.index.confirmRemoveOfficeOfExit.heading = Are you sure you want to remove {0} as an office of exit?
