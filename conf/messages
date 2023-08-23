@@ -49,8 +49,8 @@ checkYourAnswers.transit.officeOfTransit.change.hidden = office of transit {0}
 
 checkYourAnswers.exit.subheading = Offices of exit
 checkYourAnswers.exit.addOrRemove = Add or remove offices of exit
-checkYourAnswers.exit.officeOfExit.label = Office of exit {0}
-checkYourAnswers.exit.officeOfExit.change.hidden = office of exit {0}
+checkYourAnswers.exit.officeOfExit.label = Office of exit for transit {0}
+checkYourAnswers.exit.officeOfExit.change.hidden = office of exit for transit {0}
 
 addSpecificCircumstanceIndicatorYesNo.title = Do you want to add a specific circumstance indicator?
 addSpecificCircumstanceIndicatorYesNo.heading = Do you want to add a specific circumstance indicator?

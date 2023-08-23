@@ -58,14 +58,14 @@ class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChe
               val helper = new ExitCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.officeOfExit(index).get
 
-              result.key.value mustBe "Office of exit 1"
+              result.key.value mustBe "Office of exit for transit 1"
               result.value.value mustBe officeOfExit.label
               val actions = result.actions.get.items
               actions.size mustBe 1
               val action = actions.head
               action.content.value mustBe "Change"
               action.href mustBe routes.CheckOfficeOfExitAnswersController.onPageLoad(userAnswers.lrn, index, mode).url
-              action.visuallyHiddenText.get mustBe "office of exit 1"
+              action.visuallyHiddenText.get mustBe "office of exit for transit 1"
               action.id mustBe "change-office-of-exit-1"
           }
         }
