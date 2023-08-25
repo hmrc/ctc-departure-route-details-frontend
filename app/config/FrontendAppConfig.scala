@@ -26,7 +26,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val appName: String = configuration.get[String]("appName")
 
   val etaDateDaysBefore: Int = configuration.get[Int]("dates.officeOfTransitETA.daysBefore")
-  val etaDateDaysAfter: Int  = configuration.get[Int]("dates.officeOfTransitETA.daysAfter")
+
+  def etaDateDaysAfter(additionalDeclarationType: String): Int =
+    configuration.get[Int](s"dates.officeOfTransitETA.daysAfter.$additionalDeclarationType")
 
   val enrolmentProxyUrl: String            = servicesConfig.fullServiceUrl("enrolment-store-proxy")
   val eccEnrolmentSplashPage: String       = configuration.get[String]("urls.eccEnrolmentSplashPage")

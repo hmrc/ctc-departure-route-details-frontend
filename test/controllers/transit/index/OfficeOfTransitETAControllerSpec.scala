@@ -23,12 +23,15 @@ import models.{DateTime, NormalMode}
 import navigation.OfficeOfTransitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalacheck.Gen
+import pages.external.AdditionalDeclarationTypePage
 import pages.routing.CountryOfDestinationPage
 import pages.transit.index.{OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.Format.RichLocalDateTime
 import views.html.transit.index.OfficeOfTransitETAView
 
 import java.time.LocalDateTime
@@ -51,6 +54,8 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
   private val formProvider = new DateTimeFormProvider()
   private val form         = formProvider("transit.index.officeOfTransitETA", dateBefore, dateAfter)
 
+  private val additionalDeclarationType = Gen.oneOf("A", "D").sample.value
+
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
@@ -62,6 +67,7 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
       "when country defined at index" in {
 
         val updatedAnswers = emptyUserAnswers
+          .setValue(AdditionalDeclarationTypePage, additionalDeclarationType)
           .setValue(OfficeOfTransitCountryPage(index), transitCountry)
           .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
 
@@ -81,6 +87,7 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
 
       "when only country of destination defined" in {
         val updatedAnswers = emptyUserAnswers
+          .setValue(AdditionalDeclarationTypePage, additionalDeclarationType)
           .setValue(CountryOfDestinationPage, transitCountry)
           .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
 
@@ -103,6 +110,7 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
       "when country defined at index" in {
 
         val userAnswers = emptyUserAnswers
+          .setValue(AdditionalDeclarationTypePage, additionalDeclarationType)
           .setValue(OfficeOfTransitCountryPage(index), transitCountry)
           .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
           .setValue(OfficeOfTransitETAPage(index), dateTime)
@@ -134,6 +142,7 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
       "when only country of destination defined" in {
 
         val userAnswers = emptyUserAnswers
+          .setValue(AdditionalDeclarationTypePage, additionalDeclarationType)
           .setValue(CountryOfDestinationPage, transitCountry)
           .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
           .setValue(OfficeOfTransitETAPage(index), dateTime)
@@ -166,6 +175,7 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
     "must redirect to the next page when valid data is submitted" in {
 
       val userAnswers = emptyUserAnswers
+        .setValue(AdditionalDeclarationTypePage, additionalDeclarationType)
         .setValue(OfficeOfTransitCountryPage(index), transitCountry)
         .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
 
@@ -189,47 +199,101 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
       redirectLocation(result).value mustEqual onwardRoute.url
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" - {
-      "when country defined at index" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(OfficeOfTransitCountryPage(index), transitCountry)
-          .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
-        setExistingUserAnswers(userAnswers)
+    "must return a Bad Request and errors" - {
+      "when invalid data is submitted" - {
+        "and country defined at index" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(AdditionalDeclarationTypePage, additionalDeclarationType)
+            .setValue(OfficeOfTransitCountryPage(index), transitCountry)
+            .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
+          setExistingUserAnswers(userAnswers)
 
-        val invalidAnswer = ""
+          val invalidAnswer = ""
 
-        val request    = FakeRequest(POST, arrivalDateTimeRoute).withFormUrlEncodedBody(("value", ""))
-        val filledForm = form.bind(Map("value" -> invalidAnswer))
+          val request    = FakeRequest(POST, arrivalDateTimeRoute).withFormUrlEncodedBody(("value", invalidAnswer))
+          val filledForm = form.bind(Map("value" -> invalidAnswer))
 
-        val result = route(app, request).value
+          val result = route(app, request).value
 
-        status(result) mustEqual BAD_REQUEST
+          status(result) mustEqual BAD_REQUEST
 
-        val view = injector.instanceOf[OfficeOfTransitETAView]
+          val view = injector.instanceOf[OfficeOfTransitETAView]
 
-        contentAsString(result) mustEqual
-          view(filledForm, lrn, transitCountry.description, transitCustomsOffice.name, mode, index)(request, messages).toString
+          contentAsString(result) mustEqual
+            view(filledForm, lrn, transitCountry.description, transitCustomsOffice.name, mode, index)(request, messages).toString
+        }
+
+        "and only country of destination defined" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(AdditionalDeclarationTypePage, additionalDeclarationType)
+            .setValue(CountryOfDestinationPage, transitCountry)
+            .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
+          setExistingUserAnswers(userAnswers)
+
+          val invalidAnswer = ""
+
+          val request    = FakeRequest(POST, arrivalDateTimeRoute).withFormUrlEncodedBody(("value", invalidAnswer))
+          val filledForm = form.bind(Map("value" -> invalidAnswer))
+
+          val result = route(app, request).value
+
+          status(result) mustEqual BAD_REQUEST
+
+          val view = injector.instanceOf[OfficeOfTransitETAView]
+
+          contentAsString(result) mustEqual
+            view(filledForm, lrn, transitCountry.description, transitCustomsOffice.name, mode, index)(request, messages).toString
+        }
       }
 
-      "when only country of destination defined" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(CountryOfDestinationPage, transitCountry)
-          .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
-        setExistingUserAnswers(userAnswers)
+      "when standard declaration" - {
+        "and date 15 days from now is submitted" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(AdditionalDeclarationTypePage, "A")
+            .setValue(CountryOfDestinationPage, transitCountry)
+            .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
+          setExistingUserAnswers(userAnswers)
 
-        val invalidAnswer = ""
+          val dateTime = localDateTime.plusDays(15).toDateTime
 
-        val request    = FakeRequest(POST, arrivalDateTimeRoute).withFormUrlEncodedBody(("value", ""))
-        val filledForm = form.bind(Map("value" -> invalidAnswer))
+          val request = FakeRequest(POST, arrivalDateTimeRoute)
+            .withFormUrlEncodedBody(
+              "dateDay"    -> dateTime.date.getDayOfMonth.toString,
+              "dateMonth"  -> dateTime.date.getMonthValue.toString,
+              "dateYear"   -> dateTime.date.getYear.toString,
+              "timeHour"   -> dateTime.time.getHour.toString,
+              "timeMinute" -> dateTime.time.getMinute.toString
+            )
 
-        val result = route(app, request).value
+          val result = route(app, request).value
 
-        status(result) mustEqual BAD_REQUEST
+          status(result) mustEqual BAD_REQUEST
+        }
+      }
 
-        val view = injector.instanceOf[OfficeOfTransitETAView]
+      "when pre-lodge declaration" - {
+        "and date 30 days from now is submitted" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(AdditionalDeclarationTypePage, "D")
+            .setValue(CountryOfDestinationPage, transitCountry)
+            .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
+          setExistingUserAnswers(userAnswers)
 
-        contentAsString(result) mustEqual
-          view(filledForm, lrn, transitCountry.description, transitCustomsOffice.name, mode, index)(request, messages).toString
+          val dateTime = localDateTime.plusDays(30).toDateTime
+
+          val request = FakeRequest(POST, arrivalDateTimeRoute)
+            .withFormUrlEncodedBody(
+              "dateDay"    -> dateTime.date.getDayOfMonth.toString,
+              "dateMonth"  -> dateTime.date.getMonthValue.toString,
+              "dateYear"   -> dateTime.date.getYear.toString,
+              "timeHour"   -> dateTime.time.getHour.toString,
+              "timeMinute" -> dateTime.time.getMinute.toString
+            )
+
+          val result = route(app, request).value
+
+          status(result) mustEqual BAD_REQUEST
+        }
       }
     }
 
