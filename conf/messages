@@ -218,7 +218,6 @@ exit.addAnotherOfficeOfExit.maxLimit.label = You cannot add any more offices of 
 
 exit.index.officeOfExitCountry.title = In which country is the office of exit for transit?
 exit.index.officeOfExitCountry.heading = In which country is the office of exit for transit?
-exit.index.officeOfExitCountry.subHeading = Route details - Office of exit for transit
 exit.index.officeOfExitCountry.paragraph = This is the exit point for goods leaving a customs territory.
 exit.index.officeOfExitCountry.hint = Enter the country, like France or Portugal.
 exit.index.officeOfExitCountry.placeholder = Select a country
@@ -229,7 +228,6 @@ exit.index.officeOfExitCountry.error.noOffices = You cannot use this country as 
 
 exit.index.officeOfExit.title = Where in {0} is the office of exit for transit?
 exit.index.officeOfExit.heading = Where in {0} is the office of exit for transit?
-exit.index.officeOfExit.subHeading = Route details - Office of exit for transit
 exit.index.officeOfExit.hint = Enter the office location or code, like Basel or CH001454.
 exit.index.officeOfExit.placeholder = Select a customs office
 exit.index.officeOfExit.change.hidden = office of exit for transit’s location
@@ -245,7 +243,6 @@ exit.index.confirmRemoveOfficeOfExit.default.error.required = Select yes if you 
 
 exit.index.checkOfficeOfExitAnswers.title = Check your answers
 exit.index.checkOfficeOfExitAnswers.heading = Check your answers
-exit.index.checkOfficeOfExitAnswers.subHeading = Route details - Office of exit for transit
 
 # Route details - Location of goods
 

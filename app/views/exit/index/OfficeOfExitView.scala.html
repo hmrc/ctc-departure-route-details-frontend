@@ -47,7 +47,7 @@
             field = form("value"),
             selectType = OrdinarySelect(
                 heading = messages("exit.index.officeOfExit.heading", countryName),
-                caption = Some(messages("exit.index.officeOfExit.subHeading"))
+                caption = Some(messages("exit.caption"))
             ),
             hint = Some(messages("exit.index.officeOfExit.hint")),
             selectItems = customsOffices.toSelectItems(form.value),
