@@ -1,4 +1,9 @@
 
+GET        /place-of-loading/add/:lrn                                  controllers.prelodge.AddPlaceOfLoadingYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /place-of-loading/add/:lrn                                  controllers.prelodge.AddPlaceOfLoadingYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /place-of-loading/change-add/:lrn                           controllers.prelodge.AddPlaceOfLoadingYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /place-of-loading/change-add/:lrn                           controllers.prelodge.AddPlaceOfLoadingYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
 GET        /place-of-loading/add-un-locode/:lrn                        controllers.loadingAndUnloading.loading.AddUnLocodeYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 POST       /place-of-loading/add-un-locode/:lrn                        controllers.loadingAndUnloading.loading.AddUnLocodeYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 GET        /place-of-loading/change-add-un-locode/:lrn                 controllers.loadingAndUnloading.loading.AddUnLocodeYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
