@@ -28,7 +28,7 @@ date.minute.capitalized = Minute
 caption = Route details
 routing.caption = Route details - Transit route
 transit.caption = Route details - Office of transit
-exit.caption = Route details - Office of exit
+exit.caption = Route details - Office of exit for transit
 locationOfGoods.caption = Route details - Location of goods
 loadingAndUnloading.caption = Route details - Places of loading and unloading
 loadingAndUnloading.unloading.caption = Route details - Place of unloading
@@ -47,10 +47,10 @@ checkYourAnswers.transit.addOrRemove = Add or remove offices of transit
 checkYourAnswers.transit.officeOfTransit.label = Office of transit {0}
 checkYourAnswers.transit.officeOfTransit.change.hidden = office of transit {0}
 
-checkYourAnswers.exit.subheading = Offices of exit
-checkYourAnswers.exit.addOrRemove = Add or remove offices of exit
-checkYourAnswers.exit.officeOfExit.label = Office of exit {0}
-checkYourAnswers.exit.officeOfExit.change.hidden = office of exit {0}
+checkYourAnswers.exit.subheading = Offices of exit for transit
+checkYourAnswers.exit.addOrRemove = Add or remove offices of exit for transit
+checkYourAnswers.exit.officeOfExit.label = Office of exit for transit {0}
+checkYourAnswers.exit.officeOfExit.change.hidden = office of exit for transit {0}
 
 addSpecificCircumstanceIndicatorYesNo.title = Do you want to add a specific circumstance indicator?
 addSpecificCircumstanceIndicatorYesNo.heading = Do you want to add a specific circumstance indicator?
@@ -205,41 +205,41 @@ transit.index.checkOfficeOfTransitAnswers.heading = Check your answers
 
 # Route details - Exit
 
-exit.addAnotherOfficeOfExit.singular.title = You have added {0} office of exit
-exit.addAnotherOfficeOfExit.singular.heading = You have added {0} office of exit
-exit.addAnotherOfficeOfExit.plural.title = You have added {0} offices of exit
-exit.addAnotherOfficeOfExit.plural.heading = You have added {0} offices of exit
+exit.addAnotherOfficeOfExit.singular.title = You have added {0} office of exit for transit
+exit.addAnotherOfficeOfExit.singular.heading = You have added {0} office of exit for transit
+exit.addAnotherOfficeOfExit.plural.title = You have added {0} offices of exit for transit
+exit.addAnotherOfficeOfExit.plural.heading = You have added {0} offices of exit for transit
 exit.addAnotherOfficeOfExit.paragraph = You must add an office of exit every time your goods leave a customs territory.
-exit.addAnotherOfficeOfExit.error.required =  Select yes if you want to add another office of exit
-exit.addAnotherOfficeOfExit.label = Do you want to add another office of exit?
-exit.addAnotherOfficeOfExit.maxLimit.label = You cannot add any more offices of exit. To add another office, you need to remove one first.
+exit.addAnotherOfficeOfExit.error.required =  Select yes if you want to add another office of exit for transit
+exit.addAnotherOfficeOfExit.label = Do you want to add another office of exit for transit?
+exit.addAnotherOfficeOfExit.maxLimit.label = You cannot add any more offices of exit for transit. To add another office, you need to remove one first.
 
 # Route details - Exit - Index
 
-exit.index.officeOfExitCountry.title = Which country is the office of exit in?
-exit.index.officeOfExitCountry.heading = Which country is the office of exit in?
+exit.index.officeOfExitCountry.title = In which country is the office of exit for transit?
+exit.index.officeOfExitCountry.heading = In which country is the office of exit for transit?
 exit.index.officeOfExitCountry.paragraph = This is the exit point for goods leaving a customs territory.
 exit.index.officeOfExitCountry.hint = Enter the country, like France or Portugal.
 exit.index.officeOfExitCountry.placeholder = Select a country
-exit.index.officeOfExitCountry.change.hidden = office of exit’s country
+exit.index.officeOfExitCountry.change.hidden = office of exit for transit’s country
 exit.index.officeOfExitCountry.checkYourAnswersLabel = Country
-exit.index.officeOfExitCountry.error.required = Enter the country the office of exit is in
+exit.index.officeOfExitCountry.error.required = Enter the country the office of exit for transit is in
 exit.index.officeOfExitCountry.error.noOffices = You cannot use this country as it does not have any offices of exit
 
-exit.index.officeOfExit.title = Where in {0} is the office of exit?
-exit.index.officeOfExit.heading = Where in {0} is the office of exit?
+exit.index.officeOfExit.title = Where in {0} is the office of exit for transit?
+exit.index.officeOfExit.heading = Where in {0} is the office of exit for transit?
 exit.index.officeOfExit.hint = Enter the office location or code, like Basel or CH001454.
 exit.index.officeOfExit.placeholder = Select a customs office
-exit.index.officeOfExit.change.hidden = office of exit’s location
+exit.index.officeOfExit.change.hidden = office of exit for transit’s location
 exit.index.officeOfExit.checkYourAnswersLabel = Office location
 exit.index.officeOfExit.error.required = Enter where the office of exit is in {0}
 
-exit.index.confirmRemoveOfficeOfExit.title = Are you sure you want to remove {0} as an office of exit?
-exit.index.confirmRemoveOfficeOfExit.heading = Are you sure you want to remove {0} as an office of exit?
-exit.index.confirmRemoveOfficeOfExit.error.required = Select yes if you want to remove {0} as an office of exit
-exit.index.confirmRemoveOfficeOfExit.default.title = Are you sure you want to remove this office of exit?
-exit.index.confirmRemoveOfficeOfExit.default.heading = Are you sure you want to remove this office of exit?
-exit.index.confirmRemoveOfficeOfExit.default.error.required = Select yes if you want to remove this office of exit
+exit.index.confirmRemoveOfficeOfExit.title = Are you sure you want to remove {0} as an office of exit for transit?
+exit.index.confirmRemoveOfficeOfExit.heading = Are you sure you want to remove {0} as an office of exit for transit?
+exit.index.confirmRemoveOfficeOfExit.error.required = Select yes if you want to remove {0} as an office of exit for transit
+exit.index.confirmRemoveOfficeOfExit.default.title = Are you sure you want to remove this office of exit for transit?
+exit.index.confirmRemoveOfficeOfExit.default.heading = Are you sure you want to remove this office of exit for transit?
+exit.index.confirmRemoveOfficeOfExit.default.error.required = Select yes if you want to remove this office of exit for transit
 
 exit.index.checkOfficeOfExitAnswers.title = Check your answers
 exit.index.checkOfficeOfExitAnswers.heading = Check your answers
