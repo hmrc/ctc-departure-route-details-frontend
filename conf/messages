@@ -47,8 +47,8 @@ checkYourAnswers.transit.addOrRemove = Add or remove offices of transit
 checkYourAnswers.transit.officeOfTransit.label = Office of transit {0}
 checkYourAnswers.transit.officeOfTransit.change.hidden = office of transit {0}
 
-checkYourAnswers.exit.subheading = Offices of exit
-checkYourAnswers.exit.addOrRemove = Add or remove offices of exit
+checkYourAnswers.exit.subheading = Offices of exit for transit
+checkYourAnswers.exit.addOrRemove = Add or remove offices of exit for transit
 checkYourAnswers.exit.officeOfExit.label = Office of exit for transit {0}
 checkYourAnswers.exit.officeOfExit.change.hidden = office of exit for transit {0}
 
@@ -232,7 +232,7 @@ exit.index.officeOfExit.hint = Enter the office location or code, like Basel or 
 exit.index.officeOfExit.placeholder = Select a customs office
 exit.index.officeOfExit.change.hidden = office of exit for transit’s location
 exit.index.officeOfExit.checkYourAnswersLabel = Office location
-exit.index.officeOfExit.error.required = Enter where the office of exit is in {0} for transit
+exit.index.officeOfExit.error.required = Enter where the office of exit is in {0}
 
 exit.index.confirmRemoveOfficeOfExit.title = Are you sure you want to remove {0} as an office of exit for transit?
 exit.index.confirmRemoveOfficeOfExit.heading = Are you sure you want to remove {0} as an office of exit for transit?

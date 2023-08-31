@@ -93,7 +93,7 @@ class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChe
               val result  = helper.addOrRemoveOfficesOfExit.get
 
               result.id mustBe "add-or-remove-offices-of-exit"
-              result.text mustBe "Add or remove offices of exit"
+              result.text mustBe "Add or remove offices of exit for transit"
               result.href mustBe controllers.exit.routes.AddAnotherOfficeOfExitController.onPageLoad(answers.lrn, mode).url
           }
         }

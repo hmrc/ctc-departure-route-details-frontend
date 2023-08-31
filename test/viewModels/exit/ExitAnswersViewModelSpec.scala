@@ -38,7 +38,7 @@ class ExitAnswersViewModelSpec extends SpecBase with Generators {
 
     sections.size mustBe 1
 
-    sections.head.sectionTitle.get mustBe "Offices of exit"
+    sections.head.sectionTitle.get mustBe "Offices of exit for transit"
     sections.head.rows.size mustBe 1
     sections.head.addAnotherLink must be(defined)
   }
