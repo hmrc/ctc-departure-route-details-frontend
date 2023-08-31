@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.prelodge
+package controllers.loadingAndUnloading
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.YesNoFormProvider
@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.prelodge.AddPlaceOfLoadingYesNoView
+import views.html.loadingAndUnloading.AddPlaceOfLoadingYesNoView
 
 import scala.concurrent.Future
 
@@ -37,7 +37,7 @@ class AddPlaceOfLoadingYesNoControllerSpec extends SpecBase with AppWithDefaultM
   private val formProvider                     = new YesNoFormProvider()
   private val form                             = formProvider("prelodge.addPlaceOfLoadingYesNo")
   private val mode                             = NormalMode
-  private lazy val addPlaceOfLoadingYesNoRoute = controllers.prelodge.routes.AddPlaceOfLoadingYesNoController.onPageLoad(lrn, mode).url
+  private lazy val addPlaceOfLoadingYesNoRoute = controllers.loadingAndUnloading.routes.AddPlaceOfLoadingYesNoController.onPageLoad(lrn, mode).url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super

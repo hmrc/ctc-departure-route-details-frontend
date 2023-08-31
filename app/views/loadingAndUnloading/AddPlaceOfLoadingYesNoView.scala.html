@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.routes
+@import controllers.loadingAndUnloading.routes
 @import models.LocalReferenceNumber
 @import viewModels.components.InputYesNoViewModel._
 @import views.html.components.{Button, ErrorSummary, InputYesNo}
@@ -35,7 +35,7 @@
     lrn = lrn
 ) {
 
-    @formHelper(action = routes.AddSpecificCircumstanceIndicatorYesNoController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.AddPlaceOfLoadingYesNoController.onSubmit(lrn, mode), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package views.prelodge
+package views.loadingAndUnloading
 
 import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
-import views.html.prelodge.AddPlaceOfLoadingYesNoView
+import views.html.loadingAndUnloading.AddPlaceOfLoadingYesNoView
 
 class AddPlaceOfLoadingYesNoViewSpec extends YesNoViewBehaviours {
 

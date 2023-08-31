@@ -16,7 +16,7 @@
 
 package pages.prelodge
 
-import controllers.prelodge.routes
+import controllers.loadingAndUnloading.routes
 import models.{Mode, UserAnswers}
 import pages.QuestionPage
 import pages.sections.RouteDetailsSection
