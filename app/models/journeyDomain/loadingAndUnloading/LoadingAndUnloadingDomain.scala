@@ -25,10 +25,11 @@ import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.SpecificCircumstanceIndicator
-import models.{Mode, Phase, UserAnswers}
+import models.{AdditionalDeclarationType, Mode, Phase, UserAnswers}
 import pages.SpecificCircumstanceIndicatorPage
 import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
+import pages.prelodge.{AddPlaceOfLoadingYesNoPage, AdditionalDeclarationTypePage}
 import play.api.mvc.Call
 
 case class LoadingAndUnloadingDomain(
@@ -50,8 +51,10 @@ object LoadingAndUnloadingDomain {
           case _                 => UserAnswersReader[LoadingDomain].map(Some(_))
         }
       case Phase.PostTransition =>
-        // additional declaration type is currently always normal (A) as we aren't doing pre-lodge (D) yet
-        UserAnswersReader[LoadingDomain].map(Some(_))
+        AdditionalDeclarationTypePage.reader.flatMap {
+          case AdditionalDeclarationType.Standard  => UserAnswersReader[LoadingDomain].map(Some(_))
+          case AdditionalDeclarationType.Prelodged => AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[LoadingDomain])
+        }
     }
 
   implicit def unloadingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[UnloadingDomain]] = {
