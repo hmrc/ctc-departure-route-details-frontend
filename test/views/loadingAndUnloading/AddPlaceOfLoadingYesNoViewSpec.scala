@@ -27,7 +27,7 @@ class AddPlaceOfLoadingYesNoViewSpec extends YesNoViewBehaviours {
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
     injector.instanceOf[AddPlaceOfLoadingYesNoView].apply(form, lrn, NormalMode)(fakeRequest, messages)
 
-  override val prefix: String = "loadingAndUnloading.loading.addPlaceOfLoadingYesNo"
+  override val prefix: String = "loadingAndUnloading.addPlaceOfLoadingYesNo"
 
   behave like pageWithTitle()
 

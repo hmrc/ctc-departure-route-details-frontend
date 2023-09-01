@@ -44,7 +44,7 @@ class AddPlaceOfLoadingYesNoController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider("loadingAndUnloading.loading.addPlaceOfLoadingYesNo")
+  private val form = formProvider("loadingAndUnloading.addPlaceOfLoadingYesNo")
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>

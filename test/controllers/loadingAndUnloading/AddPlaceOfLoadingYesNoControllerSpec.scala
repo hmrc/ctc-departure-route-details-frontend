@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class AddPlaceOfLoadingYesNoControllerSpec extends SpecBase with AppWithDefaultMockFixtures with MockitoSugar {
 
   private val formProvider                     = new YesNoFormProvider()
-  private val form                             = formProvider("loadingAndUnloading.loading.addPlaceOfLoadingYesNo")
+  private val form                             = formProvider("loadingAndUnloading.addPlaceOfLoadingYesNo")
   private val mode                             = NormalMode
   private lazy val addPlaceOfLoadingYesNoRoute = controllers.loadingAndUnloading.routes.AddPlaceOfLoadingYesNoController.onPageLoad(lrn, mode).url
 

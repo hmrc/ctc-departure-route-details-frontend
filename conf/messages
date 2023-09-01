@@ -424,12 +424,12 @@ loadingAndUnloading.checkYourAnswers.unloading = Place of unloading
 
 # Route details - Loading and unloading - Loading
 
-loadingAndUnloading.loading.addPlaceOfLoadingYesNo.title = Do you want to add a place of loading?
-loadingAndUnloading.loading.addPlaceOfLoadingYesNo.heading = Do you want to add a place of loading?
-loadingAndUnloading.loading.addPlaceOfLoadingYesNo.paragraph = This is where the goods are loaded.
-loadingAndUnloading.loading.addPlaceOfLoadingYesNo.change.hidden = if you want to add a place of loading
-loadingAndUnloading.loading.addPlaceOfLoadingYesNo.checkYourAnswersLabel = Do you want to add a place of loading?
-loadingAndUnloading.loading.addPlaceOfLoadingYesNo.error.required = Select yes if you want to add a place of loading
+loadingAndUnloading.addPlaceOfLoadingYesNo.title = Do you want to add a place of loading?
+loadingAndUnloading.addPlaceOfLoadingYesNo.heading = Do you want to add a place of loading?
+loadingAndUnloading.addPlaceOfLoadingYesNo.paragraph = This is where the goods are loaded.
+loadingAndUnloading.addPlaceOfLoadingYesNo.change.hidden = if you want to add a place of loading
+loadingAndUnloading.addPlaceOfLoadingYesNo.checkYourAnswersLabel = Do you want to add a place of loading?
+loadingAndUnloading.addPlaceOfLoadingYesNo.error.required = Select yes if you want to add a place of loading
 
 loadingAndUnloading.loading.addUnLocodeYesNo.title = Do you want to add a UN/LOCODE for the place of loading?
 loadingAndUnloading.loading.addUnLocodeYesNo.heading = Do you want to add a UN/LOCODE for the place of loading?

@@ -30,7 +30,7 @@
 @(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("loadingAndUnloading.loading.addPlaceOfLoadingYesNo.title"),
+    title = messages("loadingAndUnloading.addPlaceOfLoadingYesNo.title"),
     showBackLink = true,
     lrn = lrn
 ) {
@@ -42,9 +42,9 @@
         @inputYesNo(
             field = form("value"),
             yesNoType = YesNoWithAdditionalHtml(
-                heading = messages("loadingAndUnloading.loading.addPlaceOfLoadingYesNo.heading"),
+                heading = messages("loadingAndUnloading.addPlaceOfLoadingYesNo.heading"),
                 caption = Some(messages("loadingAndUnloading.loading.caption")),
-                additionalHtml = messages("loadingAndUnloading.loading.addPlaceOfLoadingYesNo.paragraph").toParagraph
+                additionalHtml = messages("loadingAndUnloading.addPlaceOfLoadingYesNo.paragraph").toParagraph
             )
         )
 
