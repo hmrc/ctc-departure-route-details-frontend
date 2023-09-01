@@ -53,7 +53,7 @@ class AddAnotherOfficeOfExitViewSpec extends ListWithActionsViewBehaviours {
 
   behave like pageWithBackLink()
 
-  behave like pageWithSectionCaption("Route details - Office of exit")
+  behave like pageWithSectionCaption("Route details - Office of exit for transit")
 
   behave like pageWithContent("p", "You must add an office of exit every time your goods leave a customs territory.")
 
