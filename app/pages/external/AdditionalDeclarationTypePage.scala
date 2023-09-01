@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package pages.external
 
-sealed trait AdditionalDeclarationType extends Radioable[AdditionalDeclarationType] {
-  override val messageKeyPrefix: String = AdditionalDeclarationType.messageKeyPrefix
-}
+import pages.ReadOnlyPage
+import play.api.libs.json.JsPath
 
-object AdditionalDeclarationType extends EnumerableType[AdditionalDeclarationType] {
+case object AdditionalDeclarationTypePage extends ReadOnlyPage[String] {
 
-  case object Standard extends WithName("A") with AdditionalDeclarationType
-  case object Prelodged extends WithName("D") with AdditionalDeclarationType
+  override def path: JsPath = preTaskListPath \ toString
 
-  val messageKeyPrefix: String = "additionalDeclarationType"
+  override def toString: String = "additionalDeclarationType"
 
-  override val values: Seq[AdditionalDeclarationType] = Seq(
-    Standard,
-    Prelodged
-  )
 }

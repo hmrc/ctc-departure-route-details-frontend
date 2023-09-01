@@ -17,24 +17,21 @@
 package models.journeyDomain.loadingAndUnloading
 
 import base.SpecBase
-import config.PhaseConfig
+import config.{Constants, PhaseConfig}
 import generators.Generators
 import models.SecurityDetailsType._
 import models.domain.{EitherType, UserAnswersReader}
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.reference.SpecificCircumstanceIndicator
-import models.{AdditionalDeclarationType, Phase, SecurityDetailsType}
+import models.{Phase, SecurityDetailsType}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.SpecificCircumstanceIndicatorPage
-import pages.external.SecurityDetailsTypePage
-import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
-import pages.loadingAndUnloading.loading
-import pages.loadingAndUnloading.unloading
-import pages.prelodge.{AddPlaceOfLoadingYesNoPage, AdditionalDeclarationTypePage}
+import pages.external.{AdditionalDeclarationTypePage, SecurityDetailsTypePage}
+import pages.loadingAndUnloading.{loading, unloading, AddPlaceOfLoadingYesNoPage, AddPlaceOfUnloadingPage}
 
 class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -183,7 +180,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
           when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
           "and not pre-lodge" in {
-            val userAnswers = emptyUserAnswers.setValue(AdditionalDeclarationTypePage, AdditionalDeclarationType.Standard)
+            val userAnswers = emptyUserAnswers.setValue(AdditionalDeclarationTypePage, Constants.STANDARD)
             forAll(arbitraryLoadingAnswers(userAnswers)) {
               answers =>
                 val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
@@ -197,7 +194,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
           "and pre-lodge" - {
             "when addPlaceOfLoading is yes" in {
               val userAnswers = emptyUserAnswers
-                .setValue(AdditionalDeclarationTypePage, AdditionalDeclarationType.Prelodged)
+                .setValue(AdditionalDeclarationTypePage, Constants.`PRE-LODGE`)
                 .setValue(AddPlaceOfLoadingYesNoPage, true)
 
               forAll(arbitraryLoadingAnswers(userAnswers)) {
@@ -211,7 +208,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
             }
             "when addPlaceOfLoading is no" in {
               val userAnswers = emptyUserAnswers
-                .setValue(AdditionalDeclarationTypePage, AdditionalDeclarationType.Prelodged)
+                .setValue(AdditionalDeclarationTypePage, Constants.`PRE-LODGE`)
                 .setValue(AddPlaceOfLoadingYesNoPage, false)
               forAll(arbitraryLoadingAnswers(userAnswers)) {
                 answers =>

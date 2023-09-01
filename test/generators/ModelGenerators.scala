@@ -30,11 +30,6 @@ import wolfendale.scalacheck.regexp.RegexpGen
 trait ModelGenerators {
   self: Generators =>
 
-  implicit lazy val arbitraryAdditionalDeclarationType: Arbitrary[AdditionalDeclarationType] =
-    Arbitrary {
-      Gen.oneOf(AdditionalDeclarationType.values)
-    }
-
   implicit lazy val arbitraryLocalReferenceNumber: Arbitrary[LocalReferenceNumber] =
     Arbitrary {
       for {

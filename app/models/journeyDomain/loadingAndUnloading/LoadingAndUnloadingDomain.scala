@@ -18,18 +18,17 @@ package models.journeyDomain.loadingAndUnloading
 
 import cats.implicits._
 import config.Constants.XXX
-import config.PhaseConfig
+import config.{Constants, PhaseConfig}
 import models.SecurityDetailsType._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.SpecificCircumstanceIndicator
-import models.{AdditionalDeclarationType, Mode, Phase, UserAnswers}
+import models.{Mode, Phase, UserAnswers}
 import pages.SpecificCircumstanceIndicatorPage
-import pages.external.SecurityDetailsTypePage
-import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
-import pages.prelodge.{AddPlaceOfLoadingYesNoPage, AdditionalDeclarationTypePage}
+import pages.external.{AdditionalDeclarationTypePage, SecurityDetailsTypePage}
+import pages.loadingAndUnloading.{AddPlaceOfLoadingYesNoPage, AddPlaceOfUnloadingPage}
 import play.api.mvc.Call
 
 case class LoadingAndUnloadingDomain(
@@ -52,8 +51,8 @@ object LoadingAndUnloadingDomain {
         }
       case Phase.PostTransition =>
         AdditionalDeclarationTypePage.reader.flatMap {
-          case AdditionalDeclarationType.Standard  => UserAnswersReader[LoadingDomain].map(Some(_))
-          case AdditionalDeclarationType.Prelodged => AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[LoadingDomain])
+          case Constants.`PRE-LODGE` => AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[LoadingDomain])
+          case _                     => UserAnswersReader[LoadingDomain].map(Some(_))
         }
     }
 

@@ -23,7 +23,7 @@ import navigation.LoadingAndUnloadingNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.prelodge.AddPlaceOfLoadingYesNoPage
+import pages.loadingAndUnloading.AddPlaceOfLoadingYesNoPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest

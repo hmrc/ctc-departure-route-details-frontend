@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pages.prelodge
+package pages.loadingAndUnloading
 
 import controllers.loadingAndUnloading.routes
 import models.{Mode, UserAnswers}
