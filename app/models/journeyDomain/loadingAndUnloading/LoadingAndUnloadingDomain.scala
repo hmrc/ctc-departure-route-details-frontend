@@ -37,7 +37,11 @@ case class LoadingAndUnloadingDomain(
 ) extends JourneyDomainModel {
 
   override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(controllers.loadingAndUnloading.routes.LoadingAndUnloadingAnswersController.onPageLoad(userAnswers.lrn, mode))
+    if (loading.isEmpty && unloading.isEmpty) {
+      Some(controllers.routes.RouteDetailsAnswersController.onPageLoad(userAnswers.lrn))
+    } else {
+      Some(controllers.loadingAndUnloading.routes.LoadingAndUnloadingAnswersController.onPageLoad(userAnswers.lrn, mode))
+    }
 }
 
 object LoadingAndUnloadingDomain {
