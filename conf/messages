@@ -424,6 +424,13 @@ loadingAndUnloading.checkYourAnswers.unloading = Place of unloading
 
 # Route details - Loading and unloading - Loading
 
+loadingAndUnloading.loading.addPlaceOfLoadingYesNo.title = Do you want to add a place of loading?
+loadingAndUnloading.loading.addPlaceOfLoadingYesNo.heading = Do you want to add a place of loading?
+loadingAndUnloading.loading.addPlaceOfLoadingYesNo.paragraph = This is where the goods are loaded.
+loadingAndUnloading.loading.addPlaceOfLoadingYesNo.change.hidden = if you want to add a place of loading
+loadingAndUnloading.loading.addPlaceOfLoadingYesNo.checkYourAnswersLabel = Do you want to add a place of loading?
+loadingAndUnloading.loading.addPlaceOfLoadingYesNo.error.required = Select yes if you want to add a place of loading
+
 loadingAndUnloading.loading.addUnLocodeYesNo.title = Do you want to add a UN/LOCODE for the place of loading?
 loadingAndUnloading.loading.addUnLocodeYesNo.heading = Do you want to add a UN/LOCODE for the place of loading?
 loadingAndUnloading.loading.addUnLocodeYesNo.checkYourAnswersLabel = Do you want to add a UN/LOCODE for the place of loading?
@@ -504,10 +511,3 @@ loadingAndUnloading.unloading.location.hint = Enter the specific location, such 
 loadingAndUnloading.unloading.location.error.required = Enter the place of unloading in {0}
 loadingAndUnloading.unloading.location.error.length = The place of unloading must be 35 characters or less
 loadingAndUnloading.unloading.location.error.invalid = The place of unloading must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
-
-prelodge.addPlaceOfLoadingYesNo.title = Do you want to add a place of loading?
-prelodge.addPlaceOfLoadingYesNo.heading = Do you want to add a place of loading?
-prelodge.addPlaceOfLoadingYesNo.paragraph = This is where the goods are loaded.
-prelodge.addPlaceOfLoadingYesNo.change.hidden = if you want to add a place of loading
-prelodge.addPlaceOfLoadingYesNo.checkYourAnswersLabel = Do you want to add a place of loading?
-prelodge.addPlaceOfLoadingYesNo.error.required = Select yes if you want to add a place of loading
