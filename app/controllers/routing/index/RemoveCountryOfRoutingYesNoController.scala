@@ -28,7 +28,7 @@ import pages.routing.index.CountryOfRoutingPage
 import pages.sections.routing.CountryOfRoutingSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.routing.index.RemoveCountryOfRoutingYesNoView
@@ -48,20 +48,23 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
+  private def addAnother(lrn: LocalReferenceNumber, mode: Mode): Call =
+    routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode)
+
   private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[_]
 
   private def form(implicit request: Request): Form[Boolean] =
     formProvider("routing.index.removeCountryOfRoutingYesNo", request.arg.toString)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
-    .requireData(lrn)
+    .requireIndex(lrn, CountryOfRoutingSection(index), addAnother(lrn, mode))
     .andThen(getMandatoryPage(CountryOfRoutingPage(index))) {
       implicit request =>
         Ok(view(form, lrn, mode, index, request.arg))
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
-    .requireData(lrn)
+    .requireIndex(lrn, CountryOfRoutingSection(index), addAnother(lrn, mode))
     .andThen(getMandatoryPage(CountryOfRoutingPage(index)))
     .async {
       implicit request =>
@@ -75,9 +78,9 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
                   .removeFromUserAnswers()
                   .updateTask()
                   .writeToSession()
-                  .navigateTo(routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode))
+                  .navigateTo(addAnother(lrn, mode))
               case false =>
-                Future.successful(Redirect(routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode)))
+                Future.successful(Redirect(addAnother(lrn, mode)))
             }
           )
     }

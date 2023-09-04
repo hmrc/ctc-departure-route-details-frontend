@@ -17,6 +17,7 @@
 @import controllers.transit.index.routes
 @import models.LocalReferenceNumber
 @import viewModels.components.InputYesNoViewModel._
+@import viewModels.transit.RemoveOfficeOfTransitViewModel
 @import views.html.components.{Button, ErrorSummary, InputYesNo}
 
 @this(
@@ -27,10 +28,10 @@
     button: Button
 )
 
-@(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode, index: Index, prefix: String, args: String*)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode, index: Index, viewModel: RemoveOfficeOfTransitViewModel)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages(s"$prefix.title", args: _*),
+    title = viewModel.title,
     showBackLink = true,
     lrn = lrn
 ) {
@@ -42,7 +43,7 @@
         @inputYesNo(
             field = form("value"),
             yesNoType = OrdinaryYesNo(
-                heading = messages(s"$prefix.heading", args: _*),
+                heading = viewModel.heading,
                 caption = Some(messages("transit.caption"))
             )
         )

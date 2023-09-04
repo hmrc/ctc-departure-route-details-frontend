@@ -22,37 +22,40 @@ import models.Mode
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import viewModels.exit.RemoveOfficeOfExitViewModel
 import views.behaviours.YesNoViewBehaviours
 import views.html.exit.index.ConfirmRemoveOfficeOfExitView
 
 class ConfirmRemoveOfficeOfExitViewSpec extends YesNoViewBehaviours with Generators {
 
-  private lazy val exitOfficeName = arbitraryCustomsOffice.arbitrary.sample.get.name
+  private lazy val officeOfExit = arbitraryCustomsOffice.arbitrary.sample.value
 
   private val mode = arbitrary[Mode].sample.value
 
+  private val viewModel = new RemoveOfficeOfExitViewModel(Some(officeOfExit))
+
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
-    injector.instanceOf[ConfirmRemoveOfficeOfExitView].apply(form, lrn, index, mode, prefix, exitOfficeName)(fakeRequest, messages)
+    injector.instanceOf[ConfirmRemoveOfficeOfExitView].apply(form, lrn, index, mode, viewModel)(fakeRequest, messages)
 
   override val prefix: String = "exit.index.confirmRemoveOfficeOfExit"
 
-  behave like pageWithTitle(exitOfficeName)
+  behave like pageWithTitle(officeOfExit.name)
 
   behave like pageWithBackLink()
 
   behave like pageWithSectionCaption("Route details - Office of exit for transit")
 
-  behave like pageWithHeading(exitOfficeName)
+  behave like pageWithHeading(officeOfExit.name)
 
-  behave like pageWithRadioItems(args = Seq(exitOfficeName))
+  behave like pageWithRadioItems(args = Seq(officeOfExit.name))
 
   behave like pageWithSubmitButton("Save and continue")
 
   "when no office name is present in user answers" - {
-
     val defaultPrefix = s"$prefix.default"
+    val viewModel     = new RemoveOfficeOfExitViewModel(None)
     val form          = new YesNoFormProvider()(defaultPrefix)
-    val view          = injector.instanceOf[ConfirmRemoveOfficeOfExitView].apply(form, lrn, index, mode, defaultPrefix)(fakeRequest, messages)
+    val view          = injector.instanceOf[ConfirmRemoveOfficeOfExitView].apply(form, lrn, index, mode, viewModel)(fakeRequest, messages)
     val doc           = parseView(view)
 
     behave like pageWithTitle(doc, defaultPrefix)
