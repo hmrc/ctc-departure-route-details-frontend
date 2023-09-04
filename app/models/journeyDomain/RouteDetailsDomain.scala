@@ -16,6 +16,7 @@
 
 package models.journeyDomain
 
+import config.Constants._
 import cats.implicits._
 import config.PhaseConfig
 import models.DeclarationType.Option4
@@ -28,7 +29,7 @@ import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.SpecificCircumstanceIndicator
 import models.{DeclarationType, Mode, Phase, SecurityDetailsType, UserAnswers}
-import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
+import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.sections.routing.CountriesOfRoutingSection
 import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
@@ -107,15 +108,19 @@ object RouteDetailsDomain {
     }
 
   implicit def locationOfGoodsReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[LocationOfGoodsDomain]] = {
-    // additional declaration type is currently always normal (A) as we aren't doing pre-lodge (D) yet
     lazy val optionalReader = AddLocationOfGoodsPage.filterOptionalDependent(identity)(UserAnswersReader[LocationOfGoodsDomain])
     phaseConfig.phase match {
       case Phase.Transition =>
         optionalReader
       case Phase.PostTransition =>
-        OfficeOfDepartureInCL147Page.reader.flatMap {
-          case true  => optionalReader
-          case false => UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
+        AdditionalDeclarationTypePage.reader.flatMap {
+          case `PRE-LODGE` =>
+            optionalReader
+          case _ =>
+            OfficeOfDepartureInCL147Page.reader.flatMap {
+              case true  => optionalReader
+              case false => UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
+            }
         }
     }
   }
