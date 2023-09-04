@@ -16,8 +16,9 @@
 
 package generators
 
-import models.reference.{Country, CustomsOffice, SpecificCircumstanceIndicator, UnLocode}
-import models.{Coordinates, DateTime, DeclarationType, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress, SecurityDetailsType}
+import config.Constants._
+import models._
+import models.reference._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import play.api.libs.json._
@@ -40,12 +41,13 @@ trait UserAnswersEntryGenerators {
   private def generateExternalAnswer: PartialFunction[Gettable[_], Gen[JsValue]] = {
     import pages.external._
     {
-      case OfficeOfDeparturePage        => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
-      case OfficeOfDepartureInCL112Page => arbitrary[Boolean].map(JsBoolean)
-      case OfficeOfDepartureInCL147Page => arbitrary[Boolean].map(JsBoolean)
-      case OfficeOfDepartureInCL010Page => arbitrary[Boolean].map(JsBoolean)
-      case DeclarationTypePage          => arbitrary[DeclarationType].map(Json.toJson(_))
-      case SecurityDetailsTypePage      => arbitrary[SecurityDetailsType].map(Json.toJson(_))
+      case AdditionalDeclarationTypePage => Gen.oneOf(STANDARD, `PRE-LODGE`).map(JsString)
+      case OfficeOfDeparturePage         => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
+      case OfficeOfDepartureInCL112Page  => arbitrary[Boolean].map(JsBoolean)
+      case OfficeOfDepartureInCL147Page  => arbitrary[Boolean].map(JsBoolean)
+      case OfficeOfDepartureInCL010Page  => arbitrary[Boolean].map(JsBoolean)
+      case DeclarationTypePage           => arbitrary[DeclarationType].map(Json.toJson(_))
+      case SecurityDetailsTypePage       => arbitrary[SecurityDetailsType].map(Json.toJson(_))
     }
   }
 

@@ -24,5 +24,4 @@ case object AdditionalDeclarationTypePage extends ReadOnlyPage[String] {
   override def path: JsPath = preTaskListPath \ toString
 
   override def toString: String = "additionalDeclarationType"
-
 }

@@ -39,7 +39,7 @@ class CheckOfficeOfExitAnswersViewSpec extends CheckYourAnswersViewBehaviours {
 
   behave like pageWithBackLink()
 
-  behave like pageWithSectionCaption("Route details - Office of exit")
+  behave like pageWithSectionCaption("Route details - Office of exit for transit")
 
   behave like pageWithHeading()
 
