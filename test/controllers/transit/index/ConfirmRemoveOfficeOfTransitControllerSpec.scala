@@ -196,7 +196,7 @@ class ConfirmRemoveOfficeOfTransitControllerSpec extends SpecBase with AppWithDe
       redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
-    "must redirect to Session Expired for a GET if no existing data is found at given index" in {
+    "must redirect to add another for a GET if no existing data is found at given index" in {
       forAll(arbitraryOfficeOfTransitAnswers(emptyUserAnswers, Index(0))) {
         answers =>
           setExistingUserAnswers(answers)
@@ -207,7 +207,8 @@ class ConfirmRemoveOfficeOfTransitControllerSpec extends SpecBase with AppWithDe
 
           status(result) mustEqual SEE_OTHER
 
-          redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+          redirectLocation(result).value
+          controllers.transit.routes.AddAnotherOfficeOfTransitController.onPageLoad(lrn, mode).url
       }
     }
 
@@ -224,7 +225,7 @@ class ConfirmRemoveOfficeOfTransitControllerSpec extends SpecBase with AppWithDe
       redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
-    "must redirect to Session Expired for a POST if no existing data is found at given index" in {
+    "must redirect to add another for a POST if no existing data is found at given index" in {
       forAll(arbitraryOfficeOfTransitAnswers(emptyUserAnswers, Index(0))) {
         answers =>
           setExistingUserAnswers(answers)
@@ -236,7 +237,8 @@ class ConfirmRemoveOfficeOfTransitControllerSpec extends SpecBase with AppWithDe
 
           status(result) mustEqual SEE_OTHER
 
-          redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+          redirectLocation(result).value mustEqual
+            controllers.transit.routes.AddAnotherOfficeOfTransitController.onPageLoad(lrn, mode).url
       }
     }
   }

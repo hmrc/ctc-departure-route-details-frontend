@@ -17,9 +17,9 @@
 package controllers.routing.index
 
 import config.PhaseConfig
-import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
 import controllers.routing.{routes => routingRoutes}
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
 import models.reference.Country
 import models.requests.SpecificDataRequestProvider1
@@ -30,7 +30,6 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.routing.index.RemoveCountryOfRoutingYesNoView
 
@@ -44,8 +43,7 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
   getMandatoryPage: SpecificDataRequiredActionProvider,
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: RemoveCountryOfRoutingYesNoView,
-  countriesService: CountriesService
+  view: RemoveCountryOfRoutingYesNoView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -73,15 +71,11 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, index, request.arg))),
             {
               case true =>
-                for {
-                  ctcCountries                          <- countriesService.getCountryCodesCTC()
-                  customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                  result <- CountryOfRoutingSection(index)
-                    .removeFromUserAnswers()
-                    .updateTask()
-                    .writeToSession()
-                    .navigateTo(routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode))
-                } yield result
+                CountryOfRoutingSection(index)
+                  .removeFromUserAnswers()
+                  .updateTask()
+                  .writeToSession()
+                  .navigateTo(routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode))
               case false =>
                 Future.successful(Redirect(routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode)))
             }
