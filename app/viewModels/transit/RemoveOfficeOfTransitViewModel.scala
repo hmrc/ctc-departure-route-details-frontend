@@ -29,8 +29,11 @@ case class RemoveOfficeOfTransitViewModel(officeOfTransit: Option[CustomsOffice]
 
   def heading(implicit messages: Messages): String = messages(s"$prefix.heading", args: _*)
 
-  val prefix: String = officeOfTransit.fold("transit.index.confirmRemoveOfficeOfTransit.default") {
-    _ => "transit.index.confirmRemoveOfficeOfTransit"
+  val prefix: String = {
+    val key = "transit.index.confirmRemoveOfficeOfTransit"
+    officeOfTransit.fold(s"$key.default")(
+      _ => key
+    )
   }
 
   val args: Seq[String] = officeOfTransit.map(_.name).toList
