@@ -16,21 +16,20 @@
 
 package controllers.exit.index
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.PhaseConfig
 import controllers.actions._
 import controllers.exit.{routes => exitRoutes}
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
-import models.reference.CustomsOffice
-import models.requests.DataRequest
 import models.{Index, LocalReferenceNumber, Mode}
-import pages.exit.index.OfficeOfExitPage
 import pages.sections.exit.OfficeOfExitSection
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewModels.exit.RemoveOfficeOfExitViewModel
+import viewModels.exit.RemoveOfficeOfExitViewModel.RemoveOfficeOfExitViewModelProvider
 import views.html.exit.index.ConfirmRemoveOfficeOfExitView
 
 import javax.inject.Inject
@@ -43,56 +42,43 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ConfirmRemoveOfficeOfExitView,
-  countriesService: CountriesService
-)(implicit ec: ExecutionContext, config: FrontendAppConfig, phaseConfig: PhaseConfig)
+  viewModelProvider: RemoveOfficeOfExitViewModelProvider
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  private case class DynamicHeading(prefix: String, args: String*)
+  private def form(viewModel: RemoveOfficeOfExitViewModel): Form[Boolean] =
+    formProvider(viewModel.prefix, viewModel.args: _*)
 
-  private def dynamicHeading(index: Index)(implicit request: DataRequest[_]): Option[DynamicHeading] =
-    request.userAnswers.get(OfficeOfExitSection(index)) map {
-      _ =>
-        val prefix = "exit.index.confirmRemoveOfficeOfExit"
-        request.userAnswers.get(OfficeOfExitPage(index)) match {
-          case Some(CustomsOffice(_, name, _)) => DynamicHeading(prefix, name)
-          case None                            => DynamicHeading(s"$prefix.default")
-        }
+  private def addAnother(lrn: LocalReferenceNumber, mode: Mode): Call =
+    exitRoutes.AddAnotherOfficeOfExitController.onPageLoad(lrn, mode)
+
+  def onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions
+    .requireIndex(lrn, OfficeOfExitSection(index), addAnother(lrn, mode)) {
+      implicit request =>
+        val viewModel = viewModelProvider.apply(request.userAnswers, index)
+        Ok(view(form(viewModel), lrn, index, mode, viewModel))
     }
 
-  def onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
-    implicit request =>
-      dynamicHeading(index) match {
-        case Some(DynamicHeading(prefix, args @ _*)) =>
-          Ok(view(formProvider(prefix, args: _*), lrn, index, mode, prefix, args: _*))
-        case _ => Redirect(config.sessionExpiredUrl)
-      }
-  }
-
-  def onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
-    implicit request =>
-      dynamicHeading(index) match {
-        case Some(DynamicHeading(prefix, args @ _*)) =>
-          formProvider(prefix, args: _*)
-            .bindFromRequest()
-            .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, index, mode, prefix, args: _*))),
-              {
-                case true =>
-                  for {
-                    ctcCountries                          <- countriesService.getCountryCodesCTC()
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                    result <- OfficeOfExitSection(index)
-                      .removeFromUserAnswers()
-                      .updateTask()
-                      .writeToSession()
-                      .navigateTo(exitRoutes.AddAnotherOfficeOfExitController.onPageLoad(lrn, mode))
-                  } yield result
-                case false =>
-                  Future.successful(Redirect(exitRoutes.AddAnotherOfficeOfExitController.onPageLoad(lrn, mode)))
-              }
-            )
-        case _ => Future.successful(Redirect(config.sessionExpiredUrl))
-      }
-  }
+  def onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions
+    .requireIndex(lrn, OfficeOfExitSection(index), addAnother(lrn, mode))
+    .async {
+      implicit request =>
+        val viewModel = viewModelProvider.apply(request.userAnswers, index)
+        form(viewModel)
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, index, mode, viewModel))),
+            {
+              case true =>
+                OfficeOfExitSection(index)
+                  .removeFromUserAnswers()
+                  .updateTask()
+                  .writeToSession()
+                  .navigateTo(addAnother(lrn, mode))
+              case false =>
+                Future.successful(Redirect(addAnother(lrn, mode)))
+            }
+          )
+    }
 }

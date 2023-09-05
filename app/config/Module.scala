@@ -18,26 +18,7 @@ package config
 
 import com.google.inject.AbstractModule
 import controllers.actions._
-import navigation.{
-  CountryOfRoutingNavigatorProvider,
-  CountryOfRoutingNavigatorProviderImpl,
-  ExitNavigatorProvider,
-  ExitNavigatorProviderImpl,
-  LoadingAndUnloadingNavigatorProvider,
-  LoadingAndUnloadingNavigatorProviderImpl,
-  LocationOfGoodsNavigatorProvider,
-  LocationOfGoodsNavigatorProviderImpl,
-  OfficeOfExitNavigatorProvider,
-  OfficeOfExitNavigatorProviderImpl,
-  OfficeOfTransitNavigatorProvider,
-  OfficeOfTransitNavigatorProviderImpl,
-  RouteDetailsNavigatorProvider,
-  RouteDetailsNavigatorProviderImpl,
-  RoutingNavigatorProvider,
-  RoutingNavigatorProviderImpl,
-  TransitNavigatorProvider,
-  TransitNavigatorProviderImpl
-}
+import navigation._
 
 import java.time.{Clock, ZoneOffset}
 
@@ -51,6 +32,7 @@ class Module extends AbstractModule {
     bind(classOf[LockActionProvider]).to(classOf[LockActionProviderImpl]).asEagerSingleton()
     bind(classOf[DependentTasksAction]).to(classOf[DependentTasksActionImpl]).asEagerSingleton()
     bind(classOf[SpecificDataRequiredActionProvider]).to(classOf[SpecificDataRequiredActionImpl]).asEagerSingleton()
+    bind(classOf[IndexRequiredActionProvider]).to(classOf[IndexRequiredActionProviderImpl]).asEagerSingleton()
 
     bind(classOf[RouteDetailsNavigatorProvider]).to(classOf[RouteDetailsNavigatorProviderImpl])
     bind(classOf[RoutingNavigatorProvider]).to(classOf[RoutingNavigatorProviderImpl])
