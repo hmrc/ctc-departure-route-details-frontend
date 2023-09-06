@@ -18,7 +18,7 @@ package models.journeyDomain.loadingAndUnloading
 
 import cats.implicits._
 import config.Constants.XXX
-import config.PhaseConfig
+import config.{Constants, PhaseConfig}
 import models.SecurityDetailsType._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
@@ -27,8 +27,8 @@ import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.SpecificCircumstanceIndicator
 import models.{Mode, Phase, UserAnswers}
 import pages.SpecificCircumstanceIndicatorPage
-import pages.external.SecurityDetailsTypePage
-import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
+import pages.external.{AdditionalDeclarationTypePage, SecurityDetailsTypePage}
+import pages.loadingAndUnloading.{AddPlaceOfLoadingYesNoPage, AddPlaceOfUnloadingPage}
 import play.api.mvc.Call
 
 case class LoadingAndUnloadingDomain(
@@ -37,7 +37,11 @@ case class LoadingAndUnloadingDomain(
 ) extends JourneyDomainModel {
 
   override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(controllers.loadingAndUnloading.routes.LoadingAndUnloadingAnswersController.onPageLoad(userAnswers.lrn, mode))
+    if (loading.isEmpty && unloading.isEmpty) {
+      Some(controllers.routes.RouteDetailsAnswersController.onPageLoad(userAnswers.lrn))
+    } else {
+      Some(controllers.loadingAndUnloading.routes.LoadingAndUnloadingAnswersController.onPageLoad(userAnswers.lrn, mode))
+    }
 }
 
 object LoadingAndUnloadingDomain {
@@ -50,8 +54,10 @@ object LoadingAndUnloadingDomain {
           case _                 => UserAnswersReader[LoadingDomain].map(Some(_))
         }
       case Phase.PostTransition =>
-        // additional declaration type is currently always normal (A) as we aren't doing pre-lodge (D) yet
-        UserAnswersReader[LoadingDomain].map(Some(_))
+        AdditionalDeclarationTypePage.reader.flatMap {
+          case Constants.`PRE-LODGE` => AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[LoadingDomain])
+          case _                     => UserAnswersReader[LoadingDomain].map(Some(_))
+        }
     }
 
   implicit def unloadingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[UnloadingDomain]] = {

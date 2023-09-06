@@ -17,7 +17,7 @@
 package models.journeyDomain.loadingAndUnloading
 
 import base.SpecBase
-import config.PhaseConfig
+import config.{Constants, PhaseConfig}
 import generators.Generators
 import models.SecurityDetailsType._
 import models.domain.{EitherType, UserAnswersReader}
@@ -30,10 +30,8 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.SpecificCircumstanceIndicatorPage
-import pages.external.SecurityDetailsTypePage
-import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
-import pages.loadingAndUnloading.loading
-import pages.loadingAndUnloading.unloading
+import pages.external.{AdditionalDeclarationTypePage, SecurityDetailsTypePage}
+import pages.loadingAndUnloading.{loading, unloading, AddPlaceOfLoadingYesNoPage, AddPlaceOfUnloadingPage}
 
 class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -182,13 +180,44 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
           when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
           "and not pre-lodge" in {
-            forAll(arbitraryLoadingAnswers(emptyUserAnswers)) {
+            val userAnswers = emptyUserAnswers.setValue(AdditionalDeclarationTypePage, Constants.STANDARD)
+            forAll(arbitraryLoadingAnswers(userAnswers)) {
               answers =>
                 val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
                   LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
                 ).run(answers)
 
                 result.value mustBe defined
+            }
+          }
+
+          "and pre-lodge" - {
+            "when addPlaceOfLoading is yes" in {
+              val userAnswers = emptyUserAnswers
+                .setValue(AdditionalDeclarationTypePage, Constants.`PRE-LODGE`)
+                .setValue(AddPlaceOfLoadingYesNoPage, true)
+
+              forAll(arbitraryLoadingAnswers(userAnswers)) {
+                answers =>
+                  val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
+                    LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+                  ).run(answers)
+
+                  result.value mustBe defined
+              }
+            }
+            "when addPlaceOfLoading is no" in {
+              val userAnswers = emptyUserAnswers
+                .setValue(AdditionalDeclarationTypePage, Constants.`PRE-LODGE`)
+                .setValue(AddPlaceOfLoadingYesNoPage, false)
+              forAll(arbitraryLoadingAnswers(userAnswers)) {
+                answers =>
+                  val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
+                    LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+                  ).run(answers)
+
+                  result.value must not be defined
+              }
             }
           }
         }
