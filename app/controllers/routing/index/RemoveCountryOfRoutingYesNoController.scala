@@ -17,9 +17,9 @@
 package controllers.routing.index
 
 import config.PhaseConfig
-import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.actions._
 import controllers.routing.{routes => routingRoutes}
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
 import models.reference.Country
 import models.requests.SpecificDataRequestProvider1
@@ -28,9 +28,8 @@ import pages.routing.index.CountryOfRoutingPage
 import pages.sections.routing.CountryOfRoutingSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.routing.index.RemoveCountryOfRoutingYesNoView
 
@@ -44,11 +43,13 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
   getMandatoryPage: SpecificDataRequiredActionProvider,
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: RemoveCountryOfRoutingYesNoView,
-  countriesService: CountriesService
+  view: RemoveCountryOfRoutingYesNoView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
+
+  private def addAnother(lrn: LocalReferenceNumber, mode: Mode): Call =
+    routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode)
 
   private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[_]
 
@@ -56,14 +57,14 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
     formProvider("routing.index.removeCountryOfRoutingYesNo", request.arg.toString)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
-    .requireData(lrn)
+    .requireIndex(lrn, CountryOfRoutingSection(index), addAnother(lrn, mode))
     .andThen(getMandatoryPage(CountryOfRoutingPage(index))) {
       implicit request =>
         Ok(view(form, lrn, mode, index, request.arg))
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
-    .requireData(lrn)
+    .requireIndex(lrn, CountryOfRoutingSection(index), addAnother(lrn, mode))
     .andThen(getMandatoryPage(CountryOfRoutingPage(index)))
     .async {
       implicit request =>
@@ -73,17 +74,13 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, index, request.arg))),
             {
               case true =>
-                for {
-                  ctcCountries                          <- countriesService.getCountryCodesCTC()
-                  customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                  result <- CountryOfRoutingSection(index)
-                    .removeFromUserAnswers()
-                    .updateTask()
-                    .writeToSession()
-                    .navigateTo(routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode))
-                } yield result
+                CountryOfRoutingSection(index)
+                  .removeFromUserAnswers()
+                  .updateTask()
+                  .writeToSession()
+                  .navigateTo(addAnother(lrn, mode))
               case false =>
-                Future.successful(Redirect(routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode)))
+                Future.successful(Redirect(addAnother(lrn, mode)))
             }
           )
     }

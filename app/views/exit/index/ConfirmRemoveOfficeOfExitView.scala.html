@@ -17,6 +17,7 @@
 @import controllers.exit.index.routes
 @import models.LocalReferenceNumber
 @import viewModels.components.InputYesNoViewModel._
+@import viewModels.exit.RemoveOfficeOfExitViewModel
 @import views.html.components.{Button, ErrorSummary, InputYesNo}
 
 @this(
@@ -27,10 +28,10 @@
     button: Button
 )
 
-@(form: Form[Boolean], lrn: LocalReferenceNumber, index: Index, mode: Mode, prefix: String, args: String*)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: LocalReferenceNumber, index: Index, mode: Mode, viewModel: RemoveOfficeOfExitViewModel)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages(s"$prefix.title", args: _*),
+    title = viewModel.title,
     showBackLink = true,
     lrn = lrn
 ) {
@@ -42,7 +43,7 @@
         @inputYesNo(
             field = form("value"),
             yesNoType = OrdinaryYesNo(
-                heading = messages(s"$prefix.heading", args: _*),
+                heading = viewModel.heading,
                 caption = Some(messages("exit.caption"))
             )
         )

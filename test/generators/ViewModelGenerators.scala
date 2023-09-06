@@ -16,17 +16,18 @@
 
 package generators
 
+import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
 import play.api.mvc.Call
 import play.twirl.api.Html
-import viewModels.sections.Section
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import viewModels.exit.AddAnotherOfficeOfExitViewModel
+import viewModels.exit.{AddAnotherOfficeOfExitViewModel, RemoveOfficeOfExitViewModel}
 import viewModels.routing.AddAnotherCountryOfRoutingViewModel
-import viewModels.transit.AddAnotherOfficeOfTransitViewModel
+import viewModels.sections.Section
+import viewModels.transit.{AddAnotherOfficeOfTransitViewModel, RemoveOfficeOfTransitViewModel}
 import viewModels.{sections, Link, ListItem}
 
 trait ViewModelGenerators {
@@ -192,5 +193,17 @@ trait ViewModelGenerators {
       listItems    <- arbitrary[Seq[ListItem]]
       onSubmitCall <- arbitrary[Call]
     } yield AddAnotherCountryOfRoutingViewModel(listItems, onSubmitCall)
+  }
+
+  implicit lazy val arbitraryRemoveOfficeOfExitViewModel: Arbitrary[RemoveOfficeOfExitViewModel] = Arbitrary {
+    for {
+      officeOfExit <- Gen.option(arbitrary[CustomsOffice])
+    } yield RemoveOfficeOfExitViewModel(officeOfExit)
+  }
+
+  implicit lazy val arbitraryRemoveOfficeOfTransitViewModel: Arbitrary[RemoveOfficeOfTransitViewModel] = Arbitrary {
+    for {
+      officeOfTransit <- Gen.option(arbitrary[CustomsOffice])
+    } yield RemoveOfficeOfTransitViewModel(officeOfTransit)
   }
 }

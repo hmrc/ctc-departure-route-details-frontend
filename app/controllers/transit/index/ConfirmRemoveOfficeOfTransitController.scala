@@ -16,21 +16,20 @@
 
 package controllers.transit.index
 
-import config.{FrontendAppConfig, PhaseConfig}
-import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
+import config.PhaseConfig
 import controllers.actions._
 import controllers.transit.{routes => transitRoutes}
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
-import models.reference.CustomsOffice
-import models.requests.DataRequest
 import models.{Index, LocalReferenceNumber, Mode}
 import pages.sections.transit.OfficeOfTransitSection
-import pages.transit.index.OfficeOfTransitPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewModels.transit.RemoveOfficeOfTransitViewModel
+import viewModels.transit.RemoveOfficeOfTransitViewModel.RemoveOfficeOfTransitViewModelProvider
 import views.html.transit.index.ConfirmRemoveOfficeOfTransitView
 
 import javax.inject.Inject
@@ -43,56 +42,43 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ConfirmRemoveOfficeOfTransitView,
-  countriesService: CountriesService
-)(implicit ec: ExecutionContext, config: FrontendAppConfig, phaseConfig: PhaseConfig)
+  viewModelProvider: RemoveOfficeOfTransitViewModelProvider
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  private case class DynamicHeading(prefix: String, args: String*)
+  private def form(viewModel: RemoveOfficeOfTransitViewModel): Form[Boolean] =
+    formProvider(viewModel.prefix, viewModel.args: _*)
 
-  private def dynamicHeading(index: Index)(implicit request: DataRequest[_]): Option[DynamicHeading] =
-    request.userAnswers.get(OfficeOfTransitSection(index)) map {
-      _ =>
-        val prefix = "transit.index.confirmRemoveOfficeOfTransit"
-        request.userAnswers.get(OfficeOfTransitPage(index)) match {
-          case Some(CustomsOffice(_, name, _)) => DynamicHeading(prefix, name)
-          case None                            => DynamicHeading(s"$prefix.default")
-        }
+  private def addAnother(lrn: LocalReferenceNumber, mode: Mode): Call =
+    transitRoutes.AddAnotherOfficeOfTransitController.onPageLoad(lrn, mode)
+
+  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
+    .requireIndex(lrn, OfficeOfTransitSection(index), addAnother(lrn, mode)) {
+      implicit request =>
+        val viewModel = viewModelProvider.apply(request.userAnswers, index)
+        Ok(view(form(viewModel), lrn, mode, index, viewModel))
     }
 
-  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn) {
-    implicit request =>
-      dynamicHeading(index) match {
-        case Some(DynamicHeading(prefix, args @ _*)) =>
-          Ok(view(formProvider(prefix, args: _*), lrn, mode, index, prefix, args: _*))
-        case _ => Redirect(config.sessionExpiredUrl)
-      }
-  }
-
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
-    implicit request =>
-      dynamicHeading(index) match {
-        case Some(DynamicHeading(prefix, args @ _*)) =>
-          formProvider(prefix, args: _*)
-            .bindFromRequest()
-            .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, index, prefix, args: _*))),
-              {
-                case true =>
-                  for {
-                    ctcCountries                          <- countriesService.getCountryCodesCTC()
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries()
-                    result <- OfficeOfTransitSection(index)
-                      .removeFromUserAnswers()
-                      .updateTask()
-                      .writeToSession()
-                      .navigateTo(transitRoutes.AddAnotherOfficeOfTransitController.onPageLoad(lrn, mode))
-                  } yield result
-                case false =>
-                  Future.successful(Redirect(transitRoutes.AddAnotherOfficeOfTransitController.onPageLoad(lrn, mode)))
-              }
-            )
-        case _ => Future.successful(Redirect(config.sessionExpiredUrl))
-      }
-  }
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
+    .requireIndex(lrn, OfficeOfTransitSection(index), addAnother(lrn, mode))
+    .async {
+      implicit request =>
+        val viewModel = viewModelProvider.apply(request.userAnswers, index)
+        form(viewModel)
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, index, viewModel))),
+            {
+              case true =>
+                OfficeOfTransitSection(index)
+                  .removeFromUserAnswers()
+                  .updateTask()
+                  .writeToSession()
+                  .navigateTo(addAnother(lrn, mode))
+              case false =>
+                Future.successful(Redirect(addAnother(lrn, mode)))
+            }
+          )
+    }
 }
