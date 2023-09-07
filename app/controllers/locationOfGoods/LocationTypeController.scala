@@ -20,13 +20,14 @@ import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
-import models.requests.DataRequest
 import models.{LocalReferenceNumber, LocationType, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
 import pages.locationOfGoods.LocationTypePage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.LocationTypeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.LocationTypeView
 
@@ -39,41 +40,48 @@ class LocationTypeController @Inject() (
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
   formProvider: EnumerableFormProvider,
+  locationTypeService: LocationTypeService,
   val controllerComponents: MessagesControllerComponents,
   view: LocationTypeView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider[LocationType]("locationOfGoods.locationType")
+  private def form(locationType: Seq[LocationType]): Form[LocationType] =
+    formProvider("locationOfGoods.locationType", locationType)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
-    .requireData(lrn) {
-      implicit request =>
-        val preparedForm = request.userAnswers.get(LocationTypePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
-
-        Ok(view(preparedForm, lrn, LocationType.values, mode))
-    }
-
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
     .async {
-      implicit request: DataRequest[AnyContent] =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationType.values, mode))),
-            value => {
-              implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-              LocationTypePage
-                .writeToUserAnswers(value)
-                .updateTask()
-                .writeToSession()
-                .navigate()
+      implicit request =>
+        locationTypeService.getLocationTypes().map {
+          locationType =>
+            val preparedForm = request.userAnswers.get(LocationTypePage) match {
+              case None        => form(locationType)
+              case Some(value) => form(locationType).fill(value)
             }
-          )
+
+            Ok(view(preparedForm, lrn, locationType, mode))
+        }
     }
+
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
+    implicit request =>
+      locationTypeService.getLocationTypes().flatMap {
+        locationType =>
+          form(locationType)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationType, mode))),
+              value => {
+                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                LocationTypePage
+                  .writeToUserAnswers(value)
+                  .updateTask()
+                  .writeToSession()
+                  .navigate()
+              }
+            )
+      }
+  }
 }

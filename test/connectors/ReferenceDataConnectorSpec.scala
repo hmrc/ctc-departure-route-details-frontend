@@ -19,6 +19,7 @@ package connectors
 import base.{AppWithDefaultMockFixtures, SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
+import models.LocationType
 import models.reference._
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -184,6 +185,47 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
   )
 
   "Reference Data" - {
+    "getLocationType" - {
+      val code = "A"
+
+      val locationTypesResponseJson: String =
+        s"""
+           |{
+           |  "data": [
+           |    {
+           |      "code": "$code",
+           |      "description": "Designated place"
+           |    }
+           |  ]
+           |}
+           |""".stripMargin
+
+      val url = s"$baseUrl/filtered-lists/TypeOfLocation?foo=bar"
+
+      "should handle a 200 response for location types" in {
+        server.stubFor(
+          get(urlEqualTo(url))
+            .willReturn(okJson(locationTypesResponseJson))
+        )
+
+        val expectedResult = Seq(LocationType(code, "Designated place"))
+
+        connector.getTypeOfLocation.futureValue mustBe expectedResult
+      }
+
+      "should handle a 204 response for location types" in {
+        server.stubFor(
+          get(urlEqualTo(url))
+            .willReturn(aResponse().withStatus(NO_CONTENT))
+        )
+
+        connector.getTypeOfLocation().futureValue mustBe Nil
+      }
+
+      "should handle client and server errors for control types" in {
+        checkErrorResponse(url, connector.getTypeOfLocation())
+      }
+    }
 
     "getCustomsOfficesOfTransitForCountry" - {
       def url(countryId: String) = s"/$baseUrl/filtered-lists/CustomsOffices?data.countryId=$countryId&data.roles.role=TRA"

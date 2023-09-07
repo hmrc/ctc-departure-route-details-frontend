@@ -20,7 +20,6 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.EnumerableFormProvider
 import generators.Generators
 import models.LocationOfGoodsIdentification.AuthorisationNumber
-import models.LocationType.AuthorisedPlace
 import models.{LocationOfGoodsIdentification, NormalMode, UserAnswers}
 import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentCaptor
