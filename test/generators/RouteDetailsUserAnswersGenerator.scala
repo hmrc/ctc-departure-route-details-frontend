@@ -16,6 +16,7 @@
 
 package generators
 
+import config.PhaseConfig
 import models.journeyDomain.RouteDetailsDomain
 import models.journeyDomain.exit.{ExitDomain, OfficeOfExitDomain}
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
@@ -30,19 +31,19 @@ import org.scalacheck.Gen
 trait RouteDetailsUserAnswersGenerator {
   self: UserAnswersGenerator =>
 
-  def arbitraryRouteDetailsAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
+  def arbitraryRouteDetailsAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[RouteDetailsDomain](userAnswers)
 
-  def arbitraryRoutingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
+  def arbitraryRoutingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[RoutingDomain](userAnswers)
 
   def arbitraryCountryOfRoutingAnswers(userAnswers: UserAnswers, index: Index): Gen[UserAnswers] =
     buildUserAnswers[CountryOfRoutingDomain](userAnswers)(CountryOfRoutingDomain.userAnswersReader(index))
 
-  def arbitraryTransitAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
+  def arbitraryTransitAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[TransitDomain](userAnswers)
 
-  def arbitraryOfficeOfTransitAnswers(userAnswers: UserAnswers, index: Index): Gen[UserAnswers] =
+  def arbitraryOfficeOfTransitAnswers(userAnswers: UserAnswers, index: Index)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[OfficeOfTransitDomain](userAnswers)(
       OfficeOfTransitDomain.userAnswersReader(index)
     )
@@ -61,9 +62,9 @@ trait RouteDetailsUserAnswersGenerator {
   def arbitraryLoadingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
     buildUserAnswers[LoadingDomain](userAnswers)
 
-  def arbitraryUnloadingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
+  def arbitraryUnloadingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[UnloadingDomain](userAnswers)
 
-  def arbitraryLoadingAndUnloadingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
+  def arbitraryLoadingAndUnloadingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[LoadingAndUnloadingDomain](userAnswers)
 }

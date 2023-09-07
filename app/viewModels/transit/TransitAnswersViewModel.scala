@@ -16,7 +16,7 @@
 
 package viewModels.transit
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PhaseConfig}
 import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
 import utils.cyaHelpers.transit.TransitCheckYourAnswersHelper
@@ -30,7 +30,9 @@ object TransitAnswersViewModel {
 
   class TransitAnswersViewModelProvider @Inject() () {
 
-    def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig): TransitAnswersViewModel = {
+    def apply(userAnswers: UserAnswers,
+              mode: Mode
+    )(implicit messages: Messages, config: FrontendAppConfig, phaseConfig: PhaseConfig): TransitAnswersViewModel = {
 
       val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)
 

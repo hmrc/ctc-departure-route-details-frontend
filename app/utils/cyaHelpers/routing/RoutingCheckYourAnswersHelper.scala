@@ -19,8 +19,9 @@ package utils.cyaHelpers.routing
 import controllers.routing.index.routes
 import config.FrontendAppConfig
 import models.journeyDomain.routing.CountryOfRoutingDomain
-import models.reference.{Country, CustomsOffice}
+import models.reference.{Country, CustomsOffice, SpecificCircumstanceIndicator}
 import models.{Index, Mode, UserAnswers}
+import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 import pages.routing.index.CountryOfRoutingPage
 import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage, CountryOfDestinationPage, OfficeOfDestinationPage}
 import pages.sections.routing.CountriesOfRoutingSection
@@ -33,11 +34,25 @@ import viewModels.{Link, ListItem}
 class RoutingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig)
     extends AnswersHelper(userAnswers, mode) {
 
+  def addSpecificCircumstanceIndicatorYesNo: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
+    page = AddSpecificCircumstanceIndicatorYesNoPage,
+    formatAnswer = formatAsYesOrNo,
+    prefix = "addSpecificCircumstanceIndicatorYesNo",
+    id = Some("change-add-specific-circumstance-indicator")
+  )
+
+  def specificCircumstanceIndicator: Option[SummaryListRow] = getAnswerAndBuildRow[SpecificCircumstanceIndicator](
+    page = SpecificCircumstanceIndicatorPage,
+    formatAnswer = formatAsText,
+    prefix = "specificCircumstanceIndicator",
+    id = Some("change-specific-circumstance-indicator")
+  )
+
   def countryOfDestination: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = CountryOfDestinationPage,
     formatAnswer = formatAsText,
     prefix = "routing.countryOfDestination",
-    id = Some("change-country-of-destination")
+    id = Some("change-office-of-destination-country")
   )
 
   def officeOfDestination: Option[SummaryListRow] = getAnswerAndBuildRow[CustomsOffice](

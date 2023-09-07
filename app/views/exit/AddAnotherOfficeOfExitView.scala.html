@@ -56,7 +56,7 @@
                 yesNoType = YesNoWithLegend(
                     legend = viewModel.legend
                 ),
-                hint = Some(viewModel.hint)
+                hint = Some(HtmlContent(messages("exit.addAnotherOfficeOfExit.paragraph").toParagraph))
             )
         } else {
             <p class="govuk-body" data-testId="maxLimit">@viewModel.maxLimitLabel</p>

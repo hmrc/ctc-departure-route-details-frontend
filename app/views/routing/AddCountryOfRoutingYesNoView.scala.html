@@ -41,9 +41,10 @@
 
         @inputYesNo(
             field = form("value"),
-            yesNoType = OrdinaryYesNo(
+            yesNoType = YesNoWithAdditionalHtml(
                 heading = messages("routing.addCountryOfRoutingYesNo.heading"),
-                caption = Some(messages("routing.caption"))
+                caption = Some(messages("routing.caption")),
+                additionalHtml = messages("routing.addCountryOfRoutingYesNo.paragraph").toParagraph
             )
         )
 

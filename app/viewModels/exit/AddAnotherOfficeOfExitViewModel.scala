@@ -21,8 +21,6 @@ import controllers.exit.routes
 import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
 import play.api.mvc.Call
-import uk.gov.hmrc.govukfrontend.views.Aliases.Content
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import utils.cyaHelpers.exit.ExitCheckYourAnswersHelper
 import viewModels.{AddAnotherViewModel, ListItem}
 
@@ -35,8 +33,6 @@ case class AddAnotherOfficeOfExitViewModel(
   override val prefix: String = "exit.addAnotherOfficeOfExit"
 
   override def maxCount(implicit config: FrontendAppConfig): Int = config.maxOfficesOfExit
-
-  def hint(implicit messages: Messages): Content = messages(s"$prefix.hint").toText
 }
 
 object AddAnotherOfficeOfExitViewModel {

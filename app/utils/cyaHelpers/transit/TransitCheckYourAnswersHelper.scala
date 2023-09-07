@@ -16,7 +16,7 @@
 
 package utils.cyaHelpers.transit
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PhaseConfig}
 import controllers.transit.index.routes
 import models.journeyDomain.transit.OfficeOfTransitDomain
 import models.{Index, Mode, UserAnswers}
@@ -33,7 +33,7 @@ import viewModels.{Link, ListItem}
 class TransitCheckYourAnswersHelper(
   userAnswers: UserAnswers,
   mode: Mode
-)(implicit messages: Messages, config: FrontendAppConfig)
+)(implicit messages: Messages, config: FrontendAppConfig, phaseConfig: PhaseConfig)
     extends AnswersHelper(userAnswers, mode) {
 
   def includesT2Declarations: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](

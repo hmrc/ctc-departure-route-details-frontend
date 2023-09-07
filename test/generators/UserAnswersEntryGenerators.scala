@@ -16,7 +16,8 @@
 
 package generators
 
-import models.reference.{Country, CustomsOffice, UnLocode}
+import config.Constants._
+import models.reference._
 import models.{Coordinates, DateTime, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -30,6 +31,7 @@ trait UserAnswersEntryGenerators {
 
   private def generateRouteDetailsAnswer: PartialFunction[Gettable[_], Gen[JsValue]] =
     generateExternalAnswer orElse
+      generateSpecificCircumstanceIndicatorAnswer orElse
       generateRoutingAnswer orElse
       generateTransitAnswer orElse
       generateExitAnswer orElse
@@ -39,11 +41,21 @@ trait UserAnswersEntryGenerators {
   private def generateExternalAnswer: PartialFunction[Gettable[_], Gen[JsValue]] = {
     import pages.external._
     {
-      case OfficeOfDeparturePage        => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
-      case OfficeOfDepartureInCL112Page => arbitrary[Boolean].map(JsBoolean)
-      case OfficeOfDepartureInCL147Page => arbitrary[Boolean].map(JsBoolean)
-      case DeclarationTypePage          => arbitrary[String](arbitraryDeclarationType).map(Json.toJson(_))
-      case SecurityDetailsTypePage      => arbitrary[String](arbitrarySecurityDetailsType).map(Json.toJson(_))
+      case AdditionalDeclarationTypePage => Gen.oneOf(STANDARD, `PRE-LODGE`).map(JsString)
+      case OfficeOfDeparturePage         => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
+      case OfficeOfDepartureInCL112Page  => arbitrary[Boolean].map(JsBoolean)
+      case OfficeOfDepartureInCL147Page  => arbitrary[Boolean].map(JsBoolean)
+      case OfficeOfDepartureInCL010Page  => arbitrary[Boolean].map(JsBoolean)
+      case DeclarationTypePage           => arbitrary[String](arbitraryDeclarationType).map(Json.toJson(_))
+      case SecurityDetailsTypePage       => arbitrary[String](arbitrarySecurityDetailsType).map(Json.toJson(_))
+    }
+  }
+
+  private def generateSpecificCircumstanceIndicatorAnswer: PartialFunction[Gettable[_], Gen[JsValue]] = {
+    import pages._
+    {
+      case AddSpecificCircumstanceIndicatorYesNoPage => arbitrary[Boolean].map(JsBoolean)
+      case SpecificCircumstanceIndicatorPage         => arbitrary[SpecificCircumstanceIndicator].map(Json.toJson(_))
     }
   }
 
@@ -71,6 +83,7 @@ trait UserAnswersEntryGenerators {
       case OfficeOfTransitCountryPage(_)     => arbitrary[Country].map(Json.toJson(_))
       case OfficeOfTransitPage(_)            => arbitrary[CustomsOffice].map(Json.toJson(_))
       case OfficeOfTransitInCL147Page(_)     => arbitrary[Boolean].map(JsBoolean)
+      case OfficeOfTransitInCL010Page(_)     => arbitrary[Boolean].map(JsBoolean)
       case AddOfficeOfTransitETAYesNoPage(_) => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfTransitETAPage(_)         => arbitrary[DateTime].map(Json.toJson(_))
     }

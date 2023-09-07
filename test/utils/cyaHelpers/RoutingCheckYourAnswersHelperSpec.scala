@@ -22,10 +22,11 @@ import controllers.routing.index.{routes => indexRoutes}
 import generators.Generators
 import models.domain.UserAnswersReader
 import models.journeyDomain.routing.CountryOfRoutingDomain
-import models.reference.{Country, CountryCode, CustomsOffice}
+import models.reference.{Country, CountryCode, CustomsOffice, SpecificCircumstanceIndicator}
 import models.{Index, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 import pages.routing.index.CountryOfRoutingPage
 import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage, CountryOfDestinationPage, OfficeOfDestinationPage}
 import pages.sections.routing.CountryOfRoutingSection
@@ -39,6 +40,94 @@ import viewModels.ListItem
 class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "RoutingCheckYourAnswersHelper" - {
+
+    "addSpecificCircumstanceIndicator" - {
+      "must return None" - {
+        "when AddSpecificCircumstanceIndicatorYesNoPage undefined" in {
+          forAll(arbitrary[Mode]) {
+            mode =>
+              val helper = new RoutingCheckYourAnswersHelper(emptyUserAnswers, mode)
+              val result = helper.addSpecificCircumstanceIndicatorYesNo
+              result mustBe None
+          }
+        }
+      }
+
+      "must return Some(Row)" - {
+        "when AddSpecificCircumstanceIndicatorYesNoPage defined" in {
+          forAll(arbitrary[Mode]) {
+            mode =>
+              val answers = emptyUserAnswers.setValue(AddSpecificCircumstanceIndicatorYesNoPage, true)
+
+              val helper = new RoutingCheckYourAnswersHelper(answers, mode)
+              val result = helper.addSpecificCircumstanceIndicatorYesNo
+
+              result mustBe Some(
+                SummaryListRow(
+                  key = Key("Do you want to add a specific circumstance indicator?".toText),
+                  value = Value("Yes".toText),
+                  actions = Some(
+                    Actions(
+                      items = List(
+                        ActionItem(
+                          content = "Change".toText,
+                          href = controllers.routes.AddSpecificCircumstanceIndicatorYesNoController.onPageLoad(answers.lrn, mode).url,
+                          visuallyHiddenText = Some("if you want to add a specific circumstance indicator"),
+                          attributes = Map("id" -> "change-add-specific-circumstance-indicator")
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+          }
+        }
+      }
+    }
+
+    "specificCircumstanceIndicator" - {
+      "must return None" - {
+        "when SpecificCircumstanceIndicatorPage undefined at index" in {
+          forAll(arbitrary[Mode]) {
+            mode =>
+              val helper = new RoutingCheckYourAnswersHelper(emptyUserAnswers, mode)
+              val result = helper.specificCircumstanceIndicator
+              result mustBe None
+          }
+        }
+      }
+
+      "must return Some(Row)" - {
+        "when SpecificCircumstanceIndicatorPage defined" in {
+          forAll(arbitrary[SpecificCircumstanceIndicator], arbitrary[Mode]) {
+            (specificCircumstanceIndicator, mode) =>
+              val answers = emptyUserAnswers.setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
+
+              val helper = new RoutingCheckYourAnswersHelper(answers, mode)
+              val result = helper.specificCircumstanceIndicator
+
+              result mustBe Some(
+                SummaryListRow(
+                  key = Key("Specific circumstance indicator".toText),
+                  value = Value(s"$specificCircumstanceIndicator".toText),
+                  actions = Some(
+                    Actions(
+                      items = List(
+                        ActionItem(
+                          content = "Change".toText,
+                          href = controllers.routes.SpecificCircumstanceIndicatorController.onPageLoad(answers.lrn, mode).url,
+                          visuallyHiddenText = Some("specific circumstance indicator"),
+                          attributes = Map("id" -> "change-specific-circumstance-indicator")
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+          }
+        }
+      }
+    }
 
     "countryOfDestination" - {
       "must return None" - {
@@ -63,7 +152,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
 
               result mustBe Some(
                 SummaryListRow(
-                  key = Key("Country of destination".toText),
+                  key = Key("Office of destination’s country".toText),
                   value = Value(s"$country".toText),
                   actions = Some(
                     Actions(
@@ -71,8 +160,8 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                         ActionItem(
                           content = "Change".toText,
                           href = routingRoutes.CountryOfDestinationController.onPageLoad(answers.lrn, mode).url,
-                          visuallyHiddenText = Some("country of destination"),
-                          attributes = Map("id" -> "change-country-of-destination")
+                          visuallyHiddenText = Some("office of destination’s country"),
+                          attributes = Map("id" -> "change-office-of-destination-country")
                         )
                       )
                     )
@@ -239,14 +328,14 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new RoutingCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.countryOfRouting(index).get
 
-              result.key.value mustBe "Country of routing 1"
+              result.key.value mustBe "Country 1"
               result.value.value mustBe countryOfRouting.country.toString
               val actions = result.actions.get.items
               actions.size mustBe 1
               val action = actions.head
               action.content.value mustBe "Change"
               action.href mustBe indexRoutes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index).url
-              action.visuallyHiddenText.get mustBe "country of routing 1"
+              action.visuallyHiddenText.get mustBe "country 1 in the transit route"
               action.id mustBe "change-country-of-routing-1"
           }
         }

@@ -40,3 +40,10 @@ case class OfficeOfTransitInCL147Page(index: Index) extends QuestionPage[Boolean
 
   override def toString: String = "isInCL147"
 }
+
+case class OfficeOfTransitInCL010Page(index: Index) extends QuestionPage[Boolean] {
+
+  override def path: JsPath = OfficeOfTransitPage(index).path \ toString
+
+  override def toString: String = "isInCL010"
+}

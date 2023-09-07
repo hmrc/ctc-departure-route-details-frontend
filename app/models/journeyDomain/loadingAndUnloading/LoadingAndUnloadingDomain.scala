@@ -18,13 +18,16 @@ package models.journeyDomain.loadingAndUnloading
 
 import cats.implicits._
 import config.Constants._
+import config.{Constants, PhaseConfig}
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.{Mode, UserAnswers}
-import pages.external.SecurityDetailsTypePage
-import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
+import models.reference.SpecificCircumstanceIndicator
+import models.{Mode, Phase, UserAnswers}
+import pages.SpecificCircumstanceIndicatorPage
+import pages.external.{AdditionalDeclarationTypePage, SecurityDetailsTypePage}
+import pages.loadingAndUnloading.{AddPlaceOfLoadingYesNoPage, AddPlaceOfUnloadingPage}
 import play.api.mvc.Call
 
 case class LoadingAndUnloadingDomain(
@@ -33,27 +36,54 @@ case class LoadingAndUnloadingDomain(
 ) extends JourneyDomainModel {
 
   override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(controllers.loadingAndUnloading.routes.LoadingAndUnloadingAnswersController.onPageLoad(userAnswers.lrn, mode))
+    if (loading.isEmpty && unloading.isEmpty) {
+      Some(controllers.routes.RouteDetailsAnswersController.onPageLoad(userAnswers.lrn))
+    } else {
+      Some(controllers.loadingAndUnloading.routes.LoadingAndUnloadingAnswersController.onPageLoad(userAnswers.lrn, mode))
+    }
 }
 
 object LoadingAndUnloadingDomain {
 
-  // When pre-lodge is in, add a loadingReader to handle nav logic if additional declaration type is A or D
-
-  implicit val unloadingReader: UserAnswersReader[Option[UnloadingDomain]] =
-    SecurityDetailsTypePage.reader.flatMap {
-      case ExitSummaryDeclarationSecurityDetails =>
-        AddPlaceOfUnloadingPage
-          .filterOptionalDependent(identity)(UserAnswersReader[UnloadingDomain])
-      case EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
-        UserAnswersReader[UnloadingDomain].map(Some(_))
-      case _ =>
-        none[UnloadingDomain].pure[UserAnswersReader]
+  implicit def loadingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[LoadingDomain]] =
+    phaseConfig.phase match {
+      case Phase.Transition =>
+        SecurityDetailsTypePage.reader.flatMap {
+          case NoSecurityDetails => none[LoadingDomain].pure[UserAnswersReader]
+          case _                 => UserAnswersReader[LoadingDomain].map(Some(_))
+        }
+      case Phase.PostTransition =>
+        AdditionalDeclarationTypePage.reader.flatMap {
+          case Constants.`PRE-LODGE` => AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[LoadingDomain])
+          case _                     => UserAnswersReader[LoadingDomain].map(Some(_))
+        }
     }
 
-  implicit val userAnswersReader: UserAnswersReader[LoadingAndUnloadingDomain] =
+  implicit def unloadingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[UnloadingDomain]] = {
+    lazy val mandatoryReader: UserAnswersReader[Option[UnloadingDomain]] =
+      UserAnswersReader[UnloadingDomain].map(Some(_))
+
+    lazy val optionalReader: UserAnswersReader[Option[UnloadingDomain]] =
+      AddPlaceOfUnloadingPage.filterOptionalDependent(identity)(UserAnswersReader[UnloadingDomain])
+
+    phaseConfig.phase match {
+      case Phase.Transition =>
+        SpecificCircumstanceIndicatorPage.optionalReader.flatMap {
+          case Some(SpecificCircumstanceIndicator(XXX, _)) => optionalReader
+          case _                                           => mandatoryReader
+        }
+      case Phase.PostTransition =>
+        SecurityDetailsTypePage.reader.flatMap {
+          case NoSecurityDetails                     => none[UnloadingDomain].pure[UserAnswersReader]
+          case ExitSummaryDeclarationSecurityDetails => optionalReader
+          case _                                     => mandatoryReader
+        }
+    }
+  }
+
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[LoadingAndUnloadingDomain] =
     (
-      UserAnswersReader[LoadingDomain].map(Some(_)),
+      UserAnswersReader[Option[LoadingDomain]],
       UserAnswersReader[Option[UnloadingDomain]]
     ).tupled.map((LoadingAndUnloadingDomain.apply _).tupled)
 }

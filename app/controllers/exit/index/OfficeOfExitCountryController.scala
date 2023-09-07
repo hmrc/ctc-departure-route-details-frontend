@@ -16,6 +16,7 @@
 
 package controllers.exit.index
 
+import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
@@ -48,7 +49,7 @@ class OfficeOfExitCountryController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: OfficeOfExitCountryView,
   getMandatoryPage: SpecificDataRequiredActionProvider
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 

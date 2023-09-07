@@ -18,12 +18,14 @@ package utils.cyaHelpers
 
 import base.SpecBase
 import config.Constants._
+import config.PhaseConfig
 import controllers.transit.index.{routes => indexRoutes}
 import generators.Generators
 import models.domain.UserAnswersReader
 import models.journeyDomain.transit.OfficeOfTransitDomain
 import models.reference.{Country, CustomsOffice}
-import models.{Index, Mode}
+import models.{Index, Mode, Phase}
+import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.external.{OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
@@ -196,6 +198,9 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
 
     "listItems" - {
       "must return list items" - {
+        val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+        when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
+
         "when first cannot be removed" in {
           val mode = arbitrary[Mode].sample.value
 
@@ -222,7 +227,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             .setValue(AddOfficeOfTransitETAYesNoPage(Index(1)), false)
             .setValue(OfficeOfTransitCountryPage(Index(2)), country3)
 
-          val helper = new TransitCheckYourAnswersHelper(answers, mode)
+          val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig, phaseConfig = mockPhaseConfig)
           helper.listItems mustBe Seq(
             Right(
               ListItem(
@@ -275,7 +280,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             .setValue(AddOfficeOfTransitETAYesNoPage(Index(1)), false)
             .setValue(OfficeOfTransitCountryPage(Index(2)), country3)
 
-          val helper = new TransitCheckYourAnswersHelper(answers, mode)
+          val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig, phaseConfig = mockPhaseConfig)
           helper.listItems mustBe Seq(
             Right(
               ListItem(

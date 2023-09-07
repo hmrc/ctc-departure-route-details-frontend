@@ -134,7 +134,7 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
       }
     }
 
-    "must redirect to Session Expired for a GET" - {
+    "must redirect for a GET" - {
       "when no existing data found" in {
         setNoExistingUserAnswers()
 
@@ -156,11 +156,12 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+        redirectLocation(result).value mustEqual
+          routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode).url
       }
     }
 
-    "must redirect to Session Expired for a POST if no existing data is found" - {
+    "must redirect for a POST" - {
       "when no existing data found" in {
         setNoExistingUserAnswers()
 
@@ -184,7 +185,8 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+        redirectLocation(result).value mustEqual
+          routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode).url
       }
     }
   }

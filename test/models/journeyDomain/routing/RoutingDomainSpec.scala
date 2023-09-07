@@ -18,10 +18,12 @@ package models.journeyDomain.routing
 
 import base.SpecBase
 import config.Constants._
+import config.PhaseConfig
 import generators.Generators
-import models.Index
 import models.domain.{EitherType, UserAnswersReader}
 import models.reference.{Country, CustomsOffice}
+import models.{Index, Phase}
+import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import pages.external.SecurityDetailsTypePage
 import pages.routing._
@@ -36,103 +38,162 @@ class RoutingDomainSpec extends SpecBase with Generators {
 
     "can be parsed from UserAnswers" - {
 
-      "when no security" - {
+      "when post transition" - {
+        val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+        when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
-        val securityType = NoSecurityDetails
+        "when no security" - {
 
-        "and following binding itinerary" in {
+          val securityType = NoSecurityDetails
 
-          val userAnswers = emptyUserAnswers
-            .setValue(SecurityDetailsTypePage, securityType)
-            .setValue(CountryOfDestinationPage, country)
-            .setValue(OfficeOfDestinationPage, officeOfDestination)
-            .setValue(BindingItineraryPage, true)
-            .setValue(CountryOfRoutingPage(index), country)
+          "and following binding itinerary" in {
 
-          val expectedResult = RoutingDomain(
-            countryOfDestination = country,
-            officeOfDestination = officeOfDestination,
-            bindingItinerary = true,
-            countriesOfRouting = Seq(
-              CountryOfRoutingDomain(country)(index)
+            val userAnswers = emptyUserAnswers
+              .setValue(SecurityDetailsTypePage, securityType)
+              .setValue(CountryOfDestinationPage, country)
+              .setValue(OfficeOfDestinationPage, officeOfDestination)
+              .setValue(BindingItineraryPage, true)
+              .setValue(CountryOfRoutingPage(index), country)
+
+            val expectedResult = RoutingDomain(
+              countryOfDestination = country,
+              officeOfDestination = officeOfDestination,
+              bindingItinerary = true,
+              countriesOfRouting = Seq(
+                CountryOfRoutingDomain(country)(index)
+              )
             )
-          )
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
 
-          result.value mustBe expectedResult
+            result.value mustBe expectedResult
+          }
+
+          "and not following binding itinerary" in {
+
+            val userAnswers = emptyUserAnswers
+              .setValue(SecurityDetailsTypePage, securityType)
+              .setValue(CountryOfDestinationPage, country)
+              .setValue(OfficeOfDestinationPage, officeOfDestination)
+              .setValue(BindingItineraryPage, false)
+              .setValue(AddCountryOfRoutingYesNoPage, false)
+
+            val expectedResult = RoutingDomain(
+              countryOfDestination = country,
+              officeOfDestination = officeOfDestination,
+              bindingItinerary = false,
+              countriesOfRouting = Nil
+            )
+
+            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+
+            result.value mustBe expectedResult
+          }
         }
 
-        "and not following binding itinerary" in {
+        "when there is security" - {
 
-          val userAnswers = emptyUserAnswers
-            .setValue(SecurityDetailsTypePage, securityType)
-            .setValue(CountryOfDestinationPage, country)
-            .setValue(OfficeOfDestinationPage, officeOfDestination)
-            .setValue(BindingItineraryPage, false)
-            .setValue(AddCountryOfRoutingYesNoPage, false)
+          val securityType = arbitrary[String](arbitrarySomeSecurityDetailsType).sample.value
 
-          val expectedResult = RoutingDomain(
-            countryOfDestination = country,
-            officeOfDestination = officeOfDestination,
-            bindingItinerary = false,
-            countriesOfRouting = Nil
-          )
+          "and following binding itinerary" in {
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+            val userAnswers = emptyUserAnswers
+              .setValue(SecurityDetailsTypePage, securityType)
+              .setValue(CountryOfDestinationPage, country)
+              .setValue(OfficeOfDestinationPage, officeOfDestination)
+              .setValue(BindingItineraryPage, true)
+              .setValue(CountryOfRoutingPage(index), country)
 
-          result.value mustBe expectedResult
+            val expectedResult = RoutingDomain(
+              countryOfDestination = country,
+              officeOfDestination = officeOfDestination,
+              bindingItinerary = true,
+              countriesOfRouting = Seq(
+                CountryOfRoutingDomain(country)(index)
+              )
+            )
+
+            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+
+            result.value mustBe expectedResult
+          }
+
+          "and not following binding itinerary" in {
+
+            val userAnswers = emptyUserAnswers
+              .setValue(SecurityDetailsTypePage, securityType)
+              .setValue(CountryOfDestinationPage, country)
+              .setValue(OfficeOfDestinationPage, officeOfDestination)
+              .setValue(BindingItineraryPage, false)
+              .setValue(CountryOfRoutingPage(index), country)
+
+            val expectedResult = RoutingDomain(
+              countryOfDestination = country,
+              officeOfDestination = officeOfDestination,
+              bindingItinerary = false,
+              countriesOfRouting = Seq(
+                CountryOfRoutingDomain(country)(index)
+              )
+            )
+
+            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+
+            result.value mustBe expectedResult
+          }
         }
       }
 
-      "when there is security" - {
+      "when transition" - {
+        val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+        when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
+        val bindingItinerary = arbitrary[Boolean].sample.value
 
-        val securityType = arbitrary[String](arbitrarySomeSecurityDetailsType).sample.value
+        "when no security" in {
 
-        "and following binding itinerary" in {
+          val securityType = NoSecurityDetails
 
           val userAnswers = emptyUserAnswers
             .setValue(SecurityDetailsTypePage, securityType)
             .setValue(CountryOfDestinationPage, country)
             .setValue(OfficeOfDestinationPage, officeOfDestination)
-            .setValue(BindingItineraryPage, true)
-            .setValue(CountryOfRoutingPage(index), country)
+            .setValue(BindingItineraryPage, bindingItinerary)
 
           val expectedResult = RoutingDomain(
             countryOfDestination = country,
             officeOfDestination = officeOfDestination,
-            bindingItinerary = true,
-            countriesOfRouting = Seq(
-              CountryOfRoutingDomain(country)(index)
-            )
+            bindingItinerary = bindingItinerary,
+            countriesOfRouting = Nil
           )
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
 
           result.value mustBe expectedResult
         }
 
-        "and not following binding itinerary" in {
+        "when there is security" in {
+
+          val securityType = arbitrary[String](arbitrarySomeSecurityDetailsType).sample.value
 
           val userAnswers = emptyUserAnswers
             .setValue(SecurityDetailsTypePage, securityType)
             .setValue(CountryOfDestinationPage, country)
             .setValue(OfficeOfDestinationPage, officeOfDestination)
-            .setValue(BindingItineraryPage, false)
+            .setValue(BindingItineraryPage, bindingItinerary)
             .setValue(CountryOfRoutingPage(index), country)
 
           val expectedResult = RoutingDomain(
             countryOfDestination = country,
             officeOfDestination = officeOfDestination,
-            bindingItinerary = false,
+            bindingItinerary = bindingItinerary,
             countriesOfRouting = Seq(
               CountryOfRoutingDomain(country)(index)
             )
           )
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
 
           result.value mustBe expectedResult
+
         }
       }
     }
@@ -174,31 +235,50 @@ class RoutingDomainSpec extends SpecBase with Generators {
         result.left.value.page mustBe BindingItineraryPage
       }
 
-      "when add country page is missing" in {
+      "when post transition" - {
+        val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+        when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
-        val userAnswers = emptyUserAnswers
-          .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-          .setValue(CountryOfDestinationPage, country)
-          .setValue(OfficeOfDestinationPage, officeOfDestination)
-          .setValue(BindingItineraryPage, false)
+        "when add country page is missing" in {
 
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+          val userAnswers = emptyUserAnswers
+            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+            .setValue(CountryOfDestinationPage, country)
+            .setValue(OfficeOfDestinationPage, officeOfDestination)
+            .setValue(BindingItineraryPage, false)
 
-        result.left.value.page mustBe AddCountryOfRoutingYesNoPage
-      }
+          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
 
-      "when binding itinerary is true and no countries added" in {
+          result.left.value.page mustBe AddCountryOfRoutingYesNoPage
+        }
 
-        val securityType = arbitrary[String](arbitrarySecurityDetailsType).sample.value
-        val userAnswers = emptyUserAnswers
-          .setValue(SecurityDetailsTypePage, securityType)
-          .setValue(CountryOfDestinationPage, country)
-          .setValue(OfficeOfDestinationPage, officeOfDestination)
-          .setValue(BindingItineraryPage, true)
+        "when binding itinerary is true and no countries added" in {
 
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+          val securityType = arbitrary[String](arbitrarySecurityDetailsType).sample.value
+          val userAnswers = emptyUserAnswers
+            .setValue(SecurityDetailsTypePage, securityType)
+            .setValue(CountryOfDestinationPage, country)
+            .setValue(OfficeOfDestinationPage, officeOfDestination)
+            .setValue(BindingItineraryPage, true)
 
-        result.left.value.page mustBe CountryOfRoutingPage(Index(0))
+          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+
+          result.left.value.page mustBe CountryOfRoutingPage(Index(0))
+        }
+
+        "when add country is true and no countries added" in {
+
+          val userAnswers = emptyUserAnswers
+            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+            .setValue(CountryOfDestinationPage, country)
+            .setValue(OfficeOfDestinationPage, officeOfDestination)
+            .setValue(BindingItineraryPage, false)
+            .setValue(AddCountryOfRoutingYesNoPage, true)
+
+          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+
+          result.left.value.page mustBe CountryOfRoutingPage(Index(0))
+        }
       }
 
       "when there's security and no countries added" in {
@@ -210,20 +290,6 @@ class RoutingDomainSpec extends SpecBase with Generators {
           .setValue(CountryOfDestinationPage, country)
           .setValue(OfficeOfDestinationPage, officeOfDestination)
           .setValue(BindingItineraryPage, bindingItinerary)
-
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
-
-        result.left.value.page mustBe CountryOfRoutingPage(Index(0))
-      }
-
-      "when add country is true and no countries added" in {
-
-        val userAnswers = emptyUserAnswers
-          .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-          .setValue(CountryOfDestinationPage, country)
-          .setValue(OfficeOfDestinationPage, officeOfDestination)
-          .setValue(BindingItineraryPage, false)
-          .setValue(AddCountryOfRoutingYesNoPage, true)
 
         val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
 

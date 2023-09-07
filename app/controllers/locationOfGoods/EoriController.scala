@@ -16,6 +16,7 @@
 
 package controllers.locationOfGoods
 
+import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EoriNumberFormProvider
@@ -39,7 +40,7 @@ class EoriController @Inject() (
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
   view: EoriView
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 

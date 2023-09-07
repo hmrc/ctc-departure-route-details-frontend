@@ -16,7 +16,7 @@
 
 package navigation
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PhaseConfig}
 import models.domain.UserAnswersReader
 import models.journeyDomain.exit.ExitDomain
 import models.{CheckMode, Mode, NormalMode}
@@ -24,7 +24,7 @@ import models.{CheckMode, Mode, NormalMode}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class ExitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends ExitNavigatorProvider {
+class ExitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig, phaseConfig: PhaseConfig) extends ExitNavigatorProvider {
 
   def apply(mode: Mode): UserAnswersNavigator =
     mode match {
@@ -40,7 +40,8 @@ trait ExitNavigatorProvider {
   def apply(mode: Mode): UserAnswersNavigator
 }
 
-class ExitNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig) extends UserAnswersNavigator {
+class ExitNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig, implicit override val phaseConfig: PhaseConfig)
+    extends UserAnswersNavigator {
 
   override type T = ExitDomain
 

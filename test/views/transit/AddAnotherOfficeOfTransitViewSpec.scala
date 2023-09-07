@@ -51,6 +51,8 @@ class AddAnotherOfficeOfTransitViewSpec extends ListWithActionsViewBehaviours {
 
   behave like pageWithSectionCaption("Route details - Office of transit")
 
+  behave like pageWithContent("p", "You must add an office of transit every time your goods enter a new customs territory.")
+
   behave like pageWithMoreItemsAllowed(notMaxedOutViewModel.count)()
 
   behave like pageWithItemsMaxedOut(maxedOutViewModel.count)

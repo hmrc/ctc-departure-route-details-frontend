@@ -40,3 +40,10 @@ case object OfficeOfDepartureInCL147Page extends ReadOnlyPage[Boolean] {
 
   override def toString: String = "isInCL147"
 }
+
+case object OfficeOfDepartureInCL010Page extends ReadOnlyPage[Boolean] {
+
+  override def path: JsPath = OfficeOfDeparturePage.path \ toString
+
+  override def toString: String = "isInCL010"
+}

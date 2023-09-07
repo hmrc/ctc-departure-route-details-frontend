@@ -17,7 +17,13 @@
 package config
 
 object Constants {
-  val AD = "AD"
+  val GB  = "GB"
+  val XI  = "XI"
+  val AD  = "AD"
+  val XXX = "XXX"
+
+  val STANDARD    = "A"
+  val `PRE-LODGE` = "D"
 
   val TIR = "TIR"
   val T2  = "T2"

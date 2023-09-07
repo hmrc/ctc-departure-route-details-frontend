@@ -16,13 +16,20 @@
 
 package controllers.transit.index
 
+import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
 import pages.routing.CountryOfDestinationPage
-import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage, OfficeOfTransitInCL147Page, OfficeOfTransitPage}
+import pages.transit.index.{
+  InferredOfficeOfTransitCountryPage,
+  OfficeOfTransitCountryPage,
+  OfficeOfTransitInCL010Page,
+  OfficeOfTransitInCL147Page,
+  OfficeOfTransitPage
+}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -44,7 +51,7 @@ class OfficeOfTransitController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: OfficeOfTransitView,
   getMandatoryPage: SpecificDataRequiredActionProvider
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -82,11 +89,14 @@ class OfficeOfTransitController @Inject() (
                   for {
                     customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
                     isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.countryCode)
+                    communityCountries <- countriesService.getCommunityCountries().map(_.values)
+                    isInCL010 = communityCountries.map(_.code.code).contains(value.countryCode)
                     result <- {
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                       OfficeOfTransitPage(index)
                         .writeToUserAnswers(value)
                         .appendValue(OfficeOfTransitInCL147Page(index), isInCL147)
+                        .appendValue(OfficeOfTransitInCL010Page(index), isInCL010)
                         .updateTask()
                         .writeToSession()
                         .navigate()
