@@ -61,7 +61,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
     "valuesU" - {
       "when designated location (sub place)" - {
         "must return U and V" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.DesignatedLocation)
+          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("A", "Designated location"))
 
           LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
             CustomsOfficeIdentifier,
@@ -72,7 +72,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
       "when authorised place (auth location code)" - {
         "must return Y" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.AuthorisedPlace)
+          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("A", "Authorised place"))
 
           LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
             AuthorisationNumber
@@ -82,7 +82,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
       "when approved place (agreed location)" - {
         "must return T, U, W, X, Z" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.ApprovedPlace)
+          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("A", "Approved place"))
 
           LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
             EoriNumber,
@@ -96,7 +96,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
       "when other" - {
         "must return T, U, W, Z" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.Other)
+          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("A", "Other"))
 
           LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
             CoordinatesIdentifier,

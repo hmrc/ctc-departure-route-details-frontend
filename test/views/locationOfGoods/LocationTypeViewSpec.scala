@@ -26,7 +26,7 @@ import views.html.locationOfGoods.LocationTypeView
 
 class LocationTypeViewSpec extends RadioViewBehaviours[LocationType] {
 
-  override def form: Form[LocationType] = new EnumerableFormProvider()(prefix)
+  override def form: Form[LocationType] = new EnumerableFormProvider()(prefix, values)
 
   override def applyView(form: Form[LocationType]): HtmlFormat.Appendable =
     injector.instanceOf[LocationTypeView].apply(form, lrn, values, NormalMode)(fakeRequest, messages)
@@ -36,8 +36,10 @@ class LocationTypeViewSpec extends RadioViewBehaviours[LocationType] {
   override def radioItems(fieldId: String, checkedValue: Option[LocationType] = None): Seq[RadioItem] =
     values.toRadioItems(fieldId, checkedValue)
 
-  override def values: Seq[LocationType] = LocationType.values
-
+  override def values: Seq[LocationType] = Seq(
+    LocationType("A", "Designated location"),
+    LocationType("B", "Authorised place")
+  )
   behave like pageWithTitle()
 
   behave like pageWithBackLink()

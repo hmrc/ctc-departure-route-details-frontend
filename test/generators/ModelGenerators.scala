@@ -118,7 +118,9 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryLocationType: Arbitrary[LocationType] =
     Arbitrary {
-      Gen.oneOf(LocationType.values)
+      for {
+        description <- nonEmptyString
+      } yield LocationType("A", description)
     }
 
   implicit lazy val arbitraryLocationOfGoodsIdentification: Arbitrary[LocationOfGoodsIdentification] =

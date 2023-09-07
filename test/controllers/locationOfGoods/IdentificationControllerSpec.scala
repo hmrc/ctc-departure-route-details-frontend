@@ -20,7 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.EnumerableFormProvider
 import generators.Generators
 import models.LocationOfGoodsIdentification.AuthorisationNumber
-import models.{LocationOfGoodsIdentification, NormalMode, UserAnswers}
+import models.{LocationOfGoodsIdentification, LocationType, NormalMode, UserAnswers}
 import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -51,7 +51,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
 
     "when value is inferred" - {
       "must redirect to next page" in {
-        val userAnswers = emptyUserAnswers.setValue(LocationTypePage, AuthorisedPlace)
+        val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("A", "Authorised place"))
         setExistingUserAnswers(userAnswers)
 
         val request = FakeRequest(GET, identificationRoute)

@@ -179,38 +179,44 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       |}
       |""".stripMargin
 
+  private val locationTypesResponseJson: String =
+    """
+      |
+      |   {
+      |   "data": [
+      |              {
+      |                "code": "A",
+      |                "description": "Designated location"
+      |              },
+      |              {
+      |                "code": "B",
+      |                "description": "Authorised place"
+      |               }
+      |            ]
+      |   }
+      |""".stripMargin
+
   def queryParams(role: String): Seq[(String, StringValuePattern)] = Seq(
     "data.countryId"  -> equalTo("GB"),
     "data.roles.role" -> equalTo(role)
   )
 
   "Reference Data" - {
-    "getLocationType" - {
-      val code = "A"
 
-      val locationTypesResponseJson: String =
-        s"""
-           |{
-           |  "data": [
-           |    {
-           |      "code": "$code",
-           |      "description": "Designated place"
-           |    }
-           |  ]
-           |}
-           |""".stripMargin
-
-      val url = s"$baseUrl/filtered-lists/TypeOfLocation?foo=bar"
-
-      "should handle a 200 response for location types" in {
+    "getTypeOfLocation" - {
+      val url = s"/$baseUrl/lists/TypeOfLocation"
+      "must return Seq of security types when successful" in {
         server.stubFor(
           get(urlEqualTo(url))
             .willReturn(okJson(locationTypesResponseJson))
         )
 
-        val expectedResult = Seq(LocationType(code, "Designated place"))
+        val expectedResult: Seq[LocationType] = Seq(
+          LocationType("A", "Designated location"),
+          LocationType("B", "Authorised place")
+        )
 
-        connector.getTypeOfLocation.futureValue mustBe expectedResult
+        connector.getTypeOfLocation.futureValue mustEqual expectedResult
       }
 
       "should handle a 204 response for location types" in {
@@ -219,7 +225,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             .willReturn(aResponse().withStatus(NO_CONTENT))
         )
 
-        connector.getTypeOfLocation().futureValue mustBe Nil
+        connector.getTypeOfLocation.futureValue mustBe Nil
       }
 
       "should handle client and server errors for control types" in {
