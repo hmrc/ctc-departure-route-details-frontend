@@ -20,14 +20,14 @@ import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
-import models.requests.DataRequest
 import models.{LocalReferenceNumber, LocationOfGoodsIdentification, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
-import pages.QuestionPage
-import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage}
+import pages.locationOfGoods.IdentificationPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.LocationOfGoodsIdentificationTypeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.IdentificationView
 
@@ -40,49 +40,46 @@ class IdentificationController @Inject() (
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
   formProvider: EnumerableFormProvider,
+  locationOfGoodsIdentificationTypeService: LocationOfGoodsIdentificationTypeService,
   val controllerComponents: MessagesControllerComponents,
   view: IdentificationView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider[LocationOfGoodsIdentification]("locationOfGoods.identification")
+  private def form(locationOfGoodsIdentification: Seq[LocationOfGoodsIdentification]): Form[LocationOfGoodsIdentification] =
+    formProvider("locationOfGoods.locationOfGoodsIdentificationType", locationOfGoodsIdentification)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      LocationOfGoodsIdentification.values(request.userAnswers) match {
-        case identifier :: Nil =>
-          redirect(mode, InferredIdentificationPage, identifier)
-        case identifiers =>
+      locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes.map {
+        locationOfGoodsIdentificationType =>
           val preparedForm = request.userAnswers.get(IdentificationPage) match {
-            case None        => form
-            case Some(value) => form.fill(value)
+            case None        => form(locationOfGoodsIdentificationType)
+            case Some(value) => form(locationOfGoodsIdentificationType).fill(value)
           }
 
-          Future.successful(Ok(view(preparedForm, lrn, identifiers, mode)))
+          Ok(view(preparedForm, lrn, locationOfGoodsIdentificationType, mode))
       }
   }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationOfGoodsIdentification.values(request.userAnswers), mode))),
-          value => redirect(mode, IdentificationPage, value)
-        )
-  }
-
-  private def redirect(
-    mode: Mode,
-    page: QuestionPage[LocationOfGoodsIdentification],
-    value: LocationOfGoodsIdentification
-  )(implicit request: DataRequest[_]): Future[Result] = {
-    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-    page
-      .writeToUserAnswers(value)
-      .updateTask()
-      .writeToSession()
-      .navigate()
+      locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes.flatMap {
+        locationOfGoodsIdentificationType =>
+          form(locationOfGoodsIdentificationType)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationOfGoodsIdentificationType, mode))),
+              value => {
+                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                IdentificationPage
+                  .writeToUserAnswers(value)
+                  .updateTask()
+                  .writeToSession()
+                  .navigate()
+              }
+            )
+      }
   }
 }

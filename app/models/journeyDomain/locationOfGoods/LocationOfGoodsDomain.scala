@@ -17,15 +17,7 @@
 package models.journeyDomain.locationOfGoods
 
 import cats.implicits._
-import models.LocationOfGoodsIdentification.{
-  AddressIdentifier,
-  AuthorisationNumber,
-  CoordinatesIdentifier,
-  CustomsOfficeIdentifier,
-  EoriNumber,
-  PostalCode,
-  UnlocodeIdentifier
-}
+
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice, UnLocode}
@@ -50,15 +42,15 @@ object LocationOfGoodsDomain {
   implicit val userAnswersReader: UserAnswersReader[LocationOfGoodsDomain] =
     LocationTypePage.reader.flatMap {
       typeOfLocation =>
-        val identifierReads = InferredIdentificationPage.reader orElse IdentificationPage.reader
+        val identifierReads: UserAnswersReader[LocationOfGoodsIdentification] = InferredIdentificationPage.reader orElse IdentificationPage.reader
         identifierReads.flatMap {
-          case CustomsOfficeIdentifier => LocationOfGoodsV.userAnswersReader(typeOfLocation)
-          case EoriNumber              => LocationOfGoodsX.userAnswersReader(typeOfLocation)
-          case AuthorisationNumber     => LocationOfGoodsY.userAnswersReader(typeOfLocation)
-          case UnlocodeIdentifier      => LocationOfGoodsU.userAnswersReader(typeOfLocation)
-          case CoordinatesIdentifier   => LocationOfGoodsW.userAnswersReader(typeOfLocation)
-          case AddressIdentifier       => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
-          case PostalCode              => LocationOfGoodsT.userAnswersReader(typeOfLocation)
+          case LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier") => LocationOfGoodsV.userAnswersReader(typeOfLocation)
+          case LocationOfGoodsIdentification("X", "EoriNumber")              => LocationOfGoodsX.userAnswersReader(typeOfLocation)
+          case LocationOfGoodsIdentification("Y", "AuthorisationNumber")     => LocationOfGoodsY.userAnswersReader(typeOfLocation)
+          case LocationOfGoodsIdentification("U", "UnlocodeIdentifier")      => LocationOfGoodsU.userAnswersReader(typeOfLocation)
+          case LocationOfGoodsIdentification("W", "CoordinatesIdentifier")   => LocationOfGoodsW.userAnswersReader(typeOfLocation)
+          case LocationOfGoodsIdentification("Z", "AddressIdentifier")       => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
+          case LocationOfGoodsIdentification("T", "PostalCode")              => LocationOfGoodsT.userAnswersReader(typeOfLocation)
         }
     }
 
@@ -67,7 +59,7 @@ object LocationOfGoodsDomain {
     customsOffice: CustomsOffice
   ) extends LocationOfGoodsDomain {
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = CustomsOfficeIdentifier
+    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier")
   }
 
   object LocationOfGoodsV {
@@ -86,7 +78,7 @@ object LocationOfGoodsDomain {
     override val additionalContact: Option[AdditionalContactDomain]
   ) extends LocationOfGoodsDomain {
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = EoriNumber
+    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("X", "EoriNumber")
   }
 
   object LocationOfGoodsX {
@@ -107,7 +99,7 @@ object LocationOfGoodsDomain {
     override val additionalContact: Option[AdditionalContactDomain]
   ) extends LocationOfGoodsDomain {
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = AuthorisationNumber
+    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
   }
 
   object LocationOfGoodsY {
@@ -127,7 +119,7 @@ object LocationOfGoodsDomain {
     override val additionalContact: Option[AdditionalContactDomain]
   ) extends LocationOfGoodsDomain {
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = CoordinatesIdentifier
+    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("W", "CoordinatesIdentifier")
   }
 
   object LocationOfGoodsW {
@@ -147,7 +139,7 @@ object LocationOfGoodsDomain {
     override val additionalContact: Option[AdditionalContactDomain]
   ) extends LocationOfGoodsDomain {
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = AddressIdentifier
+    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("Z", "AddressIdentifier")
   }
 
   object LocationOfGoodsZ {
@@ -167,7 +159,7 @@ object LocationOfGoodsDomain {
     override val additionalContact: Option[AdditionalContactDomain]
   ) extends LocationOfGoodsDomain {
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = UnlocodeIdentifier
+    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("U", "UnlocodeIdentifier")
   }
 
   object LocationOfGoodsU {
@@ -186,7 +178,7 @@ object LocationOfGoodsDomain {
     override val additionalContact: Option[AdditionalContactDomain]
   ) extends LocationOfGoodsDomain {
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = PostalCode
+    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("T", "PostalCode")
   }
 
   object LocationOfGoodsT {
