@@ -52,7 +52,7 @@ class IdentificationController @Inject() (
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes.map {
+      locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.userAnswers).map {
         locationOfGoodsIdentificationType =>
           val preparedForm = request.userAnswers.get(IdentificationPage) match {
             case None        => form(locationOfGoodsIdentificationType)
@@ -65,7 +65,7 @@ class IdentificationController @Inject() (
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes.flatMap {
+      locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.userAnswers).flatMap {
         locationOfGoodsIdentificationType =>
           form(locationOfGoodsIdentificationType)
             .bindFromRequest()

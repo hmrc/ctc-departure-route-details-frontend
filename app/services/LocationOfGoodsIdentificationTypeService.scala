@@ -17,7 +17,8 @@
 package services
 
 import connectors.ReferenceDataConnector
-import models.LocationOfGoodsIdentification
+import models.{LocationOfGoodsIdentification, LocationType, UserAnswers}
+import pages.locationOfGoods.LocationTypePage
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -27,14 +28,35 @@ class LocationOfGoodsIdentificationTypeService @Inject() (
   referenceDataConnector: ReferenceDataConnector
 )(implicit ec: ExecutionContext) {
 
-  def getLocationOfGoodsIdentificationTypes(implicit hc: HeaderCarrier): Future[Seq[LocationOfGoodsIdentification]] =
+  def getLocationOfGoodsIdentificationTypes(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Seq[LocationOfGoodsIdentification]] =
     referenceDataConnector.getQualifierOfTheIdentification
       .map(sort)
+      .map {
+        x => foo(userAnswers, x)
+      }
 
   private def sort(locationOfGoodsIdentification: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
     locationOfGoodsIdentification.sortBy(_.qualifier.toLowerCase)
 
+  def foo(userAnswers: UserAnswers, locationOfGoods: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
+    userAnswers.get(LocationTypePage) match {
+      case Some(LocationType("A", _)) =>
+        locationOfGoods.filter(
+          x => x.qualifier == "V" || x.qualifier == "U"
+        )
+      case Some(LocationType("B", _)) =>
+        locationOfGoods.filter(
+          x => x.qualifier == "Y" || x.qualifier == "U"
+        )
+      case Some(LocationType("C", _)) =>
+        locationOfGoods.filter(
+          x => x.qualifier == "X" || x.qualifier == "W" || x.qualifier == "U" || x.qualifier == "V"
+        )
+      case Some(LocationType("D", _)) =>
+        locationOfGoods.filter(
+          x => x.qualifier == "W" || x.qualifier == "U" || x.qualifier == "Z" || x.qualifier == "T"
+        )
+      case _ => locationOfGoods
 
-
-
+    }
 }

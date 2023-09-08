@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Format, Json}
 
-case class LocationType(code: String, description: String) extends Radioable[LocationType] {
+case class LocationType(`type`: String, description: String) extends Radioable[LocationType] {
   override val messageKeyPrefix: String = LocationType.messageKeyPrefix
   override def toString: String         = s"$description"
 }
