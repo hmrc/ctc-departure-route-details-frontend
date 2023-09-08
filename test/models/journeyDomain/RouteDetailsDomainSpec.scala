@@ -35,6 +35,7 @@ import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, Offic
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.routing.BindingItineraryPage
 import pages.routing.index.{CountryOfRoutingInCL147Page, CountryOfRoutingPage}
+import pages.transit.AddOfficeOfTransitYesNoPage
 import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 
 class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -281,8 +282,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
               RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
             ).run(emptyUserAnswers)
-
-            result.left.value.page mustBe AddLocationOfGoodsPage
+            result.left.value.page mustBe AdditionalDeclarationTypePage
           }
         }
 
@@ -298,6 +298,21 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                 RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
               ).run(userAnswers)
 
+              result.left.value.page mustBe AddLocationOfGoodsPage
+            }
+
+            "and add location of goods type yes/no is answered No" in {
+              val customsOffice = arbitrary[CustomsOffice].sample.value
+
+              val userAnswers = emptyUserAnswers
+                .setValue(AdditionalDeclarationTypePage, "D")
+                .setValue(OfficeOfDeparturePage, customsOffice)
+                .setValue(OfficeOfDepartureInCL147Page, true)
+                .setValue(AddOfficeOfTransitYesNoPage, false)
+
+              val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
+              ).run(userAnswers)
               result.left.value.page mustBe AddLocationOfGoodsPage
             }
           }

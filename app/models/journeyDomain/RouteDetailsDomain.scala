@@ -16,14 +16,12 @@
 
 package models.journeyDomain
 
-import cats.data.Kleisli
 import config.Constants._
 import cats.implicits._
 import config.PhaseConfig
-import models.AdditionalDeclarationType.Prelodged
 import models.DeclarationType.Option4
 import models.SecurityDetailsType._
-import models.domain.{EitherType, GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
+import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
