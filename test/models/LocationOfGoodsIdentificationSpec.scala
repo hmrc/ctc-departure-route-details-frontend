@@ -22,7 +22,7 @@ import models.LocationOfGoodsIdentification._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.locationOfGoods.LocationTypePage
+import pages.locationOfGoods.{IdentificationPage, LocationTypePage}
 import play.api.libs.json.{JsError, JsString, Json}
 import services.LocationOfGoodsIdentificationTypeService
 
@@ -42,11 +42,17 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
     "must deserialise valid values" in {
 
-      val gen: LocationOfGoodsIdentification = arbitrary[LocationOfGoodsIdentification].sample.value
-
-      forAll(gen) {
-        locationOfGoodsIdentification =>
-          JsString(locationOfGoodsIdentification.toString).validate[LocationOfGoodsIdentification].asOpt.value mustEqual locationOfGoodsIdentification
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (qualifier, description) =>
+          val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
+          Json
+            .parse(s"""
+                 |{
+                 |  "qualifier": "$qualifier",
+                 |  "description": "$description"
+                 |}
+                 |""".stripMargin)
+            .as[LocationOfGoodsIdentification] mustBe locationOfGoodsIdentification
       }
     }
 
@@ -56,17 +62,21 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
       forAll(gen) {
         invalidValue =>
-          JsString(invalidValue).validate[LocationOfGoodsIdentification] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[LocationOfGoodsIdentification] mustEqual JsError("error.expected.jsobject")
       }
     }
 
     "must serialise" in {
 
-      val gen: LocationOfGoodsIdentification = arbitrary[LocationOfGoodsIdentification].sample.value
-
-      forAll(gen) {
-        locationOfGoodsIdentification =>
-          Json.toJson(locationOfGoodsIdentification) mustEqual JsString(locationOfGoodsIdentification.toString)
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (qualifier, description) =>
+          val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
+          Json.toJson(locationOfGoodsIdentification) mustBe Json.parse(s"""
+               |{
+               |  "qualifier": "$qualifier",
+               |  "description": "$description"
+               |}
+               |""".stripMargin)
       }
     }
 
@@ -87,7 +97,8 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("B", "Authorised place"))
 
           LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
-            LocationOfGoodsIdentification("Y", "AuthorisationNumber")
+            LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
+            LocationOfGoodsIdentification("U", "UnlocodeIdentifier")
           )
         }
       }
@@ -97,11 +108,10 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("C", "Approved place"))
 
           LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
-            EoriNumber,
-            LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
+            LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
+            LocationOfGoodsIdentification("X", "EoriNumber"),
             LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
-            LocationOfGoodsIdentification("Z", "AddressIdentifier"),
-            LocationOfGoodsIdentification("T", "PostalCode")
+            LocationOfGoodsIdentification("W", "CoordinatesIdentifier")
           )
         }
       }
@@ -111,8 +121,8 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("D", "Other"))
 
           LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
-            LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
             LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
+            LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
             LocationOfGoodsIdentification("Z", "AddressIdentifier"),
             LocationOfGoodsIdentification("T", "PostalCode")
           )
@@ -125,8 +135,8 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
             LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
             LocationOfGoodsIdentification("X", "EoriNumber"),
             LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
-            LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
             LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
+            LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
             LocationOfGoodsIdentification("Z", "AddressIdentifier"),
             LocationOfGoodsIdentification("T", "PostalCode")
           )
