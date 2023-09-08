@@ -23,7 +23,7 @@ import models.{LocationOfGoodsIdentification, LocationType, NormalMode, UserAnsw
 import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage, LocationTypePage}
@@ -31,45 +31,33 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.LocationOfGoodsIdentificationTypeService
 import views.html.locationOfGoods.IdentificationView
 
 import scala.concurrent.Future
 
 class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
-  private val id1                      = Arbitrary.arbitrary[LocationOfGoodsIdentification].sample.value
-  private val id2                      = Arbitrary.arbitrary[LocationOfGoodsIdentification].sample.value
-  private val ids                      = Seq(id1, id2)
-  private val formProvider             = new EnumerableFormProvider()
-  private val form                     = formProvider[LocationOfGoodsIdentification]("locationOfGoods.identification", ids)
-  private val mode                     = NormalMode
-  private lazy val identificationRoute = routes.IdentificationController.onPageLoad(lrn, mode).url
+  private val id1                                                                     = Arbitrary.arbitrary[LocationOfGoodsIdentification].sample.value
+  private val id2                                                                     = Arbitrary.arbitrary[LocationOfGoodsIdentification].sample.value
+  private val ids                                                                     = Seq(id1, id2)
+  private val formProvider                                                            = new EnumerableFormProvider()
+  private val form                                                                    = formProvider[LocationOfGoodsIdentification]("locationOfGoods.identification", ids)
+  private val mode                                                                    = NormalMode
+  private lazy val identificationRoute                                                = routes.IdentificationController.onPageLoad(lrn, mode).url
+  private val mockLocationIdentifierService: LocationOfGoodsIdentificationTypeService = mock[LocationOfGoodsIdentificationTypeService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(bind(classOf[LocationOfGoodsNavigatorProvider]).toInstance(fakeLocationOfGoodsNavigatorProvider))
+      .overrides(bind(classOf[LocationOfGoodsIdentificationTypeService]).toInstance(mockLocationIdentifierService))
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockLocationIdentifierService)
+    when(mockLocationIdentifierService.getLocationOfGoodsIdentificationTypes(any())(any())).thenReturn(Future.successful(ids))
+  }
   "LocationOfGoodsIdentification Controller" - {
-
-    "when value is inferred" - {
-      "must redirect to next page" in {
-        val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("B", "Authorised place"))
-        setExistingUserAnswers(userAnswers)
-
-        val request = FakeRequest(GET, identificationRoute)
-
-        val result = route(app, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual onwardRoute.url
-
-        val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-        verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
-        userAnswersCaptor.getValue.getValue(InferredIdentificationPage) mustBe LocationOfGoodsIdentification("Y", "AuthorisationNumber")
-        userAnswersCaptor.getValue.get(IdentificationPage) must not be defined
-      }
-    }
 
     "must return OK and the correct view for a GET" in {
 

@@ -34,7 +34,7 @@ class LocationTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
           val locationType = LocationType(code, description)
           Json.toJson(locationType) mustBe Json.parse(s"""
                                                             |{
-                                                            |  "code": "$code",
+                                                            |  "type": "$code",
                                                             |  "description": "$description"
                                                             |}
                                                             |""".stripMargin)
@@ -48,7 +48,7 @@ class LocationTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
           Json
             .parse(s"""
                       |{
-                      |  "code": "$code",
+                      |  "type": "$code",
                       |  "description": "$description"
                       |}
                       |""".stripMargin)

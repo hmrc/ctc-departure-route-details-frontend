@@ -41,7 +41,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
       "when qualifier of identification" - {
 
         "is V (Customs office identifier)" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("W", "CoordinatesIdentifier")
+          val qualifierOfIdentification = LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier")
           val customsOffice             = arbitrary[CustomsOffice].sample.value
 
           val userAnswers = emptyUserAnswers
@@ -61,7 +61,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         }
 
         "is W (Coordinate identifier)" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier")
+          val qualifierOfIdentification = LocationOfGoodsIdentification("W", "CoordinatesIdentifier")
           val coordinate                = arbitrary[Coordinates].sample.value
 
           val userAnswers = emptyUserAnswers

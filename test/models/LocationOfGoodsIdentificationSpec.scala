@@ -58,7 +58,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!Seq(LocationOfGoodsIdentification("foo", "bar")).map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!Seq(LocationOfGoodsIdentification("A", "Designated location")).map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>

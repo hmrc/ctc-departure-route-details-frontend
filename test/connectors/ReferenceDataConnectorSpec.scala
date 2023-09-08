@@ -185,11 +185,11 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       |   {
       |   "data": [
       |              {
-      |                "code": "A",
+      |                "type": "A",
       |                "description": "Designated location"
       |              },
       |              {
-      |                "code": "B",
+      |                "type": "B",
       |                "description": "Authorised place"
       |               }
       |            ]
