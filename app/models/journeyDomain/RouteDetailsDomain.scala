@@ -16,12 +16,14 @@
 
 package models.journeyDomain
 
+import cats.data.Kleisli
 import config.Constants._
 import cats.implicits._
 import config.PhaseConfig
+import models.AdditionalDeclarationType.Prelodged
 import models.DeclarationType.Option4
 import models.SecurityDetailsType._
-import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
+import models.domain.{EitherType, GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
@@ -63,8 +65,15 @@ object RouteDetailsDomain {
       routing                       <- UserAnswersReader[RoutingDomain]
       transit                       <- UserAnswersReader[Option[TransitDomain]]
       exit                          <- UserAnswersReader[Option[ExitDomain]](exitReader(transit))
-      locationOfGoods               <- UserAnswersReader[Option[LocationOfGoodsDomain]]
-      loadingAndUnloading           <- UserAnswersReader[LoadingAndUnloadingDomain]
+      val something: Kleisli[EitherType, UserAnswers, Option[LocationOfGoodsDomain]] = AdditionalDeclarationTypePage.reader.flatMap {
+        case Prelodged.toString => UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
+        case _                  => UserAnswersReader[Option[LocationOfGoodsDomain]]
+      }
+      locationOfGoods <- AdditionalDeclarationTypePage.reader.flatMap {
+        case Prelodged.toString => UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
+        case _                  => UserAnswersReader[Option[LocationOfGoodsDomain]]
+      }
+      loadingAndUnloading <- UserAnswersReader[LoadingAndUnloadingDomain]
     } yield RouteDetailsDomain(
       specificCircumstanceIndicator,
       routing,
