@@ -26,7 +26,7 @@ import views.html.locationOfGoods.IdentificationView
 
 class IdentificationViewSpec extends RadioViewBehaviours[LocationOfGoodsIdentification] {
 
-  override def form: Form[LocationOfGoodsIdentification] = new EnumerableFormProvider()(prefix)
+  override def form: Form[LocationOfGoodsIdentification] = new EnumerableFormProvider()(prefix, values)
 
   override def applyView(form: Form[LocationOfGoodsIdentification]): HtmlFormat.Appendable =
     injector.instanceOf[IdentificationView].apply(form, lrn, values, NormalMode)(fakeRequest, messages)
@@ -36,7 +36,15 @@ class IdentificationViewSpec extends RadioViewBehaviours[LocationOfGoodsIdentifi
   override def radioItems(fieldId: String, checkedValue: Option[LocationOfGoodsIdentification] = None): Seq[RadioItem] =
     values.toRadioItems(fieldId, checkedValue)
 
-  override def values: Seq[LocationOfGoodsIdentification] = LocationOfGoodsIdentification.values
+  override def values: Seq[LocationOfGoodsIdentification] = Seq(
+    LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
+    LocationOfGoodsIdentification("X", "EoriNumber"),
+    LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
+    LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
+    LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
+    LocationOfGoodsIdentification("Z", "AddressIdentifier"),
+    LocationOfGoodsIdentification("T", "PostalCode")
+  )
 
   behave like pageWithTitle()
 

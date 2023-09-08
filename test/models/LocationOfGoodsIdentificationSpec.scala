@@ -17,20 +17,32 @@
 package models
 
 import base.SpecBase
+import generators.Generators
 import models.LocationOfGoodsIdentification._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.locationOfGoods.LocationTypePage
 import play.api.libs.json.{JsError, JsString, Json}
+import services.LocationOfGoodsIdentificationTypeService
 
-class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckPropertyChecks {
+class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+
+  private val allValues = Seq(
+    LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
+    LocationOfGoodsIdentification("X", "EoriNumber"),
+    LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
+    LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
+    LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
+    LocationOfGoodsIdentification("Z", "AddressIdentifier"),
+    LocationOfGoodsIdentification("T", "PostalCode")
+  )
 
   "LocationOfGoodsIdentification" - {
 
     "must deserialise valid values" in {
 
-      val gen = Gen.oneOf(LocationOfGoodsIdentification.values)
+      val gen: LocationOfGoodsIdentification = arbitrary[LocationOfGoodsIdentification].sample.value
 
       forAll(gen) {
         locationOfGoodsIdentification =>
@@ -40,7 +52,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!LocationOfGoodsIdentification.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!Seq(LocationOfGoodsIdentification("foo", "bar")).map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
@@ -50,7 +62,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
     "must serialise" in {
 
-      val gen = Gen.oneOf(LocationOfGoodsIdentification.values)
+      val gen: LocationOfGoodsIdentification = arbitrary[LocationOfGoodsIdentification].sample.value
 
       forAll(gen) {
         locationOfGoodsIdentification =>
@@ -63,9 +75,9 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
         "must return U and V" in {
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("A", "Designated location"))
 
-          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
-            CustomsOfficeIdentifier,
-            UnlocodeIdentifier
+          LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
+            LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
+            LocationOfGoodsIdentification("U", "UnlocodeIdentifier")
           )
         }
       }
@@ -74,8 +86,8 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
         "must return Y" in {
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("B", "Authorised place"))
 
-          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
-            AuthorisationNumber
+          LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
+            LocationOfGoodsIdentification("Y", "AuthorisationNumber")
           )
         }
       }
@@ -84,12 +96,12 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
         "must return T, U, W, X, Z" in {
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("C", "Approved place"))
 
-          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
+          LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
             EoriNumber,
-            CoordinatesIdentifier,
-            UnlocodeIdentifier,
-            AddressIdentifier,
-            PostalCode
+            LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
+            LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
+            LocationOfGoodsIdentification("Z", "AddressIdentifier"),
+            LocationOfGoodsIdentification("T", "PostalCode")
           )
         }
       }
@@ -98,25 +110,25 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
         "must return T, U, W, Z" in {
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("D", "Other"))
 
-          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
-            CoordinatesIdentifier,
-            UnlocodeIdentifier,
-            AddressIdentifier,
-            PostalCode
+          LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
+            LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
+            LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
+            LocationOfGoodsIdentification("Z", "AddressIdentifier"),
+            LocationOfGoodsIdentification("T", "PostalCode")
           )
         }
       }
 
       "when undefined location type" - {
         "must return all values" in {
-          LocationOfGoodsIdentification.values(emptyUserAnswers) mustBe Seq(
-            CustomsOfficeIdentifier,
-            EoriNumber,
-            AuthorisationNumber,
-            CoordinatesIdentifier,
-            UnlocodeIdentifier,
-            AddressIdentifier,
-            PostalCode
+          LocationOfGoodsIdentificationTypeService.matchUserAnswers(emptyUserAnswers, allValues) mustBe Seq(
+            LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
+            LocationOfGoodsIdentification("X", "EoriNumber"),
+            LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
+            LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
+            LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
+            LocationOfGoodsIdentification("Z", "AddressIdentifier"),
+            LocationOfGoodsIdentification("T", "PostalCode")
           )
         }
       }

@@ -125,7 +125,17 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryLocationOfGoodsIdentification: Arbitrary[LocationOfGoodsIdentification] =
     Arbitrary {
-      Gen.oneOf(LocationOfGoodsIdentification.values)
+      Gen.oneOf(
+        Seq(
+          LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
+          LocationOfGoodsIdentification("X", "EoriNumber"),
+          LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
+          LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
+          LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
+          LocationOfGoodsIdentification("Z", "AddressIdentifier"),
+          LocationOfGoodsIdentification("T", "PostalCode")
+        )
+      )
     }
 
   implicit lazy val arbitraryCoordinates: Arbitrary[Coordinates] =

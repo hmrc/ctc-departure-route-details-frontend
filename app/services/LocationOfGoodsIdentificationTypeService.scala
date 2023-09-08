@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import services.LocationOfGoodsIdentificationTypeService._
 
 class LocationOfGoodsIdentificationTypeService @Inject() (
   referenceDataConnector: ReferenceDataConnector
@@ -32,13 +33,17 @@ class LocationOfGoodsIdentificationTypeService @Inject() (
     referenceDataConnector.getQualifierOfTheIdentification
       .map(sort)
       .map {
-        x => foo(userAnswers, x)
+        x => matchUserAnswers(userAnswers, x)
       }
 
   private def sort(locationOfGoodsIdentification: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
     locationOfGoodsIdentification.sortBy(_.qualifier.toLowerCase)
 
-  def foo(userAnswers: UserAnswers, locationOfGoods: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
+}
+
+object LocationOfGoodsIdentificationTypeService {
+
+  def matchUserAnswers(userAnswers: UserAnswers, locationOfGoods: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
     userAnswers.get(LocationTypePage) match {
       case Some(LocationType("A", _)) =>
         locationOfGoods.filter(
