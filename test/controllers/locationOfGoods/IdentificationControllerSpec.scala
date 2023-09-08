@@ -51,7 +51,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
 
     "when value is inferred" - {
       "must redirect to next page" in {
-        val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("A", "Authorised place"))
+        val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("B", "Authorised place"))
         setExistingUserAnswers(userAnswers)
 
         val request = FakeRequest(GET, identificationRoute)

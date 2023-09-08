@@ -68,13 +68,13 @@ object LocationOfGoodsIdentification extends EnumerableType[LocationOfGoodsIdent
 
   def values(userAnswers: UserAnswers): Seq[LocationOfGoodsIdentification] =
     userAnswers.get(LocationTypePage) match {
-      case Some(LocationType(_, "Authorised place")) =>
-        Seq(AuthorisationNumber)
-      case Some(LocationType(_, "Designated location")) =>
+      case Some(LocationType("A", _)) =>
         Seq(CustomsOfficeIdentifier, UnlocodeIdentifier)
-      case Some(LocationType(_, "Approved place")) =>
+      case Some(LocationType("B", _)) =>
+        Seq(AuthorisationNumber)
+      case Some(LocationType("C", _)) =>
         Seq(EoriNumber, CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier, PostalCode)
-      case Some(LocationType(_, "Other")) =>
+      case Some(LocationType("D", _)) =>
         Seq(CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier, PostalCode)
       case _ =>
         Seq(
