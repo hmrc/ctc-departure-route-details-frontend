@@ -65,15 +65,8 @@ object RouteDetailsDomain {
       routing                       <- UserAnswersReader[RoutingDomain]
       transit                       <- UserAnswersReader[Option[TransitDomain]]
       exit                          <- UserAnswersReader[Option[ExitDomain]](exitReader(transit))
-      val something: Kleisli[EitherType, UserAnswers, Option[LocationOfGoodsDomain]] = AdditionalDeclarationTypePage.reader.flatMap {
-        case Prelodged.toString => UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
-        case _                  => UserAnswersReader[Option[LocationOfGoodsDomain]]
-      }
-      locationOfGoods <- AdditionalDeclarationTypePage.reader.flatMap {
-        case Prelodged.toString => UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
-        case _                  => UserAnswersReader[Option[LocationOfGoodsDomain]]
-      }
-      loadingAndUnloading <- UserAnswersReader[LoadingAndUnloadingDomain]
+      locationOfGoods               <- UserAnswersReader[Option[LocationOfGoodsDomain]]
+      loadingAndUnloading           <- UserAnswersReader[LoadingAndUnloadingDomain]
     } yield RouteDetailsDomain(
       specificCircumstanceIndicator,
       routing,
@@ -120,7 +113,12 @@ object RouteDetailsDomain {
     lazy val optionalReader = AddLocationOfGoodsPage.filterOptionalDependent(identity)(UserAnswersReader[LocationOfGoodsDomain])
     phaseConfig.phase match {
       case Phase.Transition =>
-        optionalReader
+        AdditionalDeclarationTypePage.reader.flatMap {
+          case `PRE-LODGE` =>
+            UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
+          case _ =>
+            optionalReader
+        }
       case Phase.PostTransition =>
         AdditionalDeclarationTypePage.reader.flatMap {
           case `PRE-LODGE` =>
