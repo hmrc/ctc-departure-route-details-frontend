@@ -53,24 +53,24 @@ class IdentificationController @Inject() (
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
       locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.userAnswers).map {
-        locationOfGoodsIdentificationType =>
+        locationOfGoodsIdentificationTypes =>
           val preparedForm = request.userAnswers.get(IdentificationPage) match {
-            case None        => form(locationOfGoodsIdentificationType)
-            case Some(value) => form(locationOfGoodsIdentificationType).fill(value)
+            case None        => form(locationOfGoodsIdentificationTypes)
+            case Some(value) => form(locationOfGoodsIdentificationTypes).fill(value)
           }
 
-          Ok(view(preparedForm, lrn, locationOfGoodsIdentificationType, mode))
+          Ok(view(preparedForm, lrn, locationOfGoodsIdentificationTypes, mode))
       }
   }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
       locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.userAnswers).flatMap {
-        locationOfGoodsIdentificationType =>
-          form(locationOfGoodsIdentificationType)
+        locationOfGoodsIdentificationTypes =>
+          form(locationOfGoodsIdentificationTypes)
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationOfGoodsIdentificationType, mode))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationOfGoodsIdentificationTypes, mode))),
               value => {
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                 IdentificationPage

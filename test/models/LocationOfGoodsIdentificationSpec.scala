@@ -17,6 +17,7 @@
 package models
 
 import base.SpecBase
+import config.Constants.goodsIdentificationValues
 import generators.Generators
 import models.LocationOfGoodsIdentification._
 import org.scalacheck.Arbitrary.arbitrary
@@ -28,15 +29,7 @@ import services.LocationOfGoodsIdentificationTypeService
 
 class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val allValues = Seq(
-    LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
-    LocationOfGoodsIdentification("X", "EoriNumber"),
-    LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
-    LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
-    LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
-    LocationOfGoodsIdentification("Z", "AddressIdentifier"),
-    LocationOfGoodsIdentification("T", "PostalCode")
-  )
+  private val allValues = goodsIdentificationValues
 
   "LocationOfGoodsIdentification" - {
 
@@ -131,15 +124,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
       "when undefined location type" - {
         "must return all values" in {
-          LocationOfGoodsIdentificationTypeService.matchUserAnswers(emptyUserAnswers, allValues) mustBe Seq(
-            LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
-            LocationOfGoodsIdentification("X", "EoriNumber"),
-            LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
-            LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
-            LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
-            LocationOfGoodsIdentification("Z", "AddressIdentifier"),
-            LocationOfGoodsIdentification("T", "PostalCode")
-          )
+          LocationOfGoodsIdentificationTypeService.matchUserAnswers(emptyUserAnswers, allValues) mustBe goodsIdentificationValues
         }
       }
     }

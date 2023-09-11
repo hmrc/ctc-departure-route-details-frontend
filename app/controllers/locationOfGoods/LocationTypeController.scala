@@ -55,24 +55,24 @@ class LocationTypeController @Inject() (
     .async {
       implicit request =>
         locationTypeService.getLocationTypes().map {
-          locationType =>
+          locationTypes =>
             val preparedForm = request.userAnswers.get(LocationTypePage) match {
-              case None        => form(locationType)
-              case Some(value) => form(locationType).fill(value)
+              case None        => form(locationTypes)
+              case Some(value) => form(locationTypes).fill(value)
             }
 
-            Ok(view(preparedForm, lrn, locationType, mode))
+            Ok(view(preparedForm, lrn, locationTypes, mode))
         }
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
       locationTypeService.getLocationTypes().flatMap {
-        locationType =>
-          form(locationType)
+        locationTypes =>
+          form(locationTypes)
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationType, mode))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationTypes, mode))),
               value => {
                 implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                 LocationTypePage

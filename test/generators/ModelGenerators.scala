@@ -16,7 +16,7 @@
 
 package generators
 
-import config.Constants.XXX
+import config.Constants.{goodsIdentificationValues, XXX}
 import models.AddressLine.{Country => _}
 import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
 import models.reference._
@@ -125,17 +125,7 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryLocationOfGoodsIdentification: Arbitrary[LocationOfGoodsIdentification] =
     Arbitrary {
-      Gen.oneOf(
-        Seq(
-          LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
-          LocationOfGoodsIdentification("X", "EoriNumber"),
-          LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
-          LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
-          LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
-          LocationOfGoodsIdentification("Z", "AddressIdentifier"),
-          LocationOfGoodsIdentification("T", "PostalCode")
-        )
-      )
+      Gen.oneOf(goodsIdentificationValues)
     }
 
   implicit lazy val arbitraryCoordinates: Arbitrary[Coordinates] =

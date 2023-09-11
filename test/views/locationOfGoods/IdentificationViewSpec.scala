@@ -16,6 +16,7 @@
 
 package views.locationOfGoods
 
+import config.Constants.goodsIdentificationValues
 import forms.EnumerableFormProvider
 import models.{LocationOfGoodsIdentification, NormalMode}
 import play.api.data.Form
@@ -36,15 +37,7 @@ class IdentificationViewSpec extends RadioViewBehaviours[LocationOfGoodsIdentifi
   override def radioItems(fieldId: String, checkedValue: Option[LocationOfGoodsIdentification] = None): Seq[RadioItem] =
     values.toRadioItems(fieldId, checkedValue)
 
-  override def values: Seq[LocationOfGoodsIdentification] = Seq(
-    LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
-    LocationOfGoodsIdentification("X", "EoriNumber"),
-    LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
-    LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
-    LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
-    LocationOfGoodsIdentification("Z", "AddressIdentifier"),
-    LocationOfGoodsIdentification("T", "PostalCode")
-  )
+  override def values: Seq[LocationOfGoodsIdentification] = goodsIdentificationValues
 
   behave like pageWithTitle()
 
