@@ -216,7 +216,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
           LocationType("B", "Authorised place")
         )
 
-        connector.getTypeOfLocation.futureValue mustEqual expectedResult
+        connector.getTypesOfLocation.futureValue mustEqual expectedResult
       }
 
       "should handle a 204 response for location types" in {
@@ -225,11 +225,11 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             .willReturn(aResponse().withStatus(NO_CONTENT))
         )
 
-        connector.getTypeOfLocation.futureValue mustBe Nil
+        connector.getTypesOfLocation.futureValue mustBe Nil
       }
 
       "should handle client and server errors for control types" in {
-        checkErrorResponse(url, connector.getTypeOfLocation())
+        checkErrorResponse(url, connector.getTypesOfLocation())
       }
     }
 

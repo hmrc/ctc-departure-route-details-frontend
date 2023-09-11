@@ -30,7 +30,7 @@ class LocationOfGoodsIdentificationTypeService @Inject() (
 )(implicit ec: ExecutionContext) {
 
   def getLocationOfGoodsIdentificationTypes(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Seq[LocationOfGoodsIdentification]] =
-    referenceDataConnector.getQualifierOfTheIdentification
+    referenceDataConnector.getQualifierOfTheIdentifications
       .map(sort)
       .map {
         x => matchUserAnswers(userAnswers, x)

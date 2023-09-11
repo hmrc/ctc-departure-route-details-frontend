@@ -30,7 +30,7 @@ class LocationTypeService @Inject() (
 
   def getLocationTypes()(implicit hc: HeaderCarrier): Future[Seq[LocationType]] =
     referenceDataConnector
-      .getTypeOfLocation()
+      .getTypesOfLocation()
       .map(sort)
 
   private def sort(locationType: Seq[LocationType]): Seq[LocationType] =

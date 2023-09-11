@@ -79,12 +79,12 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http.GET[Seq[SpecificCircumstanceIndicator]](serviceUrl, headers = version2Header)
   }
 
-  def getTypeOfLocation()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[LocationType]] = {
+  def getTypesOfLocation()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[LocationType]] = {
     val serviceUrl = s"${config.referenceDataUrl}/lists/TypeOfLocation"
     http.GET[Seq[LocationType]](serviceUrl, headers = version2Header)
   }
 
-  def getQualifierOfTheIdentification(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[LocationOfGoodsIdentification]] = {
+  def getQualifierOfTheIdentifications(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[LocationOfGoodsIdentification]] = {
     val serviceUrl = s"${config.referenceDataUrl}/lists/QualifierOfTheIdentification"
     http.GET[Seq[LocationOfGoodsIdentification]](serviceUrl, headers = version2Header)
   }
