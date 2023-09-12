@@ -84,7 +84,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http.GET[Seq[LocationType]](serviceUrl, headers = version2Header)
   }
 
-  def getQualifierOfTheIdentifications(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[LocationOfGoodsIdentification]] = {
+  def getQualifierOfTheIdentifications()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[LocationOfGoodsIdentification]] = {
     val serviceUrl = s"${config.referenceDataUrl}/lists/QualifierOfTheIdentification"
     http.GET[Seq[LocationOfGoodsIdentification]](serviceUrl, headers = version2Header)
   }

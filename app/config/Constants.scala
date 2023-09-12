@@ -27,7 +27,7 @@ object Constants {
   val STANDARD    = "A"
   val `PRE-LODGE` = "D"
 
-  val goodsIdentificationValues = Seq(
+  val goodsIdentificationValues: Seq[LocationOfGoodsIdentification] = Seq(
     LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
     LocationOfGoodsIdentification("X", "EoriNumber"),
     LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
