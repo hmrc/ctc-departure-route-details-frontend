@@ -17,9 +17,12 @@
 package navigation
 
 import base.SpecBase
+import config.Constants.NoSecurityDetails
 import generators.Generators
 import models._
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.external.SecurityDetailsTypePage
 
 class LoadingAndUnloadingNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -32,12 +35,28 @@ class LoadingAndUnloadingNavigatorSpec extends SpecBase with ScalaCheckPropertyC
       val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {
-        "must redirect to loading check your answers" in {
-          forAll(arbitraryLoadingAndUnloadingAnswers(emptyUserAnswers)) {
+        "must redirect to route check your answers if security is not 0" in {
+
+          val securityType   = arbitrary[String](arbitrarySomeSecurityDetailsType).sample.value
+          val initialAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityType)
+
+          forAll(arbitraryLoadingAndUnloadingAnswers(initialAnswers)) {
             answers =>
               navigator
                 .nextPage(answers)
                 .mustBe(controllers.loadingAndUnloading.routes.LoadingAndUnloadingAnswersController.onPageLoad(answers.lrn, mode))
+          }
+        }
+
+        "must redirect to loading and unloading check your answers if security is 0" in {
+
+          val initialAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, NoSecurityDetails)
+
+          forAll(arbitraryLoadingAndUnloadingAnswers(initialAnswers)) {
+            answers =>
+              navigator
+                .nextPage(answers)
+                .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }
       }

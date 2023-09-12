@@ -68,9 +68,13 @@ object LoadingAndUnloadingDomain {
 
     phaseConfig.phase match {
       case Phase.Transition =>
-        SpecificCircumstanceIndicatorPage.optionalReader.flatMap {
-          case Some(SpecificCircumstanceIndicator(XXX, _)) => optionalReader
-          case _                                           => mandatoryReader
+        SecurityDetailsTypePage.reader.flatMap {
+          case NoSecurityDetails => none[UnloadingDomain].pure[UserAnswersReader]
+          case _ =>
+            SpecificCircumstanceIndicatorPage.optionalReader.flatMap {
+              case Some(SpecificCircumstanceIndicator(XXX, _)) => optionalReader
+              case _                                           => mandatoryReader
+            }
         }
       case Phase.PostTransition =>
         SecurityDetailsTypePage.reader.flatMap {
