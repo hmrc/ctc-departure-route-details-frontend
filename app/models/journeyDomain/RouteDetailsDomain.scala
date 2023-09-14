@@ -29,6 +29,7 @@ import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.SpecificCircumstanceIndicator
 import models.{DeclarationType, Mode, Phase, SecurityDetailsType, UserAnswers}
+import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.sections.routing.CountriesOfRoutingSection
@@ -82,14 +83,20 @@ object RouteDetailsDomain {
 
   implicit def exitReader(transit: Option[TransitDomain]): UserAnswersReader[Option[ExitDomain]] =
     for {
-      declarationType                      <- DeclarationTypePage.reader
-      securityDetails                      <- SecurityDetailsTypePage.reader
-      atLeastOneCountryOfRoutingNotInCL147 <- CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147
+      declarationType                   <- DeclarationTypePage.reader
+      securityDetails                   <- SecurityDetailsTypePage.reader
+      atLeastOneCountryOfRoutingInCL147 <- CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147
       reader <- {
-        if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingNotInCL147, transit)) {
+        if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147, transit)) {
           UserAnswersReader[ExitDomain].map(Some(_))
         } else {
-          none[ExitDomain].pure[UserAnswersReader]
+          (atLeastOneCountryOfRoutingInCL147, transit) match {
+            case (true, Some(TransitDomain(_, list))) if list.nonEmpty =>
+              AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity) {
+                UserAnswersReader[ExitDomain]
+              }
+            case _ => none[ExitDomain].pure[UserAnswersReader]
+          }
         }
       }
     } yield reader

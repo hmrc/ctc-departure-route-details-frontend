@@ -31,6 +31,7 @@ import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, OfficeOfDepartureInCL147Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.routing.BindingItineraryPage
@@ -149,13 +150,14 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             val security = Gen.oneOf(ExitSummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
 
             "at least one of the countries of routing is in set CL147 and office of transit is populated" - {
-              "and office of transit answers have been provided" in {
+              "and office of transit answers have been provided and add office of exit is false" in {
                 val answers = emptyUserAnswers
                   .setValue(DeclarationTypePage, declarationType)
                   .setValue(SecurityDetailsTypePage, security)
                   .setValue(BindingItineraryPage, true)
                   .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
                   .setValue(CountryOfRoutingInCL147Page(index), true)
+                  .setValue(AddCustomsOfficeOfExitYesNoPage, false)
 
                 forAll(arbitrary[Option[TransitDomain]](arbitraryPopulatedTransitDomain)) {
                   transit =>
@@ -164,6 +166,28 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                     ).run(answers)
 
                     result.value must not be defined
+                }
+              }
+
+              "and office of transit answers have been provided and add office of exit is true" in {
+                val initialAnswers = emptyUserAnswers
+                  .setValue(DeclarationTypePage, declarationType)
+                  .setValue(SecurityDetailsTypePage, security)
+                  .setValue(BindingItineraryPage, true)
+                  .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
+                  .setValue(CountryOfRoutingInCL147Page(index), true)
+                  .setValue(AddCustomsOfficeOfExitYesNoPage, true)
+
+                forAll(
+                  arbitraryOfficeOfExitAnswers(initialAnswers, index),
+                  arbitrary[Option[TransitDomain]](arbitraryEmptyTransitDomain)
+                ) {
+                  (answers, transit) =>
+                    val result: EitherType[Option[ExitDomain]] = UserAnswersReader[Option[ExitDomain]](
+                      RouteDetailsDomain.exitReader(transit)
+                    ).run(answers)
+
+                    result.value mustBe defined
                 }
               }
 
