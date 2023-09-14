@@ -148,14 +148,14 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           "and security is not in set {0,1}" - {
             val security = Gen.oneOf(ExitSummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
 
-            "at least one of the countries of routing is not in set CL147 and office of transit is populated" - {
+            "at least one of the countries of routing is in set CL147 and office of transit is populated" - {
               "and office of transit answers have been provided" in {
                 val answers = emptyUserAnswers
                   .setValue(DeclarationTypePage, declarationType)
                   .setValue(SecurityDetailsTypePage, security)
                   .setValue(BindingItineraryPage, true)
                   .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
-                  .setValue(CountryOfRoutingInCL147Page(index), false)
+                  .setValue(CountryOfRoutingInCL147Page(index), true)
 
                 forAll(arbitrary[Option[TransitDomain]](arbitraryPopulatedTransitDomain)) {
                   transit =>
@@ -173,7 +173,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                   .setValue(SecurityDetailsTypePage, security)
                   .setValue(BindingItineraryPage, true)
                   .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
-                  .setValue(CountryOfRoutingInCL147Page(index), false)
+                  .setValue(CountryOfRoutingInCL147Page(index), true)
 
                 forAll(
                   arbitraryOfficeOfExitAnswers(initialAnswers, index),
@@ -189,13 +189,13 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               }
             }
 
-            "and all of the countries of routing are in set CL147" in {
+            "and no countries are in set CL147" in {
               val initialAnswers = emptyUserAnswers
                 .setValue(DeclarationTypePage, declarationType)
                 .setValue(SecurityDetailsTypePage, security)
                 .setValue(BindingItineraryPage, true)
                 .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
-                .setValue(CountryOfRoutingInCL147Page(index), true)
+                .setValue(CountryOfRoutingInCL147Page(index), false)
 
               forAll(arbitraryOfficeOfExitAnswers(initialAnswers, index)) {
                 answers =>

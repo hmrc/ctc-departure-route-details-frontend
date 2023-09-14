@@ -84,7 +84,7 @@ object RouteDetailsDomain {
     for {
       declarationType                      <- DeclarationTypePage.reader
       securityDetails                      <- SecurityDetailsTypePage.reader
-      atLeastOneCountryOfRoutingNotInCL147 <- CountriesOfRoutingSection.atLeastOneCountryOfRoutingNotInCL147
+      atLeastOneCountryOfRoutingNotInCL147 <- CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147
       reader <- {
         if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingNotInCL147, transit)) {
           UserAnswersReader[ExitDomain].map(Some(_))
@@ -97,15 +97,26 @@ object RouteDetailsDomain {
   private def exitRequired(
     declarationType: DeclarationType,
     securityDetails: SecurityDetailsType,
-    atLeastOneCountryOfRoutingNotInCL147: Boolean,
+    atLeastOneCountryOfRoutingIsInCL147: Boolean,
     transit: Option[TransitDomain]
   ): Boolean =
-    (declarationType, securityDetails, atLeastOneCountryOfRoutingNotInCL147, transit) match {
+    (declarationType, securityDetails, atLeastOneCountryOfRoutingIsInCL147, transit) match {
       case (Option4, _, _, _)                                                    => false
       case (_, NoSecurityDetails | EntrySummaryDeclarationSecurityDetails, _, _) => false
-      case (_, _, true, Some(TransitDomain(_, _ :: _)))                          => false
+      case (_, _, true, Some(TransitDomain(_, list))) if list.nonEmpty           => false
       case _                                                                     => true
     }
+
+// TransitOperation/declarationType is EQUAL to 'TIR'
+//  THEN /*/CustomsOfficeOfExitForTransitDeclared = "N"
+//  ELSE IF /*/TransitOperation/security is in SET {0,1}
+//  THEN /*/CustomsOfficeOfExitForTransitDeclared = "N"
+//  ELSE
+//
+//   IF at least one iteration of the */Consignment/CountryOfRoutingOfConsignment/country is in
+//  SET CL147 AND /*/CustomsOfficeOfTransitDeclared is PRESENT
+//  THEN /*/CustomsOfficeOfExitForTransitDeclared = "O"
+//  ELSE /*/CustomsOfficeOfExitForTransitDeclared = "R"
 
   implicit def locationOfGoodsReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[LocationOfGoodsDomain]] = {
     lazy val optionalReader = AddLocationOfGoodsPage.filterOptionalDependent(identity)(UserAnswersReader[LocationOfGoodsDomain])
