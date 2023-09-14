@@ -36,9 +36,11 @@ case object UnLocodeYesNoPage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(false) =>
+      case Some(_) =>
         userAnswers
-          .remove(UnLocodePage)
+          .remove(CountryPage)
+          .flatMap(_.remove(LocationPage))
+          .flatMap(_.remove(UnLocodePage))
           .flatMap(_.remove(AddExtraInformationYesNoPage))
       case _ => super.cleanup(value, userAnswers)
     }
