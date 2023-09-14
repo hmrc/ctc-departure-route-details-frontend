@@ -26,10 +26,10 @@ import models.LocationOfGoodsIdentification.{
   PostalCode,
   UnlocodeIdentifier
 }
+import models._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.reference.{Country, CustomsOffice, UnLocode}
-import models._
+import models.reference.{Country, CustomsOffice}
 import pages.locationOfGoods._
 import play.api.mvc.Call
 
@@ -163,7 +163,7 @@ object LocationOfGoodsDomain {
 
   case class LocationOfGoodsU(
     typeOfLocation: LocationType,
-    unLocode: UnLocode,
+    unLocode: String,
     override val additionalContact: Option[AdditionalContactDomain]
   ) extends LocationOfGoodsDomain {
 

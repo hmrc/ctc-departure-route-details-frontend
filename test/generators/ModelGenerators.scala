@@ -93,12 +93,11 @@ trait ModelGenerators {
       } yield CustomsOffice(id, name, phoneNumber)
     }
 
-  implicit lazy val arbitraryUnLocode: Arbitrary[UnLocode] =
+  implicit lazy val arbitraryUnLocode: Arbitrary[String] =
     Arbitrary {
       for {
-        unLocodeExtendedCode <- nonEmptyString
-        name                 <- nonEmptyString
-      } yield UnLocode(unLocodeExtendedCode, name)
+        code <- stringsWithMaxLength(5: Int)
+      } yield code
     }
 
   implicit lazy val arbitrarySpecificCircumstanceIndicator: Arbitrary[SpecificCircumstanceIndicator] =

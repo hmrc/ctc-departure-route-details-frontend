@@ -17,7 +17,7 @@
 package utils.cyaHelpers.loadingAndUnloading
 
 import config.FrontendAppConfig
-import models.reference.{Country, UnLocode}
+import models.reference.Country
 import models.{Mode, UserAnswers}
 import pages.loadingAndUnloading
 import pages.loadingAndUnloading._
@@ -35,7 +35,7 @@ class LoadingAndUnloadingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: 
     id = Some("change-add-loading-un-locode")
   )
 
-  def loadingUnLocode: Option[SummaryListRow] = getAnswerAndBuildRow[UnLocode](
+  def loadingUnLocode: Option[SummaryListRow] = getAnswerAndBuildRow[String](
     page = loading.UnLocodePage,
     formatAnswer = formatAsText,
     prefix = "loadingAndUnloading.loading.unLocode",
@@ -77,7 +77,7 @@ class LoadingAndUnloadingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: 
     id = Some("change-add-unloading-un-locode")
   )
 
-  def unloadingUnLocode: Option[SummaryListRow] = getAnswerAndBuildRow[UnLocode](
+  def unloadingUnLocode: Option[SummaryListRow] = getAnswerAndBuildRow[String](
     page = unloading.UnLocodePage,
     formatAnswer = formatAsText,
     prefix = "loadingAndUnloading.unloading.unLocode",

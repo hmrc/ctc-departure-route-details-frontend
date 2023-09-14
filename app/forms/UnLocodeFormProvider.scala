@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-package pages.locationOfGoods
+package forms
 
-import pages.behaviours.PageBehaviours
+import forms.Constants.maxLoCodeLength
+import forms.mappings.Mappings
+import models.domain.StringFieldRegex.alphaNumericRegex
+import play.api.data.Form
 
-class UnLocodePageSpec extends PageBehaviours {
+import javax.inject.Inject
 
-  "UnLocodePage" - {
+class UnLocodeFormProvider @Inject() extends Mappings {
 
-    beRetrievable[String](UnLocodePage)
-
-    beSettable[String](UnLocodePage)
-
-    beRemovable[String](UnLocodePage)
-  }
+  def apply(prefix: String): Form[String] =
+    Form(
+      "value" -> text(s"$prefix.error.required")
+        .verifying(
+          StopOnFirstFail[String](
+            maxLength(maxLoCodeLength, s"$prefix.error.length"),
+            regexp(alphaNumericRegex, s"$prefix.error.invalid")
+          )
+        )
+    )
 }

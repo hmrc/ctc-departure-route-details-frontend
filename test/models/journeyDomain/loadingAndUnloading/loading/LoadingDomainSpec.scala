@@ -19,14 +19,14 @@ package models.journeyDomain.loadingAndUnloading.loading
 import base.SpecBase
 import generators.Generators
 import models.domain.{EitherType, UserAnswersReader}
-import models.reference.{Country, UnLocode}
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import pages.loadingAndUnloading.loading._
 
 class LoadingDomainSpec extends SpecBase with Generators {
 
-  private val unLocode     = arbitrary[UnLocode].sample.value
+  private val unLocode     = arbitrary[String].sample.value
   private val country      = arbitrary[Country].sample.value
   private val loadingPlace = Gen.alphaNumStr.sample.value.take(35)
 
