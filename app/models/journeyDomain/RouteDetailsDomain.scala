@@ -107,17 +107,6 @@ object RouteDetailsDomain {
       case _                                                                     => true
     }
 
-// TransitOperation/declarationType is EQUAL to 'TIR'
-//  THEN /*/CustomsOfficeOfExitForTransitDeclared = "N"
-//  ELSE IF /*/TransitOperation/security is in SET {0,1}
-//  THEN /*/CustomsOfficeOfExitForTransitDeclared = "N"
-//  ELSE
-//
-//   IF at least one iteration of the */Consignment/CountryOfRoutingOfConsignment/country is in
-//  SET CL147 AND /*/CustomsOfficeOfTransitDeclared is PRESENT
-//  THEN /*/CustomsOfficeOfExitForTransitDeclared = "O"
-//  ELSE /*/CustomsOfficeOfExitForTransitDeclared = "R"
-
   implicit def locationOfGoodsReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[LocationOfGoodsDomain]] = {
     lazy val optionalReader = AddLocationOfGoodsPage.filterOptionalDependent(identity)(UserAnswersReader[LocationOfGoodsDomain])
     phaseConfig.phase match {
