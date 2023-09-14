@@ -33,7 +33,7 @@ class UnLocodeYesNoPageSpec extends PageBehaviours {
 
     "cleanup" - {
       "when NO selected" - {
-        "must clean up Loading section" in {
+        "must clean up UnLoading section" in {
           forAll(arbitrary[UnLocode], nonEmptyString, arbitrary[Country]) {
             (unLocode, location, country) =>
               val preChange = emptyUserAnswers
@@ -53,7 +53,7 @@ class UnLocodeYesNoPageSpec extends PageBehaviours {
         }
       }
       "when YES selected" - {
-        "must clean up Loading section" in {
+        "must clean up UnLoading section" in {
           forAll(nonEmptyString, arbitrary[Country]) {
             (location, country) =>
               val preChange = emptyUserAnswers
