@@ -34,6 +34,6 @@ class LocationTypeService @Inject() (
       .map(sort)
 
   private def sort(locationType: Seq[LocationType]): Seq[LocationType] =
-    locationType.sortBy(_.description.toLowerCase)
+    locationType.sortBy(_.`type`.toLowerCase)
 
 }
