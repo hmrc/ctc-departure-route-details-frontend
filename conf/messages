@@ -368,7 +368,7 @@ locationOfGoods.addIdentifierYesNo.error.required = Select yes if you want to ad
 
 locationOfGoods.unLocode.title = What is the UN/LOCODE for the location of goods?
 locationOfGoods.unLocode.heading = What is the UN/LOCODE for the location of goods?
-locationOfGoods.unLocode.hint = Enter the location or code, like Berlin or DEBER.
+locationOfGoods.unLocode.hint = This is a 5-character code used to identify a transit-related location, like DEBER.
 locationOfGoods.unLocode.placeholder = Select a UN/LOCODE.
 locationOfGoods.unLocode.change.hidden = the UN/LOCODE for the location of goods
 locationOfGoods.unLocode.checkYourAnswersLabel = UN/LOCODE for the location of goods
@@ -442,7 +442,7 @@ loadingAndUnloading.loading.addUnLocodeYesNo.paragraph = This is a 5-character c
 
 loadingAndUnloading.loading.unLocode.title = What is the UN/LOCODE for the place of loading?
 loadingAndUnloading.loading.unLocode.heading = What is the UN/LOCODE for the place of loading?
-loadingAndUnloading.loading.unLocode.hint = Enter the code, like GBBRS or GBMNC.
+loadingAndUnloading.loading.unLocode.hint = This is a 5-character code used to identify a transit-related location, like DEBER.
 loadingAndUnloading.loading.unLocode.placeholder = Select a UN/LOCODE.
 loadingAndUnloading.loading.unLocode.change.hidden = UN/LOCODE for the place of loading
 loadingAndUnloading.loading.unLocode.checkYourAnswersLabel = UN/LOCODE
@@ -485,7 +485,7 @@ loadingAndUnloading.unloading.addUnLocodeYesNo.paragraph = This is a 5-character
 
 loadingAndUnloading.unloading.unLocode.title = What is the UN/LOCODE for the place of unloading?
 loadingAndUnloading.unloading.unLocode.heading = What is the UN/LOCODE for the place of unloading?
-loadingAndUnloading.unloading.unLocode.hint = Enter the code, like DEBER or ESMAD.
+loadingAndUnloading.unloading.unLocode.hint = This is a 5-character code used to identify a transit-related location, like DEBER.
 loadingAndUnloading.unloading.unLocode.label = What is the UN/LOCODE for the place of unloading?
 loadingAndUnloading.unloading.unLocode.placeholder = Select a UN/LOCODE.
 loadingAndUnloading.unloading.unLocode.change.hidden = UN/LOCODE for the place of unloading
