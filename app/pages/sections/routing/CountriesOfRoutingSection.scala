@@ -40,6 +40,18 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
       }
     } yield reader
 
+  def atLeastOneCountryOfRoutingIsInCL147: UserAnswersReader[Boolean] =
+    for {
+      numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)
+      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(false)) {
+        (acc, index) =>
+          for {
+            areAnyCountriesOfRoutingInCL147SoFar <- acc
+            isThisCountryOfRoutingInCL147        <- CountryOfRoutingInCL147Page(Index(index)).reader
+          } yield areAnyCountriesOfRoutingInCL147SoFar || isThisCountryOfRoutingInCL147
+      }
+    } yield reader
+
   def anyCountriesOfRoutingInCL112: UserAnswersReader[Boolean] =
     for {
       numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)

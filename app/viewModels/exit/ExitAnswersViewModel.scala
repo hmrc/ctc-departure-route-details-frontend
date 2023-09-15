@@ -34,13 +34,19 @@ object ExitAnswersViewModel {
 
       val helper = new ExitCheckYourAnswersHelper(userAnswers, mode)
 
+      val preSection = Section(
+        rows = Seq(
+          helper.addOfficeOfExitYesNo
+        ).flatten
+      )
+
       val officesOfExitSection = Section(
         sectionTitle = messages("checkYourAnswers.exit.subheading"),
         rows = helper.officesOfExit,
         addAnotherLink = helper.addOrRemoveOfficesOfExit
       )
 
-      new ExitAnswersViewModel(Seq(officesOfExitSection))
+      new ExitAnswersViewModel(Seq(preSection, officesOfExitSection))
     }
   }
 }
