@@ -20,10 +20,24 @@ import forms.Constants.exactLoCodeLength
 import forms.mappings.Mappings
 import models.domain.StringFieldRegex.alphaNumericRegex
 import play.api.data.Form
+import services.UnLocodesService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 
-class UnLocodeFormProvider @Inject() extends Mappings {
+class UnLocodeFormProvider @Inject() (unLocodeService: UnLocodesService) extends Mappings {
+
+//  def apply(prefix: String): Form[String] =
+//    Form(
+//      "value" -> text(s"$prefix.error.required")
+//        .verifying(
+//          StopOnFirstFail[String](
+//            maxLength(exactLoCodeLength, s"$prefix.error.length"),
+//            minLength(exactLoCodeLength, s"$prefix.error.length"),
+//            regexp(alphaNumericRegex, s"$prefix.error.invalid")
+//          )
+//        )
+//    )
 
   def apply(prefix: String): Form[String] =
     Form(
@@ -32,7 +46,8 @@ class UnLocodeFormProvider @Inject() extends Mappings {
           StopOnFirstFail[String](
             maxLength(exactLoCodeLength, s"$prefix.error.length"),
             minLength(exactLoCodeLength, s"$prefix.error.length"),
-            regexp(alphaNumericRegex, s"$prefix.error.invalid")
+            regexp(alphaNumericRegex, s"$prefix.error.invalid"),
+            exists(s"$prefix.error.not.exists", unLocodeService: UnLocodesService)
           )
         )
     )

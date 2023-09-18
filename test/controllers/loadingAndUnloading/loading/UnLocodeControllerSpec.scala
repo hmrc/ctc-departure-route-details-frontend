@@ -37,11 +37,10 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
   private val unLocode1 = arbitraryUnLocode.arbitrary.sample.get
 
-  private val formProvider = new UnLocodeFormProvider()
-  private val form         = formProvider("loadingAndUnloading.loading.unLocode")
-  private val mode         = NormalMode
-
   private val mockUnLocodesService: UnLocodesService = mock[UnLocodesService]
+  private val formProvider                           = new UnLocodeFormProvider(mockUnLocodesService)
+  private val form                                   = formProvider("loadingAndUnloading.loading.unLocode")
+  private val mode                                   = NormalMode
   private lazy val unLocodeRoute                     = routes.UnLocodeController.onPageLoad(lrn, mode).url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =

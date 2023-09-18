@@ -33,6 +33,18 @@ class UnLocodesService @Inject() (
       .getUnLocodes()
       .map(sort)
 
+  def validateUnLocode(unLocode: String)(implicit hc: HeaderCarrier): Boolean = {
+    val res: Future[Boolean] = referenceDataConnector
+      .getUnLocode(unLocode)
+      .map(
+        x => x.nonEmpty
+      )
+    res.value match {
+      case Some(_) => true
+      case None    => false
+    }
+  }
+
   private def sort(unLocodes: Seq[UnLocode]): SelectableList[UnLocode] =
     SelectableList(unLocodes.sortBy(_.name.toLowerCase))
 

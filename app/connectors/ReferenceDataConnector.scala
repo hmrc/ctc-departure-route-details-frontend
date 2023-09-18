@@ -73,6 +73,14 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http.GET[Seq[UnLocode]](serviceUrl, headers = version2Header)
   }
 
+  def getUnLocode(unLocode: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[UnLocode]] = {
+
+    val queryParams: Seq[(String, String)] = Seq("data.unLocodeExtendedCode" -> unLocode)
+    val serviceUrl: String                 = s"${config.referenceDataUrl}/filtered-lists/UnLocodeExtended"
+
+    http.GET[Seq[UnLocode]](serviceUrl, headers = version2Header, queryParams = queryParams)
+  }
+
   def getSpecificCircumstanceIndicators()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[SpecificCircumstanceIndicator]] = {
     val serviceUrl = s"${config.referenceDataUrl}/lists/SpecificCircumstanceIndicatorCode"
     http.GET[Seq[SpecificCircumstanceIndicator]](serviceUrl, headers = version2Header)

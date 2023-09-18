@@ -17,6 +17,8 @@
 package forms.mappings
 
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import services.UnLocodesService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.util.matching.Regex
@@ -33,6 +35,15 @@ trait Constraints {
       case _ =>
         Invalid(errorKey, args: _*)
     }
+
+  protected def exists(errorKey: String, unLocodeService: UnLocodesService): Constraint[String] = {
+    Constraint {
+      case str if unLocodeService.validateUnLocode(str) =>
+        Valid
+      case _ =>
+        Invalid(errorKey, Seq("not exists"): _*)
+    }
+  }
 
   protected def maxLength(maximum: Int, errorKey: String): Constraint[String] =
     maxLength(maximum, errorKey, Seq(maximum))

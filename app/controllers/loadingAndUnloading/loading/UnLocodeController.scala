@@ -26,6 +26,7 @@ import pages.loadingAndUnloading.loading.UnLocodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.loadingAndUnloading.loading.UnLocodeView
 
@@ -40,7 +41,7 @@ class UnLocodeController @Inject() (
   navigatorProvider: LoadingAndUnloadingNavigatorProvider,
   val controllerComponents: MessagesControllerComponents,
   view: UnLocodeView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig, hc: HeaderCarrier)
     extends FrontendBaseController
     with I18nSupport {
 
