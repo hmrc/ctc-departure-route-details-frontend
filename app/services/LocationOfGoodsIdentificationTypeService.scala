@@ -51,7 +51,7 @@ object LocationOfGoodsIdentificationTypeService {
         )
       case Some(LocationType("B", _)) =>
         locationOfGoods.filter(
-          x => x.qualifier == "Y" || x.qualifier == "U"
+          x => x.qualifier == "Y"
         )
       case Some(LocationType("C", _)) =>
         locationOfGoods.filter(

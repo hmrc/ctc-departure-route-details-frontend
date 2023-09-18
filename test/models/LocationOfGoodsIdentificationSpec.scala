@@ -90,8 +90,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("B", "Authorised place"))
 
           LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
-            LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
-            LocationOfGoodsIdentification("U", "UnlocodeIdentifier")
+            LocationOfGoodsIdentification("Y", "AuthorisationNumber")
           )
         }
       }
