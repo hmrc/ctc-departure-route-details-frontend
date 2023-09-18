@@ -23,7 +23,7 @@ import models.LocationOfGoodsIdentification._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.locationOfGoods.{IdentificationPage, LocationTypePage}
+import pages.locationOfGoods.LocationTypePage
 import play.api.libs.json.{JsError, JsString, Json}
 import services.LocationOfGoodsIdentificationTypeService
 

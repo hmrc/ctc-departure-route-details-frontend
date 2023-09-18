@@ -18,7 +18,6 @@ package services
 
 import connectors.ReferenceDataConnector
 import models.LocationType
-import models.reference.SpecificCircumstanceIndicator
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

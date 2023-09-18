@@ -19,14 +19,13 @@ package controllers.locationOfGoods
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.EnumerableFormProvider
 import generators.Generators
-import models.{LocationOfGoodsIdentification, LocationType, NormalMode, UserAnswers}
+import models.{LocationOfGoodsIdentification, NormalMode}
 import navigation.LocationOfGoodsNavigatorProvider
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage, LocationTypePage}
+import pages.locationOfGoods.IdentificationPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest

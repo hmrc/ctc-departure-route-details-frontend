@@ -19,7 +19,6 @@ package pages.loadingAndUnloading.unloading
 import models.reference.{Country, UnLocode}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
-import pages.loadingAndUnloading.loading.AddUnLocodeYesNoPage
 
 class UnLocodeYesNoPageSpec extends PageBehaviours {
 
