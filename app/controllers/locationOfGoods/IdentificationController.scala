@@ -20,9 +20,9 @@ import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
-import models.{LocalReferenceNumber, LocationOfGoodsIdentification, Mode}
+import models.{LocalReferenceNumber, LocationOfGoodsIdentification, LocationType, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
-import pages.locationOfGoods.IdentificationPage
+import pages.locationOfGoods.{CustomsOfficeIdentifierPage, IdentificationPage, LocationTypePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -39,6 +39,7 @@ class IdentificationController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
+  getMandatoryPage: SpecificDataRequiredActionProvider,
   formProvider: EnumerableFormProvider,
   locationOfGoodsIdentificationTypeService: LocationOfGoodsIdentificationTypeService,
   val controllerComponents: MessagesControllerComponents,
@@ -50,18 +51,28 @@ class IdentificationController @Inject() (
   private def form(locationOfGoodsIdentification: Seq[LocationOfGoodsIdentification]): Form[LocationOfGoodsIdentification] =
     formProvider("locationOfGoods.locationOfGoodsIdentificationType", locationOfGoodsIdentification)
 
-  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
-    implicit request =>
-      locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.userAnswers).map {
-        locationOfGoodsIdentificationTypes =>
-          val preparedForm = request.userAnswers.get(IdentificationPage) match {
-            case None        => form(locationOfGoodsIdentificationTypes)
-            case Some(value) => form(locationOfGoodsIdentificationTypes).fill(value)
-          }
+  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
+    .requireData(lrn)
+    .andThen(getMandatoryPage(LocationTypePage))
+    .async {
+      implicit request =>
+        val locationType = request.arg
+        locationType match {
+          case LocationType("B", _) =>
+            IdentificationPage.writeToUserAnswers(LocationOfGoodsIdentification("Y", "Authorisation number"))
+            Future.successful(Redirect(controllers.locationOfGoods.routes.AuthorisationNumberController.onPageLoad(lrn, mode)))
 
-          Ok(view(preparedForm, lrn, locationOfGoodsIdentificationTypes, mode))
-      }
-  }
+          case _ =>
+            locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.userAnswers).map {
+              locationOfGoodsIdentificationTypes =>
+                val preparedForm = request.userAnswers.get(IdentificationPage) match {
+                  case None        => form(locationOfGoodsIdentificationTypes)
+                  case Some(value) => form(locationOfGoodsIdentificationTypes).fill(value)
+                }
+                Ok(view(preparedForm, lrn, locationOfGoodsIdentificationTypes, mode))
+            }
+        }
+    }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>

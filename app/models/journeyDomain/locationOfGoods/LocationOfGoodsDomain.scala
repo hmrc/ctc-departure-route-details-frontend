@@ -42,16 +42,21 @@ object LocationOfGoodsDomain {
   implicit val userAnswersReader: UserAnswersReader[LocationOfGoodsDomain] =
     LocationTypePage.reader.flatMap {
       typeOfLocation =>
-        val identifierReads: UserAnswersReader[LocationOfGoodsIdentification] = InferredIdentificationPage.reader orElse IdentificationPage.reader
-        identifierReads.flatMap {
-          case LocationOfGoodsIdentification("V", _) => LocationOfGoodsV.userAnswersReader(typeOfLocation)
-          case LocationOfGoodsIdentification("X", _) => LocationOfGoodsX.userAnswersReader(typeOfLocation)
-          case LocationOfGoodsIdentification("Y", _) => LocationOfGoodsY.userAnswersReader(typeOfLocation)
-          case LocationOfGoodsIdentification("U", _) => LocationOfGoodsU.userAnswersReader(typeOfLocation)
-          case LocationOfGoodsIdentification("W", _) => LocationOfGoodsW.userAnswersReader(typeOfLocation)
-          case LocationOfGoodsIdentification("Z", _) => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
-          case LocationOfGoodsIdentification("T", _) => LocationOfGoodsT.userAnswersReader(typeOfLocation)
+        typeOfLocation match {
+          case LocationType("B", _) => LocationOfGoodsY.userAnswersReader()
+          case _ =>
+            val identifierReads: UserAnswersReader[LocationOfGoodsIdentification] = InferredIdentificationPage.reader orElse IdentificationPage.reader
+            identifierReads.flatMap {
+              case LocationOfGoodsIdentification("V", _) => LocationOfGoodsV.userAnswersReader(typeOfLocation)
+              case LocationOfGoodsIdentification("X", _) => LocationOfGoodsX.userAnswersReader(typeOfLocation)
+              case LocationOfGoodsIdentification("Y", _) => LocationOfGoodsY.userAnswersReader()
+              case LocationOfGoodsIdentification("U", _) => LocationOfGoodsU.userAnswersReader(typeOfLocation)
+              case LocationOfGoodsIdentification("W", _) => LocationOfGoodsW.userAnswersReader(typeOfLocation)
+              case LocationOfGoodsIdentification("Z", _) => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
+              case LocationOfGoodsIdentification("T", _) => LocationOfGoodsT.userAnswersReader(typeOfLocation)
+            }
         }
+
     }
 
   case class LocationOfGoodsV(
@@ -93,20 +98,20 @@ object LocationOfGoodsDomain {
   }
 
   case class LocationOfGoodsY(
-    typeOfLocation: LocationType,
     authorisationNumber: String,
     additionalIdentifier: Option[String],
     override val additionalContact: Option[AdditionalContactDomain]
   ) extends LocationOfGoodsDomain {
+
+    val typeOfLocation = LocationType("Y", "Authorisation number")
 
     override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
   }
 
   object LocationOfGoodsY {
 
-    def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
+    def userAnswersReader(): UserAnswersReader[LocationOfGoodsDomain] =
       (
-        UserAnswersReader(typeOfLocation),
         AuthorisationNumberPage.reader,
         AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
         AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
