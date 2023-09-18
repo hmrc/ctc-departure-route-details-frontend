@@ -14,44 +14,45 @@
  * limitations under the License.
  */
 
-package controllers.locationOfGoods
+package controllers.exit
 
 import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.UnLocodeFormProvider
+import forms.YesNoFormProvider
 import models.{LocalReferenceNumber, Mode}
-import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
-import pages.locationOfGoods.UnLocodePage
+import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
+import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.locationOfGoods.UnLocodeView
+import views.html.exit.AddCustomsOfficeOfExitYesNoView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UnLocodeController @Inject() (
+class AddCustomsOfficeOfExitYesNoController @Inject() (
   override val messagesApi: MessagesApi,
   implicit val sessionRepository: SessionRepository,
-  navigatorProvider: LocationOfGoodsNavigatorProvider,
+  navigatorProvider: RouteDetailsNavigatorProvider,
   actions: Actions,
-  formProvider: UnLocodeFormProvider,
+  formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: UnLocodeView
+  view: AddCustomsOfficeOfExitYesNoView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider("locationOfGoods.unLocode")
+  private val form = formProvider("exit.AddCustomsOfficeOfExitYesNo")
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(UnLocodePage) match {
+      val preparedForm = request.userAnswers.get(AddCustomsOfficeOfExitYesNoPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
+
       Ok(view(preparedForm, lrn, mode))
   }
 
@@ -63,7 +64,7 @@ class UnLocodeController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
           value => {
             implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-            UnLocodePage
+            AddCustomsOfficeOfExitYesNoPage
               .writeToUserAnswers(value)
               .updateTask()
               .writeToSession()

@@ -20,7 +20,7 @@ import base.SpecBase
 import generators.Generators
 import models.domain.{EitherType, UserAnswersReader}
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain._
-import models.reference.{Country, CustomsOffice, UnLocode}
+import models.reference.{Country, CustomsOffice}
 import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -207,7 +207,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
         "is U (UnLocode)" in {
           val qualifierOfIdentification = LocationOfGoodsIdentification.UnlocodeIdentifier
-          val unLocode                  = arbitrary[UnLocode].sample.value
+          val unLocode                  = arbitrary[String].sample.value
 
           val userAnswers = emptyUserAnswers
             .setValue(LocationTypePage, typeOfLocation)

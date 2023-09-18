@@ -14,53 +14,46 @@
  * limitations under the License.
  */
 
-package controllers.locationOfGoods
+package controllers.exit
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.UnLocodeFormProvider
-import generators.Generators
+import forms.YesNoFormProvider
 import models.NormalMode
-import navigation.LocationOfGoodsNavigatorProvider
+import navigation.RouteDetailsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.locationOfGoods.UnLocodePage
+import org.scalatestplus.mockito.MockitoSugar
+import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.UnLocodesService
-import views.html.locationOfGoods.UnLocodeView
+import views.html.exit.AddCustomsOfficeOfExitYesNoView
 
 import scala.concurrent.Future
 
-class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
+class AddCustomsOfficeOfExitYesNoControllerSpec extends SpecBase with AppWithDefaultMockFixtures with MockitoSugar {
 
-  private val unLocode1 = arbitraryUnLocode.arbitrary.sample.get
-
-  private val formProvider = new UnLocodeFormProvider()
-  private val form         = formProvider("locationOfGoods.unLocode")
-  private val mode         = NormalMode
-
-  private val mockUnLocodesService: UnLocodesService = mock[UnLocodesService]
-  private lazy val unLocodeRoute                     = routes.UnLocodeController.onPageLoad(lrn, mode).url
+  private val formProvider                               = new YesNoFormProvider()
+  private val form                                       = formProvider("exit.AddCustomsOfficeOfExitYesNo")
+  private val mode                                       = NormalMode
+  private lazy val addCustomsOfficeOfExitYesNoController = controllers.exit.routes.AddCustomsOfficeOfExitYesNoController.onPageLoad(lrn, mode).url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind(classOf[LocationOfGoodsNavigatorProvider]).toInstance(fakeLocationOfGoodsNavigatorProvider))
-      .overrides(bind(classOf[UnLocodesService]).toInstance(mockUnLocodesService))
+      .overrides(bind(classOf[RouteDetailsNavigatorProvider]).toInstance(fakeRouteDetailsNavigatorProvider))
 
-  "UnLocode Controller" - {
+  "AddCustomsOfficeOfExitYesNoController" - {
 
     "must return OK and the correct view for a GET" in {
 
       setExistingUserAnswers(emptyUserAnswers)
 
-      val request = FakeRequest(GET, unLocodeRoute)
+      val request = FakeRequest(GET, addCustomsOfficeOfExitYesNoController)
+      val result  = route(app, request).value
 
-      val result = route(app, request).value
-
-      val view = injector.instanceOf[UnLocodeView]
+      val view = injector.instanceOf[AddCustomsOfficeOfExitYesNoView]
 
       status(result) mustEqual OK
 
@@ -70,16 +63,16 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.setValue(UnLocodePage, unLocode1)
+      val userAnswers = emptyUserAnswers.setValue(AddCustomsOfficeOfExitYesNoPage, true)
       setExistingUserAnswers(userAnswers)
 
-      val request = FakeRequest(GET, unLocodeRoute)
+      val request = FakeRequest(GET, addCustomsOfficeOfExitYesNoController)
 
       val result = route(app, request).value
 
-      val filledForm = form.bind(Map("value" -> unLocode1))
+      val filledForm = form.bind(Map("value" -> "true"))
 
-      val view = injector.instanceOf[UnLocodeView]
+      val view = injector.instanceOf[AddCustomsOfficeOfExitYesNoView]
 
       status(result) mustEqual OK
 
@@ -93,8 +86,8 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
       setExistingUserAnswers(emptyUserAnswers)
 
-      val request = FakeRequest(POST, unLocodeRoute)
-        .withFormUrlEncodedBody(("value", unLocode1))
+      val request = FakeRequest(POST, addCustomsOfficeOfExitYesNoController)
+        .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(app, request).value
 
@@ -107,14 +100,14 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
       setExistingUserAnswers(emptyUserAnswers)
 
-      val request   = FakeRequest(POST, unLocodeRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request   = FakeRequest(POST, addCustomsOfficeOfExitYesNoController).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
 
       val result = route(app, request).value
 
-      val view = injector.instanceOf[UnLocodeView]
-
       status(result) mustEqual BAD_REQUEST
+
+      val view = injector.instanceOf[AddCustomsOfficeOfExitYesNoView]
 
       contentAsString(result) mustEqual
         view(boundForm, lrn, mode)(request, messages).toString
@@ -124,11 +117,12 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
       setNoExistingUserAnswers()
 
-      val request = FakeRequest(GET, unLocodeRoute)
+      val request = FakeRequest(GET, addCustomsOfficeOfExitYesNoController)
 
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
 
@@ -136,8 +130,8 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
       setNoExistingUserAnswers()
 
-      val request = FakeRequest(POST, unLocodeRoute)
-        .withFormUrlEncodedBody(("value", unLocode1))
+      val request = FakeRequest(POST, addCustomsOfficeOfExitYesNoController)
+        .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(app, request).value
 

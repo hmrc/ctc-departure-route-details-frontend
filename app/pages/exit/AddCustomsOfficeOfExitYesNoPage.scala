@@ -14,21 +14,29 @@
  * limitations under the License.
  */
 
-package pages.loadingAndUnloading.unloading
+package pages.exit
 
-import controllers.loadingAndUnloading.unloading.routes
+import controllers.exit.routes
 import models.{Mode, UserAnswers}
 import pages.QuestionPage
-import pages.sections.unloading.UnloadingSection
+import pages.sections.exit.{ExitSection, OfficesOfExitSection}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-case object UnLocodePage extends QuestionPage[String] {
+import scala.util.Try
 
-  override def path: JsPath = UnloadingSection.path \ toString
+case object AddCustomsOfficeOfExitYesNoPage extends QuestionPage[Boolean] {
 
-  override def toString: String = "unLocode"
+  override def path: JsPath = ExitSection.path \ toString
+
+  override def toString: String = "addCustomsOfficeOfExitYesNoPage"
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
-    Some(routes.UnLocodeController.onPageLoad(userAnswers.lrn, mode))
+    Some(routes.AddCustomsOfficeOfExitYesNoController.onPageLoad(userAnswers.lrn, mode))
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(false) => userAnswers.remove(OfficesOfExitSection)
+      case _           => super.cleanup(value, userAnswers)
+    }
 }

@@ -21,6 +21,7 @@ import generators.Generators
 import models.Mode
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
+import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
 import viewModels.exit.ExitAnswersViewModel.ExitAnswersViewModelProvider
 
@@ -30,16 +31,16 @@ class ExitAnswersViewModelSpec extends SpecBase with Generators {
     val mode = arbitrary[Mode].sample.value
 
     val userAnswers = emptyUserAnswers
+      .setValue(AddCustomsOfficeOfExitYesNoPage, arbitrary[Boolean].sample.value)
       .setValue(OfficeOfExitCountryPage(index), arbitrary[Country].sample.value)
       .setValue(OfficeOfExitPage(index), arbitrary[CustomsOffice].sample.value)
 
     val viewModelProvider = injector.instanceOf[ExitAnswersViewModelProvider]
     val sections          = viewModelProvider.apply(userAnswers, mode).sections
 
-    sections.size mustBe 1
-
-    sections.head.sectionTitle.get mustBe "Offices of exit for transit"
-    sections.head.rows.size mustBe 1
-    sections.head.addAnotherLink must be(defined)
+    sections.size mustBe 2
+    sections(1).rows.size mustBe 1
+    sections(1).addAnotherLink must be(defined)
   }
+
 }
