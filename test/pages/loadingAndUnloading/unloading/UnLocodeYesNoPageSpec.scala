@@ -16,9 +16,10 @@
 
 package pages.loadingAndUnloading.unloading
 
-import models.reference.UnLocode
+import models.reference.{Country, UnLocode}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.loadingAndUnloading.loading.AddUnLocodeYesNoPage
 
 class UnLocodeYesNoPageSpec extends PageBehaviours {
 
@@ -32,36 +33,42 @@ class UnLocodeYesNoPageSpec extends PageBehaviours {
 
     "cleanup" - {
       "when NO selected" - {
-        "must clean up UN/LOCODE and add location yes/no" in {
-          forAll(arbitrary[UnLocode], arbitrary[Boolean]) {
-            (unLocode, bool) =>
+        "must clean up UnLoading section" in {
+          forAll(arbitrary[UnLocode], nonEmptyString, arbitrary[Country]) {
+            (unLocode, location, country) =>
               val preChange = emptyUserAnswers
+                .setValue(UnLocodeYesNoPage, true)
                 .setValue(UnLocodePage, unLocode)
-                .setValue(AddExtraInformationYesNoPage, bool)
+                .setValue(AddExtraInformationYesNoPage, true)
+                .setValue(CountryPage, country)
+                .setValue(LocationPage, location)
 
               val postChange = preChange.setValue(UnLocodeYesNoPage, false)
 
               postChange.get(UnLocodePage) mustNot be(defined)
               postChange.get(AddExtraInformationYesNoPage) mustNot be(defined)
+              postChange.get(CountryPage) mustNot be(defined)
+              postChange.get(LocationPage) mustNot be(defined)
           }
         }
       }
-
       "when YES selected" - {
-        "must do nothing" in {
-          forAll(arbitrary[UnLocode], arbitrary[Boolean]) {
-            (unLocode, bool) =>
+        "must clean up UnLoading section" in {
+          forAll(nonEmptyString, arbitrary[Country]) {
+            (location, country) =>
               val preChange = emptyUserAnswers
-                .setValue(UnLocodePage, unLocode)
-                .setValue(AddExtraInformationYesNoPage, bool)
+                .setValue(UnLocodeYesNoPage, false)
+                .setValue(CountryPage, country)
+                .setValue(LocationPage, location)
 
               val postChange = preChange.setValue(UnLocodeYesNoPage, true)
 
-              postChange.get(UnLocodePage) must be(defined)
-              postChange.get(AddExtraInformationYesNoPage) must be(defined)
+              postChange.get(CountryPage) mustNot be(defined)
+              postChange.get(LocationPage) mustNot be(defined)
           }
         }
       }
+
     }
   }
 }

@@ -16,8 +16,11 @@
 
 package pages.transit.index
 
-import models.reference.CustomsOffice
+import models.DateTime
+import models.reference.{Country, CustomsOffice}
+import org.scalacheck.Arbitrary._
 import pages.behaviours.PageBehaviours
+import pages.exit.index.OfficeOfExitCountryPage
 
 class OfficeOfTransitPageSpec extends PageBehaviours {
 
@@ -28,5 +31,44 @@ class OfficeOfTransitPageSpec extends PageBehaviours {
     beSettable[CustomsOffice](OfficeOfTransitPage(index))
 
     beRemovable[CustomsOffice](OfficeOfTransitPage(index))
+  }
+
+  "cleanup" - {
+    "when value changes" - {
+
+      "must clean up transit eta page and exit section" in {
+        forAll(arbitrary[CustomsOffice], arbitrary[CustomsOffice], arbitrary[DateTime], arbitrary[Country]) {
+          (customsOffice1, customsOffice2, date, country) =>
+            val preChange = emptyUserAnswers
+              .setValue(OfficeOfTransitPage(index), customsOffice1)
+              .setValue(OfficeOfTransitETAPage(index), date)
+              .setValue(OfficeOfExitCountryPage(index), country)
+
+            val postChange = preChange
+              .setValue(OfficeOfTransitPage(index), customsOffice2)
+
+            postChange.get(OfficeOfExitCountryPage(index)) mustNot be(defined)
+            postChange.get(OfficeOfTransitETAPage(index)) mustNot be(defined)
+        }
+      }
+    }
+
+    "when value has not changed" - {
+      "must not clean up transit eta page and exit section" in {
+        forAll(arbitrary[CustomsOffice], arbitrary[DateTime], arbitrary[Country]) {
+          (customsOffice1, date, country) =>
+            val preChange = emptyUserAnswers
+              .setValue(OfficeOfTransitPage(index), customsOffice1)
+              .setValue(OfficeOfTransitETAPage(index), date)
+              .setValue(OfficeOfExitCountryPage(index), country)
+
+            val postChange = preChange
+              .setValue(OfficeOfTransitPage(index), customsOffice1)
+
+            postChange.get(OfficeOfExitCountryPage(index)) mustBe defined
+            postChange.get(OfficeOfTransitETAPage(index)) mustBe defined
+        }
+      }
+    }
   }
 }

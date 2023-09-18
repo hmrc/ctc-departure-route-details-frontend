@@ -16,8 +16,10 @@
 
 package pages.routing
 
-import models.reference.CustomsOffice
+import models.reference.{Country, CustomsOffice}
+import org.scalacheck.Arbitrary._
 import pages.behaviours.PageBehaviours
+import pages.transit.index.OfficeOfTransitCountryPage
 
 class OfficeOfDestinationPageSpec extends PageBehaviours {
 
@@ -28,5 +30,38 @@ class OfficeOfDestinationPageSpec extends PageBehaviours {
     beSettable[CustomsOffice](OfficeOfDestinationPage)
 
     beRemovable[CustomsOffice](OfficeOfDestinationPage)
+  }
+
+  "cleanup" - {
+    "when value changes" - {
+
+      "must clean up transit section" in {
+        forAll(arbitrary[CustomsOffice], arbitrary[CustomsOffice], arbitrary[Country]) {
+          (customsOffice1, customsOffice2, country) =>
+            val preChange = emptyUserAnswers
+              .setValue(OfficeOfDestinationPage, customsOffice1)
+              .setValue(OfficeOfTransitCountryPage(index), country)
+
+            val postChange = preChange.setValue(OfficeOfDestinationPage, customsOffice2)
+
+            postChange.get(OfficeOfTransitCountryPage(index)) mustNot be(defined)
+        }
+      }
+    }
+
+    "when value has not changed" - {
+      "must not clean up transit section" in {
+        forAll(arbitrary[CustomsOffice], arbitrary[Country]) {
+          (customsOffice1, country) =>
+            val preChange = emptyUserAnswers
+              .setValue(OfficeOfDestinationPage, customsOffice1)
+              .setValue(OfficeOfTransitCountryPage(index), country)
+
+            val postChange = preChange.setValue(OfficeOfDestinationPage, customsOffice1)
+
+            postChange.get(OfficeOfTransitCountryPage(index)) mustBe defined
+        }
+      }
+    }
   }
 }

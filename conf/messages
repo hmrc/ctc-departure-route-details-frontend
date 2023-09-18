@@ -214,6 +214,14 @@ exit.addAnotherOfficeOfExit.error.required =  Select yes if you want to add anot
 exit.addAnotherOfficeOfExit.label = Do you want to add another office of exit for transit?
 exit.addAnotherOfficeOfExit.maxLimit.label = You cannot add any more offices of exit for transit. To add another office, you need to remove one first.
 
+exit.AddCustomsOfficeOfExitYesNo.title = Do you want to add a customs office of exit?
+exit.AddCustomsOfficeOfExitYesNo.heading = Do you want to add a customs office of exit?
+exit.AddCustomsOfficeOfExitYesNo.paragraph = You must add an office of exit every time your goods leave a customs territory.
+exit.AddCustomsOfficeOfExitYesNo.change.hidden = if you want to add a customs office of exit
+exit.AddCustomsOfficeOfExitYesNo.checkYourAnswersLabel = Do you want to add customs office of exit?
+exit.AddCustomsOfficeOfExitYesNo.error.required = Select yes if you want to add a customs office of exit
+
+
 # Route details - Exit - Index
 
 exit.index.officeOfExitCountry.title = In which country is the office of exit for transit?

@@ -43,14 +43,15 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
         when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
         "and security is 0" - {
-          "and add country and location yes/no is unanswered" in {
-            val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, SecurityDetailsType.NoSecurityDetails)
+          "then loading and unloading are skipped" in {
+            val userAnswers = emptyUserAnswers
+              .setValue(SecurityDetailsTypePage, SecurityDetailsType.NoSecurityDetails)
 
             val result: EitherType[LoadingAndUnloadingDomain] = UserAnswersReader[LoadingAndUnloadingDomain](
               LoadingAndUnloadingDomain.userAnswersReader(mockPhaseConfig)
             ).run(userAnswers)
 
-            result.left.value.page mustBe unloading.AddExtraInformationYesNoPage
+            result.value mustBe LoadingAndUnloadingDomain(None, None)
           }
         }
       }
@@ -122,36 +123,57 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
           val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
           when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
-          "and specific circumstance indicator is XXX" - {
-            "and add place of unloading is unanswered" in {
-              forAll(arbitrary[SpecificCircumstanceIndicator](arbitraryXXXSpecificCircumstanceIndicator)) {
-                specificCircumstanceIndicator =>
-                  val userAnswers = emptyUserAnswers
-                    .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
+          "and security is not 0" - {
 
-                  val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-                    LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
-                  ).run(userAnswers)
+            "and specific circumstance indicator is XXX" - {
+              "and add place of unloading is unanswered" in {
 
-                  result.left.value.page mustBe AddPlaceOfUnloadingPage
+                val securityType = Gen.oneOf(EntrySummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
+
+                forAll(arbitrary[SpecificCircumstanceIndicator](arbitraryXXXSpecificCircumstanceIndicator), securityType) {
+                  (specificCircumstanceIndicator, security) =>
+                    val userAnswers = emptyUserAnswers
+                      .setValue(SecurityDetailsTypePage, security)
+                      .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
+
+                    val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
+                      LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+                    ).run(userAnswers)
+
+                    result.left.value.page mustBe AddPlaceOfUnloadingPage
+                }
+              }
+            }
+
+            "and specific circumstance indicator is not XXX or undefined" - {
+              "and add unloading UN/LOCODE is unanswered" in {
+                forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType), Gen.option(arbitrary[SpecificCircumstanceIndicator])) {
+                  (securityType, specificCircumstanceIndicator) =>
+                    val userAnswers = emptyUserAnswers
+                      .setValue(SecurityDetailsTypePage, securityType)
+                      .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
+
+                    val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
+                      LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+                    ).run(userAnswers)
+
+                    result.left.value.page mustBe unloading.UnLocodeYesNoPage
+                }
               }
             }
           }
 
-          "and specific circumstance indicator is not XXX or undefined" - {
-            "and add unloading UN/LOCODE is unanswered" in {
-              forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType), Gen.option(arbitrary[SpecificCircumstanceIndicator])) {
-                (securityType, specificCircumstanceIndicator) =>
-                  val userAnswers = emptyUserAnswers
-                    .setValue(SecurityDetailsTypePage, securityType)
-                    .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
+          "and security is 0" - {
 
-                  val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-                    LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
-                  ).run(userAnswers)
+            "and add place of unloading is unanswered" in {
+              val userAnswers = emptyUserAnswers
+                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
 
-                  result.left.value.page mustBe unloading.UnLocodeYesNoPage
-              }
+              val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
+                LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+              ).run(userAnswers)
+
+              result.value must not be defined
             }
           }
         }
