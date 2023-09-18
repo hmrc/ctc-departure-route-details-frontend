@@ -96,7 +96,7 @@ trait ModelGenerators {
   implicit lazy val arbitraryUnLocode: Arbitrary[String] =
     Arbitrary {
       for {
-        code <- stringsWithMaxLength(5: Int)
+        code <- stringsWithExactLength(5, 5: Int)
       } yield code
     }
 
