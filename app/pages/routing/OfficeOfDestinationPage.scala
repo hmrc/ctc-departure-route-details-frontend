@@ -21,8 +21,11 @@ import models.reference.CustomsOffice
 import models.{Mode, UserAnswers}
 import pages.QuestionPage
 import pages.sections.routing.RoutingSection
+import pages.sections.transit.TransitSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
+
+import scala.util.Try
 
 case object OfficeOfDestinationPage extends QuestionPage[CustomsOffice] {
 
@@ -32,6 +35,12 @@ case object OfficeOfDestinationPage extends QuestionPage[CustomsOffice] {
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.OfficeOfDestinationController.onPageLoad(userAnswers.lrn, mode))
+
+  override def cleanup(value: Option[CustomsOffice], userAnswers: UserAnswers): Try[UserAnswers] = value match {
+    case Some(_) => userAnswers.remove(TransitSection)
+    case None    => super.cleanup(value, userAnswers)
+  }
+
 }
 
 case object OfficeOfDestinationInCL112Page extends QuestionPage[Boolean] {

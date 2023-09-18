@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import controllers.exit.index.routes
 import models.journeyDomain.exit.OfficeOfExitDomain
 import models.{Index, Mode, UserAnswers}
+import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.exit.index.OfficeOfExitCountryPage
 import pages.sections.exit.OfficesOfExitSection
 import play.api.i18n.Messages
@@ -51,6 +52,13 @@ class ExitCheckYourAnswersHelper(
       href = controllers.exit.routes.AddAnotherOfficeOfExitController.onPageLoad(userAnswers.lrn, mode).url
     )
   }
+
+  def addOfficeOfExitYesNo: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
+    page = AddCustomsOfficeOfExitYesNoPage,
+    formatAnswer = formatAsYesOrNo,
+    prefix = "exit.AddCustomsOfficeOfExitYesNo",
+    id = Some("change-add-customs-office-of-exit")
+  )
 
   def listItems: Seq[Either[ListItem, ListItem]] =
     buildListItems(OfficesOfExitSection) {

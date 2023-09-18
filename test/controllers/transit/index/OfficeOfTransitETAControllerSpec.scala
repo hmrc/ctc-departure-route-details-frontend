@@ -247,14 +247,14 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
       }
 
       "when standard declaration" - {
-        "and date 15 days from now is submitted" in {
+        "and date 61 days from now is submitted" in {
           val userAnswers = emptyUserAnswers
             .setValue(AdditionalDeclarationTypePage, "A")
             .setValue(CountryOfDestinationPage, transitCountry)
             .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
           setExistingUserAnswers(userAnswers)
 
-          val dateTime = localDateTime.plusDays(15).toDateTime
+          val dateTime = localDateTime.plusDays(61).toDateTime
 
           val request = FakeRequest(POST, arrivalDateTimeRoute)
             .withFormUrlEncodedBody(
@@ -272,14 +272,14 @@ class OfficeOfTransitETAControllerSpec extends SpecBase with AppWithDefaultMockF
       }
 
       "when pre-lodge declaration" - {
-        "and date 30 days from now is submitted" in {
+        "and date 61 days from now is submitted" in {
           val userAnswers = emptyUserAnswers
             .setValue(AdditionalDeclarationTypePage, "D")
             .setValue(CountryOfDestinationPage, transitCountry)
             .setValue(OfficeOfTransitPage(index), transitCustomsOffice)
           setExistingUserAnswers(userAnswers)
 
-          val dateTime = localDateTime.plusDays(30).toDateTime
+          val dateTime = localDateTime.plusDays(61).toDateTime
 
           val request = FakeRequest(POST, arrivalDateTimeRoute)
             .withFormUrlEncodedBody(

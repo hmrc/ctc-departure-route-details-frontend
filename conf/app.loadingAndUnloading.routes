@@ -2,12 +2,17 @@
 ->         /                                                                                app.loadingAndUnloading.loading.Routes
 ->         /                                                                                app.loadingAndUnloading.unloading.Routes
 
-GET        /place-of-unloading/add/:lrn                                       controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-POST       /place-of-unloading/add/:lrn                                       controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-GET        /place-of-unloading/change-add/:lrn                                controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
-POST       /place-of-unloading/change-add/:lrn                                controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+GET        /place-of-loading/add/:lrn                                                       controllers.loadingAndUnloading.AddPlaceOfLoadingYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /place-of-loading/add/:lrn                                                       controllers.loadingAndUnloading.AddPlaceOfLoadingYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /place-of-loading/change-add/:lrn                                                controllers.loadingAndUnloading.AddPlaceOfLoadingYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /place-of-loading/change-add/:lrn                                                controllers.loadingAndUnloading.AddPlaceOfLoadingYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
 
-GET        /place-of-loading-unloading/check-answers/:lrn                     controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-POST       /place-of-loading-unloading/check-answers/:lrn                     controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-GET        /place-of-loading-unloading/change-check-answers/:lrn              controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
-POST       /place-of-loading-unloading/change-check-answers/:lrn              controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+GET        /place-of-unloading/add/:lrn                                                     controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /place-of-unloading/add/:lrn                                                     controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /place-of-unloading/change-add/:lrn                                              controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /place-of-unloading/change-add/:lrn                                              controllers.loadingAndUnloading.AddPlaceOfUnloadingController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+
+GET        /place-of-loading-unloading/check-answers/:lrn                                   controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+POST       /place-of-loading-unloading/check-answers/:lrn                                   controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
+GET        /place-of-loading-unloading/change-check-answers/:lrn                            controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /place-of-loading-unloading/change-check-answers/:lrn                            controllers.loadingAndUnloading.LoadingAndUnloadingAnswersController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
