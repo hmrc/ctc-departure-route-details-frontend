@@ -37,6 +37,9 @@ trait Constraints {
   protected def maxLength(maximum: Int, errorKey: String): Constraint[String] =
     maxLength(maximum, errorKey, Seq(maximum))
 
+  protected def minLength(min: Int, errorKey: String): Constraint[String] =
+    minLength(min, errorKey, Seq(min))
+
   protected def maxLength(maximum: Int, errorKey: String, args: Seq[Any], trim: Boolean = false): Constraint[String] =
     lengthConstraint(errorKey, x => (if (trim) x.replaceAll("\\s", "").length else x.length) <= maximum, args)
 

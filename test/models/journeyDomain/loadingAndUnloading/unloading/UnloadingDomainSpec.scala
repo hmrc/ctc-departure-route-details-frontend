@@ -20,7 +20,7 @@ import base.SpecBase
 import config.PhaseConfig
 import generators.Generators
 import models.domain.{EitherType, UserAnswersReader}
-import models.reference.{Country, UnLocode}
+import models.reference.Country
 import models.{Phase, SecurityDetailsType}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
@@ -31,7 +31,7 @@ import pages.loadingAndUnloading.unloading._
 class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private val country  = arbitrary[Country].sample.value
-  private val unlocode = arbitrary[UnLocode].sample.value
+  private val unlocode = arbitrary[String].sample.value
 
   "UnloadingDomain" - {
 

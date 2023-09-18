@@ -22,10 +22,10 @@ import controllers.loadingAndUnloading.unloading.{routes => unloadingRoutes}
 import controllers.loadingAndUnloading.{routes => loadingAndUnloadingRoutes}
 import generators.Generators
 import models.Mode
-import models.reference.{Country, UnLocode}
-import pages.loadingAndUnloading.{loading, unloading, AddPlaceOfUnloadingPage}
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.loadingAndUnloading.{loading, unloading, AddPlaceOfUnloadingPage}
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.cyaHelpers.loadingAndUnloading.LoadingAndUnloadingCheckYourAnswersHelper
@@ -91,7 +91,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
 
       "must return Some(Row)" - {
         "when UnLocodePage is defined" in {
-          forAll(arbitrary[Mode], arbitrary[UnLocode]) {
+          forAll(arbitrary[Mode], arbitrary[String]) {
             (mode, unLocode) =>
               val answers = emptyUserAnswers.setValue(loading.UnLocodePage, unLocode)
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
@@ -349,7 +349,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
 
       "must return Some(Row)" - {
         "when UnLocodePage is defined" in {
-          forAll(arbitrary[Mode], arbitrary[UnLocode]) {
+          forAll(arbitrary[Mode], arbitrary[String]) {
             (mode, unLocode) =>
               val answers = emptyUserAnswers.setValue(unloading.UnLocodePage, unLocode)
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)

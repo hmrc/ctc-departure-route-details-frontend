@@ -16,17 +16,16 @@
 
 package pages.loadingAndUnloading.unloading
 
-import models.reference.UnLocode
 import pages.behaviours.PageBehaviours
 
 class UnLocodePageSpec extends PageBehaviours {
 
   "UnLocodePage" - {
 
-    beRetrievable[UnLocode](UnLocodePage)
+    beRetrievable[String](UnLocodePage)
 
-    beSettable[UnLocode](UnLocodePage)
+    beSettable[String](UnLocodePage)
 
-    beRemovable[UnLocode](UnLocodePage)
+    beRemovable[String](UnLocodePage)
   }
 }
