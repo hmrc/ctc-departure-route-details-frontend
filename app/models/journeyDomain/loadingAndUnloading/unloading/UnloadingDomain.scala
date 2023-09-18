@@ -22,12 +22,11 @@ import config.PhaseConfig
 import models.Phase
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.JourneyDomainModel
-import models.reference.UnLocode
 import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.unloading.{AddExtraInformationYesNoPage, UnLocodePage, UnLocodeYesNoPage}
 
 case class UnloadingDomain(
-  unLocode: Option[UnLocode],
+  unLocode: Option[String],
   additionalInformation: Option[AdditionalInformationDomain]
 ) extends JourneyDomainModel
 
@@ -38,7 +37,7 @@ object UnloadingDomain {
       case true =>
         (UnLocodePage.reader.map(Option(_)), optionalAdditionalInformationReader).tupled
       case false =>
-        (none[UnLocode].pure[UserAnswersReader], UserAnswersReader[AdditionalInformationDomain].map(Option(_))).tupled
+        (none[String].pure[UserAnswersReader], UserAnswersReader[AdditionalInformationDomain].map(Option(_))).tupled
     }
 
     lazy val optionalAdditionalInformationReader =
@@ -47,7 +46,7 @@ object UnloadingDomain {
     val reader = phaseConfig.phase match {
       case Phase.Transition =>
         SecurityDetailsTypePage.reader.flatMap {
-          case NoSecurityDetails => (none[UnLocode].pure[UserAnswersReader], optionalAdditionalInformationReader).tupled
+          case NoSecurityDetails => (none[String].pure[UserAnswersReader], optionalAdditionalInformationReader).tupled
           case _                 => unLocodeAndAdditionalInformationReader
         }
       case Phase.PostTransition => unLocodeAndAdditionalInformationReader

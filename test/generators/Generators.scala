@@ -138,6 +138,12 @@ trait Generators extends UserAnswersGenerator with ModelGenerators with ViewMode
       chars  <- listOfN(length, charGen)
     } yield chars.mkString
 
+  def stringsWithExactLength(minLength: Int, maxLength: Int, charGen: Gen[Char] = Gen.alphaNumChar): Gen[String] =
+    for {
+      length <- choose(minLength, maxLength)
+      chars  <- listOfN(length, charGen)
+    } yield chars.mkString
+
   def stringsWithLength(length: Int, charGen: Gen[Char] = Gen.alphaNumChar): Gen[String] =
     for {
       chars <- listOfN(length, charGen)

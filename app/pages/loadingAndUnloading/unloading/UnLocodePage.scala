@@ -17,14 +17,13 @@
 package pages.loadingAndUnloading.unloading
 
 import controllers.loadingAndUnloading.unloading.routes
-import models.reference.UnLocode
 import models.{Mode, UserAnswers}
 import pages.QuestionPage
 import pages.sections.unloading.UnloadingSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-case object UnLocodePage extends QuestionPage[UnLocode] {
+case object UnLocodePage extends QuestionPage[String] {
 
   override def path: JsPath = UnloadingSection.path \ toString
 

@@ -16,10 +16,9 @@
 
 package pages.loadingAndUnloading.unloading
 
-import models.reference.{Country, UnLocode}
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
-import pages.loadingAndUnloading.loading.AddUnLocodeYesNoPage
 
 class UnLocodeYesNoPageSpec extends PageBehaviours {
 
@@ -34,7 +33,7 @@ class UnLocodeYesNoPageSpec extends PageBehaviours {
     "cleanup" - {
       "when NO selected" - {
         "must clean up UnLoading section" in {
-          forAll(arbitrary[UnLocode], nonEmptyString, arbitrary[Country]) {
+          forAll(arbitrary[String], nonEmptyString, arbitrary[Country]) {
             (unLocode, location, country) =>
               val preChange = emptyUserAnswers
                 .setValue(UnLocodeYesNoPage, true)

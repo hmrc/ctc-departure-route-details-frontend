@@ -17,25 +17,10 @@
 package utils.cyaHelpers.locationOfGoods
 
 import config.FrontendAppConfig
-import models.reference.{Country, CustomsOffice, UnLocode}
+import models.reference.{Country, CustomsOffice}
 import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, Mode, PostalCodeAddress, UserAnswers}
 import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
-import pages.locationOfGoods.{
-  AddContactYesNoPage,
-  AddIdentifierYesNoPage,
-  AddLocationOfGoodsPage,
-  AdditionalIdentifierPage,
-  AddressPage,
-  AuthorisationNumberPage,
-  CoordinatesPage,
-  CountryPage,
-  CustomsOfficeIdentifierPage,
-  EoriPage,
-  IdentificationPage,
-  LocationTypePage,
-  PostalCodePage,
-  UnLocodePage
-}
+import pages.locationOfGoods._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
 import utils.cyaHelpers.AnswersHelper
@@ -92,7 +77,7 @@ class LocationOfGoodsCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode
     id = Some("change-location-of-goods-coordinates")
   )
 
-  def unLocode: Option[SummaryListRow] = getAnswerAndBuildRow[UnLocode](
+  def unLocode: Option[SummaryListRow] = getAnswerAndBuildRow[String](
     page = UnLocodePage,
     formatAnswer = formatAsText,
     prefix = "locationOfGoods.unLocode",

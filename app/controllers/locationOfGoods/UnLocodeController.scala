@@ -19,14 +19,13 @@ package controllers.locationOfGoods
 import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.SelectableFormProvider
+import forms.UnLocodeFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
 import pages.locationOfGoods.UnLocodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.UnLocodesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.UnLocodeView
 
@@ -38,49 +37,38 @@ class UnLocodeController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
-  formProvider: SelectableFormProvider,
-  unLocodesService: UnLocodesService,
+  formProvider: UnLocodeFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: UnLocodeView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
-    .requireData(lrn)
-    .async {
-      implicit request =>
-        unLocodesService.getUnLocodes().map {
-          unLocodeList =>
-            val form = formProvider("locationOfGoods.unLocode", unLocodeList)
-            val preparedForm = request.userAnswers.get(UnLocodePage) match {
-              case None        => form
-              case Some(value) => form.fill(value)
-            }
-            Ok(view(preparedForm, lrn, unLocodeList.values, mode))
-        }
-    }
+  private val form = formProvider("locationOfGoods.unLocode")
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
-    .requireData(lrn)
-    .async {
-      implicit request =>
-        unLocodesService.getUnLocodes().flatMap {
-          unLocodeList =>
-            val form = formProvider("locationOfGoods.unLocode", unLocodeList)
-            form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, unLocodeList.values, mode))),
-                value => {
-                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-                  UnLocodePage
-                    .writeToUserAnswers(value)
-                    .updateTask()
-                    .writeToSession()
-                    .navigate()
-                }
-              )
-        }
-    }
+  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(UnLocodePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, lrn, mode))
+  }
+
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
+          value => {
+            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            UnLocodePage
+              .writeToUserAnswers(value)
+              .updateTask()
+              .writeToSession()
+              .navigate()
+          }
+        )
+  }
 }
