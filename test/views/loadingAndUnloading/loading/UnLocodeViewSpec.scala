@@ -21,16 +21,13 @@ import models.NormalMode
 import org.scalacheck.Arbitrary
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import services.UnLocodesService
 import viewModels.InputSize
 import views.behaviours.InputTextViewBehaviours
 import views.html.loadingAndUnloading.loading.UnLocodeView
 
 class UnLocodeViewSpec extends InputTextViewBehaviours[String] {
 
-  private val mockUnLocodesService: UnLocodesService = mock[UnLocodesService]
-
-  override def form: Form[String] = new UnLocodeFormProvider(mockUnLocodesService)(prefix)
+  override def form: Form[String] = new UnLocodeFormProvider()(prefix)
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
     injector.instanceOf[UnLocodeView].apply(form, lrn, NormalMode)(fakeRequest, messages)

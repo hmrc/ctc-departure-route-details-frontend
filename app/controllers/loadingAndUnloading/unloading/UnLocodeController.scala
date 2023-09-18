@@ -26,7 +26,7 @@ import pages.loadingAndUnloading.unloading.UnLocodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.http.HeaderCarrier
+import services.UnLocodesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.loadingAndUnloading.unloading.UnLocodeView
 
@@ -40,8 +40,9 @@ class UnLocodeController @Inject() (
   actions: Actions,
   formProvider: UnLocodeFormProvider,
   val controllerComponents: MessagesControllerComponents,
+  unLocodesService: UnLocodesService,
   view: UnLocodeView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig, hc: HeaderCarrier)
+)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -62,14 +63,26 @@ class UnLocodeController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
-          value => {
-            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-            UnLocodePage
-              .writeToUserAnswers(value)
-              .updateTask()
-              .writeToSession()
-              .navigate()
-          }
+          formValue =>
+            unLocodesService
+              .validateUnLocode(formValue)
+              .flatMap(
+                isValid =>
+                  formProvider
+                    .validateUnLocode("loadingAndUnloading.unloading.unLocode", isValid)
+                    .bindFromRequest()
+                    .fold(
+                      formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
+                      value => {
+                        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                        UnLocodePage
+                          .writeToUserAnswers(value)
+                          .updateTask()
+                          .writeToSession()
+                          .navigate()
+                      }
+                    )
+              )
         )
   }
 }
