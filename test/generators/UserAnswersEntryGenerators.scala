@@ -21,6 +21,7 @@ import models.reference._
 import models.{Coordinates, DateTime, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
+import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import play.api.libs.json._
 import queries.Gettable
 
@@ -92,8 +93,9 @@ trait UserAnswersEntryGenerators {
   private def generateExitAnswer: PartialFunction[Gettable[_], Gen[JsValue]] = {
     import pages.exit.index._
     {
-      case OfficeOfExitCountryPage(_) => arbitrary[Country].map(Json.toJson(_))
-      case OfficeOfExitPage(_)        => arbitrary[CustomsOffice].map(Json.toJson(_))
+      case AddCustomsOfficeOfExitYesNoPage => arbitrary[Boolean].map(JsBoolean)
+      case OfficeOfExitCountryPage(_)      => arbitrary[Country].map(Json.toJson(_))
+      case OfficeOfExitPage(_)             => arbitrary[CustomsOffice].map(Json.toJson(_))
     }
   }
 
