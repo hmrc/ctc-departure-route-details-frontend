@@ -19,8 +19,8 @@ package services
 import base.SpecBase
 import connectors.ReferenceDataConnector
 import models.{Index, LocationOfGoodsIdentification}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.sections.transit.OfficeOfTransitSection
 import play.api.libs.json.Json
