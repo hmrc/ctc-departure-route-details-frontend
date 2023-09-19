@@ -16,9 +16,31 @@
 
 package models
 
+import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
+
 sealed trait DeclarationType
 
-object DeclarationType extends EnumerableType[DeclarationType] {
+object DeclarationType extends Enumerable.Implicits {
+
+  implicit def reads(implicit ev: Enumerable[DeclarationType]): Reads[DeclarationType] =
+    Reads {
+      case JsString(str) =>
+        ev.withName(str)
+          .map {
+            s =>
+              JsSuccess(s)
+          }
+          .getOrElse(JsError("error.invalid"))
+      case _ =>
+        JsError("error.invalid")
+    }
+
+  implicit def enumerable(values: Seq[DeclarationType]): Enumerable[DeclarationType] =
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 
   case object Option1 extends WithName("T1") with DeclarationType
   case object Option2 extends WithName("T2") with DeclarationType
@@ -26,7 +48,7 @@ object DeclarationType extends EnumerableType[DeclarationType] {
   case object Option4 extends WithName("TIR") with DeclarationType
   case object Option5 extends WithName("T") with DeclarationType
 
-  override val values: Seq[DeclarationType] = Seq(
+  val values: Seq[DeclarationType] = Seq(
     Option1,
     Option2,
     Option3,

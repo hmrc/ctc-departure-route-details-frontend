@@ -21,10 +21,12 @@ import play.api.libs.json.{Format, Json}
 case class LocationOfGoodsIdentification(qualifier: String, description: String) extends Radioable[LocationOfGoodsIdentification] {
   override val messageKeyPrefix: String = LocationOfGoodsIdentification.messageKeyPrefix
   override def toString: String         = s"$description"
+
+  override val code: String = qualifier
 }
 
 object LocationOfGoodsIdentification extends DynamicEnumerableType[LocationOfGoodsIdentification] {
   implicit val format: Format[LocationOfGoodsIdentification] = Json.format[LocationOfGoodsIdentification]
 
-  val messageKeyPrefix = "locationOfGoods.locationOfGoodsIdentificationType"
+  val messageKeyPrefix = "locationOfGoods.identification"
 }

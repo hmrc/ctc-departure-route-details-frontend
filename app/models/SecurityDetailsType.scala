@@ -16,9 +16,31 @@
 
 package models
 
+import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
+
 sealed trait SecurityDetailsType
 
-object SecurityDetailsType extends EnumerableType[SecurityDetailsType] {
+object SecurityDetailsType extends Enumerable.Implicits {
+
+  implicit def reads(implicit ev: Enumerable[SecurityDetailsType]): Reads[SecurityDetailsType] =
+    Reads {
+      case JsString(str) =>
+        ev.withName(str)
+          .map {
+            s =>
+              JsSuccess(s)
+          }
+          .getOrElse(JsError("error.invalid"))
+      case _ =>
+        JsError("error.invalid")
+    }
+
+  implicit def enumerable(values: Seq[SecurityDetailsType]): Enumerable[SecurityDetailsType] =
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 
   case object NoSecurityDetails extends WithName("noSecurity") with SecurityDetailsType
 
@@ -28,7 +50,7 @@ object SecurityDetailsType extends EnumerableType[SecurityDetailsType] {
 
   case object EntryAndExitSummaryDeclarationSecurityDetails extends WithName("entryAndExitSummaryDeclaration") with SecurityDetailsType
 
-  override val values: Seq[SecurityDetailsType] = Seq(
+  val values: Seq[SecurityDetailsType] = Seq(
     NoSecurityDetails,
     EntrySummaryDeclarationSecurityDetails,
     ExitSummaryDeclarationSecurityDetails,

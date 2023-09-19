@@ -21,6 +21,8 @@ import play.api.libs.json.{Format, Json}
 case class LocationType(`type`: String, description: String) extends Radioable[LocationType] {
   override val messageKeyPrefix: String = LocationType.messageKeyPrefix
   override def toString: String         = s"$description"
+
+  override val code: String = `type`
 }
 
 object LocationType extends DynamicEnumerableType[LocationType] {
