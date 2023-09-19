@@ -20,11 +20,11 @@ import config.Constants._
 import connectors.ReferenceDataConnector
 import models.{LocationOfGoodsIdentification, LocationType, UserAnswers}
 import pages.locationOfGoods.LocationTypePage
+import services.LocationOfGoodsIdentificationTypeService._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import services.LocationOfGoodsIdentificationTypeService._
 
 class LocationOfGoodsIdentificationTypeService @Inject() (
   referenceDataConnector: ReferenceDataConnector
