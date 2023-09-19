@@ -95,12 +95,12 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
       }
 
       "when approved place (agreed location)" - {
-        "must return T, U, W, X, Z" in {
+        "must return  U, W, X, Y" in {
           val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("C", "Approved place"))
 
           LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
-            LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
             LocationOfGoodsIdentification("X", "EoriNumber"),
+            LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
             LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
             LocationOfGoodsIdentification("W", "CoordinatesIdentifier")
           )
@@ -114,7 +114,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
           LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
             LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
             LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
-            LocationOfGoodsIdentification("Z", "AddressIdentifier"),
+            LocationOfGoodsIdentification("Z", "Address"),
             LocationOfGoodsIdentification("T", "PostalCode")
           )
         }

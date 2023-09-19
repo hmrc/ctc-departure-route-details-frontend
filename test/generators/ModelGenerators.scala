@@ -128,7 +128,7 @@ trait ModelGenerators {
     LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
     LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
     LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
-    LocationOfGoodsIdentification("Z", "AddressIdentifier"),
+    LocationOfGoodsIdentification("Z", "Address"),
     LocationOfGoodsIdentification("T", "PostalCode")
   )
 

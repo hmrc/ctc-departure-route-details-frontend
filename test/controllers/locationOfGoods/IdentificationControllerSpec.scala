@@ -24,6 +24,7 @@ import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.locationOfGoods.{IdentificationPage, LocationTypePage}
 import play.api.inject.bind
@@ -32,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.LocationOfGoodsIdentificationTypeService
 import views.html.locationOfGoods.IdentificationView
-import org.scalacheck.Arbitrary.arbitrary
+
 import scala.concurrent.Future
 
 class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {

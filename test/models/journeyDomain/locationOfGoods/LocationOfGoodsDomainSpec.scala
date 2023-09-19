@@ -57,7 +57,6 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
 
           result.value mustBe expectedResult
-          result.value.qualifierOfIdentification mustBe qualifierOfIdentification
         }
 
         "is W (Coordinate identifier)" in {
@@ -79,7 +78,6 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
 
           result.value mustBe expectedResult
-          result.value.qualifierOfIdentification mustBe qualifierOfIdentification
         }
 
         "is X (EORI number) and AddIdentifierYesNoPage is answered No" in {
@@ -103,7 +101,6 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
 
           result.value mustBe expectedResult
-          result.value.qualifierOfIdentification mustBe qualifierOfIdentification
         }
 
         "is X (EORI number) and AddIdentifierYesNoPage is answered Yes" in {
@@ -128,7 +125,6 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
 
           result.value mustBe expectedResult
-          result.value.qualifierOfIdentification mustBe qualifierOfIdentification
         }
 
         "is Y (Authorisation number) and AddIdentifierYesNoPage is answered No" in {
@@ -151,7 +147,6 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
 
           result.value mustBe expectedResult
-          result.value.qualifierOfIdentification mustBe qualifierOfIdentification
         }
 
         "is Y (Authorisation number) and AddIdentifierYesNoPage is answered Yes" in {
@@ -175,7 +170,6 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
 
           result.value mustBe expectedResult
-          result.value.qualifierOfIdentification mustBe qualifierOfIdentification
         }
 
         "is Z (Address)" in {
@@ -200,7 +194,6 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
 
           result.value mustBe expectedResult
-          result.value.qualifierOfIdentification mustBe qualifierOfIdentification
         }
 
         "is U (UnLocode)" in {
@@ -222,7 +215,6 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
 
           result.value mustBe expectedResult
-          result.value.qualifierOfIdentification mustBe qualifierOfIdentification
         }
 
         "is T (PostalCode)" in {
@@ -244,7 +236,6 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
 
           result.value mustBe expectedResult
-          result.value.qualifierOfIdentification mustBe qualifierOfIdentification
         }
 
       }
@@ -371,4 +362,5 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
       }
     }
   }
+
 }

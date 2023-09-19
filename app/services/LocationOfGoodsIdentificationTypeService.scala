@@ -16,14 +16,15 @@
 
 package services
 
+import config.Constants._
 import connectors.ReferenceDataConnector
 import models.{LocationOfGoodsIdentification, LocationType, UserAnswers}
 import pages.locationOfGoods.LocationTypePage
+import services.LocationOfGoodsIdentificationTypeService._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import services.LocationOfGoodsIdentificationTypeService._
 
 class LocationOfGoodsIdentificationTypeService @Inject() (
   referenceDataConnector: ReferenceDataConnector
@@ -48,19 +49,19 @@ object LocationOfGoodsIdentificationTypeService {
     userAnswers.get(LocationTypePage) match {
       case Some(LocationType("A", _)) =>
         locationOfGoods.filter(
-          x => x.qualifier == "V" || x.qualifier == "U"
+          x => x.qualifier == CustomsOfficeIdentifier || x.qualifier == UnlocodeIdentifier
         )
       case Some(LocationType("B", _)) =>
         locationOfGoods.filter(
-          x => x.qualifier == "Y"
+          x => x.qualifier == AuthorisationNumber
         )
       case Some(LocationType("C", _)) =>
         locationOfGoods.filter(
-          x => x.qualifier == "X" || x.qualifier == "W" || x.qualifier == "U" || x.qualifier == "V"
+          x => x.qualifier == EoriNumber || x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AuthorisationNumber
         )
       case Some(LocationType("D", _)) =>
         locationOfGoods.filter(
-          x => x.qualifier == "W" || x.qualifier == "U" || x.qualifier == "Z" || x.qualifier == "T"
+          x => x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AddressIdentifier || x.qualifier == PostalCode
         )
       case _ => locationOfGoods
 

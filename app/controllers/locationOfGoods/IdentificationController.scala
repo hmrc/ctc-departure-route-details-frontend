@@ -20,14 +20,17 @@ import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
+import models.requests.DataRequest
 import models.{LocalReferenceNumber, LocationOfGoodsIdentification, LocationType, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
-import pages.locationOfGoods.{IdentificationPage, LocationTypePage}
+import pages.QuestionPage
+import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage, LocationTypePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.LocationOfGoodsIdentificationTypeService
+import uk.gov.hmrc.http.SessionKeys.redirect
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.IdentificationView
 
@@ -61,7 +64,6 @@ class IdentificationController @Inject() (
           case LocationType("B", _) =>
             IdentificationPage.writeToUserAnswers(LocationOfGoodsIdentification("Y", "Authorisation number"))
             Future.successful(Redirect(controllers.locationOfGoods.routes.AuthorisationNumberController.onPageLoad(lrn, mode)))
-
           case _ =>
             locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.userAnswers).map {
               locationOfGoodsIdentificationTypes =>
@@ -92,5 +94,18 @@ class IdentificationController @Inject() (
               }
             )
       }
+  }
+
+  private def redirect(
+    mode: Mode,
+    page: QuestionPage[LocationOfGoodsIdentification],
+    value: LocationOfGoodsIdentification
+  )(implicit request: DataRequest[_]): Future[Result] = {
+    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+    page
+      .writeToUserAnswers(value)
+      .updateTask()
+      .writeToSession()
+      .navigate()
   }
 }
