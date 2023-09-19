@@ -16,16 +16,25 @@
 
 package views.locationOfGoods
 
-import config.Constants.goodsIdentificationValues
 import forms.EnumerableFormProvider
 import models.{LocationOfGoodsIdentification, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
-import views.behaviours.RadioViewBehaviours
+import views.behaviours.EnumerableViewBehaviours
 import views.html.locationOfGoods.IdentificationView
 
-class IdentificationViewSpec extends RadioViewBehaviours[LocationOfGoodsIdentification] {
+class IdentificationViewSpec extends EnumerableViewBehaviours[LocationOfGoodsIdentification] {
+
+  val goodsIdentificationValues: Seq[LocationOfGoodsIdentification] = Seq(
+    LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
+    LocationOfGoodsIdentification("X", "EoriNumber"),
+    LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
+    LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
+    LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
+    LocationOfGoodsIdentification("Z", "AddressIdentifier"),
+    LocationOfGoodsIdentification("T", "PostalCode")
+  )
 
   override def form: Form[LocationOfGoodsIdentification] = new EnumerableFormProvider()(prefix, values)
 

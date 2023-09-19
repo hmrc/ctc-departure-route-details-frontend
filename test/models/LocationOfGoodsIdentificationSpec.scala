@@ -17,7 +17,6 @@
 package models
 
 import base.SpecBase
-import config.Constants.goodsIdentificationValues
 import generators.Generators
 import models.LocationOfGoodsIdentification._
 import org.scalacheck.Arbitrary.arbitrary

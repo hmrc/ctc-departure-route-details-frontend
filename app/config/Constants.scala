@@ -16,8 +16,6 @@
 
 package config
 
-import models.LocationOfGoodsIdentification
-
 object Constants {
   val GB  = "GB"
   val XI  = "XI"
@@ -27,13 +25,21 @@ object Constants {
   val STANDARD    = "A"
   val `PRE-LODGE` = "D"
 
-  val goodsIdentificationValues: Seq[LocationOfGoodsIdentification] = Seq(
-    LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
-    LocationOfGoodsIdentification("X", "EoriNumber"),
-    LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
-    LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
-    LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
-    LocationOfGoodsIdentification("Z", "AddressIdentifier"),
-    LocationOfGoodsIdentification("T", "PostalCode")
-  )
+  val TIR = "TIR"
+  val T2  = "T2"
+  val T   = "T"
+
+  val NoSecurityDetails                             = "0"
+  val EntrySummaryDeclarationSecurityDetails        = "1"
+  val ExitSummaryDeclarationSecurityDetails         = "2"
+  val EntryAndExitSummaryDeclarationSecurityDetails = "3"
+
+  val CustomsOfficeIdentifier = "V"
+  val EoriNumber              = "X"
+  val AuthorisationNumber     = "Y"
+  val UnlocodeIdentifier      = "U"
+  val CoordinatesIdentifier   = "W"
+  val AddressIdentifier       = "Z"
+  val PostalCode              = "T"
+
 }

@@ -23,6 +23,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import utils.Format.RichDateTime
+import models.Radioable
 
 private[utils] class SummaryListRowHelper(implicit messages: Messages) {
 
@@ -50,6 +51,8 @@ private[utils] class SummaryListRowHelper(implicit messages: Messages) {
 
   protected def formatEnumAsText[T](messageKeyPrefix: String)(answer: T): Content =
     formatEnumAsString(messageKeyPrefix)(answer).toText
+
+  protected def formatDynamicEnumAsText[T <: Radioable[T]](answer: T): Content = answer.asString.toText
 
   protected def formatEnumAsString[T](messageKeyPrefix: String)(answer: T): String =
     messages(s"$messageKeyPrefix.$answer")

@@ -17,8 +17,8 @@
 package generators
 
 import config.Constants._
-import models._
 import models.reference._
+import models.{Coordinates, DateTime, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
@@ -47,8 +47,8 @@ trait UserAnswersEntryGenerators {
       case OfficeOfDepartureInCL112Page  => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfDepartureInCL147Page  => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfDepartureInCL010Page  => arbitrary[Boolean].map(JsBoolean)
-      case DeclarationTypePage           => arbitrary[DeclarationType].map(Json.toJson(_))
-      case SecurityDetailsTypePage       => arbitrary[SecurityDetailsType].map(Json.toJson(_))
+      case DeclarationTypePage           => arbitrary[String](arbitraryDeclarationType).map(Json.toJson(_))
+      case SecurityDetailsTypePage       => arbitrary[String](arbitrarySecurityDetailsType).map(Json.toJson(_))
     }
   }
 
@@ -124,7 +124,7 @@ trait UserAnswersEntryGenerators {
       case AddIdentifierYesNoPage      => arbitrary[Boolean].map(JsBoolean)
       case AdditionalIdentifierPage    => Gen.alphaNumStr.map(JsString)
       case CoordinatesPage             => arbitrary[Coordinates].map(Json.toJson(_))
-      case UnLocodePage                => arbitrary[UnLocode].map(Json.toJson(_))
+      case UnLocodePage                => arbitrary[String].map(Json.toJson(_))
       case CountryPage                 => arbitrary[Country].map(Json.toJson(_))
       case AddressPage                 => arbitrary[DynamicAddress].map(Json.toJson(_))
       case PostalCodePage              => arbitrary[PostalCodeAddress].map(Json.toJson(_))
@@ -156,7 +156,7 @@ trait UserAnswersEntryGenerators {
     import pages.loadingAndUnloading.loading._
     {
       case AddUnLocodeYesNoPage         => arbitrary[Boolean].map(JsBoolean)
-      case UnLocodePage                 => arbitrary[UnLocode].map(Json.toJson(_))
+      case UnLocodePage                 => arbitrary[String].map(Json.toJson(_))
       case AddExtraInformationYesNoPage => arbitrary[Boolean].map(JsBoolean)
       case CountryPage                  => arbitrary[Country].map(Json.toJson(_))
       case LocationPage                 => Gen.alphaNumStr.map(JsString)
@@ -169,7 +169,7 @@ trait UserAnswersEntryGenerators {
     {
       case AddPlaceOfUnloadingPage      => arbitrary[Boolean].map(JsBoolean)
       case UnLocodeYesNoPage            => arbitrary[Boolean].map(JsBoolean)
-      case UnLocodePage                 => arbitrary[UnLocode].map(Json.toJson(_))
+      case UnLocodePage                 => arbitrary[String].map(Json.toJson(_))
       case AddExtraInformationYesNoPage => arbitrary[Boolean].map(JsBoolean)
       case CountryPage                  => arbitrary[Country].map(Json.toJson(_))
       case LocationPage                 => Gen.alphaNumStr.map(JsString)

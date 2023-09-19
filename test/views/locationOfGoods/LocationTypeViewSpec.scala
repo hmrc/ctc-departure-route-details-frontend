@@ -21,10 +21,10 @@ import models.{LocationType, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
-import views.behaviours.RadioViewBehaviours
+import views.behaviours.EnumerableViewBehaviours
 import views.html.locationOfGoods.LocationTypeView
 
-class LocationTypeViewSpec extends RadioViewBehaviours[LocationType] {
+class LocationTypeViewSpec extends EnumerableViewBehaviours[LocationType] {
 
   override def form: Form[LocationType] = new EnumerableFormProvider()(prefix, values)
 

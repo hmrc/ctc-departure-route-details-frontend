@@ -35,11 +35,11 @@ import services.LocationTypeService
 import scala.concurrent.Future
 
 class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
-  private val lt1                                          = arbitrary[LocationType].sample.value
-  private val lt2                                          = arbitrary[LocationType].sample.value
+  private val lt1                                          = LocationType("A", "testA")
+  private val lt2                                          = LocationType("B", "testB")
   private val lts                                          = Seq(lt1, lt2)
   private val formProvider                                 = new EnumerableFormProvider()
-  private val form                                         = formProvider[LocationType]("locationOfGoods.locationType", lts)
+  private val form                                         = formProvider("locationOfGoods.locationType", lts)
   private val mode                                         = NormalMode
   private lazy val locationTypeRoute                       = routes.LocationTypeController.onPageLoad(lrn, mode).url
   private val mockLocationTypeService: LocationTypeService = mock[LocationTypeService]
@@ -59,6 +59,7 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
   "LocationType Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      when(mockLocationTypeService.getLocationTypes()(any())).thenReturn(Future.successful(lts))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -76,6 +77,8 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
+      when(mockLocationTypeService.getLocationTypes()(any())).thenReturn(Future.successful(lts))
+
       val userAnswers = emptyUserAnswers.setValue(LocationTypePage, lt1)
       setExistingUserAnswers(userAnswers)
 
@@ -83,7 +86,7 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
       val result = route(app, request).value
 
-      val filledForm = form.bind(Map("value" -> lt1.toString))
+      val filledForm = form.bind(Map("value" -> lt1.code))
 
       val view = injector.instanceOf[LocationTypeView]
 
@@ -100,7 +103,7 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
       setExistingUserAnswers(emptyUserAnswers)
 
       val request = FakeRequest(POST, locationTypeRoute)
-        .withFormUrlEncodedBody(("value", lt1.toString))
+        .withFormUrlEncodedBody(("value", lt1.code))
 
       val result = route(app, request).value
 
@@ -143,7 +146,7 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
       setNoExistingUserAnswers()
 
       val request = FakeRequest(POST, locationTypeRoute)
-        .withFormUrlEncodedBody(("value", lt1.toString))
+        .withFormUrlEncodedBody(("value", lt1.code))
 
       val result = route(app, request).value
 

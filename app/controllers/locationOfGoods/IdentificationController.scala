@@ -22,7 +22,7 @@ import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
 import models.{LocalReferenceNumber, LocationOfGoodsIdentification, LocationType, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
-import pages.locationOfGoods.{CustomsOfficeIdentifierPage, IdentificationPage, LocationTypePage}
+import pages.locationOfGoods.{IdentificationPage, LocationTypePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

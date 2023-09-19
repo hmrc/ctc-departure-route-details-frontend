@@ -17,13 +17,13 @@
 package models.journeyDomain.locationOfGoods
 
 import cats.implicits._
-
+import models._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.reference.{Country, CustomsOffice, UnLocode}
-import models._
+import models.reference.{Country, CustomsOffice}
 import pages.locationOfGoods._
 import play.api.mvc.Call
+import config.Constants.{EoriNumber, _}
 
 sealed trait LocationOfGoodsDomain extends JourneyDomainModel {
 
@@ -46,14 +46,15 @@ object LocationOfGoodsDomain {
           case LocationType("B", _) => LocationOfGoodsY.userAnswersReader()
           case _ =>
             val identifierReads: UserAnswersReader[LocationOfGoodsIdentification] = InferredIdentificationPage.reader orElse IdentificationPage.reader
-            identifierReads.flatMap {
-              case LocationOfGoodsIdentification("V", _) => LocationOfGoodsV.userAnswersReader(typeOfLocation)
-              case LocationOfGoodsIdentification("X", _) => LocationOfGoodsX.userAnswersReader(typeOfLocation)
-              case LocationOfGoodsIdentification("Y", _) => LocationOfGoodsY.userAnswersReader()
-              case LocationOfGoodsIdentification("U", _) => LocationOfGoodsU.userAnswersReader(typeOfLocation)
-              case LocationOfGoodsIdentification("W", _) => LocationOfGoodsW.userAnswersReader(typeOfLocation)
-              case LocationOfGoodsIdentification("Z", _) => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
-              case LocationOfGoodsIdentification("T", _) => LocationOfGoodsT.userAnswersReader(typeOfLocation)
+            identifierReads.map(_.qualifier).flatMap {
+              case CustomsOfficeIdentifier => LocationOfGoodsV.userAnswersReader(typeOfLocation)
+              case EoriNumber              => LocationOfGoodsX.userAnswersReader(typeOfLocation)
+              case AuthorisationNumber     => LocationOfGoodsY.userAnswersReader()
+              case UnlocodeIdentifier      => LocationOfGoodsU.userAnswersReader(typeOfLocation)
+              case CoordinatesIdentifier   => LocationOfGoodsW.userAnswersReader(typeOfLocation)
+              case AddressIdentifier       => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
+              case PostalCode              => LocationOfGoodsT.userAnswersReader(typeOfLocation)
+              case x                       => throw new Exception(s"Unexpected Location of goods identifier value $x")
             }
         }
 
@@ -103,7 +104,7 @@ object LocationOfGoodsDomain {
     override val additionalContact: Option[AdditionalContactDomain]
   ) extends LocationOfGoodsDomain {
 
-    val typeOfLocation = LocationType("Y", "Authorisation number")
+    val typeOfLocation: LocationType = LocationType("Y", "Authorisation number")
 
     override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
   }
@@ -160,7 +161,7 @@ object LocationOfGoodsDomain {
 
   case class LocationOfGoodsU(
     typeOfLocation: LocationType,
-    unLocode: UnLocode,
+    unLocode: String,
     override val additionalContact: Option[AdditionalContactDomain]
   ) extends LocationOfGoodsDomain {
 

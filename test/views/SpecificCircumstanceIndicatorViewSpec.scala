@@ -22,10 +22,10 @@ import models.reference.SpecificCircumstanceIndicator
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
-import views.behaviours.RadioViewBehaviours
+import views.behaviours.EnumerableViewBehaviours
 import views.html.SpecificCircumstanceIndicatorView
 
-class SpecificCircumstanceIndicatorViewSpec extends RadioViewBehaviours[SpecificCircumstanceIndicator] {
+class SpecificCircumstanceIndicatorViewSpec extends EnumerableViewBehaviours[SpecificCircumstanceIndicator] {
 
   override def form: Form[SpecificCircumstanceIndicator] = new EnumerableFormProvider()(prefix, values)
 

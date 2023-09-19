@@ -17,30 +17,14 @@
 package utils.cyaHelpers
 
 import base.SpecBase
-import controllers.locationOfGoods.routes
-import controllers.locationOfGoods.contact
+import controllers.locationOfGoods.{contact, routes}
 import generators.Generators
+import models.reference.{Country, CustomsOffice}
 import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, Mode, PostalCodeAddress}
-import models.reference.{Country, CustomsOffice, UnLocode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
-import pages.locationOfGoods.{
-  AddContactYesNoPage,
-  AddIdentifierYesNoPage,
-  AddLocationOfGoodsPage,
-  AdditionalIdentifierPage,
-  AddressPage,
-  AuthorisationNumberPage,
-  CoordinatesPage,
-  CountryPage,
-  CustomsOfficeIdentifierPage,
-  EoriPage,
-  IdentificationPage,
-  LocationTypePage,
-  PostalCodePage,
-  UnLocodePage
-}
+import pages.locationOfGoods._
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
@@ -356,7 +340,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
 
       "must return Some(Row)" - {
         "when unLocodePage is defined" in {
-          forAll(arbitrary[Mode], arbitrary[UnLocode]) {
+          forAll(arbitrary[Mode], arbitrary[String]) {
             (mode, unLocode) =>
               val answers = emptyUserAnswers.setValue(UnLocodePage, unLocode)
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
