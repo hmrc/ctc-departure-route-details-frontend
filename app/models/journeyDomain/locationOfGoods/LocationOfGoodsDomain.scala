@@ -29,8 +29,6 @@ sealed trait LocationOfGoodsDomain extends JourneyDomainModel {
 
   val typeOfLocation: LocationType
 
-  val qualifierOfIdentification: LocationOfGoodsIdentification
-
   val additionalContact: Option[AdditionalContactDomain] = None
 
   override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
@@ -42,159 +40,136 @@ object LocationOfGoodsDomain {
   implicit val userAnswersReader: UserAnswersReader[LocationOfGoodsDomain] =
     LocationTypePage.reader.flatMap {
       typeOfLocation =>
-        typeOfLocation match {
-          case LocationType("B", _) => LocationOfGoodsY.userAnswersReader()
-          case _ =>
-            val identifierReads: UserAnswersReader[LocationOfGoodsIdentification] = InferredIdentificationPage.reader orElse IdentificationPage.reader
-            identifierReads.map(_.qualifier).flatMap {
-              case CustomsOfficeIdentifier => LocationOfGoodsV.userAnswersReader(typeOfLocation)
-              case EoriNumber              => LocationOfGoodsX.userAnswersReader(typeOfLocation)
-              case AuthorisationNumber     => LocationOfGoodsY.userAnswersReader()
-              case UnlocodeIdentifier      => LocationOfGoodsU.userAnswersReader(typeOfLocation)
-              case CoordinatesIdentifier   => LocationOfGoodsW.userAnswersReader(typeOfLocation)
-              case AddressIdentifier       => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
-              case PostalCode              => LocationOfGoodsT.userAnswersReader(typeOfLocation)
-              case x                       => throw new Exception(s"Unexpected Location of goods identifier value $x")
-            }
+        val identifierReads: UserAnswersReader[LocationOfGoodsIdentification] = InferredIdentificationPage.reader orElse IdentificationPage.reader
+        identifierReads.map(_.qualifier).flatMap {
+          case CustomsOfficeIdentifier => LocationOfGoodsV.userAnswersReader(typeOfLocation)
+          case EoriNumber              => LocationOfGoodsX.userAnswersReader(typeOfLocation)
+          case AuthorisationNumber     => LocationOfGoodsY.userAnswersReader()
+          case UnlocodeIdentifier      => LocationOfGoodsU.userAnswersReader(typeOfLocation)
+          case CoordinatesIdentifier   => LocationOfGoodsW.userAnswersReader(typeOfLocation)
+          case AddressIdentifier       => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
+          case PostalCode              => LocationOfGoodsT.userAnswersReader(typeOfLocation)
+          case x                       => throw new Exception(s"Unexpected Location of goods identifier value $x")
         }
-
     }
 
-  case class LocationOfGoodsV(
-    typeOfLocation: LocationType,
-    customsOffice: CustomsOffice
-  ) extends LocationOfGoodsDomain {
+}
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier")
-  }
+case class LocationOfGoodsV(
+  typeOfLocation: LocationType,
+  customsOffice: CustomsOffice
+) extends LocationOfGoodsDomain {}
 
-  object LocationOfGoodsV {
+object LocationOfGoodsV {
 
-    def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
-      (
-        UserAnswersReader(typeOfLocation),
-        CustomsOfficeIdentifierPage.reader
-      ).tupled.map((LocationOfGoodsV.apply _).tupled)
-  }
+  def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
+    (
+      UserAnswersReader(typeOfLocation),
+      CustomsOfficeIdentifierPage.reader
+    ).tupled.map((LocationOfGoodsV.apply _).tupled)
+}
 
-  case class LocationOfGoodsX(
-    typeOfLocation: LocationType,
-    identificationNumber: String,
-    additionalIdentifier: Option[String],
-    override val additionalContact: Option[AdditionalContactDomain]
-  ) extends LocationOfGoodsDomain {
+case class LocationOfGoodsX(
+  typeOfLocation: LocationType,
+  identificationNumber: String,
+  additionalIdentifier: Option[String],
+  override val additionalContact: Option[AdditionalContactDomain]
+) extends LocationOfGoodsDomain {}
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("X", "EoriNumber")
-  }
+object LocationOfGoodsX {
 
-  object LocationOfGoodsX {
+  def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
+    (
+      UserAnswersReader(typeOfLocation),
+      EoriPage.reader,
+      AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
+      AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
+    ).tupled.map((LocationOfGoodsX.apply _).tupled)
+}
 
-    def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
-      (
-        UserAnswersReader(typeOfLocation),
-        EoriPage.reader,
-        AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
-        AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
-      ).tupled.map((LocationOfGoodsX.apply _).tupled)
-  }
+case class LocationOfGoodsY(
+  authorisationNumber: String,
+  additionalIdentifier: Option[String],
+  override val additionalContact: Option[AdditionalContactDomain]
+) extends LocationOfGoodsDomain {
 
-  case class LocationOfGoodsY(
-    authorisationNumber: String,
-    additionalIdentifier: Option[String],
-    override val additionalContact: Option[AdditionalContactDomain]
-  ) extends LocationOfGoodsDomain {
+  val typeOfLocation: LocationType = LocationType("Y", "Authorisation number")
 
-    val typeOfLocation: LocationType = LocationType("Y", "Authorisation number")
+}
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
-  }
+object LocationOfGoodsY {
 
-  object LocationOfGoodsY {
+  def userAnswersReader(): UserAnswersReader[LocationOfGoodsDomain] =
+    (
+      AuthorisationNumberPage.reader,
+      AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
+      AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
+    ).tupled.map((LocationOfGoodsY.apply _).tupled)
+}
 
-    def userAnswersReader(): UserAnswersReader[LocationOfGoodsDomain] =
-      (
-        AuthorisationNumberPage.reader,
-        AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
-        AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
-      ).tupled.map((LocationOfGoodsY.apply _).tupled)
-  }
+case class LocationOfGoodsW(
+  typeOfLocation: LocationType,
+  coordinates: Coordinates,
+  override val additionalContact: Option[AdditionalContactDomain]
+) extends LocationOfGoodsDomain {}
 
-  case class LocationOfGoodsW(
-    typeOfLocation: LocationType,
-    coordinates: Coordinates,
-    override val additionalContact: Option[AdditionalContactDomain]
-  ) extends LocationOfGoodsDomain {
+object LocationOfGoodsW {
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("W", "CoordinatesIdentifier")
-  }
+  def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
+    (
+      UserAnswersReader(typeOfLocation),
+      CoordinatesPage.reader,
+      AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
+    ).tupled.map((LocationOfGoodsW.apply _).tupled)
+}
 
-  object LocationOfGoodsW {
+case class LocationOfGoodsZ(
+  typeOfLocation: LocationType,
+  country: Country,
+  address: DynamicAddress,
+  override val additionalContact: Option[AdditionalContactDomain]
+) extends LocationOfGoodsDomain {}
 
-    def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
-      (
-        UserAnswersReader(typeOfLocation),
-        CoordinatesPage.reader,
-        AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
-      ).tupled.map((LocationOfGoodsW.apply _).tupled)
-  }
+object LocationOfGoodsZ {
 
-  case class LocationOfGoodsZ(
-    typeOfLocation: LocationType,
-    country: Country,
-    address: DynamicAddress,
-    override val additionalContact: Option[AdditionalContactDomain]
-  ) extends LocationOfGoodsDomain {
+  def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
+    (
+      UserAnswersReader(typeOfLocation),
+      CountryPage.reader,
+      AddressPage.reader,
+      AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
+    ).tupled.map((LocationOfGoodsZ.apply _).tupled)
+}
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("Z", "AddressIdentifier")
-  }
+case class LocationOfGoodsU(
+  typeOfLocation: LocationType,
+  unLocode: String,
+  override val additionalContact: Option[AdditionalContactDomain]
+) extends LocationOfGoodsDomain {}
 
-  object LocationOfGoodsZ {
+object LocationOfGoodsU {
 
-    def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
-      (
-        UserAnswersReader(typeOfLocation),
-        CountryPage.reader,
-        AddressPage.reader,
-        AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
-      ).tupled.map((LocationOfGoodsZ.apply _).tupled)
-  }
+  def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
+    (
+      UserAnswersReader(typeOfLocation),
+      UnLocodePage.reader,
+      AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
+    ).tupled.map((LocationOfGoodsU.apply _).tupled)
+}
 
-  case class LocationOfGoodsU(
-    typeOfLocation: LocationType,
-    unLocode: String,
-    override val additionalContact: Option[AdditionalContactDomain]
-  ) extends LocationOfGoodsDomain {
+case class LocationOfGoodsT(
+  typeOfLocation: LocationType,
+  postalCodeAddress: PostalCodeAddress,
+  override val additionalContact: Option[AdditionalContactDomain]
+) extends LocationOfGoodsDomain {}
 
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("U", "UnlocodeIdentifier")
-  }
+object LocationOfGoodsT {
 
-  object LocationOfGoodsU {
-
-    def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
-      (
-        UserAnswersReader(typeOfLocation),
-        UnLocodePage.reader,
-        AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
-      ).tupled.map((LocationOfGoodsU.apply _).tupled)
-  }
-
-  case class LocationOfGoodsT(
-    typeOfLocation: LocationType,
-    postalCodeAddress: PostalCodeAddress,
-    override val additionalContact: Option[AdditionalContactDomain]
-  ) extends LocationOfGoodsDomain {
-
-    override val qualifierOfIdentification: LocationOfGoodsIdentification = LocationOfGoodsIdentification("T", "PostalCode")
-  }
-
-  object LocationOfGoodsT {
-
-    def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
-      (
-        UserAnswersReader(typeOfLocation),
-        PostalCodePage.reader,
-        AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
-      ).tupled.map((LocationOfGoodsT.apply _).tupled)
-  }
+  def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
+    (
+      UserAnswersReader(typeOfLocation),
+      PostalCodePage.reader,
+      AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
+    ).tupled.map((LocationOfGoodsT.apply _).tupled)
 
 }

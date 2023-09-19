@@ -44,7 +44,7 @@ class LocationOfGoodsCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode
 
   def locationOfGoodsIdentification: Option[SummaryListRow] = getAnswerAndBuildRow[LocationOfGoodsIdentification](
     page = IdentificationPage,
-    formatAnswer = formatAsText,
+    formatAnswer = formatDynamicEnumAsText(_),
     prefix = "locationOfGoods.identification",
     id = Some("change-location-of-goods-identification")
   )
