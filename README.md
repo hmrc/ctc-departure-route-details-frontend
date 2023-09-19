@@ -1,4 +1,3 @@
-
 # ctc-departure-route-details-frontend
 
 This service allows a user to complete the route details section of a transit movement departure.
