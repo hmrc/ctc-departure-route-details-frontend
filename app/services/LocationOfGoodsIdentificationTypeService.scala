@@ -18,7 +18,7 @@ package services
 
 import config.Constants._
 import connectors.ReferenceDataConnector
-import models.{LocationOfGoodsIdentification, LocationType, UserAnswers}
+import models.{LocationOfGoodsIdentification, UserAnswers}
 import pages.locationOfGoods.LocationTypePage
 import services.LocationOfGoodsIdentificationTypeService._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -46,21 +46,21 @@ class LocationOfGoodsIdentificationTypeService @Inject() (
 object LocationOfGoodsIdentificationTypeService {
 
   def matchUserAnswers(userAnswers: UserAnswers, locationOfGoods: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
-    userAnswers.get(LocationTypePage) match {
-      case Some(LocationType(DesignatedLocation, _)) =>
+    userAnswers.get(LocationTypePage).map(_.code) match {
+      case Some(DesignatedLocation) =>
         locationOfGoods.filter(
           x => x.qualifier == CustomsOfficeIdentifier || x.qualifier == UnlocodeIdentifier
         )
-      case Some(LocationType(AuthorisedPlace, _)) =>
+      case Some(AuthorisedPlace) =>
         locationOfGoods.filter(
           x => x.qualifier == AuthorisationNumberIdentifier
         )
-      case Some(LocationType(ApprovedPlace, _)) =>
+      case Some(ApprovedPlace) =>
         locationOfGoods.filter(
           x =>
             x.qualifier == EoriNumberIdentifier || x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AuthorisationNumberIdentifier
         )
-      case Some(LocationType(Other, _)) =>
+      case Some(Other) =>
         locationOfGoods.filter(
           x =>
             x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AddressIdentifier || x.qualifier == PostalCodeIdentifier

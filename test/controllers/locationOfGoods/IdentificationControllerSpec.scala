@@ -19,14 +19,14 @@ package controllers.locationOfGoods
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.EnumerableFormProvider
 import generators.Generators
-import models.{LocationOfGoodsIdentification, LocationType, NormalMode}
+import models.{LocationOfGoodsIdentification, NormalMode, UserAnswers}
 import navigation.LocationOfGoodsNavigatorProvider
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.locationOfGoods.{IdentificationPage, LocationTypePage}
+import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -60,46 +60,64 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
 
   "LocationOfGoodsIdentification Controller" - {
 
-    "must return OK and the correct view for a GET" in {
-      forAll(arbitrary[LocationType]) {
-        locationType =>
-          val ua = emptyUserAnswers.setValue(LocationTypePage, locationType)
-          setExistingUserAnswers(ua)
+    "when value is inferred" - {
+      "must redirect to next page" in {
+        when(mockLocationIdentifierService.getLocationOfGoodsIdentificationTypes(any())(any())).thenReturn(Future.successful(Seq(id1)))
 
-          val request = FakeRequest(GET, identificationRoute)
+        setExistingUserAnswers(emptyUserAnswers)
 
-          val result = route(app, request).value
+        val request = FakeRequest(GET, identificationRoute)
 
-          val view = injector.instanceOf[IdentificationView]
+        val result = route(app, request).value
 
-          status(result) mustEqual OK
+        status(result) mustEqual SEE_OTHER
 
-          contentAsString(result) mustEqual
-            view(form, lrn, ids, mode)(request, messages).toString
+        redirectLocation(result).value mustEqual onwardRoute.url
+
+        val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+        userAnswersCaptor.getValue.getValue(InferredIdentificationPage) mustBe id1
+        userAnswersCaptor.getValue.get(IdentificationPage) must not be defined
+      }
+
+      "must return OK and the correct view for a GET" in {
+
+        when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+
+        setExistingUserAnswers(emptyUserAnswers)
+
+        val request = FakeRequest(GET, identificationRoute)
+
+        val result = route(app, request).value
+
+        val view = injector.instanceOf[IdentificationView]
+
+        status(result) mustEqual OK
+
+        contentAsString(result) mustEqual
+          view(form, lrn, ids, mode)(request, messages).toString
       }
     }
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      forAll(arbitrary[LocationType]) {
-        locationType =>
-          val ua = emptyUserAnswers.setValue(LocationTypePage, locationType)
-          setExistingUserAnswers(ua)
-          val userAnswers = ua.setValue(IdentificationPage, id1)
-          setExistingUserAnswers(userAnswers)
+      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
-          val request = FakeRequest(GET, identificationRoute)
+      val userAnswers = emptyUserAnswers.setValue(IdentificationPage, id1)
+      setExistingUserAnswers(userAnswers)
 
-          val result = route(app, request).value
+      val request = FakeRequest(GET, identificationRoute)
 
-          val filledForm = form.bind(Map("value" -> id1.code))
+      val result = route(app, request).value
 
-          val view = injector.instanceOf[IdentificationView]
+      val filledForm = form.bind(Map("value" -> id1.code))
 
-          status(result) mustEqual OK
+      val view = injector.instanceOf[IdentificationView]
 
-          contentAsString(result) mustEqual
-            view(filledForm, lrn, ids, mode)(request, messages).toString
-      }
+      status(result) mustEqual OK
+
+      contentAsString(result) mustEqual
+        view(filledForm, lrn, ids, mode)(request, messages).toString
+
     }
     "must redirect to the next page when valid data is submitted" in {
 
