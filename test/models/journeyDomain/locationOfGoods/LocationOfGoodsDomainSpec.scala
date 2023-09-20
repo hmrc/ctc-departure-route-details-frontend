@@ -139,6 +139,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             .setValue(AddContactYesNoPage, false)
 
           val expectedResult = LocationOfGoodsY(
+            typeOfLocation = typeOfLocation,
             authorisationNumber = authorisationNumber,
             additionalIdentifier = None,
             additionalContact = None
@@ -162,6 +163,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             .setValue(AddContactYesNoPage, false)
 
           val expectedResult = LocationOfGoodsY(
+            typeOfLocation = typeOfLocation,
             authorisationNumber = authorisationNumber,
             additionalIdentifier = Some("1234"),
             additionalContact = None
@@ -257,6 +259,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
 
         val expectedResult = LocationOfGoodsY(
+          typeOfLocation = typeOfLocation,
           authorisationNumber = authorisationNumber,
           additionalIdentifier = Some("1234"),
           additionalContact = Some(AdditionalContactDomain(contactName, contactPhone))

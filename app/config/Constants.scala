@@ -42,4 +42,9 @@ object Constants {
   val AddressIdentifier       = "Z"
   val PostalCode              = "T"
 
+  val DesignatedLocation = "A"
+  val AuthorisedPlace    = "B"
+  val ApprovedPlace      = "C"
+  val Other              = "D"
+
 }

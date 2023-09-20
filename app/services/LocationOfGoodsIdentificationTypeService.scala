@@ -47,19 +47,19 @@ object LocationOfGoodsIdentificationTypeService {
 
   def matchUserAnswers(userAnswers: UserAnswers, locationOfGoods: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
     userAnswers.get(LocationTypePage) match {
-      case Some(LocationType("A", _)) =>
+      case Some(LocationType(DesignatedLocation, _)) =>
         locationOfGoods.filter(
           x => x.qualifier == CustomsOfficeIdentifier || x.qualifier == UnlocodeIdentifier
         )
-      case Some(LocationType("B", _)) =>
+      case Some(LocationType(AuthorisedPlace, _)) =>
         locationOfGoods.filter(
           x => x.qualifier == AuthorisationNumber
         )
-      case Some(LocationType("C", _)) =>
+      case Some(LocationType(ApprovedPlace, _)) =>
         locationOfGoods.filter(
           x => x.qualifier == EoriNumber || x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AuthorisationNumber
         )
-      case Some(LocationType("D", _)) =>
+      case Some(LocationType(Other, _)) =>
         locationOfGoods.filter(
           x => x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AddressIdentifier || x.qualifier == PostalCode
         )

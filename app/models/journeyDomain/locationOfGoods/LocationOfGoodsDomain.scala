@@ -44,7 +44,7 @@ object LocationOfGoodsDomain {
         identifierReads.map(_.qualifier).flatMap {
           case CustomsOfficeIdentifier => LocationOfGoodsV.userAnswersReader(typeOfLocation)
           case EoriNumber              => LocationOfGoodsX.userAnswersReader(typeOfLocation)
-          case AuthorisationNumber     => LocationOfGoodsY.userAnswersReader()
+          case AuthorisationNumber     => LocationOfGoodsY.userAnswersReader(typeOfLocation)
           case UnlocodeIdentifier      => LocationOfGoodsU.userAnswersReader(typeOfLocation)
           case CoordinatesIdentifier   => LocationOfGoodsW.userAnswersReader(typeOfLocation)
           case AddressIdentifier       => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
@@ -88,19 +88,17 @@ object LocationOfGoodsX {
 }
 
 case class LocationOfGoodsY(
+  typeOfLocation: LocationType,
   authorisationNumber: String,
   additionalIdentifier: Option[String],
   override val additionalContact: Option[AdditionalContactDomain]
-) extends LocationOfGoodsDomain {
-
-  val typeOfLocation: LocationType = LocationType("Y", "Authorisation number")
-
-}
+) extends LocationOfGoodsDomain {}
 
 object LocationOfGoodsY {
 
-  def userAnswersReader(): UserAnswersReader[LocationOfGoodsDomain] =
+  def userAnswersReader(typeOfLocation: LocationType): UserAnswersReader[LocationOfGoodsDomain] =
     (
+      UserAnswersReader(typeOfLocation),
       AuthorisationNumberPage.reader,
       AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
       AddContactYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalContactDomain])
