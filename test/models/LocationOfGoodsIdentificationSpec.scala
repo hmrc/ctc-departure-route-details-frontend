@@ -22,14 +22,10 @@ import models.LocationOfGoodsIdentification._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.locationOfGoods.LocationTypePage
 import play.api.libs.json.{JsError, JsString, Json}
-import services.LocationOfGoodsIdentificationTypeService
-import config.Constants._
 
 class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val allValues = goodsIdentificationValues
 
   "LocationOfGoodsIdentification" - {
 
@@ -72,7 +68,6 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
                |""".stripMargin)
       }
     }
-
 
   }
 }
