@@ -119,6 +119,7 @@ trait ModelGenerators {
     Arbitrary {
       for {
         description <- nonEmptyString
+        code        <- Gen.oneOf("A", "B", "C", "D")
       } yield LocationType(DesignatedLocation, description)
     }
 

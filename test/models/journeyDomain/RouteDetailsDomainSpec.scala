@@ -246,7 +246,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             "and not adding a location of goods type" in {
               val userAnswers = emptyUserAnswers
-                .setValue(AdditionalDeclarationTypePage, DesignatedLocation)
+                .setValue(AdditionalDeclarationTypePage, "A")
                 .setValue(OfficeOfDeparturePage, arbitrary[CustomsOffice].sample.value)
                 .setValue(OfficeOfDepartureInCL147Page, true)
                 .setValue(AddLocationOfGoodsPage, false)
@@ -260,7 +260,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             "and adding a location of goods type" in {
               val initialAnswers = emptyUserAnswers
-                .setValue(AdditionalDeclarationTypePage, DesignatedLocation)
+                .setValue(AdditionalDeclarationTypePage, "A")
                 .setValue(OfficeOfDeparturePage, customsOffice)
                 .setValue(OfficeOfDepartureInCL147Page, true)
                 .setValue(AddLocationOfGoodsPage, true)
@@ -280,7 +280,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             val customsOffice = arbitrary[CustomsOffice].sample.value
 
             val initialAnswers = emptyUserAnswers
-              .setValue(AdditionalDeclarationTypePage, DesignatedLocation)
+              .setValue(AdditionalDeclarationTypePage, "A")
               .setValue(OfficeOfDeparturePage, customsOffice)
               .setValue(OfficeOfDepartureInCL147Page, false)
 
@@ -316,7 +316,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
           "and pre-lodging" - {
             "and add location of goods type yes/no is unanswered" in {
-              val userAnswers = emptyUserAnswers.setValue(AdditionalDeclarationTypePage, Other)
+              val userAnswers = emptyUserAnswers.setValue(AdditionalDeclarationTypePage, "D")
 
               val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
                 RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)

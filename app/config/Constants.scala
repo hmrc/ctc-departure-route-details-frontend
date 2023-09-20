@@ -22,7 +22,7 @@ object Constants {
   val AD  = "AD"
   val XXX = "XXX"
 
-  val STANDARD    = DesignatedLocation
+  val STANDARD    = "A"
   val `PRE-LODGE` = "D"
 
   val TIR = "TIR"
