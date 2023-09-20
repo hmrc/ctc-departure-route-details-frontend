@@ -53,15 +53,17 @@ object LocationOfGoodsIdentificationTypeService {
         )
       case Some(LocationType(AuthorisedPlace, _)) =>
         locationOfGoods.filter(
-          x => x.qualifier == AuthorisationNumber
+          x => x.qualifier == AuthorisationNumberIdentifier
         )
       case Some(LocationType(ApprovedPlace, _)) =>
         locationOfGoods.filter(
-          x => x.qualifier == EoriNumber || x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AuthorisationNumber
+          x =>
+            x.qualifier == EoriNumberIdentifier || x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AuthorisationNumberIdentifier
         )
       case Some(LocationType(Other, _)) =>
         locationOfGoods.filter(
-          x => x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AddressIdentifier || x.qualifier == PostalCode
+          x =>
+            x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AddressIdentifier || x.qualifier == PostalCodeIdentifier
         )
       case _ => locationOfGoods
 

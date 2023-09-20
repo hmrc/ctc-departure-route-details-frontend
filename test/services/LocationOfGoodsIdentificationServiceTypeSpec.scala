@@ -37,11 +37,11 @@ class LocationOfGoodsIdentificationServiceTypeSpec extends SpecBase with BeforeA
 
   private val unlocodeIdentifier: LocationOfGoodsIdentification      = LocationOfGoodsIdentification(UnlocodeIdentifier, "test1")
   private val customsOfficeIdentifier: LocationOfGoodsIdentification = LocationOfGoodsIdentification(CustomsOfficeIdentifier, "test2")
-  private val eoriNumberIdentifier: LocationOfGoodsIdentification    = LocationOfGoodsIdentification(EoriNumber, "test3")
-  private val authorisationNumber: LocationOfGoodsIdentification     = LocationOfGoodsIdentification(AuthorisationNumber, "test4")
+  private val eoriNumberIdentifier: LocationOfGoodsIdentification    = LocationOfGoodsIdentification(EoriNumberIdentifier, "test3")
+  private val authorisationNumber: LocationOfGoodsIdentification     = LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "test4")
   private val coordinatesIdentifier: LocationOfGoodsIdentification   = LocationOfGoodsIdentification(CoordinatesIdentifier, "test5")
   private val addressIdentifier: LocationOfGoodsIdentification       = LocationOfGoodsIdentification(AddressIdentifier, "test6")
-  private val postalCode: LocationOfGoodsIdentification              = LocationOfGoodsIdentification(PostalCode, "test7")
+  private val postalCode: LocationOfGoodsIdentification              = LocationOfGoodsIdentification(PostalCodeIdentifier, "test7")
 
   private val identifiers: Seq[LocationOfGoodsIdentification] =
     Seq(postalCode, unlocodeIdentifier, customsOfficeIdentifier, coordinatesIdentifier, eoriNumberIdentifier, authorisationNumber, addressIdentifier)

@@ -16,6 +16,7 @@
 
 package views.locationOfGoods
 
+import config.Constants._
 import forms.EnumerableFormProvider
 import models.{LocationType, NormalMode}
 import play.api.data.Form
@@ -37,8 +38,8 @@ class LocationTypeViewSpec extends EnumerableViewBehaviours[LocationType] {
     values.toRadioItems(fieldId, checkedValue)
 
   override def values: Seq[LocationType] = Seq(
-    LocationType("A", "Designated location"),
-    LocationType("B", "Authorised place")
+    LocationType(DesignatedLocation, "Designated location"),
+    LocationType(AuthorisedPlace, "Authorised place")
   )
   behave like pageWithTitle()
 

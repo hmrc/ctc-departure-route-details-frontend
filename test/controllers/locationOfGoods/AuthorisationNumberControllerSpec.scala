@@ -43,7 +43,7 @@ class AuthorisationNumberControllerSpec extends SpecBase with AppWithDefaultMock
       .guiceApplicationBuilder()
       .overrides(bind(classOf[LocationOfGoodsNavigatorProvider]).toInstance(fakeLocationOfGoodsNavigatorProvider))
 
-  "AuthorisationNumber Controller" - {
+  "AuthorisationNumberIdentifier Controller" - {
 
     "must return OK and the correct view for a GET" in {
 

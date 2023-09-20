@@ -16,6 +16,7 @@
 
 package views.locationOfGoods
 
+import config.Constants._
 import forms.EnumerableFormProvider
 import models.{LocationOfGoodsIdentification, NormalMode}
 import play.api.data.Form
@@ -27,13 +28,13 @@ import views.html.locationOfGoods.IdentificationView
 class IdentificationViewSpec extends EnumerableViewBehaviours[LocationOfGoodsIdentification] {
 
   val goodsIdentificationValues: Seq[LocationOfGoodsIdentification] = Seq(
-    LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
-    LocationOfGoodsIdentification("X", "EoriNumber"),
-    LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
-    LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
-    LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
-    LocationOfGoodsIdentification("Z", "AddressIdentifier"),
-    LocationOfGoodsIdentification("T", "PostalCode")
+    LocationOfGoodsIdentification(CustomsOfficeIdentifier, "CustomsOfficeIdentifier"),
+    LocationOfGoodsIdentification(EoriNumberIdentifier, "EoriNumber"),
+    LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier"),
+    LocationOfGoodsIdentification(UnlocodeIdentifier, "UnlocodeIdentifier"),
+    LocationOfGoodsIdentification(CoordinatesIdentifier, "CoordinatesIdentifier"),
+    LocationOfGoodsIdentification(AddressIdentifier, "AddressIdentifier"),
+    LocationOfGoodsIdentification(PostalCodeIdentifier, "PostalCode")
   )
 
   override def form: Form[LocationOfGoodsIdentification] = new EnumerableFormProvider()(prefix, values)

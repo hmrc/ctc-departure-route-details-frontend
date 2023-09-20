@@ -19,6 +19,7 @@ package connectors
 import base.{AppWithDefaultMockFixtures, SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
+import config.Constants._
 import models.LocationType
 import models.reference._
 import org.scalacheck.Gen

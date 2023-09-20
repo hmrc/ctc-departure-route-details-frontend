@@ -17,6 +17,7 @@
 package controllers.locationOfGoods
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import config.Constants._
 import forms.EnumerableFormProvider
 import generators.Generators
 import models.{LocationType, NormalMode}
@@ -28,15 +29,14 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.locationOfGoods.LocationTypeView
-import org.scalacheck.Arbitrary.arbitrary
 import services.LocationTypeService
+import views.html.locationOfGoods.LocationTypeView
 
 import scala.concurrent.Future
 
 class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
-  private val lt1                                          = LocationType("A", "testA")
-  private val lt2                                          = LocationType("B", "testB")
+  private val lt1                                          = LocationType(DesignatedLocation, "testA")
+  private val lt2                                          = LocationType(AuthorisedPlace, "testB")
   private val lts                                          = Seq(lt1, lt2)
   private val formProvider                                 = new EnumerableFormProvider()
   private val form                                         = formProvider("locationOfGoods.locationType", lts)

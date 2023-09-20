@@ -27,6 +27,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.QuestionPage
 import pages.locationOfGoods._
+import config.Constants._
 
 class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
@@ -41,7 +42,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
       "when qualifier of identification" - {
 
         "is V (Customs office identifier)" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier")
+          val qualifierOfIdentification = LocationOfGoodsIdentification(CustomsOfficeIdentifier, "CustomsOfficeIdentifier")
           val customsOffice             = arbitrary[CustomsOffice].sample.value
 
           val userAnswers = emptyUserAnswers
@@ -60,7 +61,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         }
 
         "is W (Coordinate identifier)" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("W", "CoordinatesIdentifier")
+          val qualifierOfIdentification = LocationOfGoodsIdentification(CoordinatesIdentifier, "CoordinatesIdentifier")
           val coordinate                = arbitrary[Coordinates].sample.value
 
           val userAnswers = emptyUserAnswers
@@ -81,7 +82,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         }
 
         "is X (EORI number) and AddIdentifierYesNoPage is answered No" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("X", "EoriNumber")
+          val qualifierOfIdentification = LocationOfGoodsIdentification(EoriNumberIdentifier, "EoriNumber")
           val eoriNumber                = Gen.alphaNumStr.sample.value
 
           val userAnswers = emptyUserAnswers
@@ -104,7 +105,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         }
 
         "is X (EORI number) and AddIdentifierYesNoPage is answered Yes" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("X", "EoriNumber")
+          val qualifierOfIdentification = LocationOfGoodsIdentification(EoriNumberIdentifier, "EoriNumber")
           val eoriNumber                = Gen.alphaNumStr.sample.value
 
           val userAnswers = emptyUserAnswers
@@ -128,7 +129,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         }
 
         "is Y (Authorisation number) and AddIdentifierYesNoPage is answered No" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
+          val qualifierOfIdentification = LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier")
           val authorisationNumber       = Gen.alphaNumStr.sample.value
 
           val userAnswers = emptyUserAnswers
@@ -151,7 +152,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         }
 
         "is Y (Authorisation number) and AddIdentifierYesNoPage is answered Yes" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
+          val qualifierOfIdentification = LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier")
           val authorisationNumber       = Gen.alphaNumStr.sample.value
 
           val userAnswers = emptyUserAnswers
@@ -175,7 +176,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         }
 
         "is Z (Address)" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("Z", "AddressIdentifier")
+          val qualifierOfIdentification = LocationOfGoodsIdentification(AddressIdentifier, "AddressIdentifier")
           val country                   = arbitrary[Country].sample.value
           val address                   = arbitrary[DynamicAddress].sample.value
 
@@ -199,7 +200,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         }
 
         "is U (UnLocode)" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("U", "UnlocodeIdentifier")
+          val qualifierOfIdentification = LocationOfGoodsIdentification(UnlocodeIdentifier, "UnlocodeIdentifier")
           val unLocode                  = arbitrary[String].sample.value
 
           val userAnswers = emptyUserAnswers
@@ -220,7 +221,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         }
 
         "is T (PostalCode)" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification("T", "PostalCode")
+          val qualifierOfIdentification = LocationOfGoodsIdentification(PostalCodeIdentifier, "PostalCode")
           val postalCodeAddress         = arbitrary[PostalCodeAddress].sample.value
 
           val userAnswers = emptyUserAnswers
@@ -243,7 +244,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
       }
 
       "when is Y(Authorisation Number) and all optional pages are answered" in {
-        val qualifierOfIdentification = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
+        val qualifierOfIdentification = LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier")
         val authorisationNumber       = Gen.alphaNumStr.sample.value
 
         val userAnswers = emptyUserAnswers
@@ -280,7 +281,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           AddContactYesNoPage
         )
 
-        val qualifierOfIdentification = LocationOfGoodsIdentification("X", "EoriNumber")
+        val qualifierOfIdentification = LocationOfGoodsIdentification(EoriNumberIdentifier, "EoriNumber")
         val eoriNumber                = Gen.alphaNumStr.sample.value
 
         val userAnswers = emptyUserAnswers
@@ -301,7 +302,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
       }
 
       "when is Y(Authorisation Number) and AdditionalIdentifier page is missing when required" in {
-        val qualifierOfIdentification = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
+        val qualifierOfIdentification = LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier")
         val authorisationNumber       = Gen.alphaNumStr.sample.value
 
         val userAnswers = emptyUserAnswers
@@ -318,7 +319,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
       }
 
       "when is Y(Authorisation Number) and contact name details is missing when required" in {
-        val qualifierOfIdentification = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
+        val qualifierOfIdentification = LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier")
         val authorisationNumber       = Gen.alphaNumStr.sample.value
 
         val userAnswers = emptyUserAnswers
@@ -335,7 +336,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
       }
 
       "when is Y(Authorisation Number) and contact phone number details is missing when required" in {
-        val qualifierOfIdentification = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
+        val qualifierOfIdentification = LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier")
         val authorisationNumber       = Gen.alphaNumStr.sample.value
 
         val userAnswers = emptyUserAnswers
@@ -353,7 +354,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
       }
 
       "when type is Z (address) and country page is missing" in {
-        val qualifierOfIdentification = LocationOfGoodsIdentification("Z", "AddressIdentifier")
+        val qualifierOfIdentification = LocationOfGoodsIdentification(AddressIdentifier, "AddressIdentifier")
 
         val userAnswers = emptyUserAnswers
           .setValue(LocationTypePage, typeOfLocation)

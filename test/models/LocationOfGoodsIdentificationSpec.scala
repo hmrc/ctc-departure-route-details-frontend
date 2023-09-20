@@ -25,6 +25,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.locationOfGoods.LocationTypePage
 import play.api.libs.json.{JsError, JsString, Json}
 import services.LocationOfGoodsIdentificationTypeService
+import config.Constants._
 
 class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -50,7 +51,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!Seq(LocationOfGoodsIdentification("A", "Designated location")).map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!Seq(LocationOfGoodsIdentification(DesignatedLocation, "Designated location")).map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
@@ -75,47 +76,47 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
     "valuesU" - {
       "when designated location (sub place)" - {
         "must return U and V" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("A", "Designated location"))
+          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType(DesignatedLocation, "Designated location"))
 
           LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
-            LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier"),
-            LocationOfGoodsIdentification("U", "UnlocodeIdentifier")
+            LocationOfGoodsIdentification(CustomsOfficeIdentifier, "CustomsOfficeIdentifier"),
+            LocationOfGoodsIdentification(UnlocodeIdentifier, "UnlocodeIdentifier")
           )
         }
       }
 
       "when authorised place (auth location code)" - {
         "must return Y" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("B", "Authorised place"))
+          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType(AuthorisedPlace, "Authorised place"))
 
           LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
-            LocationOfGoodsIdentification("Y", "AuthorisationNumber")
+            LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier")
           )
         }
       }
 
       "when approved place (agreed location)" - {
         "must return  U, W, X, Y" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("C", "Approved place"))
+          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType(ApprovedPlace, "Approved place"))
 
           LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
-            LocationOfGoodsIdentification("X", "EoriNumber"),
-            LocationOfGoodsIdentification("Y", "AuthorisationNumber"),
-            LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
-            LocationOfGoodsIdentification("W", "CoordinatesIdentifier")
+            LocationOfGoodsIdentification(EoriNumberIdentifier, "EoriNumber"),
+            LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier"),
+            LocationOfGoodsIdentification(UnlocodeIdentifier, "UnlocodeIdentifier"),
+            LocationOfGoodsIdentification(CoordinatesIdentifier, "CoordinatesIdentifier")
           )
         }
       }
 
       "when other" - {
         "must return T, U, W, Z" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType("D", "Other"))
+          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType(Other, "Other"))
 
           LocationOfGoodsIdentificationTypeService.matchUserAnswers(userAnswers, allValues) mustBe Seq(
-            LocationOfGoodsIdentification("U", "UnlocodeIdentifier"),
-            LocationOfGoodsIdentification("W", "CoordinatesIdentifier"),
-            LocationOfGoodsIdentification("Z", "Address"),
-            LocationOfGoodsIdentification("T", "PostalCode")
+            LocationOfGoodsIdentification(UnlocodeIdentifier, "UnlocodeIdentifier"),
+            LocationOfGoodsIdentification(CoordinatesIdentifier, "CoordinatesIdentifier"),
+            LocationOfGoodsIdentification(AddressIdentifier, "Address"),
+            LocationOfGoodsIdentification(PostalCodeIdentifier, "PostalCode")
           )
         }
       }

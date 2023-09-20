@@ -17,6 +17,7 @@
 package viewModels.locationOfGoods
 
 import base.SpecBase
+import config.Constants._
 import generators.Generators
 import models.{LocationOfGoodsIdentification, Mode}
 import org.scalacheck.Arbitrary.arbitrary
@@ -30,7 +31,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
 
   "apply" - {
     "when 'V' customs office" - {
-      val qualifier = LocationOfGoodsIdentification("V", "CustomsOfficeIdentifier")
+      val qualifier = LocationOfGoodsIdentification(CustomsOfficeIdentifier, "CustomsOfficeIdentifier")
 
       "must return 4 rows" in {
         val initialAnswers = baseAnswers
@@ -47,7 +48,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
     }
 
     "when 'X' EORI number" - {
-      val qualifier = LocationOfGoodsIdentification("X", "EoriNumber")
+      val qualifier = LocationOfGoodsIdentification(EoriNumberIdentifier, "EoriNumber")
 
       "when an additional identifier and a contact have been provided" - {
         "must return 9 rows" in {
@@ -85,7 +86,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
     }
 
     "when 'Y' authorisations number" - {
-      val qualifier = LocationOfGoodsIdentification("Y", "AuthorisationNumber")
+      val qualifier = LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier")
 
       "when an additional identifier and a contact have been provided" - {
         "must return 9 rows" in {
@@ -123,7 +124,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
     }
 
     "when 'W' coordinates" - {
-      val qualifier = LocationOfGoodsIdentification("W", "CoordinatesIdentifier")
+      val qualifier = LocationOfGoodsIdentification(CoordinatesIdentifier, "CoordinatesIdentifier")
 
       "when a contact has been provided" - {
         "must return 7 rows" in {
@@ -159,7 +160,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
     }
 
     "when 'U' UN-LOCODE" - {
-      val qualifier = LocationOfGoodsIdentification("U", "UnlocodeIdentifier")
+      val qualifier = LocationOfGoodsIdentification(UnlocodeIdentifier, "UnlocodeIdentifier")
 
       "when a contact has been provided" - {
         "must return 7 rows" in {
@@ -195,7 +196,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
     }
 
     "when 'Z' address" - {
-      val qualifier = LocationOfGoodsIdentification("Z", "AddressIdentifier")
+      val qualifier = LocationOfGoodsIdentification(AddressIdentifier, "AddressIdentifier")
 
       "when a contact has been provided" - {
         "must return 8 rows" in {
@@ -231,7 +232,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
     }
 
     "when 'T' postal code" - {
-      val qualifier = LocationOfGoodsIdentification("T", "PostalCode")
+      val qualifier = LocationOfGoodsIdentification(PostalCodeIdentifier, "PostalCode")
 
       "when a contact has been provided" - {
         "must return 7 rows" in {

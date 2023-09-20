@@ -23,7 +23,7 @@ import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice}
 import pages.locationOfGoods._
 import play.api.mvc.Call
-import config.Constants.{EoriNumber, _}
+import config.Constants._
 
 sealed trait LocationOfGoodsDomain extends JourneyDomainModel {
 
@@ -42,14 +42,14 @@ object LocationOfGoodsDomain {
       typeOfLocation =>
         val identifierReads: UserAnswersReader[LocationOfGoodsIdentification] = InferredIdentificationPage.reader orElse IdentificationPage.reader
         identifierReads.map(_.qualifier).flatMap {
-          case CustomsOfficeIdentifier => LocationOfGoodsV.userAnswersReader(typeOfLocation)
-          case EoriNumber              => LocationOfGoodsX.userAnswersReader(typeOfLocation)
-          case AuthorisationNumber     => LocationOfGoodsY.userAnswersReader(typeOfLocation)
-          case UnlocodeIdentifier      => LocationOfGoodsU.userAnswersReader(typeOfLocation)
-          case CoordinatesIdentifier   => LocationOfGoodsW.userAnswersReader(typeOfLocation)
-          case AddressIdentifier       => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
-          case PostalCode              => LocationOfGoodsT.userAnswersReader(typeOfLocation)
-          case x                       => throw new Exception(s"Unexpected Location of goods identifier value $x")
+          case CustomsOfficeIdentifier       => LocationOfGoodsV.userAnswersReader(typeOfLocation)
+          case EoriNumberIdentifier          => LocationOfGoodsX.userAnswersReader(typeOfLocation)
+          case AuthorisationNumberIdentifier => LocationOfGoodsY.userAnswersReader(typeOfLocation)
+          case UnlocodeIdentifier            => LocationOfGoodsU.userAnswersReader(typeOfLocation)
+          case CoordinatesIdentifier         => LocationOfGoodsW.userAnswersReader(typeOfLocation)
+          case AddressIdentifier             => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
+          case PostalCodeIdentifier          => LocationOfGoodsT.userAnswersReader(typeOfLocation)
+          case x                             => throw new Exception(s"Unexpected Location of goods identifier value $x")
         }
     }
 
