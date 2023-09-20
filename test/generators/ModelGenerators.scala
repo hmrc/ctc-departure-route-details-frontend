@@ -120,7 +120,7 @@ trait ModelGenerators {
       for {
         description <- nonEmptyString
         code        <- Gen.oneOf("A", "B", "C", "D")
-      } yield LocationType(DesignatedLocation, description)
+      } yield LocationType(code, description)
     }
 
   val goodsIdentificationValues: Seq[LocationOfGoodsIdentification] = Seq(

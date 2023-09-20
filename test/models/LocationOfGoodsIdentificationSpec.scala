@@ -26,7 +26,6 @@ import play.api.libs.json.{JsError, JsString, Json}
 
 class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-
   "LocationOfGoodsIdentification" - {
 
     "must deserialise valid values" in {
