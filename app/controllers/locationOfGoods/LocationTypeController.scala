@@ -21,11 +21,9 @@ import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
 import models.LocationType.AuthorisedPlace
-import models.requests.{DataRequest, MandatoryDataRequest}
+import models.requests.MandatoryDataRequest
 import models.{LocalReferenceNumber, LocationType, Mode, ProcedureType}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
-import pages.QuestionPage
-import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage}
 import pages.external.ProcedureTypePage
 import pages.locationOfGoods.LocationTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -64,7 +62,7 @@ class LocationTypeController @Inject() (
         }
 
         request.arg match {
-          case ProcedureType.Normal     => Future.successful(Ok(view(preparedForm, lrn, LocationType.values, mode)))
+          case ProcedureType.Normal     => Future.successful(Ok(view(preparedForm, lrn, LocationType.normalProcedureValues, mode)))
           case ProcedureType.Simplified => redirect(mode, AuthorisedPlace)
         }
     }
@@ -77,7 +75,7 @@ class LocationTypeController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationType.values, mode))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationType.normalProcedureValues, mode))),
             value => redirect(mode, value)
           )
     }
