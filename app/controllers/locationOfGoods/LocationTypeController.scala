@@ -20,13 +20,16 @@ import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
-import models.requests.DataRequest
-import models.{LocalReferenceNumber, LocationType, Mode}
+import models.LocationType.AuthorisedPlace
+import models.requests.MandatoryDataRequest
+import models.{LocalReferenceNumber, LocationType, Mode, ProcedureType}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
+import pages.external.ProcedureTypePage
 import pages.locationOfGoods.LocationTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.LocationTypeView
 
@@ -40,6 +43,7 @@ class LocationTypeController @Inject() (
   actions: Actions,
   formProvider: EnumerableFormProvider,
   val controllerComponents: MessagesControllerComponents,
+  getMandatoryPage: SpecificDataRequiredActionProvider,
   view: LocationTypeView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
@@ -48,32 +52,43 @@ class LocationTypeController @Inject() (
   private val form = formProvider[LocationType]("locationOfGoods.locationType")
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
-    .requireData(lrn) {
+    .requireData(lrn)
+    .andThen(getMandatoryPage(ProcedureTypePage))
+    .async {
       implicit request =>
         val preparedForm = request.userAnswers.get(LocationTypePage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
 
-        Ok(view(preparedForm, lrn, LocationType.values, mode))
+        request.arg match {
+          case ProcedureType.Normal     => Future.successful(Ok(view(preparedForm, lrn, LocationType.normalProcedureValues, mode)))
+          case ProcedureType.Simplified => redirect(mode, AuthorisedPlace)
+        }
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
+    .andThen(getMandatoryPage(ProcedureTypePage))
     .async {
-      implicit request: DataRequest[AnyContent] =>
+      implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationType.values, mode))),
-            value => {
-              implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-              LocationTypePage
-                .writeToUserAnswers(value)
-                .updateTask()
-                .writeToSession()
-                .navigate()
-            }
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationType.normalProcedureValues, mode))),
+            value => redirect(mode, value)
           )
     }
+
+  private def redirect(
+    mode: Mode,
+    value: LocationType
+  )(implicit request: MandatoryDataRequest[_], hc: HeaderCarrier): Future[Result] = {
+    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+    LocationTypePage
+      .writeToUserAnswers(value)
+      .updateTask()
+      .writeToSession()
+      .navigate()
+  }
 }

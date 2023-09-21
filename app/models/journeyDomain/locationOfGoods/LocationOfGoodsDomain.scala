@@ -26,10 +26,13 @@ import models.LocationOfGoodsIdentification.{
   PostalCode,
   UnlocodeIdentifier
 }
+import models.LocationType.AuthorisedPlace
+import models.ProcedureType.{Normal, Simplified}
 import models._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice}
+import pages.external.ProcedureTypePage
 import pages.locationOfGoods._
 import play.api.mvc.Call
 
