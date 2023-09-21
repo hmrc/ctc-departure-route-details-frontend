@@ -48,4 +48,10 @@ object LocationType extends EnumerableType[LocationType] {
     Other
   )
 
+  val normalProcedureValues: Seq[LocationType] = Seq(
+    DesignatedLocation,
+    ApprovedPlace,
+    Other
+  )
+
 }
