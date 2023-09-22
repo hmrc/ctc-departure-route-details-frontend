@@ -17,7 +17,15 @@
 package models.journeyDomain.locationOfGoods
 
 import cats.implicits._
-import models.LocationOfGoodsIdentification.{AddressIdentifier, AuthorisationNumber, CoordinatesIdentifier, CustomsOfficeIdentifier, EoriNumber, PostalCode, UnlocodeIdentifier}
+import models.LocationOfGoodsIdentification.{
+  AddressIdentifier,
+  AuthorisationNumber,
+  CoordinatesIdentifier,
+  CustomsOfficeIdentifier,
+  EoriNumber,
+  PostalCode,
+  UnlocodeIdentifier
+}
 import models._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
