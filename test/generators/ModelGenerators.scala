@@ -18,6 +18,7 @@ package generators
 
 import config.Constants.XXX
 import models.AddressLine.{Country => _}
+import models.LockCheck.{LockCheckFailure, Locked, Unlocked}
 import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
 import models.reference._
 import models.{PostalCodeAddress, _}
@@ -211,4 +212,9 @@ trait ModelGenerators {
   lazy val arbitraryIncompleteTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
     Gen.oneOf(TaskStatus.InProgress, TaskStatus.NotStarted, TaskStatus.CannotStartYet)
   }
+
+  implicit lazy val arbitraryLockCheck: Arbitrary[LockCheck] =
+    Arbitrary {
+      Gen.oneOf(Locked, Unlocked, LockCheckFailure)
+    }
 }
