@@ -20,7 +20,7 @@ import controllers.locationOfGoods.routes
 import models.reference.Country
 import models.{Mode, UserAnswers}
 import pages.QuestionPage
-import pages.sections.locationOfGoods.LocationOfGoodsSection
+import pages.sections.locationOfGoods.LocationOfGoodsIdentifierSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
@@ -28,7 +28,7 @@ import scala.util.Try
 
 case object CountryPage extends QuestionPage[Country] {
 
-  override def path: JsPath = LocationOfGoodsSection.path \ toString
+  override def path: JsPath = LocationOfGoodsIdentifierSection.path \ toString
 
   override def toString: String = "country"
 

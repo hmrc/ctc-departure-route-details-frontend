@@ -17,13 +17,13 @@
 package models.journeyDomain.locationOfGoods
 
 import cats.implicits._
+import config.Constants._
 import models._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice}
 import pages.locationOfGoods._
 import play.api.mvc.Call
-import config.Constants._
 
 sealed trait LocationOfGoodsDomain extends JourneyDomainModel {
 
