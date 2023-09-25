@@ -18,7 +18,7 @@ package base
 
 import config.{PostTransitionModule, TransitionModule}
 import controllers.actions._
-import models.{Index, Mode, SelectableList, UserAnswers}
+import models.{Index, LockCheck, Mode, SelectableList, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -43,7 +43,7 @@ trait AppWithDefaultMockFixtures extends BeforeAndAfterEach with GuiceOneAppPerS
     when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
     when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(SelectableList(Nil)))
     when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(SelectableList(Nil)))
-    when(mockLockService.checkLock(any())(any())).thenReturn(Future.successful(true))
+    when(mockLockService.checkLock(any())(any())).thenReturn(Future.successful(LockCheck.Unlocked))
   }
 
   final val mockSessionRepository: SessionRepository                     = mock[SessionRepository]
