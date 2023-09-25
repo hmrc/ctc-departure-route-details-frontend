@@ -17,8 +17,8 @@
 package generators
 
 import config.Constants._
-import models._
 import models.reference._
+import models.{Coordinates, DateTime, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
@@ -47,8 +47,8 @@ trait UserAnswersEntryGenerators {
       case OfficeOfDepartureInCL112Page  => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfDepartureInCL147Page  => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfDepartureInCL010Page  => arbitrary[Boolean].map(JsBoolean)
-      case DeclarationTypePage           => arbitrary[DeclarationType].map(Json.toJson(_))
-      case SecurityDetailsTypePage       => arbitrary[SecurityDetailsType].map(Json.toJson(_))
+      case DeclarationTypePage           => arbitrary[String](arbitraryDeclarationType).map(Json.toJson(_))
+      case SecurityDetailsTypePage       => arbitrary[String](arbitrarySecurityDetailsType).map(Json.toJson(_))
     }
   }
 

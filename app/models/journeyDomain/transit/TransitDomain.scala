@@ -16,11 +16,12 @@
 
 package models.journeyDomain.transit
 
+import config.Constants._
 import config.PhaseConfig
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.transit.TransitDomain.OfficesOfTransit
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.{DeclarationType, Index, Mode, RichJsArray, UserAnswers}
+import models.{Index, Mode, RichJsArray, UserAnswers}
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage}
 import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import pages.sections.routing.CountriesOfRoutingSection
@@ -90,9 +91,9 @@ object TransitDomain {
           addOfficesOfTransitReader.map(TransitDomain(None, _))
         } else {
           DeclarationTypePage.reader.flatMap {
-            case DeclarationType.Option2 =>
+            case T2 =>
               UserAnswersReader[OfficesOfTransit].map(TransitDomain(None, _))
-            case DeclarationType.Option5 =>
+            case T =>
               T2DeclarationTypeYesNoPage.reader.flatMap {
                 case true =>
                   UserAnswersReader[OfficesOfTransit].map(TransitDomain(Some(true), _))

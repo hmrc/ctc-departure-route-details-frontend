@@ -17,10 +17,10 @@
 package models.journeyDomain.routing
 
 import cats.implicits._
+import config.Constants._
 import config.PhaseConfig
-import models.SecurityDetailsType.NoSecurityDetails
-import models.{Index, Phase, RichJsArray}
 import models.domain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
+import models.{Index, Phase, RichJsArray}
 import pages.external.SecurityDetailsTypePage
 import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage}
 import pages.sections.routing.CountriesOfRoutingSection

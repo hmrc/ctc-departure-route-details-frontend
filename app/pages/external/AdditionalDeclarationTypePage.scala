@@ -21,7 +21,5 @@ import play.api.libs.json.JsPath
 
 case object AdditionalDeclarationTypePage extends ReadOnlyPage[String] {
 
-  override def path: JsPath = preTaskListPath \ toString
-
-  override def toString: String = "additionalDeclarationType"
+  override def path: JsPath = preTaskListPath \ "additionalDeclarationType" \ "code"
 }

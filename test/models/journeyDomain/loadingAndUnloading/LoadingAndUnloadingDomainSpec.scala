@@ -17,14 +17,14 @@
 package models.journeyDomain.loadingAndUnloading
 
 import base.SpecBase
+import config.Constants._
 import config.{Constants, PhaseConfig}
 import generators.Generators
-import models.SecurityDetailsType._
+import models.Phase
 import models.domain.{EitherType, UserAnswersReader}
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.reference.SpecificCircumstanceIndicator
-import models.{Phase, SecurityDetailsType}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -45,7 +45,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
         "and security is 0" - {
           "then loading and unloading are skipped" in {
             val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, SecurityDetailsType.NoSecurityDetails)
+              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
 
             val result: EitherType[LoadingAndUnloadingDomain] = UserAnswersReader[LoadingAndUnloadingDomain](
               LoadingAndUnloadingDomain.userAnswersReader(mockPhaseConfig)
@@ -147,7 +147,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
 
             "and specific circumstance indicator is not XXX or undefined" - {
               "and add unloading UN/LOCODE is unanswered" in {
-                forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType), Gen.option(arbitrary[SpecificCircumstanceIndicator])) {
+                forAll(arbitrary[String](arbitrarySomeSecurityDetailsType), Gen.option(arbitrary[SpecificCircumstanceIndicator])) {
                   (securityType, specificCircumstanceIndicator) =>
                     val userAnswers = emptyUserAnswers
                       .setValue(SecurityDetailsTypePage, securityType)
@@ -252,7 +252,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
 
           "and security is not 0" - {
             "and add place of loading UN/LOCODE yes/no is unanswered" in {
-              forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType)) {
+              forAll(arbitrary[String](arbitrarySomeSecurityDetailsType)) {
                 security =>
                   val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, security)
 
@@ -271,7 +271,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
           when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
           "and add place of loading UN/LOCODE yes/no is unanswered" in {
-            forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType)) {
+            forAll(arbitrary[String](arbitrarySomeSecurityDetailsType)) {
               security =>
                 val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, security)
 

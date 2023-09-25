@@ -160,14 +160,19 @@ trait ModelGenerators {
       } yield PostalCodeAddress(streetNumber, postalCode, country)
     }
 
-  implicit lazy val arbitraryDeclarationType: Arbitrary[DeclarationType] =
+  lazy val arbitraryDeclarationType: Arbitrary[String] =
     Arbitrary {
-      Gen.oneOf(DeclarationType.values)
+      Gen.oneOf("T", "T1", "T2", "T2F", "TIR")
     }
 
-  lazy val arbitraryNonOption4DeclarationType: Arbitrary[DeclarationType] =
+  lazy val arbitraryNonTIRDeclarationType: Arbitrary[String] =
     Arbitrary {
-      Gen.oneOf(DeclarationType.values.filterNot(_ == DeclarationType.Option4))
+      Gen.oneOf("T", "T1", "T2", "T2F")
+    }
+
+  lazy val arbitraryT1OrT2FDeclarationType: Arbitrary[String] =
+    Arbitrary {
+      Gen.oneOf("T1", "T2F")
     }
 
   lazy val arbitraryXiCustomsOffice: Arbitrary[CustomsOffice] =
@@ -193,14 +198,14 @@ trait ModelGenerators {
       Gen.oneOf(arbitraryGbCustomsOffice.arbitrary, arbitraryXiCustomsOffice.arbitrary)
     }
 
-  implicit lazy val arbitrarySecurityDetailsType: Arbitrary[SecurityDetailsType] =
+  lazy val arbitrarySecurityDetailsType: Arbitrary[String] =
     Arbitrary {
-      Gen.oneOf(SecurityDetailsType.values)
+      Gen.oneOf("0", "1", "2", "3")
     }
 
-  lazy val arbitrarySomeSecurityDetailsType: Arbitrary[SecurityDetailsType] =
+  lazy val arbitrarySomeSecurityDetailsType: Arbitrary[String] =
     Arbitrary {
-      Gen.oneOf(SecurityDetailsType.values.filterNot(_ == SecurityDetailsType.NoSecurityDetails))
+      Gen.oneOf("1", "2", "3")
     }
 
   lazy val arbitraryIncompleteTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
