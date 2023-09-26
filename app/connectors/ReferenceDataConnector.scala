@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.reference._
-import models.{LocationOfGoodsIdentification, LocationType, ProcedureType}
+import models.{LocationOfGoodsIdentification, LocationType}
 import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, NO_CONTENT, OK}
 import play.api.libs.json.Reads
