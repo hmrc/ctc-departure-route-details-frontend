@@ -58,7 +58,7 @@ object LocationOfGoodsIdentificationTypeService {
       case Some(ApprovedPlace) =>
         locationOfGoods.filter(
           x =>
-            x.qualifier == EoriNumberIdentifier || x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AuthorisationNumberIdentifier
+            x.qualifier == EoriNumberIdentifier || x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AddressIdentifier || x.qualifier == PostalCodeIdentifier
         )
       case Some(Other) =>
         locationOfGoods.filter(

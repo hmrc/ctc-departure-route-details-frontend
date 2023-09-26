@@ -59,7 +59,7 @@ class LocationTypeController @Inject() (
     .andThen(getMandatoryPage(ProcedureTypePage))
     .async {
       implicit request =>
-        locationTypeService.getLocationTypes().map {
+        locationTypeService.getLocationTypes().flatMap {
           locationTypes =>
             val preparedForm = request.userAnswers.get(LocationTypePage) match {
               case None        => form(locationTypes)
@@ -68,9 +68,8 @@ class LocationTypeController @Inject() (
             request.arg match {
               case ProcedureType.Normal => Future.successful(Ok(view(preparedForm, lrn, locationTypes, mode)))
               case ProcedureType.Simplified =>
-                Future.successful(Redirect(controllers.locationOfGoods.routes.AuthorisationNumberController.onPageLoad(lrn, NormalMode)))
+                redirect(mode, LocationType("B", "Authorised place"))
             }
-            Ok(view(preparedForm, lrn, locationTypes, mode))
         }
     }
 

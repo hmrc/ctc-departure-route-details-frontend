@@ -100,7 +100,6 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
     }
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-
       val userAnswers = emptyUserAnswers.setValue(IdentificationPage, id1)
       setExistingUserAnswers(userAnswers)
 

@@ -90,10 +90,12 @@ class LocationOfGoodsIdentificationServiceTypeSpec extends SpecBase with BeforeA
           val answers = emptyUserAnswers
             .setValue(OfficeOfTransitSection(Index(0)), Json.obj("foo" -> "bar"))
             .setValue(LocationTypePage, LocationType(ApprovedPlace, "Approved place"))
-          service.getLocationOfGoodsIdentificationTypes(answers).futureValue mustBe Seq(unlocodeIdentifier,
-                                                                                        coordinatesIdentifier,
-                                                                                        eoriNumberIdentifier,
-                                                                                        authorisationNumber
+          service.getLocationOfGoodsIdentificationTypes(answers).futureValue mustBe Seq(
+            postalCode,
+            unlocodeIdentifier,
+            coordinatesIdentifier,
+            eoriNumberIdentifier,
+            addressIdentifier
           )
         }
 
