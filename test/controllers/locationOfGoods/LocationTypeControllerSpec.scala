@@ -55,7 +55,7 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockLocationTypeService)
-    when(mockLocationTypeService.getLocationTypes()(any())).thenReturn(Future.successful(lts))
+    when(mockLocationTypeService.getLocationTypes(any())(any())).thenReturn(Future.successful(lts))
   }
 
   private val baseUa = emptyUserAnswers
@@ -65,7 +65,6 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
     "must return OK and the correct view for a GET when in Normal Procedure" - {
       "must return OK and the correct view for a GET" in {
-        when(mockLocationTypeService.getLocationTypes()(any())).thenReturn(Future.successful(lts))
 
         setExistingUserAnswers(baseUa)
 
@@ -101,7 +100,6 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
       "must populate the view correctly on a GET when the question has previously been answered" in {
 
-        when(mockLocationTypeService.getLocationTypes()(any())).thenReturn(Future.successful(lts))
         val userAnswers = baseUa.setValue(LocationTypePage, lts.head)
 
         setExistingUserAnswers(userAnswers)

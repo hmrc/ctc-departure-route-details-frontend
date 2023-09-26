@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.reference._
-import models.{LocationOfGoodsIdentification, LocationType}
+import models.{LocationOfGoodsIdentification, LocationType, ProcedureType}
 import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, NO_CONTENT, OK}
 import play.api.libs.json.Reads
@@ -79,7 +79,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http.GET[Seq[SpecificCircumstanceIndicator]](serviceUrl, headers = version2Header)
   }
 
-  def getTypesOfLocation()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[LocationType]] = {
+  def getTypesOfLocation(procedureType: ProcedureType)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[LocationType]] = {
     val serviceUrl = s"${config.referenceDataUrl}/lists/TypeOfLocation"
     http.GET[Seq[LocationType]](serviceUrl, headers = version2Header)
   }

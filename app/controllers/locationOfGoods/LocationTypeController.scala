@@ -59,13 +59,12 @@ class LocationTypeController @Inject() (
     .andThen(getMandatoryPage(ProcedureTypePage))
     .async {
       implicit request =>
-        locationTypeService.getLocationTypes().map {
+        locationTypeService.getLocationTypes(request.arg).map {
           locationTypes =>
             val preparedForm = request.userAnswers.get(LocationTypePage) match {
               case None        => form(locationTypes)
               case Some(value) => form(locationTypes).fill(value)
             }
-
             request.arg match {
               case ProcedureType.Normal => Future.successful(Ok(view(preparedForm, lrn, locationTypes, mode)))
               case ProcedureType.Simplified =>
@@ -80,7 +79,7 @@ class LocationTypeController @Inject() (
     .andThen(getMandatoryPage(ProcedureTypePage))
     .async {
       implicit request =>
-        locationTypeService.getLocationTypes().flatMap {
+        locationTypeService.getLocationTypes(request.arg).flatMap {
           locationTypes =>
             form(locationTypes)
               .bindFromRequest()
