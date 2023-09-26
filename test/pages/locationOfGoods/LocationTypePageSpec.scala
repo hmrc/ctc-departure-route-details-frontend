@@ -36,10 +36,12 @@ class LocationTypePageSpec extends PageBehaviours {
           forAll(arbitrary[LocationType], arbitrary[LocationOfGoodsIdentification]) {
             (locationType, identification) =>
               val userAnswers = emptyUserAnswers
+                .setValue(InferredLocationTypePage, locationType)
                 .setValue(IdentificationPage, identification)
 
               val result = userAnswers.setValue(LocationTypePage, locationType)
 
+              result.get(InferredLocationTypePage) must not be defined
               result.get(IdentificationPage) must not be defined
           }
         }
@@ -48,10 +50,12 @@ class LocationTypePageSpec extends PageBehaviours {
           forAll(arbitrary[LocationType], arbitrary[LocationOfGoodsIdentification]) {
             (locationType, identification) =>
               val userAnswers = emptyUserAnswers
+                .setValue(InferredLocationTypePage, locationType)
                 .setValue(InferredIdentificationPage, identification)
 
               val result = userAnswers.setValue(LocationTypePage, locationType)
 
+              result.get(InferredLocationTypePage) must not be defined
               result.get(InferredIdentificationPage) must not be defined
           }
         }

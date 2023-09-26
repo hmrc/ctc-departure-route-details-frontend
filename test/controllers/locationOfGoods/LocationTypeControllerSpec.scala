@@ -17,16 +17,17 @@
 package controllers.locationOfGoods
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import config.Constants._
 import forms.EnumerableFormProvider
 import generators.Generators
 import models.ProcedureType.{Normal, Simplified}
-import models.{LocationType, NormalMode}
+import models.{LocationType, NormalMode, UserAnswers}
 import navigation.LocationOfGoodsNavigatorProvider
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
 import pages.external.ProcedureTypePage
-import pages.locationOfGoods.LocationTypePage
+import pages.locationOfGoods.{InferredLocationTypePage, LocationTypePage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -37,9 +38,10 @@ import views.html.locationOfGoods.LocationTypeView
 import scala.concurrent.Future
 
 class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
-  private val lt1                                          = LocationType(DesignatedLocation, "testA")
-  private val lt2                                          = LocationType(AuthorisedPlace, "testB")
-  private val lts                                          = Seq(lt1, lt2)
+
+  private val lts = arbitrary[Seq[LocationType]].sample.value
+  private val lt  = lts.head
+
   private val formProvider                                 = new EnumerableFormProvider()
   private val form                                         = formProvider("locationOfGoods.locationType", lts)
   private val mode                                         = NormalMode
@@ -55,130 +57,129 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockLocationTypeService)
-    when(mockLocationTypeService.getLocationTypes()(any())).thenReturn(Future.successful(lts))
+    when(mockLocationTypeService.getLocationTypes(any())(any())).thenReturn(Future.successful(lts))
   }
-
-  private val baseUa = emptyUserAnswers
-    .setValue(ProcedureTypePage, Normal)
 
   "LocationType Controller" - {
 
-    "must return OK and the correct view for a GET when in Normal Procedure" - {
-      "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET" in {
 
-        setExistingUserAnswers(baseUa)
+      val userAnswers = emptyUserAnswers.setValue(ProcedureTypePage, Normal)
+      setExistingUserAnswers(userAnswers)
 
-        val request = FakeRequest(GET, locationTypeRoute)
+      val request = FakeRequest(GET, locationTypeRoute)
 
-        val result = route(app, request).value
+      val result = route(app, request).value
 
-        val view = injector.instanceOf[LocationTypeView]
+      val view = injector.instanceOf[LocationTypeView]
 
-        status(result) mustEqual OK
+      status(result) mustEqual OK
 
-        contentAsString(result) mustEqual
-          view(form, lrn, lts, mode)(request, messages).toString
-      }
+      contentAsString(result) mustEqual
+        view(form, lrn, lts, mode)(request, messages).toString
+    }
 
-      "must redirect to the next page and set LocationType to AuthorisedPlace when Simplified Procedure for a GET" in {
+    "must redirect to the next page and infer LocationType when only one location type" in {
 
-        when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
-        val baseUa = emptyUserAnswers
-          .setValue(ProcedureTypePage, Simplified)
-          .setValue(LocationTypePage, LocationType("B", ""))
-        setExistingUserAnswers(baseUa)
+      when(mockLocationTypeService.getLocationTypes(any())(any())).thenReturn(Future.successful(Seq(lt)))
 
-        val request = FakeRequest(POST, locationTypeRoute)
-          .withFormUrlEncodedBody(("value", lt1.code))
+      val userAnswers = emptyUserAnswers.setValue(ProcedureTypePage, Simplified)
+      setExistingUserAnswers(userAnswers)
 
-        val result = route(app, request).value
+      val request = FakeRequest(GET, locationTypeRoute)
 
-        status(result) mustEqual SEE_OTHER
+      val result = route(app, request).value
 
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
+      status(result) mustEqual SEE_OTHER
 
-      "must populate the view correctly on a GET when the question has previously been answered" in {
+      redirectLocation(result).value mustEqual onwardRoute.url
 
-        val userAnswers = baseUa.setValue(LocationTypePage, lts.head)
+      val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+      userAnswersCaptor.getValue.get(LocationTypePage) must not be defined
+      userAnswersCaptor.getValue.getValue(InferredLocationTypePage) mustBe lt
+    }
 
-        setExistingUserAnswers(userAnswers)
+    "must populate the view correctly on a GET when the question has previously been answered" in {
 
-        val request = FakeRequest(GET, locationTypeRoute)
+      val userAnswers = emptyUserAnswers
+        .setValue(ProcedureTypePage, Normal)
+        .setValue(LocationTypePage, lts.head)
 
-        val result = route(app, request).value
+      setExistingUserAnswers(userAnswers)
 
-        val filledForm = form.bind(Map("value" -> lt1.code))
+      val request = FakeRequest(GET, locationTypeRoute)
 
-        val view = injector.instanceOf[LocationTypeView]
+      val result = route(app, request).value
 
-        status(result) mustEqual OK
+      val filledForm = form.bind(Map("value" -> lt.code))
 
-        contentAsString(result) mustEqual
-          view(filledForm, lrn, lts, mode)(request, messages).toString
-      }
+      val view = injector.instanceOf[LocationTypeView]
 
-      "must redirect to the next page when valid data is submitted" in {
+      status(result) mustEqual OK
 
-        when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+      contentAsString(result) mustEqual
+        view(filledForm, lrn, lts, mode)(request, messages).toString
+    }
 
-        setExistingUserAnswers(baseUa)
+    "must redirect to the next page when valid data is submitted" in {
 
-        val request = FakeRequest(POST, locationTypeRoute)
-          .withFormUrlEncodedBody(("value", lts.head.toString))
-          .withFormUrlEncodedBody(("value", lt1.code))
+      val userAnswers = emptyUserAnswers.setValue(ProcedureTypePage, Normal)
+      setExistingUserAnswers(userAnswers)
 
-        val result = route(app, request).value
+      val request = FakeRequest(POST, locationTypeRoute)
+        .withFormUrlEncodedBody(("value", lt.code))
 
-        status(result) mustEqual SEE_OTHER
+      val result = route(app, request).value
 
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
+      status(result) mustEqual SEE_OTHER
 
-      "must return a Bad Request and errors when invalid data is submitted" in {
+      redirectLocation(result).value mustEqual onwardRoute.url
+    }
 
-        setExistingUserAnswers(baseUa)
+    "must return a Bad Request and errors when invalid data is submitted" in {
 
-        val request   = FakeRequest(POST, locationTypeRoute).withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+      val userAnswers = emptyUserAnswers.setValue(ProcedureTypePage, Normal)
+      setExistingUserAnswers(userAnswers)
 
-        val result = route(app, request).value
+      val request   = FakeRequest(POST, locationTypeRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = injector.instanceOf[LocationTypeView]
+      val result = route(app, request).value
 
-        status(result) mustEqual BAD_REQUEST
+      val view = injector.instanceOf[LocationTypeView]
 
-        contentAsString(result) mustEqual
-          view(boundForm, lrn, lts, mode)(request, messages).toString
+      status(result) mustEqual BAD_REQUEST
+
+      contentAsString(result) mustEqual
         view(boundForm, lrn, lts, mode)(request, messages).toString
-      }
+      view(boundForm, lrn, lts, mode)(request, messages).toString
+    }
 
-      "must redirect to Session Expired for a GET if no existing data is found" in {
+    "must redirect to Session Expired for a GET if no existing data is found" in {
 
-        setNoExistingUserAnswers()
+      setNoExistingUserAnswers()
 
-        val request = FakeRequest(GET, locationTypeRoute)
+      val request = FakeRequest(GET, locationTypeRoute)
 
-        val result = route(app, request).value
+      val result = route(app, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+    }
 
-      "must redirect to Session Expired for a POST if no existing data is found" in {
+    "must redirect to Session Expired for a POST if no existing data is found" in {
 
-        setNoExistingUserAnswers()
+      setNoExistingUserAnswers()
 
-        val request = FakeRequest(POST, locationTypeRoute)
-          .withFormUrlEncodedBody(("value", lts.head.toString))
-          .withFormUrlEncodedBody(("value", lt1.code))
+      val request = FakeRequest(POST, locationTypeRoute)
+        .withFormUrlEncodedBody(("value", lt.code))
 
-        val result = route(app, request).value
+      val result = route(app, request).value
 
-        status(result) mustEqual SEE_OTHER
+      status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
-      }
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
     }
   }
 }

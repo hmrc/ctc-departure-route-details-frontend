@@ -19,18 +19,15 @@ package services
 import base.SpecBase
 import config.Constants._
 import connectors.ReferenceDataConnector
-import models.{Index, LocationOfGoodsIdentification, LocationType}
+import models.{LocationOfGoodsIdentification, LocationType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
-import pages.locationOfGoods.LocationTypePage
-import pages.sections.transit.OfficeOfTransitSection
-import play.api.libs.json.Json
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class LocationOfGoodsIdentificationServiceTypeSpec extends SpecBase with BeforeAndAfterEach {
+class LocationOfGoodsIdentificationTypeServiceSpec extends SpecBase with BeforeAndAfterEach {
 
   val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   val service                                      = new LocationOfGoodsIdentificationTypeService(mockRefDataConnector)
@@ -54,43 +51,29 @@ class LocationOfGoodsIdentificationServiceTypeSpec extends SpecBase with BeforeA
   "LocationOfGoodsIdentificationTypeService" - {
 
     "getLocationOfGoodsIdentificationTypes" - {
-      "must return a list of sorted LocationOfGoodsIdentification" in {
-
-        when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
-          .thenReturn(Future.successful(identifiers))
-        val answers = emptyUserAnswers.setValue(OfficeOfTransitSection(Index(0)), Json.obj("foo" -> "bar"))
-        service.getLocationOfGoodsIdentificationTypes(answers).futureValue mustBe identifiers
-
-      }
-      "must return a filtered list of LocationOfGoodsIdentification dependant on answers to LocationTypePage" - {
+      "must return a filtered list of LocationOfGoodsIdentification" - {
         "When LocationType is DesignatedLocation" in {
 
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
             .thenReturn(Future.successful(identifiers))
-          val answers = emptyUserAnswers
-            .setValue(OfficeOfTransitSection(Index(0)), Json.obj("foo" -> "bar"))
-            .setValue(LocationTypePage, LocationType(DesignatedLocation, "Designated location"))
-          service.getLocationOfGoodsIdentificationTypes(answers).futureValue mustBe Seq(unlocodeIdentifier, customsOfficeIdentifier)
+          val locationType = LocationType(DesignatedLocation, "Designated location")
+          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(unlocodeIdentifier, customsOfficeIdentifier)
         }
 
         "When LocationType is Authorised Place" in {
 
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
             .thenReturn(Future.successful(identifiers))
-          val answers = emptyUserAnswers
-            .setValue(OfficeOfTransitSection(Index(0)), Json.obj("foo" -> "bar"))
-            .setValue(LocationTypePage, LocationType(AuthorisedPlace, "Authorised place"))
-          service.getLocationOfGoodsIdentificationTypes(answers).futureValue mustBe Seq(authorisationNumber)
+          val locationType = LocationType(AuthorisedPlace, "Authorised place")
+          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(authorisationNumber)
         }
 
         "When LocationType is Approved Place" in {
 
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
             .thenReturn(Future.successful(identifiers))
-          val answers = emptyUserAnswers
-            .setValue(OfficeOfTransitSection(Index(0)), Json.obj("foo" -> "bar"))
-            .setValue(LocationTypePage, LocationType(ApprovedPlace, "Approved place"))
-          service.getLocationOfGoodsIdentificationTypes(answers).futureValue mustBe Seq(
+          val locationType = LocationType(ApprovedPlace, "Approved place")
+          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(
             postalCode,
             unlocodeIdentifier,
             coordinatesIdentifier,
@@ -103,16 +86,14 @@ class LocationOfGoodsIdentificationServiceTypeSpec extends SpecBase with BeforeA
 
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
             .thenReturn(Future.successful(identifiers))
-          val answers = emptyUserAnswers
-            .setValue(OfficeOfTransitSection(Index(0)), Json.obj("foo" -> "bar"))
-            .setValue(LocationTypePage, LocationType(Other, "Other"))
-          service.getLocationOfGoodsIdentificationTypes(answers).futureValue mustBe Seq(postalCode,
-                                                                                        unlocodeIdentifier,
-                                                                                        coordinatesIdentifier,
-                                                                                        addressIdentifier
+          val locationType = LocationType(Other, "Other")
+          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(
+            postalCode,
+            unlocodeIdentifier,
+            coordinatesIdentifier,
+            addressIdentifier
           )
         }
-
       }
     }
   }

@@ -17,8 +17,7 @@
 package viewModels.locationOfGoods
 
 import config.FrontendAppConfig
-import models.{Mode, ProcedureType, UserAnswers}
-import pages.external.ProcedureTypePage
+import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
 import utils.cyaHelpers.locationOfGoods.LocationOfGoodsCheckYourAnswersHelper
 import viewModels.sections.Section
@@ -34,16 +33,11 @@ object LocationOfGoodsAnswersViewModel {
     def apply(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig): LocationOfGoodsAnswersViewModel = {
       val helper = new LocationOfGoodsCheckYourAnswersHelper(userAnswers, mode)
 
-      val inferredLocationType = userAnswers.get(ProcedureTypePage).flatMap {
-        case ProcedureType.Normal     => helper.locationType
-        case ProcedureType.Simplified => None
-      }
-
       val section = Section(
         sectionTitle = messages("locationOfGoods.checkYourAnswers.subHeading"),
         rows = Seq(
           helper.addLocationOfGoods,
-          inferredLocationType,
+          helper.locationType,
           helper.locationOfGoodsIdentification,
           helper.customsOfficeIdentifier,
           helper.eori,

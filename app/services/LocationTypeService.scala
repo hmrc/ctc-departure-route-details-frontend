@@ -18,7 +18,7 @@ package services
 
 import config.Constants.AuthorisedPlace
 import connectors.ReferenceDataConnector
-import models.LocationType
+import models.{LocationType, ProcedureType}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -28,13 +28,16 @@ class LocationTypeService @Inject() (
   referenceDataConnector: ReferenceDataConnector
 )(implicit ec: ExecutionContext) {
 
-  def getLocationTypes()(implicit hc: HeaderCarrier): Future[Seq[LocationType]] =
+  def getLocationTypes(procedureType: ProcedureType)(implicit hc: HeaderCarrier): Future[Seq[LocationType]] = {
+    def filter(typesOfLocation: Seq[LocationType]): Seq[LocationType] = procedureType match {
+      case ProcedureType.Normal     => typesOfLocation.filterNot(_.code == AuthorisedPlace)
+      case ProcedureType.Simplified => typesOfLocation.filter(_.code == AuthorisedPlace)
+    }
+
     referenceDataConnector
       .getTypesOfLocation()
       .map(filter)
       .map(_.sortBy(_.`type`.toLowerCase))
-
-  def filter(typesOfLocation: Seq[LocationType]): Seq[LocationType] =
-    typesOfLocation.filterNot(_.code == AuthorisedPlace)
+  }
 
 }

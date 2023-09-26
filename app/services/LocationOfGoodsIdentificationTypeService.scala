@@ -18,9 +18,7 @@ package services
 
 import config.Constants._
 import connectors.ReferenceDataConnector
-import models.{LocationOfGoodsIdentification, UserAnswers}
-import pages.locationOfGoods.LocationTypePage
-import services.LocationOfGoodsIdentificationTypeService._
+import models.{LocationOfGoodsIdentification, LocationType}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -30,42 +28,28 @@ class LocationOfGoodsIdentificationTypeService @Inject() (
   referenceDataConnector: ReferenceDataConnector
 )(implicit ec: ExecutionContext) {
 
-  def getLocationOfGoodsIdentificationTypes(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Seq[LocationOfGoodsIdentification]] =
+  def getLocationOfGoodsIdentificationTypes(locationType: LocationType)(implicit hc: HeaderCarrier): Future[Seq[LocationOfGoodsIdentification]] = {
+    def filter(locationOfGoods: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
+      locationType.code match {
+        case DesignatedLocation =>
+          locationOfGoods.filter(_.qualifierIsOneOf(CustomsOfficeIdentifier, UnlocodeIdentifier))
+        case AuthorisedPlace =>
+          locationOfGoods.filter(_.qualifierIsOneOf(AuthorisationNumberIdentifier))
+        case ApprovedPlace =>
+          locationOfGoods.filter(_.qualifierIsOneOf(EoriNumberIdentifier, CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier, PostalCodeIdentifier))
+        case Other =>
+          locationOfGoods.filter(_.qualifierIsOneOf(CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier, PostalCodeIdentifier))
+        case _ =>
+          locationOfGoods
+      }
+
     referenceDataConnector
       .getQualifierOfTheIdentifications()
       .map(sort)
-      .map {
-        x => matchUserAnswers(userAnswers, x)
-      }
+      .map(filter)
+  }
 
   private def sort(locationOfGoodsIdentification: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
     locationOfGoodsIdentification.sortBy(_.qualifier.toLowerCase)
 
-}
-
-object LocationOfGoodsIdentificationTypeService {
-
-  def matchUserAnswers(userAnswers: UserAnswers, locationOfGoods: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
-    userAnswers.get(LocationTypePage).map(_.code) match {
-      case Some(DesignatedLocation) =>
-        locationOfGoods.filter(
-          x => x.qualifier == CustomsOfficeIdentifier || x.qualifier == UnlocodeIdentifier
-        )
-      case Some(AuthorisedPlace) =>
-        locationOfGoods.filter(
-          x => x.qualifier == AuthorisationNumberIdentifier
-        )
-      case Some(ApprovedPlace) =>
-        locationOfGoods.filter(
-          x =>
-            x.qualifier == EoriNumberIdentifier || x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AddressIdentifier || x.qualifier == PostalCodeIdentifier
-        )
-      case Some(Other) =>
-        locationOfGoods.filter(
-          x =>
-            x.qualifier == CoordinatesIdentifier || x.qualifier == UnlocodeIdentifier || x.qualifier == AddressIdentifier || x.qualifier == PostalCodeIdentifier
-        )
-      case _ => locationOfGoods
-
-    }
 }
