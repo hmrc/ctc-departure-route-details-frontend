@@ -55,7 +55,7 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockLocationTypeService)
-    when(mockLocationTypeService.getLocationTypes(any())(any())).thenReturn(Future.successful(lts))
+    when(mockLocationTypeService.getLocationTypes()(any())).thenReturn(Future.successful(lts))
   }
 
   private val baseUa = emptyUserAnswers

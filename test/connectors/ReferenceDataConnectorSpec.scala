@@ -20,7 +20,6 @@ import base.{AppWithDefaultMockFixtures, SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import models.LocationType
-import models.ProcedureType.{Normal, Simplified}
 import models.reference._
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -217,7 +216,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
           LocationType("B", "Authorised place")
         )
 
-        connector.getTypesOfLocation(Normal).futureValue mustEqual expectedResult
+        connector.getTypesOfLocation().futureValue mustEqual expectedResult
       }
 
       "should handle a 204 response for location types" in {
@@ -226,11 +225,11 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             .willReturn(aResponse().withStatus(NO_CONTENT))
         )
 
-        connector.getTypesOfLocation(Normal).futureValue mustBe Nil
+        connector.getTypesOfLocation().futureValue mustBe Nil
       }
 
       "should handle client and server errors for control types" in {
-        checkErrorResponse(url, connector.getTypesOfLocation(Normal))
+        checkErrorResponse(url, connector.getTypesOfLocation())
       }
     }
 

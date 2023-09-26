@@ -16,7 +16,6 @@
 
 package forms.mappings
 
-import config.Constants.DesignatedLocation
 import generators.Generators
 import org.scalacheck.Gen
 import org.scalatest.freespec.AnyFreeSpec
