@@ -23,6 +23,8 @@ case class LocationOfGoodsIdentification(qualifier: String, description: String)
   override def toString: String         = s"$description"
 
   override val code: String = qualifier
+
+  def qualifierIsOneOf(qualifiers: String*): Boolean = qualifiers.contains(qualifier)
 }
 
 object LocationOfGoodsIdentification extends DynamicEnumerableType[LocationOfGoodsIdentification] {

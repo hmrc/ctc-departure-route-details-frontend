@@ -25,18 +25,37 @@ import play.api.mvc.Call
 
 import scala.util.Try
 
-case object LocationTypePage extends QuestionPage[LocationType] {
+abstract class BaseLocationTypePage extends QuestionPage[LocationType] {
 
   override def path: JsPath = LocationOfGoodsSection.path \ toString
-
-  override def toString: String = "typeOfLocation"
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.LocationTypeController.onPageLoad(userAnswers.lrn, mode))
 
+  def cleanup(userAnswers: UserAnswers): Try[UserAnswers]
+
   override def cleanup(value: Option[LocationType], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(_) => userAnswers.remove(IdentificationPage).flatMap(_.remove(InferredIdentificationPage))
-      case None    => super.cleanup(value, userAnswers)
+      case Some(_) =>
+        userAnswers
+          .remove(IdentificationPage)
+          .flatMap(_.remove(InferredIdentificationPage))
+          .flatMap(cleanup)
+      case None =>
+        super.cleanup(value, userAnswers)
     }
+}
+
+case object LocationTypePage extends BaseLocationTypePage {
+  override def toString: String = "typeOfLocation"
+
+  override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers.remove(InferredLocationTypePage)
+}
+
+case object InferredLocationTypePage extends BaseLocationTypePage {
+  override def toString: String = "inferredTypeOfLocation"
+
+  override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers.remove(LocationTypePage)
 }

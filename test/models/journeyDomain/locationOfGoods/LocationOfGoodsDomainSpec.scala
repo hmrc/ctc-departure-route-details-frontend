@@ -17,6 +17,7 @@
 package models.journeyDomain.locationOfGoods
 
 import base.SpecBase
+import config.Constants._
 import generators.Generators
 import models.domain.{EitherType, UserAnswersReader}
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain._
@@ -27,7 +28,6 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.QuestionPage
 import pages.locationOfGoods._
-import config.Constants._
 
 class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
@@ -133,7 +133,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           val authorisationNumber       = Gen.alphaNumStr.sample.value
 
           val userAnswers = emptyUserAnswers
-            .setValue(LocationTypePage, typeOfLocation)
+            .setValue(InferredLocationTypePage, typeOfLocation)
             .setValue(InferredIdentificationPage, qualifierOfIdentification)
             .setValue(AuthorisationNumberPage, authorisationNumber)
             .setValue(AddIdentifierYesNoPage, false)

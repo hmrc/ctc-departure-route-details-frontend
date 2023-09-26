@@ -21,10 +21,11 @@ import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
 import models.requests.MandatoryDataRequest
-import models.{LocalReferenceNumber, LocationType, Mode, NormalMode, ProcedureType}
+import models.{LocalReferenceNumber, LocationType, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
+import pages.QuestionPage
 import pages.external.ProcedureTypePage
-import pages.locationOfGoods.LocationTypePage
+import pages.locationOfGoods.{InferredLocationTypePage, LocationTypePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -59,17 +60,15 @@ class LocationTypeController @Inject() (
     .andThen(getMandatoryPage(ProcedureTypePage))
     .async {
       implicit request =>
-        locationTypeService.getLocationTypes().flatMap {
-          locationTypes =>
+        locationTypeService.getLocationTypes(request.arg).flatMap {
+          case locationType :: Nil =>
+            redirect(mode, InferredLocationTypePage, locationType)
+          case locationTypes =>
             val preparedForm = request.userAnswers.get(LocationTypePage) match {
               case None        => form(locationTypes)
               case Some(value) => form(locationTypes).fill(value)
             }
-            request.arg match {
-              case ProcedureType.Normal => Future.successful(Ok(view(preparedForm, lrn, locationTypes, mode)))
-              case ProcedureType.Simplified =>
-                redirect(mode, LocationType("B", "Authorised place"))
-            }
+            Future.successful(Ok(view(preparedForm, lrn, locationTypes, mode)))
         }
     }
 
@@ -78,13 +77,13 @@ class LocationTypeController @Inject() (
     .andThen(getMandatoryPage(ProcedureTypePage))
     .async {
       implicit request =>
-        locationTypeService.getLocationTypes().flatMap {
+        locationTypeService.getLocationTypes(request.arg).flatMap {
           locationTypes =>
             form(locationTypes)
               .bindFromRequest()
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationTypes, mode))),
-                value => redirect(mode, value)
+                value => redirect(mode, LocationTypePage, value)
               )
 
         }
@@ -92,10 +91,11 @@ class LocationTypeController @Inject() (
 
   private def redirect(
     mode: Mode,
+    page: QuestionPage[LocationType],
     value: LocationType
   )(implicit request: MandatoryDataRequest[_], hc: HeaderCarrier): Future[Result] = {
     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-    LocationTypePage
+    page
       .writeToUserAnswers(value)
       .updateTask()
       .writeToSession()

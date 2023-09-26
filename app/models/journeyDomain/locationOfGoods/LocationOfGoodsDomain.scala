@@ -38,7 +38,7 @@ sealed trait LocationOfGoodsDomain extends JourneyDomainModel {
 object LocationOfGoodsDomain {
 
   implicit val userAnswersReader: UserAnswersReader[LocationOfGoodsDomain] =
-    LocationTypePage.reader.flatMap {
+    (InferredLocationTypePage.reader orElse LocationTypePage.reader).flatMap {
       typeOfLocation =>
         val identifierReads: UserAnswersReader[LocationOfGoodsIdentification] = InferredIdentificationPage.reader orElse IdentificationPage.reader
         identifierReads.map(_.qualifier).flatMap {

@@ -20,11 +20,11 @@ import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
-import models.requests.DataRequest
-import models.{LocalReferenceNumber, LocationOfGoodsIdentification, Mode}
+import models.requests.SpecificDataRequestProvider1
+import models.{LocalReferenceNumber, LocationOfGoodsIdentification, LocationType, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
 import pages.QuestionPage
-import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage}
+import pages.locationOfGoods.{IdentificationPage, InferredIdentificationPage, InferredLocationTypePage, LocationTypePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -41,6 +41,7 @@ class IdentificationController @Inject() (
   implicit val sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
+  getMandatoryPage: SpecificDataRequiredActionProvider,
   formProvider: EnumerableFormProvider,
   locationOfGoodsIdentificationTypeService: LocationOfGoodsIdentificationTypeService,
   val controllerComponents: MessagesControllerComponents,
@@ -49,42 +50,50 @@ class IdentificationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
+  private type Request = SpecificDataRequestProvider1[LocationType]#SpecificDataRequest[_]
+
   private def form(locationOfGoodsIdentification: Seq[LocationOfGoodsIdentification]): Form[LocationOfGoodsIdentification] =
     formProvider("locationOfGoods.locationOfGoodsIdentificationType", locationOfGoodsIdentification)
 
-  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
-    implicit request =>
-      locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.userAnswers).flatMap {
-        case identifier :: Nil =>
-          redirect(mode, InferredIdentificationPage, identifier)
-        case identifiers =>
-          val preparedForm = request.userAnswers.get(IdentificationPage) match {
-            case None        => form(identifiers)
-            case Some(value) => form(identifiers).fill(value)
-          }
+  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
+    .requireData(lrn)
+    .andThen(getMandatoryPage(LocationTypePage, InferredLocationTypePage))
+    .async {
+      implicit request =>
+        locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.arg).flatMap {
+          case identifier :: Nil =>
+            redirect(mode, InferredIdentificationPage, identifier)
+          case identifiers =>
+            val preparedForm = request.userAnswers.get(IdentificationPage) match {
+              case None        => form(identifiers)
+              case Some(value) => form(identifiers).fill(value)
+            }
 
-          Future.successful(Ok(view(preparedForm, lrn, identifiers, mode)))
-      }
-  }
+            Future.successful(Ok(view(preparedForm, lrn, identifiers, mode)))
+        }
+    }
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
-    implicit request =>
-      locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.userAnswers).flatMap {
-        locationOfGoodsIdentificationTypes =>
-          form(locationOfGoodsIdentificationTypes)
-            .bindFromRequest()
-            .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationOfGoodsIdentificationTypes, mode))),
-              value => redirect(mode, IdentificationPage, value)
-            )
-      }
-  }
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
+    .requireData(lrn)
+    .andThen(getMandatoryPage(LocationTypePage, InferredLocationTypePage))
+    .async {
+      implicit request =>
+        locationOfGoodsIdentificationTypeService.getLocationOfGoodsIdentificationTypes(request.arg).flatMap {
+          locationOfGoodsIdentificationTypes =>
+            form(locationOfGoodsIdentificationTypes)
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationOfGoodsIdentificationTypes, mode))),
+                value => redirect(mode, IdentificationPage, value)
+              )
+        }
+    }
 
   private def redirect(
     mode: Mode,
     page: QuestionPage[LocationOfGoodsIdentification],
     value: LocationOfGoodsIdentification
-  )(implicit request: DataRequest[_]): Future[Result] = {
+  )(implicit request: Request): Future[Result] = {
     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
     page
       .writeToUserAnswers(value)
