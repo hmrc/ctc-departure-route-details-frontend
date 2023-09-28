@@ -26,6 +26,7 @@ import views.behaviours.InputTextViewBehaviours
 import views.html.locationOfGoods.UnLocodeView
 
 class UnLocodeViewSpec extends InputTextViewBehaviours[String] {
+
   override def form: Form[String] = new UnLocodeFormProvider()(prefix)
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
