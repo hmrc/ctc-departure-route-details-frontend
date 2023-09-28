@@ -86,9 +86,10 @@ trait ModelGenerators {
   }
 
   implicit def arbitraryRadioableList[T <: Radioable[T]](implicit arbitrary: Arbitrary[T]): Arbitrary[Seq[T]] = Arbitrary {
-    for {
+    val listGen = for {
       values <- listWithMaxLength[T]()
     } yield values.distinctBy(_.code)
+    listGen.retryUntil(_.length > 1)
   }
 
   implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] =

@@ -104,7 +104,7 @@ class LocationTypeControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
       val userAnswers = emptyUserAnswers
         .setValue(ProcedureTypePage, Normal)
-        .setValue(LocationTypePage, lts.head)
+        .setValue(LocationTypePage, lt)
 
       setExistingUserAnswers(userAnswers)
 

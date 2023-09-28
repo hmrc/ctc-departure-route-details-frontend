@@ -23,6 +23,7 @@ import forms.UnLocodeFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LoadingAndUnloadingNavigatorProvider, UserAnswersNavigator}
 import pages.loadingAndUnloading.unloading.UnLocodePage
+import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -46,7 +47,8 @@ class UnLocodeController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider("loadingAndUnloading.unloading.unLocode")
+  private val prefix: String = "loadingAndUnloading.unloading.unLocode"
+  private val form           = formProvider(prefix)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
@@ -63,26 +65,19 @@ class UnLocodeController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
-          formValue =>
-            unLocodesService
-              .validateUnLocode(formValue)
-              .flatMap(
-                isValid =>
-                  formProvider
-                    .validateUnLocode("loadingAndUnloading.unloading.unLocode", isValid)
-                    .bindFromRequest()
-                    .fold(
-                      formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
-                      value => {
-                        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-                        UnLocodePage
-                          .writeToUserAnswers(value)
-                          .updateTask()
-                          .writeToSession()
-                          .navigate()
-                      }
-                    )
-              )
+          value =>
+            unLocodesService.doesUnLocodeExist(value).flatMap {
+              case true =>
+                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                UnLocodePage
+                  .writeToUserAnswers(value)
+                  .updateTask()
+                  .writeToSession()
+                  .navigate()
+              case false =>
+                val formWithErrors = form.withError(FormError("value", s"$prefix.error.not.exists"))
+                Future.successful(BadRequest(view(formWithErrors, lrn, mode)))
+            }
         )
   }
 }
