@@ -19,6 +19,7 @@ package connectors
 import base.{AppWithDefaultMockFixtures, SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
+import models.LocationType
 import models.reference._
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -178,12 +179,59 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       |}
       |""".stripMargin
 
+  private val locationTypesResponseJson: String =
+    """
+      |
+      |   {
+      |   "data": [
+      |              {
+      |                "type": "A",
+      |                "description": "Designated location"
+      |              },
+      |              {
+      |                "type": "B",
+      |                "description": "Authorised place"
+      |               }
+      |            ]
+      |   }
+      |""".stripMargin
+
   def queryParams(role: String): Seq[(String, StringValuePattern)] = Seq(
     "data.countryId"  -> equalTo("GB"),
     "data.roles.role" -> equalTo(role)
   )
 
   "Reference Data" - {
+
+    "getTypeOfLocation" - {
+      val url = s"/$baseUrl/lists/TypeOfLocation"
+      "must return Seq of security types when successful" in {
+        server.stubFor(
+          get(urlEqualTo(url))
+            .willReturn(okJson(locationTypesResponseJson))
+        )
+
+        val expectedResult: Seq[LocationType] = Seq(
+          LocationType("A", "Designated location"),
+          LocationType("B", "Authorised place")
+        )
+
+        connector.getTypesOfLocation().futureValue mustEqual expectedResult
+      }
+
+      "should handle a 204 response for location types" in {
+        server.stubFor(
+          get(urlEqualTo(url))
+            .willReturn(aResponse().withStatus(NO_CONTENT))
+        )
+
+        connector.getTypesOfLocation().futureValue mustBe Nil
+      }
+
+      "should handle client and server errors for control types" in {
+        checkErrorResponse(url, connector.getTypesOfLocation())
+      }
+    }
 
     "getCustomsOfficesOfTransitForCountry" - {
       def url(countryId: String) = s"/$baseUrl/filtered-lists/CustomsOffices?data.countryId=$countryId&data.roles.role=TRA"

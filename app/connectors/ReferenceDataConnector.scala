@@ -18,6 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.reference._
+import models.{LocationOfGoodsIdentification, LocationType}
 import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, NO_CONTENT, OK}
 import play.api.libs.json.Reads
@@ -76,6 +77,16 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   def getSpecificCircumstanceIndicators()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[SpecificCircumstanceIndicator]] = {
     val serviceUrl = s"${config.referenceDataUrl}/lists/SpecificCircumstanceIndicatorCode"
     http.GET[Seq[SpecificCircumstanceIndicator]](serviceUrl, headers = version2Header)
+  }
+
+  def getTypesOfLocation()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[LocationType]] = {
+    val serviceUrl = s"${config.referenceDataUrl}/lists/TypeOfLocation"
+    http.GET[Seq[LocationType]](serviceUrl, headers = version2Header)
+  }
+
+  def getQualifierOfTheIdentifications()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[LocationOfGoodsIdentification]] = {
+    val serviceUrl = s"${config.referenceDataUrl}/lists/QualifierOfTheIdentification"
+    http.GET[Seq[LocationOfGoodsIdentification]](serviceUrl, headers = version2Header)
   }
 
   private def version2Header: Seq[(String, String)] = Seq(

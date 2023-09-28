@@ -20,15 +20,17 @@ import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
-import models.LocationType.AuthorisedPlace
 import models.requests.MandatoryDataRequest
-import models.{LocalReferenceNumber, LocationType, Mode, ProcedureType}
+import models.{LocalReferenceNumber, LocationType, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
+import pages.QuestionPage
 import pages.external.ProcedureTypePage
-import pages.locationOfGoods.LocationTypePage
+import pages.locationOfGoods.{InferredLocationTypePage, LocationTypePage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
+import services.LocationTypeService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.LocationTypeView
@@ -42,6 +44,7 @@ class LocationTypeController @Inject() (
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
   formProvider: EnumerableFormProvider,
+  locationTypeService: LocationTypeService,
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   view: LocationTypeView
@@ -49,21 +52,23 @@ class LocationTypeController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider[LocationType]("locationOfGoods.locationType")
+  private def form(locationType: Seq[LocationType]): Form[LocationType] =
+    formProvider("locationOfGoods.locationType", locationType)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
     .andThen(getMandatoryPage(ProcedureTypePage))
     .async {
       implicit request =>
-        val preparedForm = request.userAnswers.get(LocationTypePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
-
-        request.arg match {
-          case ProcedureType.Normal     => Future.successful(Ok(view(preparedForm, lrn, LocationType.normalProcedureValues, mode)))
-          case ProcedureType.Simplified => redirect(mode, AuthorisedPlace)
+        locationTypeService.getLocationTypes(request.arg).flatMap {
+          case locationType :: Nil =>
+            redirect(mode, InferredLocationTypePage, locationType)
+          case locationTypes =>
+            val preparedForm = request.userAnswers.get(LocationTypePage) match {
+              case None        => form(locationTypes)
+              case Some(value) => form(locationTypes).fill(value)
+            }
+            Future.successful(Ok(view(preparedForm, lrn, locationTypes, mode)))
         }
     }
 
@@ -72,23 +77,29 @@ class LocationTypeController @Inject() (
     .andThen(getMandatoryPage(ProcedureTypePage))
     .async {
       implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationType.normalProcedureValues, mode))),
-            value => redirect(mode, value)
-          )
+        locationTypeService.getLocationTypes(request.arg).flatMap {
+          locationTypes =>
+            form(locationTypes)
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationTypes, mode))),
+                value => redirect(mode, LocationTypePage, value)
+              )
+
+        }
     }
 
   private def redirect(
     mode: Mode,
+    page: QuestionPage[LocationType],
     value: LocationType
   )(implicit request: MandatoryDataRequest[_], hc: HeaderCarrier): Future[Result] = {
     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-    LocationTypePage
+    page
       .writeToUserAnswers(value)
       .updateTask()
       .writeToSession()
       .navigate()
   }
+
 }

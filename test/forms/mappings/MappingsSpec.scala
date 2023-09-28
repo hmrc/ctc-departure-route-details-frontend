@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.Enumerable
+import models.{Enumerable, Radioable}
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -24,21 +24,25 @@ import play.api.data.{Form, FormError}
 
 object MappingsSpec {
 
-  sealed trait Foo
-  case object Bar extends Foo
-  case object Baz extends Foo
+  sealed trait Foo extends Radioable[Foo]
 
-  object Foo {
-
-    val values: Set[Foo] = Set(Bar, Baz)
-
-    implicit val fooEnumerable: Enumerable[Foo] =
-      Enumerable(
-        values.toSeq.map(
-          v => v.toString -> v
-        ): _*
-      )
+  case object Bar extends Foo {
+    override val code: String             = "bar"
+    override val messageKeyPrefix: String = "mk.bar"
   }
+
+  case object Baz extends Foo {
+    override val code: String             = "baz"
+    override val messageKeyPrefix: String = "mk.baz"
+  }
+
+  implicit val fooEnumerable: Enumerable[Foo] =
+    Enumerable(
+      Seq(Bar, Baz).map(
+        v => v.toString -> v
+      ): _*
+    )
+
 }
 
 class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mappings {

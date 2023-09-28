@@ -91,7 +91,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               result mustBe Some(
                 SummaryListRow(
                   key = Key("Location type".toText),
-                  value = Value(messages(s"${LocationType.messageKeyPrefix}.$locationType").toText),
+                  value = Value(messages(s"$locationType").toText),
                   actions = Some(
                     Actions(
                       items = List(
@@ -134,7 +134,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               result mustBe Some(
                 SummaryListRow(
                   key = Key("Identifier type for the location of goods".toText),
-                  value = Value(messages(s"${LocationOfGoodsIdentification.messageKeyPrefix}.$locationOfGoodsIdentification").toText),
+                  value = Value(messages(s"$locationOfGoodsIdentification").toText),
                   actions = Some(
                     Actions(
                       items = List(
