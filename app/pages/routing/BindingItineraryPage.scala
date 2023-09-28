@@ -16,8 +16,9 @@
 
 package pages.routing
 
+import config.Constants.NoSecurityDetails
 import controllers.routing.routes
-import models.{Mode, SecurityDetailsType, UserAnswers}
+import models.{Mode, UserAnswers}
 import pages.QuestionPage
 import pages.external.SecurityDetailsTypePage
 import pages.sections.routing.RoutingSection
@@ -34,8 +35,8 @@ case object BindingItineraryPage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     (value, userAnswers.get(SecurityDetailsTypePage)) match {
-      case (Some(false), Some(SecurityDetailsType.NoSecurityDetails)) => super.cleanup(value, userAnswers)
-      case _                                                          => userAnswers.remove(AddCountryOfRoutingYesNoPage)
+      case (Some(false), Some(NoSecurityDetails)) => super.cleanup(value, userAnswers)
+      case _                                      => userAnswers.remove(AddCountryOfRoutingYesNoPage)
     }
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =

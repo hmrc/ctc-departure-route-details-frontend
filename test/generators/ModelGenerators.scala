@@ -16,8 +16,9 @@
 
 package generators
 
-import config.Constants.XXX
+import config.Constants._
 import models.AddressLine.{Country => _}
+import models.LockCheck.{LockCheckFailure, Locked, Unlocked}
 import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
 import models.reference._
 import models.{PostalCodeAddress, _}
@@ -84,6 +85,12 @@ trait ModelGenerators {
     } yield SelectableList(values.distinctBy(_.value))
   }
 
+  implicit def arbitraryRadioableList[T <: Radioable[T]](implicit arbitrary: Arbitrary[T]): Arbitrary[Seq[T]] = Arbitrary {
+    for {
+      values <- listWithMaxLength[T]()
+    } yield values.distinctBy(_.code)
+  }
+
   implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] =
     Arbitrary {
       for {
@@ -117,12 +124,25 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryLocationType: Arbitrary[LocationType] =
     Arbitrary {
-      Gen.oneOf(LocationType.values)
+      for {
+        description <- nonEmptyString
+        code        <- Gen.oneOf("A", "B", "C", "D")
+      } yield LocationType(code, description)
     }
+
+  val goodsIdentificationValues: Seq[LocationOfGoodsIdentification] = Seq(
+    LocationOfGoodsIdentification(CustomsOfficeIdentifier, "CustomsOfficeIdentifier"),
+    LocationOfGoodsIdentification(EoriNumberIdentifier, "EoriNumber"),
+    LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier"),
+    LocationOfGoodsIdentification(UnlocodeIdentifier, "UnlocodeIdentifier"),
+    LocationOfGoodsIdentification(CoordinatesIdentifier, "CoordinatesIdentifier"),
+    LocationOfGoodsIdentification(AddressIdentifier, "Address"),
+    LocationOfGoodsIdentification(PostalCodeIdentifier, "PostalCode")
+  )
 
   implicit lazy val arbitraryLocationOfGoodsIdentification: Arbitrary[LocationOfGoodsIdentification] =
     Arbitrary {
-      Gen.oneOf(LocationOfGoodsIdentification.values)
+      Gen.oneOf(goodsIdentificationValues)
     }
 
   implicit lazy val arbitraryCoordinates: Arbitrary[Coordinates] =
@@ -160,14 +180,19 @@ trait ModelGenerators {
       } yield PostalCodeAddress(streetNumber, postalCode, country)
     }
 
-  implicit lazy val arbitraryDeclarationType: Arbitrary[DeclarationType] =
+  lazy val arbitraryDeclarationType: Arbitrary[String] =
     Arbitrary {
-      Gen.oneOf(DeclarationType.values)
+      Gen.oneOf("T", "T1", "T2", "T2F", "TIR")
     }
 
-  lazy val arbitraryNonOption4DeclarationType: Arbitrary[DeclarationType] =
+  lazy val arbitraryNonTIRDeclarationType: Arbitrary[String] =
     Arbitrary {
-      Gen.oneOf(DeclarationType.values.filterNot(_ == DeclarationType.Option4))
+      Gen.oneOf("T", "T1", "T2", "T2F")
+    }
+
+  lazy val arbitraryT1OrT2FDeclarationType: Arbitrary[String] =
+    Arbitrary {
+      Gen.oneOf("T1", "T2F")
     }
 
   lazy val arbitraryXiCustomsOffice: Arbitrary[CustomsOffice] =
@@ -193,17 +218,22 @@ trait ModelGenerators {
       Gen.oneOf(arbitraryGbCustomsOffice.arbitrary, arbitraryXiCustomsOffice.arbitrary)
     }
 
-  implicit lazy val arbitrarySecurityDetailsType: Arbitrary[SecurityDetailsType] =
+  lazy val arbitrarySecurityDetailsType: Arbitrary[String] =
     Arbitrary {
-      Gen.oneOf(SecurityDetailsType.values)
+      Gen.oneOf("0", "1", "2", "3")
     }
 
-  lazy val arbitrarySomeSecurityDetailsType: Arbitrary[SecurityDetailsType] =
+  lazy val arbitrarySomeSecurityDetailsType: Arbitrary[String] =
     Arbitrary {
-      Gen.oneOf(SecurityDetailsType.values.filterNot(_ == SecurityDetailsType.NoSecurityDetails))
+      Gen.oneOf("1", "2", "3")
     }
 
   lazy val arbitraryIncompleteTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
     Gen.oneOf(TaskStatus.InProgress, TaskStatus.NotStarted, TaskStatus.CannotStartYet)
   }
+
+  implicit lazy val arbitraryLockCheck: Arbitrary[LockCheck] =
+    Arbitrary {
+      Gen.oneOf(Locked, Unlocked, LockCheckFailure)
+    }
 }

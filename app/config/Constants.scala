@@ -24,4 +24,27 @@ object Constants {
 
   val STANDARD    = "A"
   val `PRE-LODGE` = "D"
+
+  val TIR = "TIR"
+  val T2  = "T2"
+  val T   = "T"
+
+  val NoSecurityDetails                             = "0"
+  val EntrySummaryDeclarationSecurityDetails        = "1"
+  val ExitSummaryDeclarationSecurityDetails         = "2"
+  val EntryAndExitSummaryDeclarationSecurityDetails = "3"
+
+  val CustomsOfficeIdentifier       = "V"
+  val EoriNumberIdentifier          = "X"
+  val AuthorisationNumberIdentifier = "Y"
+  val UnlocodeIdentifier            = "U"
+  val CoordinatesIdentifier         = "W"
+  val AddressIdentifier             = "Z"
+  val PostalCodeIdentifier          = "T"
+
+  val DesignatedLocation = "A"
+  val AuthorisedPlace    = "B"
+  val ApprovedPlace      = "C"
+  val Other              = "D"
+
 }

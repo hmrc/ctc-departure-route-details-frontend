@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package pages.external
+package views.behaviours
 
-import pages.ReadOnlyPage
-import play.api.libs.json.JsPath
+import models.Radioable
 
-case object SecurityDetailsTypePage extends ReadOnlyPage[String] {
-
-  override def path: JsPath = preTaskListPath \ "securityDetailsType" \ "code"
+trait EnumerableViewBehaviours[T <: Radioable[T]] extends RadioViewBehaviours[T] {
+  override val getValue: T => String = _.code
 }

@@ -17,16 +17,14 @@
 package models.journeyDomain.transit
 
 import base.SpecBase
+import config.Constants._
 import config.PhaseConfig
 import generators.Generators
-import models.DeclarationType._
-import models.{Index, Phase}
-import models.SecurityDetailsType.NoSecurityDetails
 import models.domain.{EitherType, UserAnswersReader}
 import models.reference.{Country, CustomsOffice}
+import models.{Index, Phase}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.routing._
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingPage}
@@ -65,7 +63,7 @@ class TransitDomainSpec extends SpecBase with Generators {
         val userAnswers = emptyUserAnswers
           .setValue(OfficeOfDeparturePage, customsOffice)
           .setValue(OfficeOfDepartureInCL112Page, false)
-          .setValue(DeclarationTypePage, Option2)
+          .setValue(DeclarationTypePage, T2)
           .setValue(SecurityDetailsTypePage, NoSecurityDetails)
           .setValue(OfficeOfDestinationPage, customsOffice)
           .setValue(OfficeOfDestinationInCL112Page, false)
@@ -89,7 +87,7 @@ class TransitDomainSpec extends SpecBase with Generators {
           val userAnswers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOffice)
             .setValue(OfficeOfDepartureInCL112Page, false)
-            .setValue(DeclarationTypePage, Option5)
+            .setValue(DeclarationTypePage, T)
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice)
             .setValue(OfficeOfDestinationInCL112Page, false)
@@ -113,7 +111,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             val userAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOffice)
               .setValue(OfficeOfDepartureInCL112Page, true)
-              .setValue(DeclarationTypePage, Option5)
+              .setValue(DeclarationTypePage, T)
               .setValue(SecurityDetailsTypePage, NoSecurityDetails)
               .setValue(OfficeOfDestinationPage, customsOffice)
               .setValue(OfficeOfDestinationInCL112Page, false)
@@ -140,7 +138,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               val userAnswers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOffice)
                 .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, Option5)
+                .setValue(DeclarationTypePage, T)
                 .setValue(SecurityDetailsTypePage, NoSecurityDetails)
                 .setValue(OfficeOfDestinationPage, customsOffice)
                 .setValue(OfficeOfDestinationInCL112Page, true)
@@ -165,7 +163,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               val userAnswers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOffice)
                 .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, Option5)
+                .setValue(DeclarationTypePage, T)
                 .setValue(SecurityDetailsTypePage, NoSecurityDetails)
                 .setValue(OfficeOfDestinationPage, customsOffice)
                 .setValue(OfficeOfDestinationInCL112Page, true)
@@ -191,7 +189,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               val userAnswers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOffice)
                 .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, Option5)
+                .setValue(DeclarationTypePage, T)
                 .setValue(SecurityDetailsTypePage, NoSecurityDetails)
                 .setValue(OfficeOfDestinationPage, customsOffice)
                 .setValue(OfficeOfDestinationInCL112Page, false)
@@ -217,7 +215,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               val userAnswers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOffice)
                 .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, Option5)
+                .setValue(DeclarationTypePage, T)
                 .setValue(SecurityDetailsTypePage, NoSecurityDetails)
                 .setValue(OfficeOfDestinationPage, customsOffice)
                 .setValue(OfficeOfDestinationInCL112Page, false)
@@ -242,7 +240,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
       "when declaration type is neither T nor T2" - {
 
-        val declarationType = Gen.oneOf(Option1, Option3).sample.value
+        val declarationType = arbitrary[String](arbitraryT1OrT2FDeclarationType).sample.value
 
         "and country code for office of departure is in set CL112" in {
           val userAnswers = emptyUserAnswers
@@ -397,7 +395,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               val userAnswers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOffice)
                 .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, Option2)
+                .setValue(DeclarationTypePage, T2)
                 .setValue(OfficeOfDestinationPage, customsOffice)
                 .setValue(OfficeOfDestinationInCL112Page, true)
 
@@ -413,7 +411,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               val userAnswers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOffice)
                 .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, Option2)
+                .setValue(DeclarationTypePage, T2)
                 .setValue(OfficeOfDestinationPage, customsOffice)
                 .setValue(OfficeOfDestinationInCL112Page, true)
 
@@ -429,7 +427,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             val userAnswers = emptyUserAnswers
               .setValue(OfficeOfDeparturePage, customsOffice)
               .setValue(OfficeOfDepartureInCL112Page, false)
-              .setValue(DeclarationTypePage, Option2)
+              .setValue(DeclarationTypePage, T2)
               .setValue(OfficeOfDestinationPage, customsOffice)
               .setValue(OfficeOfDestinationInCL112Page, false)
 
@@ -442,7 +440,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
       "when declaration type is neither T nor T2" - {
 
-        val declarationType = Gen.oneOf(Option1, Option3).sample.value
+        val declarationType = arbitrary[String](arbitraryT1OrT2FDeclarationType).sample.value
 
         "and country code for neither office of departure nor office of destination is in set CL112" - {
           "and no countries of routing are in set CL112" - {

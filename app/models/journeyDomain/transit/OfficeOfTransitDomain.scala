@@ -17,9 +17,8 @@
 package models.journeyDomain.transit
 
 import cats.implicits._
-import config.Constants.AD
+import config.Constants._
 import config.PhaseConfig
-import models.SecurityDetailsType.{EntryAndExitSummaryDeclarationSecurityDetails, EntrySummaryDeclarationSecurityDetails, NoSecurityDetails}
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice}

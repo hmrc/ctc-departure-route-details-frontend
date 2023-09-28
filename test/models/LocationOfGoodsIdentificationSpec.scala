@@ -17,109 +17,56 @@
 package models
 
 import base.SpecBase
+import generators.Generators
 import models.LocationOfGoodsIdentification._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.locationOfGoods.LocationTypePage
 import play.api.libs.json.{JsError, JsString, Json}
 
-class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckPropertyChecks {
+class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "LocationOfGoodsIdentification" - {
 
     "must deserialise valid values" in {
 
-      val gen = Gen.oneOf(LocationOfGoodsIdentification.values)
-
-      forAll(gen) {
-        locationOfGoodsIdentification =>
-          JsString(locationOfGoodsIdentification.toString).validate[LocationOfGoodsIdentification].asOpt.value mustEqual locationOfGoodsIdentification
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (qualifier, description) =>
+          val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
+          Json
+            .parse(s"""
+                 |{
+                 |  "qualifier": "$qualifier",
+                 |  "description": "$description"
+                 |}
+                 |""".stripMargin)
+            .as[LocationOfGoodsIdentification] mustBe locationOfGoodsIdentification
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!LocationOfGoodsIdentification.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!goodsIdentificationValues.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
-          JsString(invalidValue).validate[LocationOfGoodsIdentification] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[LocationOfGoodsIdentification] mustEqual JsError("error.expected.jsobject")
       }
     }
 
     "must serialise" in {
 
-      val gen = Gen.oneOf(LocationOfGoodsIdentification.values)
-
-      forAll(gen) {
-        locationOfGoodsIdentification =>
-          Json.toJson(locationOfGoodsIdentification) mustEqual JsString(locationOfGoodsIdentification.toString)
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (qualifier, description) =>
+          val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
+          Json.toJson(locationOfGoodsIdentification) mustBe Json.parse(s"""
+               |{
+               |  "qualifier": "$qualifier",
+               |  "description": "$description"
+               |}
+               |""".stripMargin)
       }
     }
 
-    "valuesU" - {
-      "when designated location (sub place)" - {
-        "must return U and V" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.DesignatedLocation)
-
-          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
-            CustomsOfficeIdentifier,
-            UnlocodeIdentifier
-          )
-        }
-      }
-
-      "when authorised place (auth location code)" - {
-        "must return Y" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.AuthorisedPlace)
-
-          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
-            AuthorisationNumber
-          )
-        }
-      }
-
-      "when approved place (agreed location)" - {
-        "must return T, U, W, X, Z" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.ApprovedPlace)
-
-          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
-            EoriNumber,
-            CoordinatesIdentifier,
-            UnlocodeIdentifier,
-            AddressIdentifier,
-            PostalCode
-          )
-        }
-      }
-
-      "when other" - {
-        "must return T, U, W, Z" in {
-          val userAnswers = emptyUserAnswers.setValue(LocationTypePage, LocationType.Other)
-
-          LocationOfGoodsIdentification.values(userAnswers) mustBe Seq(
-            CoordinatesIdentifier,
-            UnlocodeIdentifier,
-            AddressIdentifier,
-            PostalCode
-          )
-        }
-      }
-
-      "when undefined location type" - {
-        "must return all values" in {
-          LocationOfGoodsIdentification.values(emptyUserAnswers) mustBe Seq(
-            CustomsOfficeIdentifier,
-            EoriNumber,
-            AuthorisationNumber,
-            CoordinatesIdentifier,
-            UnlocodeIdentifier,
-            AddressIdentifier,
-            PostalCode
-          )
-        }
-      }
-    }
   }
 }

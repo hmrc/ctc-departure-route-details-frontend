@@ -16,45 +16,51 @@
 
 package models
 
-import org.scalacheck.Arbitrary.arbitrary
+import generators.Generators
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsError, JsString, Json}
+import play.api.libs.json.Json
 
-class LocationTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
+class LocationTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with Generators {
 
   "LocationType" - {
 
-    "must deserialise valid values" in {
-
-      val gen = Gen.oneOf(LocationType.values)
-
-      forAll(gen) {
-        locationType =>
-          JsString(locationType.toString).validate[LocationType].asOpt.value mustEqual locationType
-      }
-    }
-
-    "must fail to deserialise invalid values" in {
-
-      val gen = arbitrary[String] suchThat (!LocationType.values.map(_.toString).contains(_))
-
-      forAll(gen) {
-        invalidValue =>
-          JsString(invalidValue).validate[LocationType] mustEqual JsError("error.invalid")
-      }
-    }
-
     "must serialise" in {
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (code, description) =>
+          val locationType = LocationType(code, description)
+          Json.toJson(locationType) mustBe Json.parse(s"""
+                                                            |{
+                                                            |  "type": "$code",
+                                                            |  "description": "$description"
+                                                            |}
+                                                            |""".stripMargin)
+      }
+    }
 
-      val gen = Gen.oneOf(LocationType.values)
+    "must deserialise" in {
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (code, description) =>
+          val locationType = LocationType(code, description)
+          Json
+            .parse(s"""
+                      |{
+                      |  "type": "$code",
+                      |  "description": "$description"
+                      |}
+                      |""".stripMargin)
+            .as[LocationType] mustBe locationType
+      }
+    }
 
-      forAll(gen) {
-        locationType =>
-          Json.toJson(locationType) mustEqual JsString(locationType.toString)
+    "must format as string" in {
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (code, description) =>
+          val locationType = LocationType(code, description)
+          locationType.toString mustBe s"$description"
       }
     }
   }
