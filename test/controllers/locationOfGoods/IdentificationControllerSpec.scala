@@ -38,9 +38,10 @@ import views.html.locationOfGoods.IdentificationView
 import scala.concurrent.Future
 
 class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
-  private val id1                                                                     = Arbitrary.arbitrary[LocationOfGoodsIdentification].sample.value
-  private val id2                                                                     = Arbitrary.arbitrary[LocationOfGoodsIdentification].sample.value
-  private val ids                                                                     = Seq(id1, id2)
+
+  private val ids = arbitrary[Seq[LocationOfGoodsIdentification]].sample.value
+  private val id1 = ids.head
+
   private val formProvider                                                            = new EnumerableFormProvider()
   private val form                                                                    = formProvider[LocationOfGoodsIdentification]("locationOfGoods.identification", ids)
   private val mode                                                                    = NormalMode

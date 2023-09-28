@@ -375,6 +375,7 @@ locationOfGoods.unLocode.error.required = Enter the UN/LOCODE for the location o
 locationOfGoods.unLocode.paragraph = This is a 5-character code used to identify a transit-related location, like a port or clearance depot.
 locationOfGoods.unLocode.error.length = The UN/LOCODE must be exactly 5 characters long
 locationOfGoods.unLocode.error.invalid = The UN/LOCODE number must only include letters A to Z and numbers 0 to 9.
+locationOfGoods.unLocode.error.not.exists = Please enter a valid UN/LOCODE. This is a 5-character code used to identify a transit-related location, like DEBER.
 
 locationOfGoods.addContactLocationOfGoods.title = Do you want to add a contact for the location of goods?
 locationOfGoods.addContactLocationOfGoods.heading = Do you want to add a contact for the location of goods?
@@ -448,6 +449,7 @@ loadingAndUnloading.loading.unLocode.checkYourAnswersLabel = UN/LOCODE
 loadingAndUnloading.loading.unLocode.error.required = Enter the UN/LOCODE for the place of loading
 loadingAndUnloading.loading.unLocode.error.length = The UN/LOCODE must be exactly 5 characters long
 loadingAndUnloading.loading.unLocode.error.invalid = The UN/LOCODE number must only include letters A to Z and numbers 0 to 9.
+loadingAndUnloading.loading.unLocode.error.not.exists = Please enter a valid UN/LOCODE. This is a 5-character code used to identify a transit-related location, like DEBER.
 
 loadingAndUnloading.loading.addExtraInformationYesNo.title = Do you want to add extra information for the place of loading?
 loadingAndUnloading.loading.addExtraInformationYesNo.heading = Do you want to add extra information for the place of loading?
@@ -492,6 +494,7 @@ loadingAndUnloading.unloading.unLocode.checkYourAnswersLabel = UN/LOCODE
 loadingAndUnloading.unloading.unLocode.error.required = Enter the UN/LOCODE for the place of unloading
 loadingAndUnloading.unloading.unLocode.error.length = The UN/LOCODE must be exactly 5 characters long
 loadingAndUnloading.unloading.unLocode.error.invalid = The UN/LOCODE number must only include letters A to Z and numbers 0 to 9.
+loadingAndUnloading.unloading.unLocode.error.not.exists = Please enter a valid UN/LOCODE. This is a 5-character code used to identify a transit-related location, like DEBER.
 
 loadingAndUnloading.unloading.addExtraInformationYesNo.title = Do you want to add extra information for the place of unloading?
 loadingAndUnloading.unloading.addExtraInformationYesNo.heading = Do you want to add extra information for the place of unloading?

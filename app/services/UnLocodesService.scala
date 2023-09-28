@@ -33,6 +33,11 @@ class UnLocodesService @Inject() (
       .getUnLocodes()
       .map(sort)
 
+  def doesUnLocodeExist(unLocode: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    referenceDataConnector
+      .getUnLocode(unLocode)
+      .map(_.nonEmpty)
+
   private def sort(unLocodes: Seq[UnLocode]): SelectableList[UnLocode] =
     SelectableList(unLocodes.sortBy(_.name.toLowerCase))
 
