@@ -16,29 +16,28 @@
 
 package services
 
+import config.Constants.AuthorisedPlace
 import connectors.ReferenceDataConnector
-import models.SelectableList
-import models.reference.UnLocode
+import models.{LocationType, ProcedureType}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UnLocodesService @Inject() (
+class LocationTypeService @Inject() (
   referenceDataConnector: ReferenceDataConnector
 )(implicit ec: ExecutionContext) {
 
-  def getUnLocodes()(implicit hc: HeaderCarrier): Future[SelectableList[UnLocode]] =
-    referenceDataConnector
-      .getUnLocodes()
-      .map(sort)
+  def getLocationTypes(procedureType: ProcedureType)(implicit hc: HeaderCarrier): Future[Seq[LocationType]] = {
+    def filter(typesOfLocation: Seq[LocationType]): Seq[LocationType] = procedureType match {
+      case ProcedureType.Normal     => typesOfLocation.filterNot(_.code == AuthorisedPlace)
+      case ProcedureType.Simplified => typesOfLocation.filter(_.code == AuthorisedPlace)
+    }
 
-  def doesUnLocodeExist(unLocode: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     referenceDataConnector
-      .getUnLocode(unLocode)
-      .map(_.nonEmpty)
-
-  private def sort(unLocodes: Seq[UnLocode]): SelectableList[UnLocode] =
-    SelectableList(unLocodes.sortBy(_.name.toLowerCase))
+      .getTypesOfLocation()
+      .map(filter)
+      .map(_.sortBy(_.`type`.toLowerCase))
+  }
 
 }

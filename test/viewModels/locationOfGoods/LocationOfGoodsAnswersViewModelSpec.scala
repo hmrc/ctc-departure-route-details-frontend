@@ -17,30 +17,17 @@
 package viewModels.locationOfGoods
 
 import base.SpecBase
+import config.Constants._
 import generators.Generators
-import models.LocationOfGoodsIdentification.{
-  AddressIdentifier,
-  AuthorisationNumber,
-  CoordinatesIdentifier,
-  CustomsOfficeIdentifier,
-  EoriNumber,
-  PostalCode,
-  UnlocodeIdentifier
-}
-import models.Mode
-import models.ProcedureType.{Normal, Simplified}
+import models.{LocationOfGoodsIdentification, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.external.ProcedureTypePage
 import pages.locationOfGoods.{AddContactYesNoPage, AddIdentifierYesNoPage, AddLocationOfGoodsPage, IdentificationPage}
 import viewModels.locationOfGoods.LocationOfGoodsAnswersViewModel.LocationOfGoodsAnswersViewModelProvider
 
 class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val baseAnswers =
-    emptyUserAnswers
-      .setValue(AddLocationOfGoodsPage, true)
-      .setValue(ProcedureTypePage, Normal)
+  private val baseAnswers = emptyUserAnswers.setValue(AddLocationOfGoodsPage, true)
 
   "apply" - {
     "when 'V' customs office" - {
@@ -48,7 +35,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
 
       "must return 4 rows" in {
         val initialAnswers = baseAnswers
-          .setValue(IdentificationPage, qualifier)
+          .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
 
         forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
           (userAnswers, mode) =>
@@ -61,12 +48,12 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
     }
 
     "when 'X' EORI number" - {
-      val qualifier = EoriNumber
+      val qualifier = EoriNumberIdentifier
 
       "when an additional identifier and a contact have been provided" - {
         "must return 9 rows" in {
           val initialAnswers = baseAnswers
-            .setValue(IdentificationPage, qualifier)
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
             .setValue(AddIdentifierYesNoPage, true)
             .setValue(AddContactYesNoPage, true)
 
@@ -83,7 +70,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
       "when neither an additional identifier nor a contact have been provided" - {
         "must return 6 rows" in {
           val initialAnswers = baseAnswers
-            .setValue(IdentificationPage, qualifier)
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
             .setValue(AddIdentifierYesNoPage, false)
             .setValue(AddContactYesNoPage, false)
 
@@ -99,87 +86,41 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
     }
 
     "when 'Y' authorisations number" - {
-      val qualifier = AuthorisationNumber
+      val qualifier = AuthorisationNumberIdentifier
 
-      "and Normal procedure type" - {
+      "when an additional identifier and a contact have been provided" - {
+        "must return 9 rows" in {
+          val initialAnswers = baseAnswers
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
+            .setValue(AddIdentifierYesNoPage, true)
+            .setValue(AddContactYesNoPage, true)
 
-        "when an additional identifier and a contact have been provided" - {
-          "must return 9 rows" in {
-            val initialAnswers = baseAnswers
-              .setValue(IdentificationPage, qualifier)
-              .setValue(AddIdentifierYesNoPage, true)
-              .setValue(AddContactYesNoPage, true)
-
-            forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
-              (userAnswers, mode) =>
-                val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
-                val section           = viewModelProvider.apply(userAnswers, mode).section
-                section.rows.size mustBe 9
-                section.sectionTitle.get mustBe "Location of goods"
-            }
+          forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
+            (userAnswers, mode) =>
+              val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
+              val section           = viewModelProvider.apply(userAnswers, mode).section
+              section.rows.size mustBe 9
+              section.sectionTitle.get mustBe "Location of goods"
           }
         }
-
-        "when neither an additional identifier nor a contact have been provided" - {
-          "must return 6 rows" in {
-            val initialAnswers = baseAnswers
-              .setValue(IdentificationPage, qualifier)
-              .setValue(AddIdentifierYesNoPage, false)
-              .setValue(AddContactYesNoPage, false)
-
-            forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
-              (userAnswers, mode) =>
-                val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
-                val section           = viewModelProvider.apply(userAnswers, mode).section
-                section.rows.size mustBe 6
-                section.sectionTitle.get mustBe "Location of goods"
-            }
-          }
-        }
-
       }
 
-      "and Simplified procedure type" - {
+      "when neither an additional identifier nor a contact have been provided" - {
+        "must return 6 rows" in {
+          val initialAnswers = baseAnswers
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
+            .setValue(AddIdentifierYesNoPage, false)
+            .setValue(AddContactYesNoPage, false)
 
-        val userAnswers = baseAnswers
-          .setValue(ProcedureTypePage, Simplified)
-
-        "when an additional identifier and a contact have been provided" - {
-          "must return 8 rows" in {
-            val initialAnswers = userAnswers
-              .setValue(IdentificationPage, qualifier)
-              .setValue(AddIdentifierYesNoPage, true)
-              .setValue(AddContactYesNoPage, true)
-
-            forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
-              (userAnswers, mode) =>
-                val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
-                val section           = viewModelProvider.apply(userAnswers, mode).section
-                section.rows.size mustBe 8
-                section.sectionTitle.get mustBe "Location of goods"
-            }
+          forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
+            (userAnswers, mode) =>
+              val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
+              val section           = viewModelProvider.apply(userAnswers, mode).section
+              section.rows.size mustBe 6
+              section.sectionTitle.get mustBe "Location of goods"
           }
         }
-
-        "when neither an additional identifier nor a contact have been provided" - {
-          "must return 5 rows" in {
-            val initialAnswers = userAnswers
-              .setValue(IdentificationPage, qualifier)
-              .setValue(AddIdentifierYesNoPage, false)
-              .setValue(AddContactYesNoPage, false)
-
-            forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
-              (userAnswers, mode) =>
-                val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
-                val section           = viewModelProvider.apply(userAnswers, mode).section
-                section.rows.size mustBe 5
-                section.sectionTitle.get mustBe "Location of goods"
-            }
-          }
-        }
-
       }
-
     }
 
     "when 'W' coordinates" - {
@@ -188,7 +129,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
       "when a contact has been provided" - {
         "must return 7 rows" in {
           val initialAnswers = baseAnswers
-            .setValue(IdentificationPage, qualifier)
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
             .setValue(AddContactYesNoPage, true)
 
           forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
@@ -204,7 +145,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
       "when a contact has not been provided" - {
         "must return 5 rows" in {
           val initialAnswers = baseAnswers
-            .setValue(IdentificationPage, qualifier)
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
             .setValue(AddContactYesNoPage, false)
 
           forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
@@ -224,7 +165,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
       "when a contact has been provided" - {
         "must return 7 rows" in {
           val initialAnswers = baseAnswers
-            .setValue(IdentificationPage, qualifier)
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
             .setValue(AddContactYesNoPage, true)
 
           forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
@@ -240,7 +181,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
       "when a contact has not been provided" - {
         "must return 5 rows" in {
           val initialAnswers = baseAnswers
-            .setValue(IdentificationPage, qualifier)
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
             .setValue(AddContactYesNoPage, false)
 
           forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
@@ -260,7 +201,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
       "when a contact has been provided" - {
         "must return 8 rows" in {
           val initialAnswers = baseAnswers
-            .setValue(IdentificationPage, qualifier)
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
             .setValue(AddContactYesNoPage, true)
 
           forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
@@ -276,7 +217,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
       "when a contact has not been provided" - {
         "must return 6 rows" in {
           val initialAnswers = baseAnswers
-            .setValue(IdentificationPage, qualifier)
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
             .setValue(AddContactYesNoPage, false)
 
           forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
@@ -291,12 +232,12 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
     }
 
     "when 'T' postal code" - {
-      val qualifier = PostalCode
+      val qualifier = PostalCodeIdentifier
 
       "when a contact has been provided" - {
         "must return 7 rows" in {
           val initialAnswers = baseAnswers
-            .setValue(IdentificationPage, qualifier)
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
             .setValue(AddContactYesNoPage, true)
 
           forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {
@@ -312,7 +253,7 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
       "when a contact has not been provided" - {
         "must return 5 rows" in {
           val initialAnswers = baseAnswers
-            .setValue(IdentificationPage, qualifier)
+            .setValue(IdentificationPage, LocationOfGoodsIdentification(qualifier, "test"))
             .setValue(AddContactYesNoPage, false)
 
           forAll(arbitraryLocationOfGoodsAnswers(initialAnswers), arbitrary[Mode]) {

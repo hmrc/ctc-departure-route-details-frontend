@@ -16,17 +16,18 @@
 
 package views.locationOfGoods
 
+import config.Constants._
 import forms.EnumerableFormProvider
 import models.{LocationType, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
-import views.behaviours.RadioViewBehaviours
+import views.behaviours.EnumerableViewBehaviours
 import views.html.locationOfGoods.LocationTypeView
 
-class LocationTypeViewSpec extends RadioViewBehaviours[LocationType] {
+class LocationTypeViewSpec extends EnumerableViewBehaviours[LocationType] {
 
-  override def form: Form[LocationType] = new EnumerableFormProvider()(prefix)
+  override def form: Form[LocationType] = new EnumerableFormProvider()(prefix, values)
 
   override def applyView(form: Form[LocationType]): HtmlFormat.Appendable =
     injector.instanceOf[LocationTypeView].apply(form, lrn, values, NormalMode)(fakeRequest, messages)
@@ -36,8 +37,10 @@ class LocationTypeViewSpec extends RadioViewBehaviours[LocationType] {
   override def radioItems(fieldId: String, checkedValue: Option[LocationType] = None): Seq[RadioItem] =
     values.toRadioItems(fieldId, checkedValue)
 
-  override def values: Seq[LocationType] = LocationType.values
-
+  override def values: Seq[LocationType] = Seq(
+    LocationType(DesignatedLocation, "Designated location"),
+    LocationType(AuthorisedPlace, "Authorised place")
+  )
   behave like pageWithTitle()
 
   behave like pageWithBackLink()
