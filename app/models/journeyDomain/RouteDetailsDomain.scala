@@ -116,12 +116,7 @@ object RouteDetailsDomain {
     lazy val optionalReader = AddLocationOfGoodsPage.filterOptionalDependent(identity)(UserAnswersReader[LocationOfGoodsDomain])
     phaseConfig.phase match {
       case Phase.Transition =>
-        AdditionalDeclarationTypePage.reader.flatMap {
-          case `PRE-LODGE` =>
-            UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
-          case _ =>
-            optionalReader
-        }
+        optionalReader
       case Phase.PostTransition =>
         AdditionalDeclarationTypePage.reader.flatMap {
           case `PRE-LODGE` =>
