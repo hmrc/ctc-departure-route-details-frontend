@@ -17,10 +17,10 @@
 package utils.cyaHelpers
 
 import base.SpecBase
+import config.Constants._
 import config.PhaseConfig
 import controllers.transit.index.{routes => indexRoutes}
 import generators.Generators
-import models.SecurityDetailsType.NoSecurityDetails
 import models.domain.UserAnswersReader
 import models.journeyDomain.transit.OfficeOfTransitDomain
 import models.reference.{Country, CustomsOffice}

@@ -23,7 +23,7 @@ import models.NormalMode
 import models.reference.SpecificCircumstanceIndicator
 import navigation.RouteDetailsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.SpecificCircumstanceIndicatorPage
 import play.api.inject.bind
@@ -37,9 +37,8 @@ import scala.concurrent.Future
 
 class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
-  private val sci1 = arbitrary[SpecificCircumstanceIndicator].sample.value
-  private val sci2 = arbitrary[SpecificCircumstanceIndicator].sample.value
-  private val scis = Seq(sci1, sci2)
+  private val scis = arbitrary[Seq[SpecificCircumstanceIndicator]].sample.value
+  private val sci1 = scis.head
 
   private val formProvider = new EnumerableFormProvider()
   private val form         = formProvider("specificCircumstanceIndicator", scis)
@@ -54,11 +53,16 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
       .overrides(bind(classOf[RouteDetailsNavigatorProvider]).toInstance(fakeRouteDetailsNavigatorProvider))
       .overrides(bind(classOf[SpecificCircumstanceIndicatorsService]).toInstance(mockSpecificCircumstanceIndicatorsService))
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockSpecificCircumstanceIndicatorsService)
+    when(mockSpecificCircumstanceIndicatorsService.getSpecificCircumstanceIndicators()(any())).thenReturn(Future.successful(scis))
+  }
+
   "SpecificCircumstanceIndicator Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockSpecificCircumstanceIndicatorsService.getSpecificCircumstanceIndicators()(any())).thenReturn(Future.successful(scis))
       setExistingUserAnswers(emptyUserAnswers)
 
       val request = FakeRequest(GET, specificCircumstanceIndicatorRoute)
@@ -75,7 +79,6 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockSpecificCircumstanceIndicatorsService.getSpecificCircumstanceIndicators()(any())).thenReturn(Future.successful(scis))
       val userAnswers = emptyUserAnswers.setValue(SpecificCircumstanceIndicatorPage, sci1)
       setExistingUserAnswers(userAnswers)
 
@@ -83,7 +86,7 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
 
       val result = route(app, request).value
 
-      val filledForm = form.bind(Map("value" -> sci1.toString))
+      val filledForm = form.bind(Map("value" -> sci1.code))
 
       val view = injector.instanceOf[SpecificCircumstanceIndicatorView]
 
@@ -95,13 +98,10 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
 
     "must redirect to the next page when valid data is submitted" in {
 
-      when(mockSpecificCircumstanceIndicatorsService.getSpecificCircumstanceIndicators()(any())).thenReturn(Future.successful(scis))
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
-
       setExistingUserAnswers(emptyUserAnswers)
 
       val request = FakeRequest(POST, specificCircumstanceIndicatorRoute)
-        .withFormUrlEncodedBody(("value", sci1.toString))
+        .withFormUrlEncodedBody(("value", sci1.code))
 
       val result = route(app, request).value
 
@@ -112,7 +112,6 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockSpecificCircumstanceIndicatorsService.getSpecificCircumstanceIndicators()(any())).thenReturn(Future.successful(scis))
       setExistingUserAnswers(emptyUserAnswers)
 
       val request   = FakeRequest(POST, specificCircumstanceIndicatorRoute).withFormUrlEncodedBody(("value", "invalid value"))
@@ -145,7 +144,7 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
       setNoExistingUserAnswers()
 
       val request = FakeRequest(POST, specificCircumstanceIndicatorRoute)
-        .withFormUrlEncodedBody(("value", sci1.toString))
+        .withFormUrlEncodedBody(("value", sci1.code))
 
       val result = route(app, request).value
 

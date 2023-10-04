@@ -17,11 +17,12 @@
 package models.journeyDomain.loadingAndUnloading.unloading
 
 import base.SpecBase
+import config.Constants.NoSecurityDetails
 import config.PhaseConfig
 import generators.Generators
+import models.Phase
 import models.domain.{EitherType, UserAnswersReader}
 import models.reference.Country
-import models.{Phase, SecurityDetailsType}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -107,7 +108,7 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
 
         "when security is 0" - {
           "and add country and location yes/no is unanswered" in {
-            val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, SecurityDetailsType.NoSecurityDetails)
+            val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, NoSecurityDetails)
 
             val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
               UnloadingDomain.userAnswersReader(mockPhaseConfig)
@@ -119,7 +120,7 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
 
         "when security is not 0" - {
           "and add unloading UN/LOCODE yes/no is unanswered" in {
-            forAll(arbitrary[SecurityDetailsType](arbitrarySomeSecurityDetailsType)) {
+            forAll(arbitrary[String](arbitrarySomeSecurityDetailsType)) {
               securityDetails =>
                 val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityDetails)
 

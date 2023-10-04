@@ -16,36 +16,17 @@
 
 package models
 
-sealed trait LocationType extends Radioable[LocationType] {
+import play.api.libs.json.{Format, Json}
+
+case class LocationType(`type`: String, description: String) extends Radioable[LocationType] {
   override val messageKeyPrefix: String = LocationType.messageKeyPrefix
-  val code: String
+  override def toString: String         = s"$description"
+
+  override val code: String = `type`
 }
 
-object LocationType extends EnumerableType[LocationType] {
+object LocationType extends DynamicEnumerableType[LocationType] {
+  implicit val format: Format[LocationType] = Json.format[LocationType]
 
   val messageKeyPrefix = "locationOfGoods.locationType"
-
-  case object DesignatedLocation extends WithName("designatedLocation") with LocationType {
-    override val code: String = "A"
-  }
-
-  case object AuthorisedPlace extends WithName("authorisedPlace") with LocationType {
-    override val code: String = "B"
-  }
-
-  case object ApprovedPlace extends WithName("approvedPlace") with LocationType {
-    override val code: String = "C"
-  }
-
-  case object Other extends WithName("other") with LocationType {
-    override val code: String = "D"
-  }
-
-  override val values: Seq[LocationType] = Seq(
-    AuthorisedPlace,
-    DesignatedLocation,
-    ApprovedPlace,
-    Other
-  )
-
 }

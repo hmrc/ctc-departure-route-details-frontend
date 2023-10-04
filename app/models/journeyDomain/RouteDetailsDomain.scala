@@ -16,11 +16,9 @@
 
 package models.journeyDomain
 
-import config.Constants._
 import cats.implicits._
+import config.Constants._
 import config.PhaseConfig
-import models.DeclarationType.Option4
-import models.SecurityDetailsType._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
@@ -28,7 +26,7 @@ import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.SpecificCircumstanceIndicator
-import models.{DeclarationType, Mode, Phase, SecurityDetailsType, UserAnswers}
+import models.{Mode, Phase, UserAnswers}
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
@@ -77,8 +75,8 @@ object RouteDetailsDomain {
 
   implicit def transitReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[TransitDomain]] =
     DeclarationTypePage.reader.flatMap {
-      case Option4 => none[TransitDomain].pure[UserAnswersReader]
-      case _       => UserAnswersReader[TransitDomain].map(Some(_))
+      case TIR => none[TransitDomain].pure[UserAnswersReader]
+      case _   => UserAnswersReader[TransitDomain].map(Some(_))
     }
 
   implicit def exitReader(transit: Option[TransitDomain]): UserAnswersReader[Option[ExitDomain]] =
@@ -102,13 +100,13 @@ object RouteDetailsDomain {
     } yield reader
 
   private def exitRequired(
-    declarationType: DeclarationType,
-    securityDetails: SecurityDetailsType,
+    declarationType: String,
+    securityDetails: String,
     atLeastOneCountryOfRoutingIsInCL147: Boolean,
     transit: Option[TransitDomain]
   ): Boolean =
     (declarationType, securityDetails, atLeastOneCountryOfRoutingIsInCL147, transit) match {
-      case (Option4, _, _, _)                                                    => false
+      case (TIR, _, _, _)                                                        => false
       case (_, NoSecurityDetails | EntrySummaryDeclarationSecurityDetails, _, _) => false
       case (_, _, true, Some(TransitDomain(_, list))) if list.nonEmpty           => false
       case _                                                                     => true

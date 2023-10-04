@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.ReferenceDataConnector
 import models.SelectableList
 import models.reference.UnLocode
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 
@@ -53,6 +53,32 @@ class UnLocodesServiceSpec extends SpecBase with BeforeAndAfterEach {
           SelectableList(Seq(unLocode1, unLocode2))
 
         verify(mockRefDataConnector).getUnLocodes()(any(), any())
+      }
+    }
+
+    "doesUnLocodeExist" - {
+      "must return true" - {
+        "when UN/LOCODE exists" in {
+
+          when(mockRefDataConnector.getUnLocode(any())(any(), any()))
+            .thenReturn(Future.successful(Seq(unLocode1)))
+
+          service.doesUnLocodeExist(unLocode1.unLocodeExtendedCode).futureValue mustBe true
+
+          verify(mockRefDataConnector).getUnLocode(eqTo(unLocode1.unLocodeExtendedCode))(any(), any())
+        }
+      }
+
+      "must return false" - {
+        "when UN/LOCODE does not exist" in {
+
+          when(mockRefDataConnector.getUnLocode(any())(any(), any()))
+            .thenReturn(Future.successful(Seq.empty))
+
+          service.doesUnLocodeExist(unLocode1.unLocodeExtendedCode).futureValue mustBe false
+
+          verify(mockRefDataConnector).getUnLocode(eqTo(unLocode1.unLocodeExtendedCode))(any(), any())
+        }
       }
     }
   }

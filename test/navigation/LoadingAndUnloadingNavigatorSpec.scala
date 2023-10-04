@@ -17,10 +17,10 @@
 package navigation
 
 import base.SpecBase
+import config.Constants.NoSecurityDetails
 import generators.Generators
-import models.SecurityDetailsType.{EntryAndExitSummaryDeclarationSecurityDetails, EntrySummaryDeclarationSecurityDetails, NoSecurityDetails}
 import models._
-import org.scalacheck.Gen
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.external.SecurityDetailsTypePage
 
@@ -37,7 +37,7 @@ class LoadingAndUnloadingNavigatorSpec extends SpecBase with ScalaCheckPropertyC
       "when answers complete" - {
         "must redirect to route check your answers if security is not 0" in {
 
-          val securityType   = Gen.oneOf(EntrySummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
+          val securityType   = arbitrary[String](arbitrarySomeSecurityDetailsType).sample.value
           val initialAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityType)
 
           forAll(arbitraryLoadingAndUnloadingAnswers(initialAnswers)) {

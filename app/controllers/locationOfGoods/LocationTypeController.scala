@@ -20,13 +20,18 @@ import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
-import models.requests.DataRequest
+import models.requests.MandatoryDataRequest
 import models.{LocalReferenceNumber, LocationType, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
-import pages.locationOfGoods.LocationTypePage
+import pages.QuestionPage
+import pages.external.ProcedureTypePage
+import pages.locationOfGoods.{InferredLocationTypePage, LocationTypePage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
+import services.LocationTypeService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.LocationTypeView
 
@@ -39,41 +44,62 @@ class LocationTypeController @Inject() (
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
   formProvider: EnumerableFormProvider,
+  locationTypeService: LocationTypeService,
   val controllerComponents: MessagesControllerComponents,
+  getMandatoryPage: SpecificDataRequiredActionProvider,
   view: LocationTypeView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider[LocationType]("locationOfGoods.locationType")
+  private def form(locationType: Seq[LocationType]): Form[LocationType] =
+    formProvider("locationOfGoods.locationType", locationType)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
-    .requireData(lrn) {
+    .requireData(lrn)
+    .andThen(getMandatoryPage(ProcedureTypePage))
+    .async {
       implicit request =>
-        val preparedForm = request.userAnswers.get(LocationTypePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+        locationTypeService.getLocationTypes(request.arg).flatMap {
+          case locationType :: Nil =>
+            redirect(mode, InferredLocationTypePage, locationType)
+          case locationTypes =>
+            val preparedForm = request.userAnswers.get(LocationTypePage) match {
+              case None        => form(locationTypes)
+              case Some(value) => form(locationTypes).fill(value)
+            }
+            Future.successful(Ok(view(preparedForm, lrn, locationTypes, mode)))
         }
-
-        Ok(view(preparedForm, lrn, LocationType.values, mode))
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
+    .andThen(getMandatoryPage(ProcedureTypePage))
     .async {
-      implicit request: DataRequest[AnyContent] =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, LocationType.values, mode))),
-            value => {
-              implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-              LocationTypePage
-                .writeToUserAnswers(value)
-                .updateTask()
-                .writeToSession()
-                .navigate()
-            }
-          )
+      implicit request =>
+        locationTypeService.getLocationTypes(request.arg).flatMap {
+          locationTypes =>
+            form(locationTypes)
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, locationTypes, mode))),
+                value => redirect(mode, LocationTypePage, value)
+              )
+
+        }
     }
+
+  private def redirect(
+    mode: Mode,
+    page: QuestionPage[LocationType],
+    value: LocationType
+  )(implicit request: MandatoryDataRequest[_], hc: HeaderCarrier): Future[Result] = {
+    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+    page
+      .writeToUserAnswers(value)
+      .updateTask()
+      .writeToSession()
+      .navigate()
+  }
+
 }

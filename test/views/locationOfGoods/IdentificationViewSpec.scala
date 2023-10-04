@@ -16,17 +16,28 @@
 
 package views.locationOfGoods
 
+import config.Constants._
 import forms.EnumerableFormProvider
 import models.{LocationOfGoodsIdentification, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
-import views.behaviours.RadioViewBehaviours
+import views.behaviours.EnumerableViewBehaviours
 import views.html.locationOfGoods.IdentificationView
 
-class IdentificationViewSpec extends RadioViewBehaviours[LocationOfGoodsIdentification] {
+class IdentificationViewSpec extends EnumerableViewBehaviours[LocationOfGoodsIdentification] {
 
-  override def form: Form[LocationOfGoodsIdentification] = new EnumerableFormProvider()(prefix)
+  val goodsIdentificationValues: Seq[LocationOfGoodsIdentification] = Seq(
+    LocationOfGoodsIdentification(CustomsOfficeIdentifier, "CustomsOfficeIdentifier"),
+    LocationOfGoodsIdentification(EoriNumberIdentifier, "EoriNumber"),
+    LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier"),
+    LocationOfGoodsIdentification(UnlocodeIdentifier, "UnlocodeIdentifier"),
+    LocationOfGoodsIdentification(CoordinatesIdentifier, "CoordinatesIdentifier"),
+    LocationOfGoodsIdentification(AddressIdentifier, "AddressIdentifier"),
+    LocationOfGoodsIdentification(PostalCodeIdentifier, "PostalCode")
+  )
+
+  override def form: Form[LocationOfGoodsIdentification] = new EnumerableFormProvider()(prefix, values)
 
   override def applyView(form: Form[LocationOfGoodsIdentification]): HtmlFormat.Appendable =
     injector.instanceOf[IdentificationView].apply(form, lrn, values, NormalMode)(fakeRequest, messages)
@@ -36,7 +47,7 @@ class IdentificationViewSpec extends RadioViewBehaviours[LocationOfGoodsIdentifi
   override def radioItems(fieldId: String, checkedValue: Option[LocationOfGoodsIdentification] = None): Seq[RadioItem] =
     values.toRadioItems(fieldId, checkedValue)
 
-  override def values: Seq[LocationOfGoodsIdentification] = LocationOfGoodsIdentification.values
+  override def values: Seq[LocationOfGoodsIdentification] = goodsIdentificationValues
 
   behave like pageWithTitle()
 
