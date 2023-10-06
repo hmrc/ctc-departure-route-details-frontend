@@ -16,7 +16,7 @@
 
 package pages.routing
 
-import config.Constants.NoSecurityDetails
+import config.Constants.SecurityType.NoSecurityDetails
 import controllers.routing.routes
 import models.{Mode, UserAnswers}
 import pages.QuestionPage

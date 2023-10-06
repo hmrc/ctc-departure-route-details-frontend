@@ -16,7 +16,7 @@
 
 package services
 
-import config.Constants.TIR
+import config.Constants.DeclarationType.TIR
 import connectors.ReferenceDataConnector
 import models.SelectableList.countriesOfRoutingReads
 import models.reference.{Country, CountryCode}

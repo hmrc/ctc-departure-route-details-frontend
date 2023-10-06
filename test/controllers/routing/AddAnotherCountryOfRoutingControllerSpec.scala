@@ -17,7 +17,7 @@
 package controllers.routing
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import config.Constants.NoSecurityDetails
+import config.Constants.SecurityType.NoSecurityDetails
 import forms.AddAnotherFormProvider
 import generators.Generators
 import models.reference.{Country, CountryCode}

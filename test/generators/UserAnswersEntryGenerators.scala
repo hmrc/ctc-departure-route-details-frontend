@@ -16,7 +16,7 @@
 
 package generators
 
-import config.Constants._
+import config.Constants.AdditionalDeclarationType._
 import models.reference._
 import models.{Coordinates, DateTime, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
@@ -42,7 +42,7 @@ trait UserAnswersEntryGenerators {
   private def generateExternalAnswer: PartialFunction[Gettable[_], Gen[JsValue]] = {
     import pages.external._
     {
-      case AdditionalDeclarationTypePage => Gen.oneOf(STANDARD, `PRE-LODGE`).map(JsString)
+      case AdditionalDeclarationTypePage => Gen.oneOf(Standard, PreLodge).map(JsString)
       case OfficeOfDeparturePage         => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
       case OfficeOfDepartureInCL112Page  => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfDepartureInCL147Page  => arbitrary[Boolean].map(JsBoolean)

@@ -17,8 +17,9 @@
 package models.journeyDomain.loadingAndUnloading
 
 import base.SpecBase
-import config.Constants._
-import config.{Constants, PhaseConfig}
+import config.Constants.AdditionalDeclarationType._
+import config.Constants.SecurityType._
+import config.PhaseConfig
 import generators.Generators
 import models.Phase
 import models.domain.{EitherType, UserAnswersReader}
@@ -202,7 +203,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
           when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
           "and not pre-lodge" in {
-            val userAnswers = emptyUserAnswers.setValue(AdditionalDeclarationTypePage, Constants.STANDARD)
+            val userAnswers = emptyUserAnswers.setValue(AdditionalDeclarationTypePage, Standard)
             forAll(arbitraryLoadingAnswers(userAnswers)) {
               answers =>
                 val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
@@ -216,7 +217,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
           "and pre-lodge" - {
             "when addPlaceOfLoading is yes" in {
               val userAnswers = emptyUserAnswers
-                .setValue(AdditionalDeclarationTypePage, Constants.`PRE-LODGE`)
+                .setValue(AdditionalDeclarationTypePage, PreLodge)
                 .setValue(AddPlaceOfLoadingYesNoPage, true)
 
               forAll(arbitraryLoadingAnswers(userAnswers)) {
@@ -230,7 +231,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
             }
             "when addPlaceOfLoading is no" in {
               val userAnswers = emptyUserAnswers
-                .setValue(AdditionalDeclarationTypePage, Constants.`PRE-LODGE`)
+                .setValue(AdditionalDeclarationTypePage, PreLodge)
                 .setValue(AddPlaceOfLoadingYesNoPage, false)
               forAll(arbitraryLoadingAnswers(userAnswers)) {
                 answers =>

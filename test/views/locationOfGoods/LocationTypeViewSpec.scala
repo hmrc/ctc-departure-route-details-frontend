@@ -16,7 +16,7 @@
 
 package views.locationOfGoods
 
-import config.Constants._
+import config.Constants.LocationType._
 import forms.EnumerableFormProvider
 import models.{LocationType, NormalMode}
 import play.api.data.Form

@@ -17,34 +17,48 @@
 package config
 
 object Constants {
-  val GB  = "GB"
-  val XI  = "XI"
-  val AD  = "AD"
-  val XXX = "XXX"
 
-  val STANDARD    = "A"
-  val `PRE-LODGE` = "D"
+  object CountryCode {
+    val GB = "GB"
+    val AD = "AD"
+  }
 
-  val TIR = "TIR"
-  val T2  = "T2"
-  val T   = "T"
+  object SpecificCircumstanceIndicator {
+    val XXX = "XXX"
+  }
 
-  val NoSecurityDetails                             = "0"
-  val EntrySummaryDeclarationSecurityDetails        = "1"
-  val ExitSummaryDeclarationSecurityDetails         = "2"
-  val EntryAndExitSummaryDeclarationSecurityDetails = "3"
+  object AdditionalDeclarationType {
+    val Standard = "A"
+    val PreLodge = "D"
+  }
 
-  val CustomsOfficeIdentifier       = "V"
-  val EoriNumberIdentifier          = "X"
-  val AuthorisationNumberIdentifier = "Y"
-  val UnlocodeIdentifier            = "U"
-  val CoordinatesIdentifier         = "W"
-  val AddressIdentifier             = "Z"
-  val PostalCodeIdentifier          = "T"
+  object DeclarationType {
+    val TIR = "TIR"
+    val T2  = "T2"
+    val T   = "T"
+  }
 
-  val DesignatedLocation = "A"
-  val AuthorisedPlace    = "B"
-  val ApprovedPlace      = "C"
-  val Other              = "D"
+  object SecurityType {
+    val NoSecurityDetails                             = "0"
+    val EntrySummaryDeclarationSecurityDetails        = "1"
+    val ExitSummaryDeclarationSecurityDetails         = "2"
+    val EntryAndExitSummaryDeclarationSecurityDetails = "3"
+  }
 
+  object LocationOfGoodsIdentifier {
+    val CustomsOfficeIdentifier       = "V"
+    val EoriNumberIdentifier          = "X"
+    val AuthorisationNumberIdentifier = "Y"
+    val UnlocodeIdentifier            = "U"
+    val CoordinatesIdentifier         = "W"
+    val AddressIdentifier             = "Z"
+    val PostalCodeIdentifier          = "T"
+  }
+
+  object LocationType {
+    val DesignatedLocation = "A"
+    val AuthorisedPlace    = "B"
+    val ApprovedPlace      = "C"
+    val Other              = "D"
+  }
 }

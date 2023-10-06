@@ -17,7 +17,7 @@
 package navigation
 
 import base.SpecBase
-import config.Constants.NoSecurityDetails
+import config.Constants.SecurityType.NoSecurityDetails
 import generators.Generators
 import models._
 import org.scalacheck.Arbitrary.arbitrary

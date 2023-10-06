@@ -17,8 +17,10 @@
 package models.journeyDomain.loadingAndUnloading
 
 import cats.implicits._
-import config.Constants._
-import config.{Constants, PhaseConfig}
+import config.Constants.AdditionalDeclarationType._
+import config.Constants.SecurityType._
+import config.Constants.SpecificCircumstanceIndicator._
+import config.PhaseConfig
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
@@ -54,8 +56,8 @@ object LoadingAndUnloadingDomain {
         }
       case Phase.PostTransition =>
         AdditionalDeclarationTypePage.reader.flatMap {
-          case Constants.`PRE-LODGE` => AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[LoadingDomain])
-          case _                     => UserAnswersReader[LoadingDomain].map(Some(_))
+          case PreLodge => AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[LoadingDomain])
+          case _        => UserAnswersReader[LoadingDomain].map(Some(_))
         }
     }
 
