@@ -16,7 +16,8 @@
 
 package services
 
-import config.Constants._
+import config.Constants.LocationOfGoodsIdentifier._
+import config.Constants.LocationType._
 import connectors.ReferenceDataConnector
 import models.{LocationOfGoodsIdentification, LocationType}
 import uk.gov.hmrc.http.HeaderCarrier

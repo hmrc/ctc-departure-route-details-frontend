@@ -17,7 +17,8 @@
 package models.journeyDomain.transit
 
 import base.SpecBase
-import config.Constants._
+import config.Constants.DeclarationType._
+import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
 import models.domain.{EitherType, UserAnswersReader}

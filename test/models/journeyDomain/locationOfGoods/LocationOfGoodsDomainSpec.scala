@@ -17,7 +17,7 @@
 package models.journeyDomain.locationOfGoods
 
 import base.SpecBase
-import config.Constants._
+import config.Constants.LocationOfGoodsIdentifier._
 import generators.Generators
 import models.domain.{EitherType, UserAnswersReader}
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain._

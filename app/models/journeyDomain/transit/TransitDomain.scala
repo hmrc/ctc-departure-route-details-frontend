@@ -16,7 +16,7 @@
 
 package models.journeyDomain.transit
 
-import config.Constants._
+import config.Constants.DeclarationType._
 import config.PhaseConfig
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.transit.TransitDomain.OfficesOfTransit

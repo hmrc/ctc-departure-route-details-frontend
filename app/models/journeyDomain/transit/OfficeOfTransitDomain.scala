@@ -17,7 +17,8 @@
 package models.journeyDomain.transit
 
 import cats.implicits._
-import config.Constants._
+import config.Constants.CountryCode._
+import config.Constants.SecurityType._
 import config.PhaseConfig
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}

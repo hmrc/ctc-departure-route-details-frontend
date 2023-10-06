@@ -16,7 +16,8 @@
 
 package generators
 
-import config.Constants._
+import config.Constants.LocationOfGoodsIdentifier._
+import config.Constants.SpecificCircumstanceIndicator._
 import models.AddressLine.{Country => _}
 import models.LockCheck.{LockCheckFailure, Locked, Unlocked}
 import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
@@ -65,7 +66,7 @@ trait ModelGenerators {
   implicit lazy val arbitraryCountryCode: Arbitrary[CountryCode] =
     Arbitrary {
       Gen
-        .pick(CountryCode.Constants.countryCodeLength, 'A' to 'Z')
+        .pick(2, 'A' to 'Z')
         .map(
           code => CountryCode(code.mkString)
         )

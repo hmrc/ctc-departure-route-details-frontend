@@ -17,7 +17,7 @@
 package utils.cyaHelpers
 
 import base.SpecBase
-import config.Constants._
+import config.Constants.SecurityType._
 import config.PhaseConfig
 import controllers.transit.index.{routes => indexRoutes}
 import generators.Generators

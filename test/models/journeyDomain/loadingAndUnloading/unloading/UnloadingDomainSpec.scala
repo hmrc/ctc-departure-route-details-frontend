@@ -17,7 +17,7 @@
 package models.journeyDomain.loadingAndUnloading.unloading
 
 import base.SpecBase
-import config.Constants.NoSecurityDetails
+import config.Constants.SecurityType.NoSecurityDetails
 import config.PhaseConfig
 import generators.Generators
 import models.Phase

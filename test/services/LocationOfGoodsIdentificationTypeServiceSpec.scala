@@ -17,7 +17,8 @@
 package services
 
 import base.SpecBase
-import config.Constants._
+import config.Constants.LocationOfGoodsIdentifier._
+import config.Constants.LocationType._
 import connectors.ReferenceDataConnector
 import models.{LocationOfGoodsIdentification, LocationType}
 import org.mockito.ArgumentMatchers.any

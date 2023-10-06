@@ -17,7 +17,7 @@
 package services
 
 import base.SpecBase
-import config.Constants.TIR
+import config.Constants.DeclarationType.TIR
 import connectors.ReferenceDataConnector
 import generators.Generators
 import models.reference.{Country, CountryCode}

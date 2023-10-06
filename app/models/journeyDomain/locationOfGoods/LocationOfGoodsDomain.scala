@@ -17,7 +17,7 @@
 package models.journeyDomain.locationOfGoods
 
 import cats.implicits._
-import config.Constants._
+import config.Constants.LocationOfGoodsIdentifier._
 import models._
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}

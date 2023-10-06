@@ -17,7 +17,7 @@
 package models.journeyDomain.loadingAndUnloading.unloading
 
 import cats.implicits._
-import config.Constants.NoSecurityDetails
+import config.Constants.SecurityType.NoSecurityDetails
 import config.PhaseConfig
 import models.Phase
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}

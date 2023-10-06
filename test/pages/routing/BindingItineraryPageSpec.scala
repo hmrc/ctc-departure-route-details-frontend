@@ -16,7 +16,7 @@
 
 package pages.routing
 
-import config.Constants.NoSecurityDetails
+import config.Constants.SecurityType.NoSecurityDetails
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.external.SecurityDetailsTypePage

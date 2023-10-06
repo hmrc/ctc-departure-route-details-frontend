@@ -17,7 +17,8 @@
 package models.journeyDomain.transit
 
 import base.SpecBase
-import config.Constants._
+import config.Constants.CountryCode._
+import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
 import models.domain.{EitherType, UserAnswersReader}
@@ -40,9 +41,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
     val eta = arbitrary[DateTime].sample.value
 
-    val securityType1Or3 = Gen.oneOf(EntrySummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
-    val securityType1Or2or3 =
-      Gen.oneOf(EntrySummaryDeclarationSecurityDetails, ExitSummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
+    val securityType1Or3    = Gen.oneOf(EntrySummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
+    val securityType1Or2or3 = arbitrary[String](arbitrarySomeSecurityDetailsType).sample.value
     val securityTypeNot1Or3 = Gen.oneOf(NoSecurityDetails, ExitSummaryDeclarationSecurityDetails).sample.value
 
     val officeOfTransit = arbitrary[CustomsOffice].sample.value

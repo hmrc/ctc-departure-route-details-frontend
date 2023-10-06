@@ -17,7 +17,9 @@
 package models.journeyDomain
 
 import cats.implicits._
-import config.Constants._
+import config.Constants.AdditionalDeclarationType._
+import config.Constants.DeclarationType._
+import config.Constants.SecurityType._
 import config.PhaseConfig
 import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.exit.ExitDomain
@@ -119,7 +121,7 @@ object RouteDetailsDomain {
         optionalReader
       case Phase.PostTransition =>
         AdditionalDeclarationTypePage.reader.flatMap {
-          case `PRE-LODGE` =>
+          case PreLodge =>
             optionalReader
           case _ =>
             OfficeOfDepartureInCL147Page.reader.flatMap {

@@ -16,7 +16,7 @@
 
 package services
 
-import config.Constants.AuthorisedPlace
+import config.Constants.LocationType.AuthorisedPlace
 import connectors.ReferenceDataConnector
 import models.{LocationType, ProcedureType}
 import uk.gov.hmrc.http.HeaderCarrier

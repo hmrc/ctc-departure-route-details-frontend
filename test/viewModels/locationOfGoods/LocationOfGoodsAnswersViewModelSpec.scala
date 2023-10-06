@@ -17,7 +17,7 @@
 package viewModels.locationOfGoods
 
 import base.SpecBase
-import config.Constants._
+import config.Constants.LocationOfGoodsIdentifier._
 import generators.Generators
 import models.{LocationOfGoodsIdentification, Mode}
 import org.scalacheck.Arbitrary.arbitrary
