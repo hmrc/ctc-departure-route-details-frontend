@@ -56,7 +56,7 @@ class OfficeOfExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPro
               result mustBe Some(
                 SummaryListRow(
                   key = Key("Country".toText),
-                  value = Value(country.description.toText),
+                  value = Value(country.toString.toText),
                   actions = Some(
                     Actions(
                       items = List(

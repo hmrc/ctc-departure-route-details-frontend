@@ -61,7 +61,7 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               result mustBe Some(
                 SummaryListRow(
                   key = Key("Office of transit country".toText),
-                  value = Value(country.description.toText),
+                  value = Value(country.toString.toText),
                   actions = Some(
                     Actions(
                       items = List(
