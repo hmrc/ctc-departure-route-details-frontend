@@ -53,12 +53,12 @@ object UserAnswersNavigator extends Logging {
     userAnswersReader.run(userAnswers) match {
       case Left(ReaderError(page, _)) =>
         page.route(userAnswers, mode).getOrElse {
-          logger.debug(s"Route not defined for page ${page.path}")
+          logger.error(s"Route not defined for page ${page.path}") // TODO reduce severity
           errorCall
         }
       case Right(x) =>
         x.routeIfCompleted(userAnswers, mode, stage).getOrElse {
-          logger.debug(s"Completed route not defined for model $x")
+          logger.error(s"Completed route not defined for model $x") // TODO reduce severity
           errorCall
         }
     }
