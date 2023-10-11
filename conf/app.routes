@@ -9,8 +9,6 @@
 ->         /hmrc-frontend                                             hmrcfrontend.Routes
 GET        /assets/*file                                              controllers.Assets.versioned(path="/public", file: Asset)
 
-GET        /:lrn                                                      controllers.RedirectController.redirect(lrn: LocalReferenceNumber)
-
 GET        /add-specific-circumstance-indicator/:lrn                  controllers.AddSpecificCircumstanceIndicatorYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 POST       /add-specific-circumstance-indicator/:lrn                  controllers.AddSpecificCircumstanceIndicatorYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 GET        /change-add-specific-circumstance-indicator/:lrn           controllers.AddSpecificCircumstanceIndicatorYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
@@ -23,3 +21,6 @@ POST       /change-specific-circumstance-indicator/:lrn               controller
 
 GET        /check-answers/:lrn                                        controllers.RouteDetailsAnswersController.onPageLoad(lrn: LocalReferenceNumber)
 POST       /check-answers/:lrn                                        controllers.RouteDetailsAnswersController.onSubmit(lrn: LocalReferenceNumber)
+
+GET        /:lrn                                                      controllers.RedirectController.redirect(lrn: LocalReferenceNumber)
+
