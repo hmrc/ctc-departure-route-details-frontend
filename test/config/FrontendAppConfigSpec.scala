@@ -29,21 +29,30 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
       "in Transition" - {
 
-        val app = transitionApplicationBuilder().build()
-
+        val app    = transitionApplicationBuilder().build()
         val config = app.injector.instanceOf[FrontendAppConfig]
 
         "etaDateDaysBefore must be 44" in {
-
           running(app) {
             config.etaDateDaysBefore mustBe 44
           }
         }
 
-        "etaDateDaysAfter must be 60" in {
+        "etaDateDaysAfter" - {
+          "for a standard declaration" - {
+            "must be 60" in {
+              running(app) {
+                config.etaDateDaysAfter("A") mustBe 60
+              }
+            }
+          }
 
-          running(app) {
-            config.etaDateDaysAfter mustBe 60
+          "for a pre-lodge declaration" - {
+            "must be 60" in {
+              running(app) {
+                config.etaDateDaysAfter("D") mustBe 60
+              }
+            }
           }
         }
 
@@ -51,21 +60,30 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
       "in Post-Transition" - {
 
-        val app = postTransitionApplicationBuilder().build()
-
+        val app    = postTransitionApplicationBuilder().build()
         val config = app.injector.instanceOf[FrontendAppConfig]
 
         "etaDateDaysBefore must be 0" in {
-
           running(app) {
             config.etaDateDaysBefore mustBe 0
           }
         }
 
-        "etaDateDaysAfter must be 60" in {
+        "etaDateDaysAfter" - {
+          "for a standard declaration" - {
+            "must be 60" in {
+              running(app) {
+                config.etaDateDaysAfter("A") mustBe 60
+              }
+            }
+          }
 
-          running(app) {
-            config.etaDateDaysAfter mustBe 60
+          "for a pre-lodge declaration" - {
+            "must be 60" in {
+              running(app) {
+                config.etaDateDaysAfter("D") mustBe 60
+              }
+            }
           }
         }
       }

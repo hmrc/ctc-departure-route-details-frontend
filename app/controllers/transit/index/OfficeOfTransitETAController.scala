@@ -22,6 +22,7 @@ import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.DateTimeFormProvider
 import models.{DateTime, Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
+import pages.external.AdditionalDeclarationTypePage
 import pages.routing.CountryOfDestinationPage
 import pages.transit.index.{OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
 import play.api.data.Form
@@ -49,23 +50,24 @@ class OfficeOfTransitETAController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private def form: Form[DateTime] = {
+  private def form(additionalDeclarationType: String): Form[DateTime] = {
     val today      = dateTimeService.today
     val pastDate   = today.minusDays(config.etaDateDaysBefore)
-    val futureDate = today.plusDays(config.etaDateDaysAfter)
+    val futureDate = today.plusDays(config.etaDateDaysAfter(additionalDeclarationType))
     formProvider("transit.index.officeOfTransitETA", pastDate, futureDate)
   }
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
     .requireData(lrn)
-    .andThen(getMandatoryPage(OfficeOfTransitCountryPage(index), CountryOfDestinationPage))
-    .andThen(getMandatoryPage.getSecond(OfficeOfTransitPage(index))) {
+    .andThen(getMandatoryPage.getFirst(OfficeOfTransitCountryPage(index), CountryOfDestinationPage))
+    .andThen(getMandatoryPage.getSecond(OfficeOfTransitPage(index)))
+    .andThen(getMandatoryPage.getThird(AdditionalDeclarationTypePage)) {
       implicit request =>
         request.arg match {
-          case (country, customsOffice) =>
+          case (country, customsOffice, additionalDeclarationType) =>
             val preparedForm = request.userAnswers.get(OfficeOfTransitETAPage(index)) match {
-              case None        => form
-              case Some(value) => form.fill(value)
+              case None        => form(additionalDeclarationType)
+              case Some(value) => form(additionalDeclarationType).fill(value)
             }
             Ok(view(preparedForm, lrn, country.description, customsOffice.name, mode, index))
         }
@@ -73,13 +75,14 @@ class OfficeOfTransitETAController @Inject() (
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
     .requireData(lrn)
-    .andThen(getMandatoryPage(OfficeOfTransitCountryPage(index), CountryOfDestinationPage))
+    .andThen(getMandatoryPage.getFirst(OfficeOfTransitCountryPage(index), CountryOfDestinationPage))
     .andThen(getMandatoryPage.getSecond(OfficeOfTransitPage(index)))
+    .andThen(getMandatoryPage.getThird(AdditionalDeclarationTypePage))
     .async {
       implicit request =>
         request.arg match {
-          case (country, customsOffice) =>
-            form
+          case (country, customsOffice, additionalDeclarationType) =>
+            form(additionalDeclarationType)
               .bindFromRequest()
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, country.description, customsOffice.name, mode, index))),
