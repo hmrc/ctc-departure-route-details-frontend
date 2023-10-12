@@ -435,7 +435,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               result mustBe Some(
                 SummaryListRow(
                   key = Key("Location of goods country".toText),
-                  value = Value(country.description.toText),
+                  value = Value(country.toString.toText),
                   actions = Some(
                     Actions(
                       items = List(

@@ -51,7 +51,7 @@ class LoadingAndUnloadingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: 
 
   def loadingCountry: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = loading.CountryPage,
-    formatAnswer = formatAsText,
+    formatAnswer = formatAsCountry,
     prefix = "loadingAndUnloading.loading.country",
     id = Some("change-loading-country")
   )
@@ -93,7 +93,7 @@ class LoadingAndUnloadingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: 
 
   def unloadingCountry: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = unloading.CountryPage,
-    formatAnswer = formatAsText,
+    formatAnswer = formatAsCountry,
     prefix = "loadingAndUnloading.unloading.country",
     id = Some("change-unloading-country")
   )

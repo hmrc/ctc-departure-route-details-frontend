@@ -29,7 +29,7 @@ class OfficeOfTransitCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode
 
   def officeOfTransitCountry: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = OfficeOfTransitCountryPage(index),
-    formatAnswer = formatAsText,
+    formatAnswer = formatAsCountry,
     prefix = "transit.index.officeOfTransitCountry",
     id = Some("change-office-of-transit-country")
   )

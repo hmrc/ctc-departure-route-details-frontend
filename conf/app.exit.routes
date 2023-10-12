@@ -3,8 +3,8 @@
 
 GET        /office-of-exit-for-transit/add-another/:lrn               controllers.exit.AddAnotherOfficeOfExitController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 POST       /office-of-exit-for-transit/add-another/:lrn               controllers.exit.AddAnotherOfficeOfExitController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-GET        /office-of-exit/change-add-another/:lrn                    controllers.exit.AddAnotherOfficeOfExitController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
-POST       /office-of-exit/change-add-another/:lrn                    controllers.exit.AddAnotherOfficeOfExitController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+GET        /office-of-exit-for-transit/change-add-another/:lrn        controllers.exit.AddAnotherOfficeOfExitController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
+POST       /office-of-exit-for-transit/change-add-another/:lrn        controllers.exit.AddAnotherOfficeOfExitController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
 
 GET        /add-office-of-exit-for-transit/:lrn                       controllers.exit.AddCustomsOfficeOfExitYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 POST       /add-office-of-exit-for-transit/:lrn                       controllers.exit.AddCustomsOfficeOfExitYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)

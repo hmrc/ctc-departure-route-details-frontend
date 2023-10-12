@@ -50,7 +50,7 @@ class RoutingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implic
 
   def countryOfDestination: Option[SummaryListRow] = getAnswerAndBuildRow[Country](
     page = CountryOfDestinationPage,
-    formatAnswer = formatAsText,
+    formatAnswer = formatAsCountry,
     prefix = "routing.countryOfDestination",
     id = Some("change-office-of-destination-country")
   )

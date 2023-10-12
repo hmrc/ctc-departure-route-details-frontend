@@ -17,19 +17,19 @@
 package utils.cyaHelpers
 
 import base.SpecBase
-import controllers.routing.{routes => routingRoutes}
 import controllers.routing.index.{routes => indexRoutes}
+import controllers.routing.{routes => routingRoutes}
 import generators.Generators
 import models.domain.UserAnswersReader
 import models.journeyDomain.routing.CountryOfRoutingDomain
-import models.reference.{Country, CountryCode, CustomsOffice, SpecificCircumstanceIndicator}
+import models.reference.{Country, CustomsOffice, SpecificCircumstanceIndicator}
 import models.{Index, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 import pages.routing.index.CountryOfRoutingPage
 import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage, CountryOfDestinationPage, OfficeOfDestinationPage}
 import pages.sections.routing.CountryOfRoutingSection
+import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
@@ -153,7 +153,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               result mustBe Some(
                 SummaryListRow(
                   key = Key("Office of destination’s country".toText),
-                  value = Value(s"$country".toText),
+                  value = Value(country.toString.toText),
                   actions = Some(
                     Actions(
                       items = List(
@@ -372,25 +372,26 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
 
     "listItems" - {
       "must return list items" in {
-        val mode        = arbitrary[Mode].sample.value
-        def countryCode = arbitrary[CountryCode].sample.value
+        val mode     = arbitrary[Mode].sample.value
+        val country1 = arbitrary[Country].sample.value
+        val country2 = arbitrary[Country].sample.value
 
         val answers = emptyUserAnswers
-          .setValue(CountryOfRoutingPage(Index(0)), Country(countryCode, "France"))
-          .setValue(CountryOfRoutingPage(Index(1)), Country(countryCode, "Portugal"))
+          .setValue(CountryOfRoutingPage(Index(0)), country1)
+          .setValue(CountryOfRoutingPage(Index(1)), country2)
 
         val helper = new RoutingCheckYourAnswersHelper(answers, mode)
         helper.listItems mustBe Seq(
           Right(
             ListItem(
-              name = "France",
+              name = country1.toString,
               changeUrl = indexRoutes.CountryOfRoutingController.onPageLoad(answers.lrn, mode, Index(0)).url,
               removeUrl = Some(indexRoutes.RemoveCountryOfRoutingYesNoController.onPageLoad(answers.lrn, mode, Index(0)).url)
             )
           ),
           Right(
             ListItem(
-              name = "Portugal",
+              name = country2.toString,
               changeUrl = indexRoutes.CountryOfRoutingController.onPageLoad(answers.lrn, mode, Index(1)).url,
               removeUrl = Some(indexRoutes.RemoveCountryOfRoutingYesNoController.onPageLoad(answers.lrn, mode, Index(1)).url)
             )
