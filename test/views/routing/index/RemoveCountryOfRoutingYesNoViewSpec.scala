@@ -36,15 +36,15 @@ class RemoveCountryOfRoutingYesNoViewSpec extends YesNoViewBehaviours with Gener
 
   override val prefix: String = "routing.index.removeCountryOfRoutingYesNo"
 
-  behave like pageWithTitle(country.toString)
+  behave like pageWithTitle(country.description)
 
   behave like pageWithBackLink()
 
   behave like pageWithSectionCaption("Route details - Transit route")
 
-  behave like pageWithHeading(country.toString)
+  behave like pageWithHeading(country.description)
 
-  behave like pageWithRadioItems(args = Seq(country.toString))
+  behave like pageWithRadioItems(args = Seq(country.description))
 
   behave like pageWithSubmitButton("Save and continue")
 }
