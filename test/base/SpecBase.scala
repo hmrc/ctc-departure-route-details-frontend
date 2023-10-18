@@ -38,6 +38,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Content, Key, Value}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
+import models.SubmissionState
 
 trait SpecBase
     extends AnyFreeSpec
@@ -50,14 +51,15 @@ trait SpecBase
     with IntegrationPatience
     with MockitoSugar {
 
-  val eoriNumber: EoriNumber    = EoriNumber("GB1234567891234")
-  val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123").get
+  val eoriNumber: EoriNumber        = EoriNumber("GB1234567891234")
+  val lrn: LocalReferenceNumber     = LocalReferenceNumber("ABCD1234567890123").get
+  val submitStatus: SubmissionState = SubmissionState.NotSubmitted
 
   val index: Index = Index(0)
 
   def fakeRequest: FakeRequest[AnyContent] = FakeRequest("", "")
 
-  val emptyUserAnswers: UserAnswers = UserAnswers(lrn, eoriNumber, Json.obj())
+  val emptyUserAnswers: UserAnswers = UserAnswers(lrn, eoriNumber, submitStatus, Json.obj())
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

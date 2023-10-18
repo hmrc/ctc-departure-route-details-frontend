@@ -23,6 +23,7 @@ import models.journeyDomain.RouteDetailsDomain
 import models.{EoriNumber, LocalReferenceNumber, RichJsObject, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
+import models.SubmissionState
 
 trait UserAnswersGenerator extends UserAnswersEntryGenerators with RouteDetailsUserAnswersGenerator {
   self: Generators =>
@@ -30,9 +31,10 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with RouteDetailsU
   implicit def arbitraryUserAnswers(implicit phaseConfig: PhaseConfig): Arbitrary[UserAnswers] =
     Arbitrary {
       for {
-        lrn        <- arbitrary[LocalReferenceNumber]
-        eoriNumber <- arbitrary[EoriNumber]
-        answers    <- buildUserAnswers[RouteDetailsDomain](UserAnswers(lrn, eoriNumber))
+        lrn             <- arbitrary[LocalReferenceNumber]
+        eoriNumber      <- arbitrary[EoriNumber]
+        submissionState <- arbitrary[SubmissionState]
+        answers         <- buildUserAnswers[RouteDetailsDomain](UserAnswers(lrn, eoriNumber, submissionState))
       } yield answers
     }
 

@@ -124,6 +124,16 @@ trait ModelGenerators {
       } yield SpecificCircumstanceIndicator(XXX, description)
     }
 
+  implicit lazy val arbitrarySubmissionState: Arbitrary[SubmissionState] = Arbitrary {
+    val values = Seq(
+      SubmissionState.NotSubmitted,
+      SubmissionState.Submitted,
+      SubmissionState.RejectedPendingChanges,
+      SubmissionState.Amendment
+    )
+    Gen.oneOf(values)
+  }
+
   implicit lazy val arbitraryLocationType: Arbitrary[LocationType] =
     Arbitrary {
       for {
