@@ -60,9 +60,7 @@ class SubmissionStateSpec extends AnyFreeSpec with Generators with Matchers with
       }
       "when status is non amendment" in {
         forAll(
-          arbitrary[SubmissionState].filter(
-            _ != SubmissionState.Amendment
-          )
+          arbitrary[SubmissionState]
         ) {
           state =>
             state.taskStatus mustBe TaskStatus.Completed
@@ -70,10 +68,12 @@ class SubmissionStateSpec extends AnyFreeSpec with Generators with Matchers with
       }
 
       "when status is amendment" in {
-
-        val state = SubmissionState.Amendment
-        state.taskStatus mustBe TaskStatus.Amended
-
+        forAll(
+          arbitrary[SubmissionState](arbitraryAmendedmentSubmissionState)
+        ) {
+          state =>
+            state.taskStatus mustBe TaskStatus.Amended
+        }
       }
     }
   }
