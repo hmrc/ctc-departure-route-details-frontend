@@ -79,7 +79,7 @@ package object controllers {
             case Some(section) =>
               val status = UserAnswersReader[RouteDetailsDomain].run(userAnswers) match {
                 case Left(_)  => InProgress
-                case Right(_) => Completed
+                case Right(_) => userAnswers.status.taskStatus
               }
               Right((page, userAnswers.updateTask(section, status)))
             case None =>
