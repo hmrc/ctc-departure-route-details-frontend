@@ -18,7 +18,6 @@ package models
 
 import models.TaskStatus.{Amended, Completed}
 import play.api.libs.json._
-import play.api.mvc.QueryStringBindable
 
 sealed trait SubmissionState {
   val asString: String
