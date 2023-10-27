@@ -93,8 +93,7 @@ class OfficeOfExitCountryController @Inject() (
                   customsOfficesService
                     .getCustomsOfficesOfExitForCountry(value.code)
                     .flatMap {
-                      _ =>
-                        redirect(mode, index, OfficeOfExitCountryPage, value)
+                      _ => redirect(mode, index, OfficeOfExitCountryPage, value)
                     }
                     .recover {
                       case _: NotFoundException =>
