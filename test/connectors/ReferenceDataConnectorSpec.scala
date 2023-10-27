@@ -25,9 +25,7 @@ import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.mvc.Http.HeaderNames.CONTENT_TYPE
-import play.mvc.Http.MimeTypes.JSON
-import play.mvc.Http.Status._
+import uk.gov.hmrc.http.NotFoundException
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -181,19 +179,25 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
   private val locationTypesResponseJson: String =
     """
-      |
-      |   {
-      |   "data": [
-      |              {
-      |                "type": "A",
-      |                "description": "Designated location"
-      |              },
-      |              {
-      |                "type": "B",
-      |                "description": "Authorised place"
-      |               }
-      |            ]
-      |   }
+      |{
+      |  "data": [
+      |    {
+      |      "type": "A",
+      |      "description": "Designated location"
+      |    },
+      |    {
+      |      "type": "B",
+      |      "description": "Authorised place"
+      |    }
+      |  ]
+      |}
+      |""".stripMargin
+
+  private val emptyResponseJson: String =
+    """
+      |{
+      |  "data": []
+      |}
       |""".stripMargin
 
   def queryParams(role: String): Seq[(String, StringValuePattern)] = Seq(
@@ -219,13 +223,15 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         connector.getTypesOfLocation().futureValue mustEqual expectedResult
       }
 
-      "should handle a 204 response for location types" in {
+      "should throw a NotFoundException for an empty list of location types" in {
         server.stubFor(
           get(urlEqualTo(url))
-            .willReturn(aResponse().withStatus(NO_CONTENT))
+            .willReturn(okJson(emptyResponseJson))
         )
 
-        connector.getTypesOfLocation().futureValue mustBe Nil
+        whenReady[Throwable, Assertion](connector.getTypesOfLocation().failed) {
+          _ mustBe a[NotFoundException]
+        }
       }
 
       "should handle client and server errors for control types" in {
@@ -252,20 +258,17 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         connector.getCustomsOfficesOfTransitForCountry(CountryCode(countryId)).futureValue mustBe expectedResult
       }
 
-      "must return a successful future response when CustomsOffice returns no data" in {
+      "should throw a NotFoundException for an empty list of customs offices" in {
         val countryId = "AR"
 
         server.stubFor(
-          get(urlEqualTo(url(countryId))).willReturn(
-            aResponse()
-              .withStatus(NO_CONTENT)
-              .withHeader(CONTENT_TYPE, JSON)
-          )
+          get(urlEqualTo(url(countryId)))
+            .willReturn(okJson(emptyResponseJson))
         )
 
-        val expectedResult = Nil
-
-        connector.getCustomsOfficesOfTransitForCountry(CountryCode(countryId)).futureValue mustBe expectedResult
+        whenReady[Throwable, Assertion](connector.getCustomsOfficesOfTransitForCountry(CountryCode(countryId)).failed) {
+          _ mustBe a[NotFoundException]
+        }
       }
 
       "must return an exception when an error response is returned" in {
@@ -293,20 +296,17 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         connector.getCustomsOfficesOfDestinationForCountry(CountryCode(countryId)).futureValue mustBe expectedResult
       }
 
-      "must return a successful future response when CustomsOffice is not found" in {
+      "should throw a NotFoundException for an empty list of customs offices" in {
         val countryId = "AR"
 
         server.stubFor(
-          get(urlEqualTo(url(countryId))).willReturn(
-            aResponse()
-              .withStatus(NO_CONTENT)
-              .withHeader(CONTENT_TYPE, JSON)
-          )
+          get(urlEqualTo(url(countryId)))
+            .willReturn(okJson(emptyResponseJson))
         )
 
-        val expectedResult = Nil
-
-        connector.getCustomsOfficesOfDestinationForCountry(CountryCode(countryId)).futureValue mustBe expectedResult
+        whenReady[Throwable, Assertion](connector.getCustomsOfficesOfDestinationForCountry(CountryCode(countryId)).failed) {
+          _ mustBe a[NotFoundException]
+        }
       }
 
       "must return an exception when an error response is returned" in {
@@ -334,20 +334,17 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         connector.getCustomsOfficesOfExitForCountry(CountryCode(countryId)).futureValue mustBe expectedResult
       }
 
-      "must return a successful future response when CustomsOffice is not found" in {
+      "should throw a NotFoundException for an empty list of customs offices" in {
         val countryId = "AR"
 
         server.stubFor(
-          get(urlEqualTo(url(countryId))).willReturn(
-            aResponse()
-              .withStatus(NO_CONTENT)
-              .withHeader(CONTENT_TYPE, JSON)
-          )
+          get(urlEqualTo(url(countryId)))
+            .willReturn(okJson(emptyResponseJson))
         )
 
-        val expectedResult = Nil
-
-        connector.getCustomsOfficesOfExitForCountry(CountryCode(countryId)).futureValue mustBe expectedResult
+        whenReady[Throwable, Assertion](connector.getCustomsOfficesOfExitForCountry(CountryCode(countryId)).failed) {
+          _ mustBe a[NotFoundException]
+        }
       }
 
       "must return an exception when an error response is returned" in {
@@ -375,20 +372,17 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         connector.getCustomsOfficesOfDepartureForCountry(countryId).futureValue mustBe expectedResult
       }
 
-      "must return a successful future response when CustomsOffice is not found" in {
+      "should throw a NotFoundException for an empty list of customs offices" in {
         val countryId = "AR"
 
         server.stubFor(
-          get(urlEqualTo(url(countryId))).willReturn(
-            aResponse()
-              .withStatus(NO_CONTENT)
-              .withHeader(CONTENT_TYPE, JSON)
-          )
+          get(urlEqualTo(url(countryId)))
+            .willReturn(okJson(emptyResponseJson))
         )
 
-        val expectedResult = Nil
-
-        connector.getCustomsOfficesOfDepartureForCountry(countryId).futureValue mustBe expectedResult
+        whenReady[Throwable, Assertion](connector.getCustomsOfficesOfDepartureForCountry(countryId).failed) {
+          _ mustBe a[NotFoundException]
+        }
       }
 
       "must return an exception when an error response is returned" in {
@@ -555,7 +549,6 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
   private def checkErrorResponse(url: String, result: => Future[_]): Assertion = {
     val errorResponses: Gen[Int] = Gen
       .chooseNum(400: Int, 599: Int)
-      .suchThat(_ != 404)
 
     forAll(errorResponses) {
       errorResponse =>
@@ -567,7 +560,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             )
         )
 
-        whenReady(result.failed) {
+        whenReady[Throwable, Assertion](result.failed) {
           _ mustBe an[Exception]
         }
     }

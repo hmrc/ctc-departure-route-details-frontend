@@ -28,6 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{CountriesService, CustomsOfficesService}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.routing.CountryOfDestinationView
 
@@ -74,18 +75,22 @@ class CountryOfDestinationController @Inject() (
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode))),
               value =>
-                customsOfficesService.getCustomsOfficesOfDestinationForCountry(value.code).flatMap {
-                  case x if x.values.nonEmpty =>
-                    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-                    CountryOfDestinationPage
-                      .writeToUserAnswers(value)
-                      .updateTask()
-                      .writeToSession()
-                      .navigate()
-                  case _ =>
-                    val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
-                    Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode)))
-                }
+                customsOfficesService
+                  .getCustomsOfficesOfDestinationForCountry(value.code)
+                  .flatMap {
+                    _ =>
+                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                      CountryOfDestinationPage
+                        .writeToUserAnswers(value)
+                        .updateTask()
+                        .writeToSession()
+                        .navigate()
+                  }
+                  .recover {
+                    case _: NotFoundException =>
+                      val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
+                      BadRequest(view(formWithErrors, lrn, countryList.values, mode))
+                  }
             )
       }
   }

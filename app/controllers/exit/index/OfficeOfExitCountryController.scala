@@ -32,6 +32,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.{CountriesService, CustomsOfficesService}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.exit.index.OfficeOfExitCountryView
 
@@ -89,13 +90,17 @@ class OfficeOfExitCountryController @Inject() (
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, index, mode))),
                 value =>
-                  customsOfficesService.getCustomsOfficesOfExitForCountry(value.code).flatMap {
-                    case x if x.values.nonEmpty =>
-                      redirect(mode, index, OfficeOfExitCountryPage, value)
-                    case _ =>
-                      val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
-                      Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, index, mode)))
-                  }
+                  customsOfficesService
+                    .getCustomsOfficesOfExitForCountry(value.code)
+                    .flatMap {
+                      _ =>
+                        redirect(mode, index, OfficeOfExitCountryPage, value)
+                    }
+                    .recover {
+                      case _: NotFoundException =>
+                        val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
+                        BadRequest(view(formWithErrors, lrn, countryList.values, index, mode))
+                    }
               )
         }
     }

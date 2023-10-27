@@ -32,6 +32,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.CustomsOfficesService
+import uk.gov.hmrc.http.NotFoundException
 import views.html.routing.CountryOfDestinationView
 
 import scala.concurrent.Future
@@ -152,7 +153,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       when(mockCountriesService.getDestinationCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
-        .thenReturn(Future.successful(SelectableList(Nil)))
+        .thenReturn(Future.failed(new NotFoundException("")))
 
       setExistingUserAnswers(emptyUserAnswers)
 
