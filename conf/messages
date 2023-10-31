@@ -34,7 +34,7 @@ loadingAndUnloading.caption = Route details - Places of loading and unloading
 loadingAndUnloading.unloading.caption = Route details - Place of unloading
 loadingAndUnloading.loading.caption = Route details - Place of loading
 
-checkYourAnswers.title = Check your answers
+checkYourAnswers.title = Check your answers - Route details
 checkYourAnswers.heading = Check your answers
 
 checkYourAnswers.routing.subheading = Transit route countries
@@ -108,7 +108,7 @@ routing.addAnotherCountryOfRouting.error.required = Select yes if you want to ad
 routing.addAnotherCountryOfRouting.label = Do you want to add another country to the transit route?
 routing.addAnotherCountryOfRouting.maxLimit.label = You cannot add any more countries to the transit route. To add another country, you need to remove one first.
 
-routing.checkYourAnswers.title = Check your answers
+routing.checkYourAnswers.title = Check your answers - Route details - Transit route
 routing.checkYourAnswers.heading = Check your answers
 
 # Route details - Routing - Index
@@ -200,7 +200,7 @@ transit.index.confirmRemoveOfficeOfTransit.default.title = Are you sure you want
 transit.index.confirmRemoveOfficeOfTransit.default.heading = Are you sure you want to remove this office of transit?
 transit.index.confirmRemoveOfficeOfTransit.default.error.required = Select yes if you want to remove this office of transit
 
-transit.index.checkOfficeOfTransitAnswers.title = Check your answers
+transit.index.checkOfficeOfTransitAnswers.title = Check your answers - Route details - Office of transit
 transit.index.checkOfficeOfTransitAnswers.heading = Check your answers
 
 # Route details - Exit
@@ -249,7 +249,7 @@ exit.index.confirmRemoveOfficeOfExit.default.title = Are you sure you want to re
 exit.index.confirmRemoveOfficeOfExit.default.heading = Are you sure you want to remove this office of exit for transit?
 exit.index.confirmRemoveOfficeOfExit.default.error.required = Select yes if you want to remove this office of exit for transit
 
-exit.index.checkOfficeOfExitAnswers.title = Check your answers
+exit.index.checkOfficeOfExitAnswers.title = Check your answers - Route details - Office of exit for transit
 exit.index.checkOfficeOfExitAnswers.heading = Check your answers
 
 # Route details - Location of goods
@@ -384,7 +384,7 @@ locationOfGoods.addContactLocationOfGoods.checkYourAnswersLabel = Do you want to
 locationOfGoods.addContactLocationOfGoods.change.hidden = if you want to add a contact for the location of goods
 locationOfGoods.addContactLocationOfGoods.error.required = Select yes if you want to add a contact for the location of goods.
 
-locationOfGoods.checkYourAnswers.title = Check your answers
+locationOfGoods.checkYourAnswers.title = Check your answers - Route details - Location of goods
 locationOfGoods.checkYourAnswers.heading = Check your answers
 locationOfGoods.checkYourAnswers.subHeading = Location of goods
 
@@ -419,7 +419,7 @@ loadingAndUnloading.addPlaceOfUnloading.checkYourAnswersLabel = Do you want to a
 loadingAndUnloading.addPlaceOfUnloading.change.hidden = if you want to add a place of unloading
 loadingAndUnloading.addPlaceOfUnloading.error.required = Select yes if you want to add a place of unloading
 
-loadingAndUnloading.checkYourAnswers.title = Check your answers
+loadingAndUnloading.checkYourAnswers.title = Check your answers - Route details - Places of loading and unloading
 loadingAndUnloading.checkYourAnswers.heading = Check your answers
 loadingAndUnloading.checkYourAnswers.loading = Place of loading
 loadingAndUnloading.checkYourAnswers.unloading = Place of unloading
