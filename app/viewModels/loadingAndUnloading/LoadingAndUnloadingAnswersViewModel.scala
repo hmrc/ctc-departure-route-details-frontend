@@ -36,6 +36,7 @@ object LoadingAndUnloadingAnswersViewModel {
       val loadingSection = Section(
         sectionTitle = messages("loadingAndUnloading.checkYourAnswers.loading"),
         rows = Seq(
+          helper.addLoading,
           helper.addLoadingUnLocode,
           helper.loadingUnLocode,
           helper.addLoadingCountryAndLocation,

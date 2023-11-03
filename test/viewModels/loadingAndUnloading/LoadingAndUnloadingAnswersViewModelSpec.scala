@@ -37,6 +37,7 @@ class LoadingAndUnloadingAnswersViewModelSpec extends SpecBase with ScalaCheckPr
         "and not adding country and location" - {
           "must render 3 rows" in {
             val initialAnswers = emptyUserAnswers
+              .setValue(loadingAndUnloading.AddPlaceOfLoadingYesNoPage, true)
               .setValue(loading.AddUnLocodeYesNoPage, true)
               .setValue(loading.AddExtraInformationYesNoPage, false)
 
@@ -44,7 +45,7 @@ class LoadingAndUnloadingAnswersViewModelSpec extends SpecBase with ScalaCheckPr
               (userAnswers, mode) =>
                 val viewModelProvider = injector.instanceOf[LoadingAndUnloadingAnswersViewModelProvider]
                 val section           = viewModelProvider.apply(userAnswers, mode).sections.head
-                section.rows.size mustBe 3
+                section.rows.size mustBe 4
                 section.sectionTitle.value mustBe "Place of loading"
             }
           }
@@ -53,6 +54,7 @@ class LoadingAndUnloadingAnswersViewModelSpec extends SpecBase with ScalaCheckPr
         "and adding country and location" - {
           "must render 5 rows" in {
             val initialAnswers = emptyUserAnswers
+              .setValue(loadingAndUnloading.AddPlaceOfLoadingYesNoPage, true)
               .setValue(loading.AddUnLocodeYesNoPage, true)
               .setValue(loading.AddExtraInformationYesNoPage, true)
 
@@ -60,7 +62,7 @@ class LoadingAndUnloadingAnswersViewModelSpec extends SpecBase with ScalaCheckPr
               (userAnswers, mode) =>
                 val viewModelProvider = injector.instanceOf[LoadingAndUnloadingAnswersViewModelProvider]
                 val section           = viewModelProvider.apply(userAnswers, mode).sections.head
-                section.rows.size mustBe 5
+                section.rows.size mustBe 6
                 section.sectionTitle.value mustBe "Place of loading"
             }
           }
@@ -69,13 +71,15 @@ class LoadingAndUnloadingAnswersViewModelSpec extends SpecBase with ScalaCheckPr
 
       "when not adding a UN/LOCODE" - {
         "must render 3 rows" in {
-          val initialAnswers = emptyUserAnswers.setValue(loading.AddUnLocodeYesNoPage, false)
+          val initialAnswers = emptyUserAnswers
+            .setValue(loadingAndUnloading.AddPlaceOfLoadingYesNoPage, true)
+            .setValue(loading.AddUnLocodeYesNoPage, false)
 
           forAll(arbitraryLoadingAnswers(initialAnswers), arbitrary[Mode]) {
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LoadingAndUnloadingAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).sections.head
-              section.rows.size mustBe 3
+              section.rows.size mustBe 4
               section.sectionTitle.value mustBe "Place of loading"
           }
         }
