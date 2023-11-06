@@ -17,6 +17,7 @@
 package controllers.transit.index
 
 import config.PhaseConfig
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
@@ -79,13 +80,16 @@ class OfficeOfTransitCountryController @Inject() (
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))),
               value =>
-                customsOfficesService.getCustomsOfficesOfTransitForCountry(value.code).flatMap {
-                  case x if x.values.nonEmpty =>
-                    redirect(mode, index, OfficeOfTransitCountryPage, value)
-                  case _ =>
-                    val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
-                    Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index)))
-                }
+                customsOfficesService
+                  .getCustomsOfficesOfTransitForCountry(value.code)
+                  .flatMap {
+                    _ => redirect(mode, index, OfficeOfTransitCountryPage, value)
+                  }
+                  .recover {
+                    case _: NoReferenceDataFoundException =>
+                      val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
+                      BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))
+                  }
             )
       }
   }

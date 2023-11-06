@@ -17,6 +17,7 @@
 package controllers.transit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import forms.SelectableFormProvider
 import generators.Generators
 import models.reference.CustomsOffice
@@ -177,7 +178,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
       when(mockCountriesService.getCountries()(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
-        .thenReturn(Future.successful(SelectableList(Nil)))
+        .thenReturn(Future.failed(new NoReferenceDataFoundException))
 
       setExistingUserAnswers(emptyUserAnswers)
 

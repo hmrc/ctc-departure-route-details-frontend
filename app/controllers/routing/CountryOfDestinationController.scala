@@ -17,6 +17,7 @@
 package controllers.routing
 
 import config.PhaseConfig
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
@@ -74,18 +75,22 @@ class CountryOfDestinationController @Inject() (
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode))),
               value =>
-                customsOfficesService.getCustomsOfficesOfDestinationForCountry(value.code).flatMap {
-                  case x if x.values.nonEmpty =>
-                    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
-                    CountryOfDestinationPage
-                      .writeToUserAnswers(value)
-                      .updateTask()
-                      .writeToSession()
-                      .navigate()
-                  case _ =>
-                    val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
-                    Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode)))
-                }
+                customsOfficesService
+                  .getCustomsOfficesOfDestinationForCountry(value.code)
+                  .flatMap {
+                    _ =>
+                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                      CountryOfDestinationPage
+                        .writeToUserAnswers(value)
+                        .updateTask()
+                        .writeToSession()
+                        .navigate()
+                  }
+                  .recover {
+                    case _: NoReferenceDataFoundException =>
+                      val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
+                      BadRequest(view(formWithErrors, lrn, countryList.values, mode))
+                  }
             )
       }
   }

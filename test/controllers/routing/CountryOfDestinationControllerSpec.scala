@@ -17,6 +17,7 @@
 package controllers.routing
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import forms.SelectableFormProvider
 import generators.Generators
 import models.reference.CustomsOffice
@@ -152,7 +153,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       when(mockCountriesService.getDestinationCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
-        .thenReturn(Future.successful(SelectableList(Nil)))
+        .thenReturn(Future.failed(new NoReferenceDataFoundException))
 
       setExistingUserAnswers(emptyUserAnswers)
 

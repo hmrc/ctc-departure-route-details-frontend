@@ -17,6 +17,7 @@
 package controllers.exit.index
 
 import config.PhaseConfig
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
@@ -89,13 +90,16 @@ class OfficeOfExitCountryController @Inject() (
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, index, mode))),
                 value =>
-                  customsOfficesService.getCustomsOfficesOfExitForCountry(value.code).flatMap {
-                    case x if x.values.nonEmpty =>
-                      redirect(mode, index, OfficeOfExitCountryPage, value)
-                    case _ =>
-                      val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
-                      Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, index, mode)))
-                  }
+                  customsOfficesService
+                    .getCustomsOfficesOfExitForCountry(value.code)
+                    .flatMap {
+                      _ => redirect(mode, index, OfficeOfExitCountryPage, value)
+                    }
+                    .recover {
+                      case _: NoReferenceDataFoundException =>
+                        val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
+                        BadRequest(view(formWithErrors, lrn, countryList.values, index, mode))
+                    }
               )
         }
     }

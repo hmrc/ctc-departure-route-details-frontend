@@ -17,6 +17,7 @@
 package controllers.exit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import forms.SelectableFormProvider
 import generators.Generators
 import models.reference.CustomsOffice
@@ -181,7 +182,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
         .thenReturn(Future.successful(countryList))
 
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any()))
-        .thenReturn(Future.successful(SelectableList(Nil)))
+        .thenReturn(Future.failed(new NoReferenceDataFoundException))
 
       setExistingUserAnswers(baseAnswers)
 
