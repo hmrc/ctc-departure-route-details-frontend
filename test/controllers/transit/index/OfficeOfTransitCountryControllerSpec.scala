@@ -17,6 +17,7 @@
 package controllers.transit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import forms.SelectableFormProvider
 import generators.Generators
 import models.reference.CustomsOffice
@@ -33,7 +34,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.CustomsOfficesService
-import uk.gov.hmrc.http.NotFoundException
 import views.html.transit.index.OfficeOfTransitCountryView
 
 import scala.concurrent.Future
@@ -178,7 +178,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
       when(mockCountriesService.getCountries()(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
-        .thenReturn(Future.failed(new NotFoundException("")))
+        .thenReturn(Future.failed(new NoReferenceDataFoundException))
 
       setExistingUserAnswers(emptyUserAnswers)
 

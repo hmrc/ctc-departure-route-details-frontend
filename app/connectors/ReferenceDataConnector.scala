@@ -17,13 +17,14 @@
 package connectors
 
 import config.FrontendAppConfig
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.reference._
 import models.{LocationOfGoodsIdentification, LocationType}
 import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Reads}
 import sttp.model.HeaderNames
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse, NotFoundException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -122,7 +123,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
         case OK =>
           (response.json \ "data").validate[Seq[A]] match {
             case JsSuccess(Nil, _) =>
-              throw new NotFoundException(s"[ReferenceDataConnector][responseHandlerGeneric] No reference data found.")
+              throw new NoReferenceDataFoundException
             case JsSuccess(value, _) =>
               value
             case JsError(errors) =>
@@ -133,4 +134,9 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
           throw new Exception(s"[ReferenceDataConnector][responseHandlerGeneric] $e - ${response.body}")
       }
     }
+}
+
+object ReferenceDataConnector {
+
+  class NoReferenceDataFoundException extends Exception("The reference data call was successful but the response body is empty.")
 }

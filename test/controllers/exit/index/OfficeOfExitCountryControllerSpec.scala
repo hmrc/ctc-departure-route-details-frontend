@@ -17,6 +17,7 @@
 package controllers.exit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import forms.SelectableFormProvider
 import generators.Generators
 import models.reference.CustomsOffice
@@ -34,7 +35,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.CustomsOfficesService
-import uk.gov.hmrc.http.NotFoundException
 import views.html.exit.index.OfficeOfExitCountryView
 
 import scala.concurrent.Future
@@ -182,7 +182,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
         .thenReturn(Future.successful(countryList))
 
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any()))
-        .thenReturn(Future.failed(new NotFoundException("")))
+        .thenReturn(Future.failed(new NoReferenceDataFoundException))
 
       setExistingUserAnswers(baseAnswers)
 

@@ -19,13 +19,13 @@ package connectors
 import base.{AppWithDefaultMockFixtures, SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.LocationType
 import models.reference._
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.http.NotFoundException
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -223,14 +223,14 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         connector.getTypesOfLocation().futureValue mustEqual expectedResult
       }
 
-      "should throw a NotFoundException for an empty list of location types" in {
+      "should throw a NoReferenceDataFoundException for an empty list of location types" in {
         server.stubFor(
           get(urlEqualTo(url))
             .willReturn(okJson(emptyResponseJson))
         )
 
         whenReady[Throwable, Assertion](connector.getTypesOfLocation().failed) {
-          _ mustBe a[NotFoundException]
+          _ mustBe a[NoReferenceDataFoundException]
         }
       }
 
@@ -258,7 +258,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         connector.getCustomsOfficesOfTransitForCountry(CountryCode(countryId)).futureValue mustBe expectedResult
       }
 
-      "should throw a NotFoundException for an empty list of customs offices" in {
+      "should throw a NoReferenceDataFoundException for an empty list of customs offices" in {
         val countryId = "AR"
 
         server.stubFor(
@@ -267,7 +267,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         )
 
         whenReady[Throwable, Assertion](connector.getCustomsOfficesOfTransitForCountry(CountryCode(countryId)).failed) {
-          _ mustBe a[NotFoundException]
+          _ mustBe a[NoReferenceDataFoundException]
         }
       }
 
@@ -296,7 +296,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         connector.getCustomsOfficesOfDestinationForCountry(CountryCode(countryId)).futureValue mustBe expectedResult
       }
 
-      "should throw a NotFoundException for an empty list of customs offices" in {
+      "should throw a NoReferenceDataFoundException for an empty list of customs offices" in {
         val countryId = "AR"
 
         server.stubFor(
@@ -305,7 +305,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         )
 
         whenReady[Throwable, Assertion](connector.getCustomsOfficesOfDestinationForCountry(CountryCode(countryId)).failed) {
-          _ mustBe a[NotFoundException]
+          _ mustBe a[NoReferenceDataFoundException]
         }
       }
 
@@ -334,7 +334,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         connector.getCustomsOfficesOfExitForCountry(CountryCode(countryId)).futureValue mustBe expectedResult
       }
 
-      "should throw a NotFoundException for an empty list of customs offices" in {
+      "should throw a NoReferenceDataFoundException for an empty list of customs offices" in {
         val countryId = "AR"
 
         server.stubFor(
@@ -343,7 +343,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         )
 
         whenReady[Throwable, Assertion](connector.getCustomsOfficesOfExitForCountry(CountryCode(countryId)).failed) {
-          _ mustBe a[NotFoundException]
+          _ mustBe a[NoReferenceDataFoundException]
         }
       }
 
@@ -372,7 +372,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         connector.getCustomsOfficesOfDepartureForCountry(countryId).futureValue mustBe expectedResult
       }
 
-      "should throw a NotFoundException for an empty list of customs offices" in {
+      "should throw a NoReferenceDataFoundException for an empty list of customs offices" in {
         val countryId = "AR"
 
         server.stubFor(
@@ -381,7 +381,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         )
 
         whenReady[Throwable, Assertion](connector.getCustomsOfficesOfDepartureForCountry(countryId).failed) {
-          _ mustBe a[NotFoundException]
+          _ mustBe a[NoReferenceDataFoundException]
         }
       }
 

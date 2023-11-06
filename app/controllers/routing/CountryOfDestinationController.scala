@@ -17,6 +17,7 @@
 package controllers.routing
 
 import config.PhaseConfig
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
@@ -28,7 +29,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{CountriesService, CustomsOfficesService}
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.routing.CountryOfDestinationView
 
@@ -87,7 +87,7 @@ class CountryOfDestinationController @Inject() (
                         .navigate()
                   }
                   .recover {
-                    case _: NotFoundException =>
+                    case _: NoReferenceDataFoundException =>
                       val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
                       BadRequest(view(formWithErrors, lrn, countryList.values, mode))
                   }
