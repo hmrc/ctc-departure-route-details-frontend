@@ -429,7 +429,7 @@ loadingAndUnloading.checkYourAnswers.unloading = Place of unloading
 loadingAndUnloading.addPlaceOfLoadingYesNo.title = Do you want to add a place of loading?
 loadingAndUnloading.addPlaceOfLoadingYesNo.heading = Do you want to add a place of loading?
 loadingAndUnloading.addPlaceOfLoadingYesNo.paragraph = This is where the goods are loaded.
-loadingAndUnloading.addPlaceOfLoadingYesNo.change.hidden = if you want to add a place of loading
+loadingAndUnloading.addPlaceOfLoadingYesNo.change.hidden =  if you want to add a place of loading
 loadingAndUnloading.addPlaceOfLoadingYesNo.checkYourAnswersLabel = Do you want to add a place of loading?
 loadingAndUnloading.addPlaceOfLoadingYesNo.error.required = Select yes if you want to add a place of loading
 

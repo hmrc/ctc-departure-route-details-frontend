@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.loadingAndUnloading.loading.{routes => loadingRoutes}
 import controllers.loadingAndUnloading.unloading.{routes => unloadingRoutes}
 import controllers.loadingAndUnloading.{routes => loadingAndUnloadingRoutes}
+import pages.loadingAndUnloading._
 import generators.Generators
 import models.Mode
 import models.reference.Country
@@ -33,6 +34,49 @@ import utils.cyaHelpers.loadingAndUnloading.LoadingAndUnloadingCheckYourAnswersH
 class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "LoadingAndUnloadingCheckYourAnswersHelper" - {
+
+    "addLoading" - {
+      "must return None" - {
+        "when AddLoadingYesNoPage is undefined" in {
+          forAll(arbitrary[Mode]) {
+            mode =>
+              val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
+              val result = helper.addLoading
+              result mustBe None
+          }
+        }
+      }
+
+      "must return Some(Row)" - {
+        "when AddLoadingYesNoPage is defined" in {
+          forAll(arbitrary[Mode]) {
+            mode =>
+              val answers = emptyUserAnswers.setValue(AddPlaceOfLoadingYesNoPage, true)
+              val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
+              val result  = helper.addLoading
+
+              result mustBe Some(
+                SummaryListRow(
+                  key = Key("Do you want to add a place of loading?".toText),
+                  value = Value("Yes".toText),
+                  actions = Some(
+                    Actions(
+                      items = List(
+                        ActionItem(
+                          content = "Change".toText,
+                          href = loadingAndUnloadingRoutes.AddPlaceOfLoadingYesNoController.onPageLoad(answers.lrn, mode).url,
+                          visuallyHiddenText = Some("if you want to add a place of loading"),
+                          attributes = Map("id" -> "change-add-loading")
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+          }
+        }
+      }
+    }
 
     "addLoadingUnLocode" - {
       "must return None" - {

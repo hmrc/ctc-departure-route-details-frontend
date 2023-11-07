@@ -28,6 +28,13 @@ import utils.cyaHelpers.AnswersHelper
 class LoadingAndUnloadingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Messages, config: FrontendAppConfig)
     extends AnswersHelper(userAnswers, mode) {
 
+  def addLoading: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
+    page = loadingAndUnloading.AddPlaceOfLoadingYesNoPage,
+    formatAnswer = formatAsYesOrNo,
+    prefix = "loadingAndUnloading.addPlaceOfLoadingYesNo",
+    id = Some("change-add-loading")
+  )
+
   def addLoadingUnLocode: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
     page = loading.AddUnLocodeYesNoPage,
     formatAnswer = formatAsYesOrNo,
