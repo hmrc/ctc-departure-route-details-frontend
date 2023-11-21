@@ -17,8 +17,7 @@
 package services
 
 import connectors.ReferenceDataConnector
-import models.SelectableList
-import models.reference.UnLocode
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -28,17 +27,11 @@ class UnLocodesService @Inject() (
   referenceDataConnector: ReferenceDataConnector
 )(implicit ec: ExecutionContext) {
 
-  def getUnLocodes()(implicit hc: HeaderCarrier): Future[SelectableList[UnLocode]] =
-    referenceDataConnector
-      .getUnLocodes()
-      .map(sort)
-
   def doesUnLocodeExist(unLocode: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     referenceDataConnector
       .getUnLocode(unLocode)
       .map(_.nonEmpty)
-
-  private def sort(unLocodes: Seq[UnLocode]): SelectableList[UnLocode] =
-    SelectableList(unLocodes.sortBy(_.name.toLowerCase))
-
+      .recover {
+        case _: NoReferenceDataFoundException => false
+      }
 }
