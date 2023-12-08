@@ -29,6 +29,7 @@ class DateTimeFormProviderSpec extends FieldBehaviours with Generators {
 
   private val prefix = Gen.alphaNumStr.sample.value
 
+  private val nonNumericDate    = s"$prefix.date.error.numeric"
   private val invalidDate       = s"$prefix.date.error.invalid"
   private val requiredAllDate   = s"$prefix.date.error.required.all"
   private val requiredMultiDate = s"$prefix.date.error.required.multiple"
@@ -217,7 +218,7 @@ class DateTimeFormProviderSpec extends FieldBehaviours with Generators {
       }
     }
 
-    "must not bind when year is invalid" in {
+    "must not bind when year is non numeric" in {
 
       forAll(nonNumerics) {
         invalidYear =>
@@ -229,7 +230,7 @@ class DateTimeFormProviderSpec extends FieldBehaviours with Generators {
 
           val result = form.bind(data).apply(fieldName)
 
-          result.errors mustBe Seq(FormError(fieldName, List(invalidDate), List.empty))
+          result.errors mustBe Seq(FormError(fieldName, List(nonNumericDate), List.empty))
       }
     }
 

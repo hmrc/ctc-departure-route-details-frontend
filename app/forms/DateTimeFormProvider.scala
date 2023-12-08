@@ -32,6 +32,7 @@ class DateTimeFormProvider @Inject() extends Mappings {
       mapping(
         "date" -> {
           localDate(
+            numericKey = s"$prefix.date.error.numeric",
             invalidKey = s"$prefix.date.error.invalid",
             allRequiredKey = s"$prefix.date.error.required.all",
             twoRequiredKey = s"$prefix.date.error.required.multiple",
