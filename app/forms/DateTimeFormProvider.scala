@@ -33,8 +33,6 @@ class DateTimeFormProvider @Inject() extends Mappings {
         "date" -> {
           localDate(
             invalidKey = s"$prefix.date.error.invalid",
-            allRequiredKey = s"$prefix.date.error.required.all",
-            twoRequiredKey = s"$prefix.date.error.required.multiple",
             requiredKey = s"$prefix.date.error.required"
           ).verifying(
             maxDate(maximumDate, s"$prefix.date.error.futureDate", maximumDate.plusDays(1).formatAsString),
@@ -44,7 +42,6 @@ class DateTimeFormProvider @Inject() extends Mappings {
         "time" -> {
           localTime(
             invalidKey = s"$prefix.time.error.invalid",
-            allRequiredKey = s"$prefix.time.error.required.all",
             requiredKey = s"$prefix.time.error.required"
           )
         }

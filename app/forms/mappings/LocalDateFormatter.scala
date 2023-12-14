@@ -24,8 +24,6 @@ import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalDateFormatter(
   invalidKey: String,
-  allRequiredKey: String,
-  twoRequiredKey: String,
   requiredKey: String,
   args: Seq[String] = Seq.empty
 ) extends Formatter[LocalDate]
@@ -38,56 +36,37 @@ private[mappings] class LocalDateFormatter(
       case Success(date) =>
         Right(date)
       case Failure(_) =>
-        Left(Seq(FormError(key, invalidKey, args)))
+        Left(Seq(FormError(key, s"$invalidKey.all", args)))
     }
 
-  private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
-
-    val int = intFormatter(
-      requiredKey = invalidKey,
-      wholeNumberKey = invalidKey,
-      nonNumericKey = invalidKey,
-      args
-    )
-
-    for {
-      day   <- int.bind(s"${key}Day".replaceAll("\\s", ""), data)
-      month <- int.bind(s"${key}Month".replaceAll("\\s", ""), data)
-      year  <- int.bind(s"${key}Year".replaceAll("\\s", ""), data)
-      date  <- toDate(key, day, month, year)
-    } yield date
-  }
-
-  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
-
-    val fields: Map[String, Option[String]] = fieldKeys.map {
-      field =>
-        field -> data.get(s"$key$field").filter(_.nonEmpty).map(_.replaceAll("\\s", ""))
-    }.toMap
-
-    lazy val missingFields = fields
-      .withFilter(_._2.isEmpty)
-      .map(_._1.toLowerCase)
-      .toList
-
-    fields.count(_._2.isDefined) match {
-      case 3 =>
-        formatDate(key, data).left.map {
-          _.map(_.copy(key = key, args = args))
+  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] =
+    fieldKeys.foldLeft[Seq[Either[FormError, Int]]](Nil) {
+      (acc, fieldKey) =>
+        intFormatter(requiredKey, invalidKey, invalidKey, fieldKey.toLowerCase +: args).bind(s"$key$fieldKey", data) match {
+          case Left(formErrors) => acc ++ formErrors.map(Left(_))
+          case Right(value)     => acc :+ Right(value)
         }
-      case 2 =>
-        Left(List(FormError(key, requiredKey, missingFields ++ args)))
-      case 1 =>
-        Left(List(FormError(key, twoRequiredKey, missingFields ++ args)))
-      case 0 =>
-        Left(List(FormError(key, allRequiredKey, args)))
+    } match {
+      case Seq(Right(day), Right(month), Right(year)) =>
+        toDate(key, day, month, year)
+      case errors =>
+        def collectErrors(errorKey: String): Seq[FormError] =
+          errors.collect {
+            case Left(FormError(_, `errorKey` :: _, args)) => args
+          }.flatten match {
+            case args if args.size == 3 => Seq(FormError(key, s"$errorKey.all"))
+            case args if args.size == 2 => Seq(FormError(key, s"$errorKey.multiple", args))
+            case args if args.size == 1 => Seq(FormError(key, errorKey, args))
+            case _                      => Nil
+          }
+
+        Left(collectErrors(requiredKey) ++ collectErrors(invalidKey))
     }
-  }
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(
-      s"${key}Day"   -> value.getDayOfMonth.toString.replaceAll("\\s", ""),
-      s"${key}Month" -> value.getMonthValue.toString.replaceAll("\\s", ""),
-      s"${key}Year"  -> value.getYear.toString.replaceAll("\\s", "")
+      s"${key}Day"   -> value.getDayOfMonth.toString,
+      s"${key}Month" -> value.getMonthValue.toString,
+      s"${key}Year"  -> value.getYear.toString
     )
 }

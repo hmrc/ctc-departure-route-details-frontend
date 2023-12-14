@@ -30,13 +30,12 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
   val form: Form[LocalTime] = Form(
     "value" -> localTime(
-      requiredKey = "error.required",
-      allRequiredKey = "error.required.all",
-      invalidKey = "error.invalid"
+      invalidKey = "error.invalid",
+      requiredKey = "error.required"
     )
   )
 
-  val invalidField: Gen[String] = Gen.alphaStr.suchThat(_.nonEmpty)
+  val invalidField: Gen[String] = nonEmptyString.retryUntil(_.toIntOption.isEmpty)
 
   val genTime: Gen[LocalTime] = arbitraryLocalTime.arbitrary
 
@@ -73,7 +72,7 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required.minute", List("minute"))
+        result.errors must contain only FormError("value", "error.required.minute", List.empty)
     }
   }
 
@@ -88,9 +87,7 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain(
-          FormError("value", "error.invalid", List.empty)
-        )
+        result.errors must contain only FormError("value", "error.invalid.minute", List.empty)
     }
   }
 
@@ -105,7 +102,7 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required.hour", List("hour"))
+        result.errors must contain only FormError("value", "error.required.hour", List.empty)
     }
   }
 
@@ -120,9 +117,7 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain(
-          FormError("value", "error.invalid", List.empty)
-        )
+        result.errors must contain only FormError("value", "error.invalid.hour", List.empty)
     }
   }
 
@@ -137,7 +132,7 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.invalid", List.empty)
+        result.errors must contain only FormError("value", "error.invalid.all", List.empty)
     }
   }
 
