@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import forms.mappings.LocalTimeFormatter.{fieldKeys, hourField, minuteField}
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -24,63 +25,58 @@ import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalTimeFormatter(
   invalidKey: String,
-  allRequiredKey: String,
   requiredKey: String,
   args: Seq[String] = Seq.empty
 ) extends Formatter[LocalTime]
     with Formatters {
-
-  private val fieldKeys: List[String] = List("Hour", "Minute")
 
   private def toTime(key: String, hour: Int, minute: Int): Either[Seq[FormError], LocalTime] =
     Try(LocalTime.of(hour, minute, 0)) match {
       case Success(date) =>
         Right(date)
       case Failure(_) =>
-        Left(Seq(FormError(key, invalidKey, args)))
+        Left(Seq(FormError(key, s"$invalidKey.all", fieldKeys)))
     }
 
-  private def formatTime(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] = {
-    val int = intFormatter(
-      requiredKey = invalidKey,
-      wholeNumberKey = invalidKey,
-      nonNumericKey = invalidKey,
-      args
-    )
-
-    for {
-      hour     <- int.bind(s"${key}Hour".replaceAll("\\s", ""), data)
-      minute   <- int.bind(s"${key}Minute".replaceAll("\\s", ""), data)
-      dateTime <- toTime(key, hour, minute)
-    } yield dateTime
-  }
-
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] = {
-    val fields: Map[String, Option[String]] = fieldKeys.map {
-      field =>
-        field -> data.get(s"$key$field").filter(_.nonEmpty).map(_.replaceAll("\\s", ""))
-    }.toMap
+    def binding(fieldKey: String): Either[Seq[FormError], Int] =
+      intFormatter(requiredKey, invalidKey, invalidKey, Seq(fieldKey)).bind(s"$key${fieldKey.capitalize}", data)
 
-    lazy val missingFields = fields
-      .withFilter(_._2.isEmpty)
-      .map(_._1.toLowerCase)
-      .toList
+    val hourBinding   = binding(hourField)
+    val minuteBinding = binding(minuteField)
 
-    missingFields match {
-      case Nil =>
-        formatTime(key, data).left.map {
-          _.map(_.copy(key = key, args = args))
-        }
-      case head :: Nil =>
-        Left(List(FormError(key, s"$requiredKey.$head", missingFields ++ args)))
+    (hourBinding, minuteBinding) match {
+      case (Right(hour), Right(minute)) =>
+        toTime(key, hour, minute)
       case _ =>
-        Left(List(FormError(key, allRequiredKey, args)))
+        Left {
+          Seq(hourBinding, minuteBinding)
+            .collect {
+              case Left(value) => value
+            }
+            .flatten
+            .groupByPreserveOrder(_.message)
+            .map {
+              case (errorKey, formErrors) => errorKey -> formErrors.toSeq.flatMap(_.args)
+            }
+            .flatMap {
+              case (errorKey, args) if args.size == 2 => Seq(FormError(key, s"$errorKey.all", args))
+              case (errorKey, fieldKey :: Nil)        => Seq(FormError(key, s"$errorKey.$fieldKey", Seq(fieldKey)))
+              case _                                  => Nil
+            }
+        }
     }
   }
 
   override def unbind(key: String, value: LocalTime): Map[String, String] =
     Map(
-      s"${key}Hour"   -> value.getHour.toString.replaceAll("\\s", ""),
-      s"${key}Minute" -> value.getMinute.toString.replaceAll("\\s", "")
+      s"${key}Hour"   -> value.getHour.toString,
+      s"${key}Minute" -> value.getMinute.toString
     )
+}
+
+object LocalTimeFormatter {
+  val hourField: String       = "hour"
+  val minuteField: String     = "minute"
+  val fieldKeys: List[String] = List(hourField, minuteField)
 }
