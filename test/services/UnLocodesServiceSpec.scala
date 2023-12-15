@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.ReferenceDataConnector
-import models.SelectableList
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.reference.UnLocode
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
@@ -43,19 +43,6 @@ class UnLocodesServiceSpec extends SpecBase with BeforeAndAfterEach {
 
   "UnLocodesService" - {
 
-    "getUnLocodes" - {
-      "must return a list of sorted unLocodes" in {
-
-        when(mockRefDataConnector.getUnLocodes()(any(), any()))
-          .thenReturn(Future.successful(unLocodes))
-
-        service.getUnLocodes().futureValue mustBe
-          SelectableList(Seq(unLocode1, unLocode2))
-
-        verify(mockRefDataConnector).getUnLocodes()(any(), any())
-      }
-    }
-
     "doesUnLocodeExist" - {
       "must return true" - {
         "when UN/LOCODE exists" in {
@@ -74,6 +61,18 @@ class UnLocodesServiceSpec extends SpecBase with BeforeAndAfterEach {
 
           when(mockRefDataConnector.getUnLocode(any())(any(), any()))
             .thenReturn(Future.successful(Seq.empty))
+
+          service.doesUnLocodeExist(unLocode1.unLocodeExtendedCode).futureValue mustBe false
+
+          verify(mockRefDataConnector).getUnLocode(eqTo(unLocode1.unLocodeExtendedCode))(any(), any())
+        }
+
+        "when UN/LOCODE does not exist in reference data" in {
+
+          val unLocode = "ABCDE"
+
+          when(mockRefDataConnector.getUnLocode(any())(any(), any()))
+            .thenReturn(Future.failed(new NoReferenceDataFoundException))
 
           service.doesUnLocodeExist(unLocode1.unLocodeExtendedCode).futureValue mustBe false
 
