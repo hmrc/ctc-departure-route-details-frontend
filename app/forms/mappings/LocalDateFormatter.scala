@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import forms.mappings.LocalDateFormatter.fieldKeys
+import forms.mappings.LocalDateFormatter.{dayField, fieldKeys, monthField, yearField}
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -38,23 +38,24 @@ private[mappings] class LocalDateFormatter(
         Left(Seq(FormError(key, s"$invalidKey.all", fieldKeys)))
     }
 
-  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] =
-    fieldKeys
-      .foldLeft[Seq[Either[FormError, Int]]](Nil) {
-        (acc, fieldKey) =>
-          intFormatter(requiredKey, invalidKey, invalidKey, Seq(fieldKey)).bind(s"$key${fieldKey.capitalize}", data) match {
-            case Left(formErrors) => acc ++ formErrors.map(Left(_))
-            case Right(value)     => acc :+ Right(value)
-          }
-      } match {
-      case Seq(Right(day), Right(month), Right(year)) =>
+  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
+    def binding(fieldKey: String): Either[Seq[FormError], Int] =
+      intFormatter(requiredKey, invalidKey, invalidKey, Seq(fieldKey)).bind(s"$key${fieldKey.capitalize}", data)
+
+    val dayBinding   = binding(dayField)
+    val monthBinding = binding(monthField)
+    val yearBinding  = binding(yearField)
+
+    (dayBinding, monthBinding, yearBinding) match {
+      case (Right(day), Right(month), Right(year)) =>
         toDate(key, day, month, year)
-      case errors =>
+      case _ =>
         Left {
-          errors
+          Seq(dayBinding, monthBinding, yearBinding)
             .collect {
-              case Left(value) => value
+              case Left(formErrors) => formErrors
             }
+            .flatten
             .groupByPreserveOrder(_.message)
             .map {
               case (errorKey, formErrors) => errorKey -> formErrors.toSeq.flatMap(_.args)
@@ -67,6 +68,7 @@ private[mappings] class LocalDateFormatter(
             }
         }
     }
+  }
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(
@@ -77,6 +79,8 @@ private[mappings] class LocalDateFormatter(
 }
 
 object LocalDateFormatter {
-
-  val fieldKeys: List[String] = List("day", "month", "year")
+  val dayField: String        = "day"
+  val monthField: String      = "month"
+  val yearField: String       = "year"
+  val fieldKeys: List[String] = List(dayField, monthField, yearField)
 }
