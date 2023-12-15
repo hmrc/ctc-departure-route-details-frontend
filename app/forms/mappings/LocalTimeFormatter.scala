@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import forms.mappings.LocalTimeFormatter.fieldKeys
+import forms.mappings.LocalTimeFormatter.{fieldKeys, hourField, minuteField}
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -38,22 +38,23 @@ private[mappings] class LocalTimeFormatter(
         Left(Seq(FormError(key, s"$invalidKey.all", fieldKeys)))
     }
 
-  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] =
-    fieldKeys.foldLeft[Seq[Either[FormError, Int]]](Nil) {
-      (acc, fieldKey) =>
-        intFormatter(requiredKey, invalidKey, invalidKey, Seq(fieldKey)).bind(s"$key${fieldKey.capitalize}", data) match {
-          case Left(formErrors) => acc ++ formErrors.map(Left(_))
-          case Right(value)     => acc :+ Right(value)
-        }
-    } match {
-      case Seq(Right(hour), Right(minute)) =>
+  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] = {
+    def binding(fieldKey: String): Either[Seq[FormError], Int] =
+      intFormatter(requiredKey, invalidKey, invalidKey, Seq(fieldKey)).bind(s"$key${fieldKey.capitalize}", data)
+
+    val hourBinding   = binding(hourField)
+    val minuteBinding = binding(minuteField)
+
+    (hourBinding, minuteBinding) match {
+      case (Right(hour), Right(minute)) =>
         toTime(key, hour, minute)
-      case errors =>
+      case _ =>
         Left {
-          errors
+          Seq(hourBinding, minuteBinding)
             .collect {
               case Left(value) => value
             }
+            .flatten
             .groupByPreserveOrder(_.message)
             .map {
               case (errorKey, formErrors) => errorKey -> formErrors.toSeq.flatMap(_.args)
@@ -65,6 +66,7 @@ private[mappings] class LocalTimeFormatter(
             }
         }
     }
+  }
 
   override def unbind(key: String, value: LocalTime): Map[String, String] =
     Map(
@@ -74,6 +76,7 @@ private[mappings] class LocalTimeFormatter(
 }
 
 object LocalTimeFormatter {
-
-  val fieldKeys: List[String] = List("hour", "minute")
+  val hourField: String       = "hour"
+  val minuteField: String     = "minute"
+  val fieldKeys: List[String] = List(hourField, minuteField)
 }
