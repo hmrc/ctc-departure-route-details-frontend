@@ -54,6 +54,21 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     }
   }
 
+  "must bind valid data with spaces" in {
+
+    forAll(genTime -> "valid time") {
+      time =>
+        val data = Map(
+          "valueMinute" -> s"${time.getMinute.toString}   ",
+          "valueHour"   -> s"${time.getHour.toString}   "
+        )
+
+        val result = form.bind(data)
+
+        result.value.value mustEqual time
+    }
+  }
+
   "must fail to bind an empty time" in {
 
     val result = form.bind(Map.empty[String, String])

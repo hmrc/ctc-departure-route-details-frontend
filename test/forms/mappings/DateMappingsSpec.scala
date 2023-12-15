@@ -58,6 +58,22 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     }
   }
 
+  "must bind valid data with spaces" in {
+
+    forAll(validData -> "valid date") {
+      date =>
+        val data = Map(
+          "valueDay"   -> s"${date.getDayOfMonth.toString}   ",
+          "valueMonth" -> s"${date.getMonthValue.toString}   ",
+          "valueYear"  -> s"${date.getYear.toString}   "
+        )
+
+        val result = form.bind(data)
+
+        result.value.value mustEqual date
+    }
+  }
+
   "must fail to bind an empty date" in {
 
     val result = form.bind(Map.empty[String, String])
