@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import forms.mappings.LocalTimeFormatter.fieldKeys
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -28,8 +29,6 @@ private[mappings] class LocalTimeFormatter(
   args: Seq[String] = Seq.empty
 ) extends Formatter[LocalTime]
     with Formatters {
-
-  private val fieldKeys: List[String] = List("hour", "minute")
 
   private def toTime(key: String, hour: Int, minute: Int): Either[Seq[FormError], LocalTime] =
     Try(LocalTime.of(hour, minute, 0)) match {
@@ -72,4 +71,9 @@ private[mappings] class LocalTimeFormatter(
       s"${key}Hour"   -> value.getHour.toString,
       s"${key}Minute" -> value.getMinute.toString
     )
+}
+
+object LocalTimeFormatter {
+
+  val fieldKeys: List[String] = List("hour", "minute")
 }

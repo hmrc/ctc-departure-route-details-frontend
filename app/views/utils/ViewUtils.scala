@@ -16,12 +16,13 @@
 
 package views.utils
 
+import forms.mappings.{LocalDateFormatter, LocalTimeFormatter}
 import play.api.data.{Field, FormError}
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases._
-import uk.gov.hmrc.govukfrontend.views.implicits._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+import uk.gov.hmrc.govukfrontend.views.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorLink
 import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
@@ -104,8 +105,8 @@ object ViewUtils {
       formErrors.map {
         formError =>
           val args = formError.key match {
-            case "date" => Seq("day", "month", "year")
-            case "time" => Seq("hour", "minute")
+            case "date" => LocalDateFormatter.fieldKeys
+            case "time" => LocalTimeFormatter.fieldKeys
             case _      => Seq("")
           }
           val arg = formError.args.find(args.contains).getOrElse(args.head).toString

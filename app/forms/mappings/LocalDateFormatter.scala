@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import forms.mappings.LocalDateFormatter.fieldKeys
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -28,8 +29,6 @@ private[mappings] class LocalDateFormatter(
   args: Seq[String] = Seq.empty
 ) extends Formatter[LocalDate]
     with Formatters {
-
-  private val fieldKeys: List[String] = List("day", "month", "year")
 
   private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
     Try(LocalDate.of(year, month, day)) match {
@@ -75,4 +74,9 @@ private[mappings] class LocalDateFormatter(
       s"${key}Month" -> value.getMonthValue.toString,
       s"${key}Year"  -> value.getYear.toString
     )
+}
+
+object LocalDateFormatter {
+
+  val fieldKeys: List[String] = List("day", "month", "year")
 }
