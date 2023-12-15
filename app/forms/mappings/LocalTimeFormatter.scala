@@ -29,20 +29,20 @@ private[mappings] class LocalTimeFormatter(
 ) extends Formatter[LocalTime]
     with Formatters {
 
-  private val fieldKeys: List[String] = List("Hour", "Minute")
+  private val fieldKeys: List[String] = List("hour", "minute")
 
   private def toTime(key: String, hour: Int, minute: Int): Either[Seq[FormError], LocalTime] =
     Try(LocalTime.of(hour, minute, 0)) match {
       case Success(date) =>
         Right(date)
       case Failure(_) =>
-        Left(Seq(FormError(key, s"$invalidKey.all", args)))
+        Left(Seq(FormError(key, s"$invalidKey.all", fieldKeys)))
     }
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] =
     fieldKeys.foldLeft[Seq[Either[FormError, Int]]](Nil) {
       (acc, fieldKey) =>
-        intFormatter(requiredKey, invalidKey, invalidKey, fieldKey.toLowerCase +: args).bind(s"$key$fieldKey", data) match {
+        intFormatter(requiredKey, invalidKey, invalidKey, Seq(fieldKey)).bind(s"$key${fieldKey.capitalize}", data) match {
           case Left(formErrors) => acc ++ formErrors.map(Left(_))
           case Right(value)     => acc :+ Right(value)
         }
@@ -50,16 +50,21 @@ private[mappings] class LocalTimeFormatter(
       case Seq(Right(hour), Right(minute)) =>
         toTime(key, hour, minute)
       case errors =>
-        def collectErrors(errorKey: String): Seq[FormError] =
-          errors.collect {
-            case Left(FormError(_, `errorKey` :: _, args)) => args
-          }.flatten match {
-            case args if args.size == 2 => Seq(FormError(key, s"$errorKey.all"))
-            case fieldKey :: Nil        => Seq(FormError(key, s"$errorKey.$fieldKey"))
-            case _                      => Nil
-          }
-
-        Left(collectErrors(requiredKey) ++ collectErrors(invalidKey))
+        Left {
+          errors
+            .collect {
+              case Left(value) => value
+            }
+            .groupByPreserveOrder(_.message)
+            .map {
+              case (errorKey, formErrors) => errorKey -> formErrors.toSeq.flatMap(_.args)
+            }
+            .flatMap {
+              case (errorKey, args) if args.size == 2 => Seq(FormError(key, s"$errorKey.all", args))
+              case (errorKey, fieldKey :: Nil)        => Seq(FormError(key, s"$errorKey.$fieldKey", Seq(fieldKey)))
+              case _                                  => Nil
+            }
+        }
     }
 
   override def unbind(key: String, value: LocalTime): Map[String, String] =

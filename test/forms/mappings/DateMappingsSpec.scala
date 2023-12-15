@@ -78,7 +78,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
     val result = form.bind(Map.empty[String, String])
 
-    result.errors must contain only FormError("value", "error.required.all")
+    result.errors must contain only FormError("value", "error.required.all", List("day", "month", "year"))
   }
 
   "must fail to bind a date with a missing day" in {
@@ -157,8 +157,29 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain(FormError("value", "error.required", List("day")))
-        result.errors must contain(FormError("value", "error.invalid", List("month")))
+        result.errors mustBe Seq(
+          FormError("value", "error.required", List("day")),
+          FormError("value", "error.invalid", List("month"))
+        )
+    }
+  }
+
+  "must fail to bind a date with an invalid day and a missing month" in {
+
+    forAll(validData -> "valid data", invalidField -> "invalid field") {
+      (date, field) =>
+        val data = Map(
+          "valueDay"   -> field,
+          "valueMonth" -> "",
+          "valueYear"  -> date.getYear.toString
+        )
+
+        val result = form.bind(data)
+
+        result.errors mustBe Seq(
+          FormError("value", "error.invalid", List("day")),
+          FormError("value", "error.required", List("month"))
+        )
     }
   }
 
@@ -302,7 +323,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.invalid.all", List.empty)
+        result.errors must contain only FormError("value", "error.invalid.all", List("day", "month", "year"))
     }
   }
 
@@ -317,7 +338,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     val result = form.bind(data)
 
     result.errors must contain(
-      FormError("value", "error.invalid.all", List.empty)
+      FormError("value", "error.invalid.all", List("day", "month", "year"))
     )
   }
 

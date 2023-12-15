@@ -48,21 +48,21 @@
         id = form("date").id,
         items = Seq(
             InputItem(
-                classes = s"govuk-input--width-2 ${errorClass(form("date").error, "day")}",
+                classes = s"govuk-input--width-2 ${errorClass(form("date").errors, "day")}",
                 name = "dateDay",
                 label = Some(messages("date.day.capitalized")),
                 value = form("dateDay").value,
                 id = "dateDay"
             ),
             InputItem(
-                classes = s"govuk-input--width-2 ${errorClass(form("date").error, "month")}",
+                classes = s"govuk-input--width-2 ${errorClass(form("date").errors, "month")}",
                 name = "dateMonth",
                 label = Some(messages("date.month.capitalized")),
                 value = form("dateMonth").value,
                 id = "dateMonth"
             ),
             InputItem(
-                classes = s"govuk-input--width-4 ${errorClass(form("date").error, "year")}",
+                classes = s"govuk-input--width-4 ${errorClass(form("date").errors, "year")}",
                 name = "dateYear",
                 label = Some(messages("date.year.capitalized")),
                 value = form("dateYear").value,
@@ -88,14 +88,14 @@
         id = form("time").id,
         items = Seq(
             InputItem(
-                classes = s"govuk-input--width-2 ${errorClass(form("time").error, "hour")}",
+                classes = s"govuk-input--width-2 ${errorClass(form("time").errors, "hour")}",
                 name = "timeHour",
                 label = Some(messages("date.hour.capitalized")),
                 value = form("timeHour").value,
                 id = "timeHour"
             ),
             InputItem(
-                classes = s"govuk-input--width-2 ${errorClass(form("time").error, "minute")}",
+                classes = s"govuk-input--width-2 ${errorClass(form("time").errors, "minute")}",
                 name = "timeMinute",
                 label = Some(messages("date.minute.capitalized")),
                 value = form("timeMinute").value,
