@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.{Enumerable, Radioable}
+import models.{Enumerable, Radioable, RichString}
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -87,7 +87,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
     val testForm: Form[String] =
       Form(
-        "value" -> textWithSpacesRemoved()
+        "value" -> adaptedText()(_.removeSpaces())
       )
 
     "must bind a valid string" - {
