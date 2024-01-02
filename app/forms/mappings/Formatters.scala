@@ -61,13 +61,11 @@ trait Formatters {
 
       val decimalRegexp = """^-?(\d*\.\d*)$"""
 
-      private val baseFormatter = stringFormatter(requiredKey, args)(identity)
+      private val baseFormatter = stringFormatter(requiredKey, args)(_.replace(",", "").removeSpaces())
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
         baseFormatter
           .bind(key, data)
-          .map(_.replace(",", ""))
-          .map(_.removeSpaces())
           .flatMap {
             case s if s.matches(decimalRegexp) =>
               Left(Seq(FormError(key, wholeNumberKey, args)))
