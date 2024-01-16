@@ -42,6 +42,6 @@ object ExitDomain {
           x.traverse[OfficeOfExitDomain](OfficeOfExitDomain.userAnswersReader(_)(_)).apply(pages)
       }
 
-    pages => UserAnswersReader[Seq[OfficeOfExitDomain]](officesOfExitReader(pages)).map(_.to(ExitDomain(_)))
+    officesOfExitReader(_).map(_.to(ExitDomain(_)))
   }
 }

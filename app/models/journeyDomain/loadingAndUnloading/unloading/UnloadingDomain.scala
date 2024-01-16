@@ -34,19 +34,18 @@ object UnloadingDomain {
 
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[UnloadingDomain] = {
     lazy val unLocodeAndAdditionalInformationReader: Read[UnloadingDomain] =
-      pages =>
-        UnLocodeYesNoPage.reader.apply(pages).flatMap {
-          case ReaderSuccess(true, pages) =>
-            (
-              UnLocodePage.reader.map(_.toOption),
-              optionalAdditionalInformationReader
-            ).mapReads(UnloadingDomain.apply).apply(pages)
-          case ReaderSuccess(false, pages) =>
-            (
-              UserAnswersReader.none,
-              AdditionalInformationDomain.userAnswersReader.map(_.toOption)
-            ).mapReads(UnloadingDomain.apply).apply(pages)
-        }
+      UnLocodeYesNoPage.reader.apply(_).flatMap {
+        case ReaderSuccess(true, pages) =>
+          (
+            UnLocodePage.reader.map(_.toOption),
+            optionalAdditionalInformationReader
+          ).mapReads(UnloadingDomain.apply).apply(pages)
+        case ReaderSuccess(false, pages) =>
+          (
+            UserAnswersReader.none,
+            AdditionalInformationDomain.userAnswersReader.map(_.toOption)
+          ).mapReads(UnloadingDomain.apply).apply(pages)
+      }
 
     lazy val optionalAdditionalInformationReader: Read[Option[AdditionalInformationDomain]] =
       AddExtraInformationYesNoPage.filterOptionalDependent(identity)(AdditionalInformationDomain.userAnswersReader)

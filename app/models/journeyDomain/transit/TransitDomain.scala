@@ -76,16 +76,11 @@ object TransitDomain {
             val officesOfTransit = if (officeOfDepartureInCL112 || officeOfDestinationInCL112) {
               officesOfTransitReader(pages)
             } else {
-              for {
-                a <- CountriesOfRoutingSection.anyCountriesOfRoutingInCL112(pages)
-                anyCountriesOfRoutingInCL112 = a.value
-                reader <-
-                  if (anyCountriesOfRoutingInCL112) {
-                    officesOfTransitReader(a.pages)
-                  } else {
-                    addOfficesOfTransitReader(a.pages)
-                  }
-              } yield reader
+              CountriesOfRoutingSection.anyCountriesOfRoutingInCL112(pages).flatMap {
+                case ReaderSuccess(true, pages)  => officesOfTransitReader(pages)
+                case ReaderSuccess(false, pages) => addOfficesOfTransitReader(pages)
+
+              }
             }
 
             officesOfTransit.map(_.to(TransitDomain(isT2DeclarationType, _)))

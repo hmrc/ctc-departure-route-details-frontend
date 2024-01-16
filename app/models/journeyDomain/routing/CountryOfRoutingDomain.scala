@@ -43,7 +43,4 @@ object CountryOfRoutingDomain {
 
   implicit def userAnswersReader(index: Index): Read[CountryOfRoutingDomain] =
     CountryOfRoutingPage(index).reader.apply(_).map(_.to(CountryOfRoutingDomain(_)(index)))
-
-  /*implicit def countriesOfRoutingReader(implicit phaseConfig: PhaseConfig): Read[Seq[CountryOfRoutingDomain]] =
-    CountriesOfRoutingDomain.userAnswersReader*/
 }
