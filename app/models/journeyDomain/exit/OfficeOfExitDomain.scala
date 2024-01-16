@@ -16,9 +16,8 @@
 
 package models.journeyDomain.exit
 
-import cats.implicits._
 import controllers.exit.index.routes
-import models.domain.{GettableAsReaderOps, UserAnswersReader}
+import models.domain._
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode, UserAnswers}
@@ -39,13 +38,9 @@ case class OfficeOfExitDomain(
 
 object OfficeOfExitDomain {
 
-  implicit def userAnswersReader(
-    index: Index
-  ): UserAnswersReader[OfficeOfExitDomain] =
+  implicit def userAnswersReader(index: Index): Read[OfficeOfExitDomain] =
     (
-      InferredOfficeOfExitCountryPage(index).reader orElse OfficeOfExitCountryPage(index).reader,
+      UserAnswersReader.readInferred(OfficeOfExitCountryPage(index), InferredOfficeOfExitCountryPage(index)),
       OfficeOfExitPage(index).reader
-    ).mapN {
-      (country, office) => OfficeOfExitDomain(country, office)(index)
-    }
+    ).mapReads(OfficeOfExitDomain.apply(_, _)(index))
 }

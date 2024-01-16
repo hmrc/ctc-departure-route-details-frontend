@@ -22,51 +22,6 @@ import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147
 
 class CountriesOfRoutingSectionSpec extends SpecBase {
 
-  "atLeastOneCountryOfRoutingNotInCL147" - {
-    "must return false" - {
-      "when all countries of routing are in CL147" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(CountryOfRoutingInCL147Page(Index(0)), true)
-          .setValue(CountryOfRoutingInCL147Page(Index(1)), true)
-          .setValue(CountryOfRoutingInCL147Page(Index(2)), true)
-
-        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingNotInCL147.run(userAnswers).value
-
-        result mustBe false
-      }
-
-      "when no countries of routing" in {
-        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingNotInCL147.run(emptyUserAnswers).value
-
-        result mustBe false
-      }
-    }
-
-    "must return true" - {
-      "when no countries of routing are in CL147" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(CountryOfRoutingInCL147Page(Index(0)), false)
-          .setValue(CountryOfRoutingInCL147Page(Index(1)), false)
-          .setValue(CountryOfRoutingInCL147Page(Index(2)), false)
-
-        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingNotInCL147.run(userAnswers).value
-
-        result mustBe true
-      }
-
-      "when some countries of routing are not in CL147" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(CountryOfRoutingInCL147Page(Index(0)), true)
-          .setValue(CountryOfRoutingInCL147Page(Index(1)), true)
-          .setValue(CountryOfRoutingInCL147Page(Index(2)), false)
-
-        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingNotInCL147.run(userAnswers).value
-
-        result mustBe true
-      }
-    }
-  }
-
   "atLeastOneCountryOfRoutingInCL147" - {
     "must return true" - {
       "when all countries of routing are in CL147" in {
@@ -75,9 +30,14 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
           .setValue(CountryOfRoutingInCL147Page(Index(1)), true)
           .setValue(CountryOfRoutingInCL147Page(Index(2)), true)
 
-        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.run(userAnswers).value
+        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.apply(Nil).run(userAnswers).value
 
-        result mustBe true
+        result.value mustBe true
+        result.pages mustBe Seq(
+          CountryOfRoutingInCL147Page(Index(0)),
+          CountryOfRoutingInCL147Page(Index(1)),
+          CountryOfRoutingInCL147Page(Index(2))
+        )
       }
 
       "when some countries of routing are in CL147" in {
@@ -86,9 +46,14 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
           .setValue(CountryOfRoutingInCL147Page(Index(1)), true)
           .setValue(CountryOfRoutingInCL147Page(Index(2)), false)
 
-        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.run(userAnswers).value
+        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.apply(Nil).run(userAnswers).value
 
-        result mustBe true
+        result.value mustBe true
+        result.pages mustBe Seq(
+          CountryOfRoutingInCL147Page(Index(0)),
+          CountryOfRoutingInCL147Page(Index(1)),
+          CountryOfRoutingInCL147Page(Index(2))
+        )
       }
     }
 
@@ -99,15 +64,21 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
           .setValue(CountryOfRoutingInCL147Page(Index(1)), false)
           .setValue(CountryOfRoutingInCL147Page(Index(2)), false)
 
-        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.run(userAnswers).value
+        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.apply(Nil).run(userAnswers).value
 
-        result mustBe false
+        result.value mustBe false
+        result.pages mustBe Seq(
+          CountryOfRoutingInCL147Page(Index(0)),
+          CountryOfRoutingInCL147Page(Index(1)),
+          CountryOfRoutingInCL147Page(Index(2))
+        )
       }
 
       "when no countries of routing" in {
-        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.run(emptyUserAnswers).value
+        val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.apply(Nil).run(emptyUserAnswers).value
 
-        result mustBe false
+        result.value mustBe false
+        result.pages mustBe Nil
       }
     }
   }
@@ -120,9 +91,14 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
           .setValue(CountryOfRoutingInCL112Page(Index(1)), true)
           .setValue(CountryOfRoutingInCL112Page(Index(2)), true)
 
-        val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.run(userAnswers).value
+        val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.apply(Nil).run(userAnswers).value
 
-        result mustBe true
+        result.value mustBe true
+        result.pages mustBe Seq(
+          CountryOfRoutingInCL112Page(Index(0)),
+          CountryOfRoutingInCL112Page(Index(1)),
+          CountryOfRoutingInCL112Page(Index(2))
+        )
       }
 
       "when some countries of routing are in CL112" in {
@@ -131,9 +107,14 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
           .setValue(CountryOfRoutingInCL112Page(Index(1)), false)
           .setValue(CountryOfRoutingInCL112Page(Index(2)), true)
 
-        val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.run(userAnswers).value
+        val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.apply(Nil).run(userAnswers).value
 
-        result mustBe true
+        result.value mustBe true
+        result.pages mustBe Seq(
+          CountryOfRoutingInCL112Page(Index(0)),
+          CountryOfRoutingInCL112Page(Index(1)),
+          CountryOfRoutingInCL112Page(Index(2))
+        )
       }
     }
 
@@ -144,15 +125,21 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
           .setValue(CountryOfRoutingInCL112Page(Index(1)), false)
           .setValue(CountryOfRoutingInCL112Page(Index(2)), false)
 
-        val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.run(userAnswers).value
+        val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.apply(Nil).run(userAnswers).value
 
-        result mustBe false
+        result.value mustBe false
+        result.pages mustBe Seq(
+          CountryOfRoutingInCL112Page(Index(0)),
+          CountryOfRoutingInCL112Page(Index(1)),
+          CountryOfRoutingInCL112Page(Index(2))
+        )
       }
 
       "when there are no countries of routing" in {
-        val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.run(emptyUserAnswers).value
+        val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.apply(Nil).run(emptyUserAnswers).value
 
-        result mustBe false
+        result.value mustBe false
+        result.pages mustBe Nil
       }
     }
   }

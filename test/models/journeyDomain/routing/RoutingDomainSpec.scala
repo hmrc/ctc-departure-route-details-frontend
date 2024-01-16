@@ -20,7 +20,7 @@ import base.SpecBase
 import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Phase}
 import org.mockito.Mockito.when
@@ -64,9 +64,11 @@ class RoutingDomainSpec extends SpecBase with Generators {
               )
             )
 
-            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+            val result = UserAnswersReader[RoutingDomain](
+              RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
 
           "and not following binding itinerary" in {
@@ -85,9 +87,11 @@ class RoutingDomainSpec extends SpecBase with Generators {
               countriesOfRouting = Nil
             )
 
-            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+            val result = UserAnswersReader[RoutingDomain](
+              RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
         }
 
@@ -113,9 +117,11 @@ class RoutingDomainSpec extends SpecBase with Generators {
               )
             )
 
-            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+            val result = UserAnswersReader[RoutingDomain](
+              RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
 
           "and not following binding itinerary" in {
@@ -136,9 +142,11 @@ class RoutingDomainSpec extends SpecBase with Generators {
               )
             )
 
-            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+            val result = UserAnswersReader[RoutingDomain](
+              RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
         }
       }
@@ -165,9 +173,11 @@ class RoutingDomainSpec extends SpecBase with Generators {
             countriesOfRouting = Nil
           )
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+          val result = UserAnswersReader[RoutingDomain](
+            RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
 
         "when there is security" in {
@@ -190,9 +200,11 @@ class RoutingDomainSpec extends SpecBase with Generators {
             )
           )
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+          val result = UserAnswersReader[RoutingDomain](
+            RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
 
         }
       }
@@ -205,7 +217,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
         val securityType = arbitrary[String](arbitrarySecurityDetailsType).sample.value
         val userAnswers  = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityType)
 
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+        val result = UserAnswersReader[RoutingDomain](
+          RoutingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe CountryOfDestinationPage
       }
@@ -217,7 +231,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
           .setValue(SecurityDetailsTypePage, securityType)
           .setValue(CountryOfDestinationPage, country)
 
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+        val result = UserAnswersReader[RoutingDomain](
+          RoutingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe OfficeOfDestinationPage
       }
@@ -230,7 +246,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
           .setValue(CountryOfDestinationPage, country)
           .setValue(OfficeOfDestinationPage, officeOfDestination)
 
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+        val result = UserAnswersReader[RoutingDomain](
+          RoutingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe BindingItineraryPage
       }
@@ -247,7 +265,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
             .setValue(OfficeOfDestinationPage, officeOfDestination)
             .setValue(BindingItineraryPage, false)
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+          val result = UserAnswersReader[RoutingDomain](
+            RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+          ).run(userAnswers)
 
           result.left.value.page mustBe AddCountryOfRoutingYesNoPage
         }
@@ -261,7 +281,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
             .setValue(OfficeOfDestinationPage, officeOfDestination)
             .setValue(BindingItineraryPage, true)
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+          val result = UserAnswersReader[RoutingDomain](
+            RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+          ).run(userAnswers)
 
           result.left.value.page mustBe CountryOfRoutingPage(Index(0))
         }
@@ -275,7 +297,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
             .setValue(BindingItineraryPage, false)
             .setValue(AddCountryOfRoutingYesNoPage, true)
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+          val result = UserAnswersReader[RoutingDomain](
+            RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+          ).run(userAnswers)
 
           result.left.value.page mustBe CountryOfRoutingPage(Index(0))
         }
@@ -291,7 +315,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
           .setValue(OfficeOfDestinationPage, officeOfDestination)
           .setValue(BindingItineraryPage, bindingItinerary)
 
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+        val result = UserAnswersReader[RoutingDomain](
+          RoutingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe CountryOfRoutingPage(Index(0))
       }

@@ -21,7 +21,7 @@ import config.Constants.CountryCode._
 import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import models.{DateTime, Index, Phase}
 import org.mockito.Mockito.when
@@ -69,11 +69,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               eta = None
             )(index)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
 
           "and office of destination is in 'AD'" in {
@@ -90,11 +90,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               eta = None
             )(index)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
 
           "and office of destination is not in 'AD'" in {
@@ -112,11 +112,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               eta = None
             )(index)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
         }
 
@@ -139,11 +139,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             eta = Some(eta)
           )(index)
 
-          val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+          val result = UserAnswersReader[OfficeOfTransitDomain](
+            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
           ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
 
         "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
@@ -163,11 +163,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               eta = Some(eta)
             )(index)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
 
           "and office of transit is not in CL147" in {
@@ -186,11 +186,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               eta = None
             )(index)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
         }
 
@@ -210,11 +210,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             eta = None
           )(index)
 
-          val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+          val result = UserAnswersReader[OfficeOfTransitDomain](
+            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
           ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
       }
       "when is transition" - {
@@ -237,11 +237,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             eta = None
           )(index)
 
-          val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+          val result = UserAnswersReader[OfficeOfTransitDomain](
+            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
           ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
 
         "and office of destination is not in 'AD'" in {
@@ -259,11 +259,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             eta = None
           )(index)
 
-          val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+          val result = UserAnswersReader[OfficeOfTransitDomain](
+            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
           ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
 
         "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration' or 'exitSummaryDeclaration'" - {
@@ -284,11 +284,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               eta = Some(eta)
             )(index)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
 
           "and office of transit is not in CL010 or office of departure is in CL010" in {
@@ -308,11 +308,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               eta = None
             )(index)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
         }
 
@@ -333,11 +333,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             eta = None
           )(index)
 
-          val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+          val result = UserAnswersReader[OfficeOfTransitDomain](
+            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
           ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
       }
     }
@@ -356,8 +356,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             val userAnswers = emptyUserAnswers
               .setValue(OfficeOfTransitCountryPage(Index(0)), country)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
             result.left.value.page mustBe OfficeOfTransitCountryPage(index)
@@ -369,8 +369,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
                 .setValue(OfficeOfTransitCountryPage(Index(0)), country)
                 .setValue(OfficeOfTransitCountryPage(index), country)
 
-              val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+              val result = UserAnswersReader[OfficeOfTransitDomain](
+                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
               ).run(userAnswers)
 
               result.left.value.page mustBe OfficeOfTransitPage(index)
@@ -381,8 +381,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
                 .setValue(OfficeOfTransitCountryPage(Index(0)), country)
                 .setValue(InferredOfficeOfTransitCountryPage(index), country)
 
-              val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+              val result = UserAnswersReader[OfficeOfTransitDomain](
+                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
               ).run(userAnswers)
 
               result.left.value.page mustBe OfficeOfTransitPage(index)
@@ -399,8 +399,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
                   .setValue(OfficeOfTransitPage(index), officeOfTransit)
                   .setValue(OfficeOfTransitInCL147Page(index), true)
 
-                val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-                  OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+                val result = UserAnswersReader[OfficeOfTransitDomain](
+                  OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
                 ).run(userAnswers)
 
                 result.left.value.page mustBe OfficeOfTransitETAPage(index)
@@ -416,8 +416,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
                   .setValue(OfficeOfTransitPage(index), officeOfTransit)
                   .setValue(OfficeOfTransitInCL147Page(index), false)
 
-                val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-                  OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+                val result = UserAnswersReader[OfficeOfTransitDomain](
+                  OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
                 ).run(userAnswers)
 
                 result.left.value.page mustBe AddOfficeOfTransitETAYesNoPage(index)
@@ -434,8 +434,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
                 .setValue(OfficeOfTransitPage(index), officeOfTransit)
                 .setValue(OfficeOfTransitInCL147Page(index), arbitrary[Boolean].sample.value)
 
-              val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+              val result = UserAnswersReader[OfficeOfTransitDomain](
+                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
               ).run(userAnswers)
 
               result.left.value.page mustBe AddOfficeOfTransitETAYesNoPage(index)
@@ -451,8 +451,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               .setValue(OfficeOfTransitInCL147Page(index), false)
               .setValue(AddOfficeOfTransitETAYesNoPage(index), true)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
             result.left.value.page mustBe OfficeOfTransitETAPage(index)
@@ -468,8 +468,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           val userAnswers = emptyUserAnswers
             .setValue(OfficeOfTransitCountryPage(Index(0)), country)
 
-          val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+          val result = UserAnswersReader[OfficeOfTransitDomain](
+            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
           ).run(userAnswers)
 
           result.left.value.page mustBe OfficeOfDestinationPage
@@ -482,8 +482,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               .setValue(OfficeOfTransitCountryPage(Index(0)), country)
               .setValue(OfficeOfTransitCountryPage(index), country)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
             result.left.value.page mustBe OfficeOfTransitPage(index)
@@ -495,8 +495,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               .setValue(OfficeOfTransitCountryPage(Index(0)), country)
               .setValue(InferredOfficeOfTransitCountryPage(index), country)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
             result.left.value.page mustBe OfficeOfTransitPage(index)
@@ -515,8 +515,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
                 .setValue(OfficeOfTransitInCL010Page(index), true)
                 .setValue(OfficeOfDepartureInCL010Page, false)
 
-              val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+              val result = UserAnswersReader[OfficeOfTransitDomain](
+                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
               ).run(userAnswers)
 
               result.left.value.page mustBe OfficeOfTransitETAPage(index)
@@ -534,8 +534,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
                 .setValue(OfficeOfTransitInCL010Page(index), false)
                 .setValue(OfficeOfDepartureInCL010Page, true)
 
-              val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+              val result = UserAnswersReader[OfficeOfTransitDomain](
+                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
               ).run(userAnswers)
 
               result.left.value.page mustBe AddOfficeOfTransitETAYesNoPage(index)
@@ -554,8 +554,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               .setValue(OfficeOfTransitInCL010Page(index), arbitrary[Boolean].sample.value)
               .setValue(OfficeOfDepartureInCL010Page, arbitrary[Boolean].sample.value)
 
-            val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+            val result = UserAnswersReader[OfficeOfTransitDomain](
+              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
             result.left.value.page mustBe AddOfficeOfTransitETAYesNoPage(index)
@@ -573,8 +573,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             .setValue(OfficeOfDepartureInCL010Page, arbitrary[Boolean].sample.value)
             .setValue(AddOfficeOfTransitETAYesNoPage(index), true)
 
-          val result: EitherType[OfficeOfTransitDomain] = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig)
+          val result = UserAnswersReader[OfficeOfTransitDomain](
+            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
           ).run(userAnswers)
 
           result.left.value.page mustBe OfficeOfTransitETAPage(index)

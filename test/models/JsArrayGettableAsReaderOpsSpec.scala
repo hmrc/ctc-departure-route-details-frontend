@@ -18,6 +18,7 @@ package models
 
 import base.SpecBase
 import models.domain.JsArrayGettableAsReaderOps
+import pages.sections.Section
 import play.api.libs.json._
 import queries.Gettable
 
@@ -25,7 +26,7 @@ class JsArrayGettableAsReaderOpsSpec extends SpecBase {
 
   "fieldReader" - {
 
-    case object FakeSection extends Gettable[JsArray] {
+    case object FakeSection extends Section[JsArray] {
       override def path: JsPath = __ \ "foo"
     }
 
@@ -54,8 +55,13 @@ class JsArrayGettableAsReaderOpsSpec extends SpecBase {
           .as[JsObject]
 
         val userAnswers = emptyUserAnswers.copy(data = json)
-        val result      = FakeSection.fieldReader(FakePage).run(userAnswers)
-        result.value mustBe Seq("1", "3")
+        val result      = FakeSection.fieldReader(FakePage).apply(Nil).run(userAnswers)
+        result.value.value mustBe Seq("1", "3")
+        result.value.pages mustBe Seq(
+          FakePage(Index(0)),
+          FakePage(Index(1)),
+          FakePage(Index(2))
+        )
       }
     }
   }

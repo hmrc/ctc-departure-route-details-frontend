@@ -49,5 +49,5 @@ class OfficeOfTransitNavigator(
   override type T = OfficeOfTransitDomain
 
   implicit override val reader: UserAnswersReader[OfficeOfTransitDomain] =
-    OfficeOfTransitDomain.userAnswersReader(index)
+    OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
 }

@@ -20,8 +20,8 @@ import cats.implicits._
 import config.Constants.CountryCode._
 import config.Constants.SecurityType._
 import config.PhaseConfig
-import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
-import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.domain._
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, Stage}
 import models.reference.{Country, CustomsOffice}
 import models.{DateTime, Index, Mode, Phase, UserAnswers}
 import pages.external.{OfficeOfDepartureInCL010Page, SecurityDetailsTypePage}
@@ -52,33 +52,40 @@ object OfficeOfTransitDomain {
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
-  implicit def userAnswersReader(index: Index)(implicit phaseConfig: PhaseConfig): UserAnswersReader[OfficeOfTransitDomain] = {
+  implicit def userAnswersReader(index: Index)(implicit phaseConfig: PhaseConfig): Read[OfficeOfTransitDomain] = {
 
-    lazy val etaReads: UserAnswersReader[Option[DateTime]] = {
+    lazy val etaReads: Read[Option[DateTime]] = {
       phaseConfig.phase match {
         case Phase.PostTransition =>
-          SecurityDetailsTypePage.reader.flatMap {
-            case EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
-              OfficeOfTransitInCL147Page(index).reader.flatMap {
-                case true =>
-                  OfficeOfTransitETAPage(index).reader.map(Some(_))
-                case false =>
-                  AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
+          SecurityDetailsTypePage.reader.apply(_).flatMap {
+            case ReaderSuccess(EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails, pages) =>
+              OfficeOfTransitInCL147Page(index).reader.apply(pages).flatMap {
+                case ReaderSuccess(true, pages) =>
+                  OfficeOfTransitETAPage(index).reader.apply(pages).map(_.toOption)
+                case ReaderSuccess(false, pages) =>
+                  AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader).apply(pages)
               }
-            case _ =>
-              AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
+            case ReaderSuccess(_, pages) =>
+              AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader).apply(pages)
           }
 
         case Phase.Transition =>
-          SecurityDetailsTypePage.reader.flatMap {
-            case NoSecurityDetails => AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
-            case _ =>
+          SecurityDetailsTypePage.reader.apply(_).flatMap {
+            case ReaderSuccess(NoSecurityDetails, pages) =>
+              AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader).apply(pages)
+            case ReaderSuccess(_, pages) =>
               for {
-                officeOfTransitInCL010   <- OfficeOfTransitInCL010Page(index).reader
-                officeOfDepartureInCL010 <- OfficeOfDepartureInCL010Page.reader
-                reader <- (officeOfTransitInCL010, officeOfDepartureInCL010) match {
-                  case (true, false) => OfficeOfTransitETAPage(index).reader.map(Some(_))
-                  case _             => AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
+                a <- OfficeOfTransitInCL010Page(index).reader.apply(pages)
+                officeOfTransitInCL010 = a.value
+                b <- OfficeOfDepartureInCL010Page.reader.apply(a.pages)
+                officeOfDepartureInCL010 = b.value
+                reader <- {
+                  (officeOfTransitInCL010, officeOfDepartureInCL010) match {
+                    case (true, false) =>
+                      OfficeOfTransitETAPage(index).reader.apply(b.pages).map(_.toOption)
+                    case _ =>
+                      AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader).apply(b.pages)
+                  }
                 }
               } yield reader
           }
@@ -86,40 +93,37 @@ object OfficeOfTransitDomain {
 
     }
 
-    lazy val readsWithoutCountry: UserAnswersReader[OfficeOfTransitDomain] =
+    lazy val readsWithoutCountry: Read[OfficeOfTransitDomain] =
       (
         OfficeOfTransitPage(index).reader,
         etaReads
-      ).mapN {
-        (office, eta) => OfficeOfTransitDomain(None, office, eta)(index)
-      }
+      ).mapReads(OfficeOfTransitDomain.apply(None, _, _)(index))
 
-    lazy val readsWithCountry: UserAnswersReader[OfficeOfTransitDomain] =
+    lazy val readsWithCountry: Read[OfficeOfTransitDomain] =
       (
-        InferredOfficeOfTransitCountryPage(index).reader orElse OfficeOfTransitCountryPage(index).reader,
+        UserAnswersReader.readInferred(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index)).map(_.toOption),
         OfficeOfTransitPage(index).reader,
         etaReads
-      ).mapN {
-        (country, office, eta) => OfficeOfTransitDomain(Some(country), office, eta)(index)
-      }
+      ).mapReads(OfficeOfTransitDomain.apply(_, _, _)(index))
 
     (index.position, phaseConfig.phase) match {
       case (0, Phase.PostTransition) =>
-        OfficeOfDestinationInCL112Page.reader.flatMap {
-          case true =>
-            readsWithoutCountry
-          case false =>
-            OfficeOfDestinationPage.reader.map(_.countryCode).flatMap {
-              case AD => readsWithoutCountry
-              case _  => readsWithCountry
+        OfficeOfDestinationInCL112Page.reader.apply(_).flatMap {
+          case ReaderSuccess(true, pages) =>
+            readsWithoutCountry(pages)
+          case ReaderSuccess(false, pages) =>
+            OfficeOfDestinationPage.reader.apply(pages).map(_.to(_.countryCode)).flatMap {
+              case ReaderSuccess(AD, pages) => readsWithoutCountry(pages)
+              case ReaderSuccess(_, pages)  => readsWithCountry(pages)
             }
         }
       case (_, Phase.Transition) =>
-        OfficeOfDestinationPage.reader.map(_.countryCode).flatMap {
-          case AD => readsWithoutCountry
-          case _  => readsWithCountry
+        OfficeOfDestinationPage.reader.apply(_).map(_.to(_.countryCode)).flatMap {
+          case ReaderSuccess(AD, pages) => readsWithoutCountry(pages)
+          case ReaderSuccess(_, pages)  => readsWithCountry(pages)
         }
-      case _ => readsWithCountry
+      case _ =>
+        readsWithCountry(_)
     }
   }
   // scalastyle:on cyclomatic.complexity

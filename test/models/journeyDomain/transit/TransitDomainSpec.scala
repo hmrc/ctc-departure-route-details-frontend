@@ -21,7 +21,7 @@ import config.Constants.DeclarationType._
 import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Phase}
 import org.mockito.Mockito.when
@@ -55,9 +55,11 @@ class TransitDomainSpec extends SpecBase with Generators {
           officesOfTransit = Nil
         )
 
-        val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+        val result = UserAnswersReader[TransitDomain](
+          TransitDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
       }
 
       "when T2 declaration type" in {
@@ -77,9 +79,11 @@ class TransitDomainSpec extends SpecBase with Generators {
           officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
         )
 
-        val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+        val result = UserAnswersReader[TransitDomain](
+          TransitDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
       }
 
       "when T declaration type" - {
@@ -102,9 +106,11 @@ class TransitDomainSpec extends SpecBase with Generators {
             officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
           )
 
-          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+          val result = UserAnswersReader[TransitDomain](
+            TransitDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
 
         "and no items are T2 declaration type" - {
@@ -126,9 +132,11 @@ class TransitDomainSpec extends SpecBase with Generators {
               officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
             )
 
-            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+            val result = UserAnswersReader[TransitDomain](
+              TransitDomain.userAnswersReader.apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
 
           "and country code for office of destination is in set CL112" - {
@@ -152,9 +160,11 @@ class TransitDomainSpec extends SpecBase with Generators {
                 officesOfTransit = Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))
               )
 
-              val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+              val result = UserAnswersReader[TransitDomain](
+                TransitDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+              ).run(userAnswers)
 
-              result.value mustBe expectedResult
+              result.value.value mustBe expectedResult
             }
 
             "when is transition" in {
@@ -178,9 +188,11 @@ class TransitDomainSpec extends SpecBase with Generators {
                 officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
               )
 
-              val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+              val result = UserAnswersReader[TransitDomain](
+                TransitDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+              ).run(userAnswers)
 
-              result.value mustBe expectedResult
+              result.value.value mustBe expectedResult
             }
           }
 
@@ -207,9 +219,11 @@ class TransitDomainSpec extends SpecBase with Generators {
                 officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
               )
 
-              val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+              val result = UserAnswersReader[TransitDomain](
+                TransitDomain.userAnswersReader.apply(Nil)
+              ).run(userAnswers)
 
-              result.value mustBe expectedResult
+              result.value.value mustBe expectedResult
             }
 
             "and no countries of routing are in set CL112" in {
@@ -231,9 +245,11 @@ class TransitDomainSpec extends SpecBase with Generators {
                 officesOfTransit = Nil
               )
 
-              val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+              val result = UserAnswersReader[TransitDomain](
+                TransitDomain.userAnswersReader.apply(Nil)
+              ).run(userAnswers)
 
-              result.value mustBe expectedResult
+              result.value.value mustBe expectedResult
             }
           }
         }
@@ -260,9 +276,11 @@ class TransitDomainSpec extends SpecBase with Generators {
             officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
           )
 
-          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+          val result = UserAnswersReader[TransitDomain](
+            TransitDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
 
         "and country code for office of destination is in set CL112" - {
@@ -286,9 +304,11 @@ class TransitDomainSpec extends SpecBase with Generators {
               officesOfTransit = Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))
             )
 
-            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+            val result = UserAnswersReader[TransitDomain](
+              TransitDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
 
           "when is transition" in {
@@ -311,9 +331,11 @@ class TransitDomainSpec extends SpecBase with Generators {
               officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
             )
 
-            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+            val result = UserAnswersReader[TransitDomain](
+              TransitDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
         }
 
@@ -339,9 +361,11 @@ class TransitDomainSpec extends SpecBase with Generators {
               officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
             )
 
-            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+            val result = UserAnswersReader[TransitDomain](
+              TransitDomain.userAnswersReader.apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
 
           "and no countries of routing are in set CL112" in {
@@ -362,9 +386,11 @@ class TransitDomainSpec extends SpecBase with Generators {
               officesOfTransit = Nil
             )
 
-            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+            val result = UserAnswersReader[TransitDomain](
+              TransitDomain.userAnswersReader.apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
           }
         }
       }
@@ -380,7 +406,9 @@ class TransitDomainSpec extends SpecBase with Generators {
             .setValue(OfficeOfDestinationPage, customsOffice)
             .setValue(OfficeOfDestinationInCL112Page, true)
 
-          val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+          val result = UserAnswersReader[TransitDomain](
+            TransitDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
           result.left.value.page mustBe AddOfficeOfTransitYesNoPage
         }
@@ -400,7 +428,9 @@ class TransitDomainSpec extends SpecBase with Generators {
                 .setValue(OfficeOfDestinationPage, customsOffice)
                 .setValue(OfficeOfDestinationInCL112Page, true)
 
-              val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+              val result = UserAnswersReader[TransitDomain](
+                TransitDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+              ).run(userAnswers)
 
               result.left.value.page mustBe OfficeOfTransitPage(Index(0))
             }
@@ -416,7 +446,9 @@ class TransitDomainSpec extends SpecBase with Generators {
                 .setValue(OfficeOfDestinationPage, customsOffice)
                 .setValue(OfficeOfDestinationInCL112Page, true)
 
-              val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain](TransitDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+              val result = UserAnswersReader[TransitDomain](
+                TransitDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+              ).run(userAnswers)
 
               result.left.value.page mustBe OfficeOfTransitCountryPage(Index(0))
             }
@@ -432,7 +464,9 @@ class TransitDomainSpec extends SpecBase with Generators {
               .setValue(OfficeOfDestinationPage, customsOffice)
               .setValue(OfficeOfDestinationInCL112Page, false)
 
-            val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+            val result = UserAnswersReader[TransitDomain](
+              TransitDomain.userAnswersReader.apply(Nil)
+            ).run(userAnswers)
 
             result.left.value.page mustBe OfficeOfTransitCountryPage(Index(0))
           }
@@ -457,7 +491,9 @@ class TransitDomainSpec extends SpecBase with Generators {
                 .setValue(CountryOfRoutingPage(index), country)
                 .setValue(CountryOfRoutingInCL112Page(index), false)
 
-              val result: EitherType[TransitDomain] = UserAnswersReader[TransitDomain].run(userAnswers)
+              val result = UserAnswersReader[TransitDomain](
+                TransitDomain.userAnswersReader.apply(Nil)
+              ).run(userAnswers)
 
               result.left.value.page mustBe AddOfficeOfTransitYesNoPage
             }

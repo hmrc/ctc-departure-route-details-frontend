@@ -20,8 +20,8 @@ import cats.implicits._
 import config.Constants.SecurityType.NoSecurityDetails
 import config.PhaseConfig
 import models.Phase
-import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
-import models.journeyDomain.JourneyDomainModel
+import models.domain._
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
 import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.unloading.{AddExtraInformationYesNoPage, UnLocodePage, UnLocodeYesNoPage}
 
@@ -32,26 +32,38 @@ case class UnloadingDomain(
 
 object UnloadingDomain {
 
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[UnloadingDomain] = {
-    lazy val unLocodeAndAdditionalInformationReader = UnLocodeYesNoPage.reader.flatMap {
-      case true =>
-        (UnLocodePage.reader.map(Option(_)), optionalAdditionalInformationReader).tupled
-      case false =>
-        (none[String].pure[UserAnswersReader], UserAnswersReader[AdditionalInformationDomain].map(Option(_))).tupled
-    }
-
-    lazy val optionalAdditionalInformationReader =
-      AddExtraInformationYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalInformationDomain])
-
-    val reader = phaseConfig.phase match {
-      case Phase.Transition =>
-        SecurityDetailsTypePage.reader.flatMap {
-          case NoSecurityDetails => (none[String].pure[UserAnswersReader], optionalAdditionalInformationReader).tupled
-          case _                 => unLocodeAndAdditionalInformationReader
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[UnloadingDomain] = {
+    lazy val unLocodeAndAdditionalInformationReader: Read[UnloadingDomain] =
+      pages =>
+        UnLocodeYesNoPage.reader.apply(pages).flatMap {
+          case ReaderSuccess(true, pages) =>
+            (
+              UnLocodePage.reader.map(_.toOption),
+              optionalAdditionalInformationReader
+            ).mapReads(UnloadingDomain.apply).apply(pages)
+          case ReaderSuccess(false, pages) =>
+            (
+              UserAnswersReader.none,
+              AdditionalInformationDomain.userAnswersReader.map(_.toOption)
+            ).mapReads(UnloadingDomain.apply).apply(pages)
         }
-      case Phase.PostTransition => unLocodeAndAdditionalInformationReader
-    }
 
-    reader.map((UnloadingDomain.apply _).tupled)
+    lazy val optionalAdditionalInformationReader: Read[Option[AdditionalInformationDomain]] =
+      AddExtraInformationYesNoPage.filterOptionalDependent(identity)(AdditionalInformationDomain.userAnswersReader)
+
+    phaseConfig.phase match {
+      case Phase.Transition =>
+        SecurityDetailsTypePage.reader.apply(_).flatMap {
+          case ReaderSuccess(NoSecurityDetails, pages) =>
+            (
+              UserAnswersReader.none,
+              optionalAdditionalInformationReader
+            ).mapReads(UnloadingDomain.apply).apply(pages)
+          case ReaderSuccess(_, pages) =>
+            unLocodeAndAdditionalInformationReader(pages)
+        }
+      case Phase.PostTransition =>
+        unLocodeAndAdditionalInformationReader(_)
+    }
   }
 }

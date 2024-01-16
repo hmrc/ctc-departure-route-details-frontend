@@ -18,7 +18,7 @@ package models.journeyDomain.routing
 
 import base.SpecBase
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import pages.routing.index.CountryOfRoutingPage
@@ -38,11 +38,11 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
           country = country
         )(index)
 
-        val result: EitherType[CountryOfRoutingDomain] = UserAnswersReader[CountryOfRoutingDomain](
-          CountryOfRoutingDomain.userAnswersReader(index)
+        val result = UserAnswersReader[CountryOfRoutingDomain](
+          CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
         ).run(userAnswers)
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
       }
     }
 
@@ -50,8 +50,8 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
       "when country of routing not answered at index" in {
         val userAnswers = emptyUserAnswers
 
-        val result: EitherType[CountryOfRoutingDomain] = UserAnswersReader[CountryOfRoutingDomain](
-          CountryOfRoutingDomain.userAnswersReader(index)
+        val result = UserAnswersReader[CountryOfRoutingDomain](
+          CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
         ).run(userAnswers)
 
         result.left.value.page mustBe CountryOfRoutingPage(index)

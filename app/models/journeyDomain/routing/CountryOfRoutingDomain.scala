@@ -16,8 +16,7 @@
 
 package models.journeyDomain.routing
 
-import config.PhaseConfig
-import models.domain.{GettableAsReaderOps, UserAnswersReader}
+import models.domain._
 import models.journeyDomain.Stage._
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.Country
@@ -42,9 +41,9 @@ case class CountryOfRoutingDomain(
 
 object CountryOfRoutingDomain {
 
-  implicit def userAnswersReader(index: Index): UserAnswersReader[CountryOfRoutingDomain] =
-    CountryOfRoutingPage(index).reader.map(CountryOfRoutingDomain(_)(index))
+  implicit def userAnswersReader(index: Index): Read[CountryOfRoutingDomain] =
+    CountryOfRoutingPage(index).reader.apply(_).map(_.to(CountryOfRoutingDomain(_)(index)))
 
-  implicit def countriesOfRoutingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Seq[CountryOfRoutingDomain]] =
-    CountriesOfRoutingDomain.userAnswersReader
+  /*implicit def countriesOfRoutingReader(implicit phaseConfig: PhaseConfig): Read[Seq[CountryOfRoutingDomain]] =
+    CountriesOfRoutingDomain.userAnswersReader*/
 }

@@ -21,10 +21,10 @@ import config.Constants.AdditionalDeclarationType._
 import config.Constants.SecurityType._
 import config.Constants.SpecificCircumstanceIndicator._
 import config.PhaseConfig
-import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
+import models.domain._
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
-import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, Stage}
 import models.reference.SpecificCircumstanceIndicator
 import models.{Mode, Phase, UserAnswers}
 import pages.SpecificCircumstanceIndicatorPage
@@ -47,49 +47,54 @@ case class LoadingAndUnloadingDomain(
 
 object LoadingAndUnloadingDomain {
 
-  implicit def loadingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[LoadingDomain]] =
+  def loadingReader(implicit phaseConfig: PhaseConfig): Read[Option[LoadingDomain]] =
     phaseConfig.phase match {
       case Phase.Transition =>
-        SecurityDetailsTypePage.reader.flatMap {
-          case NoSecurityDetails => none[LoadingDomain].pure[UserAnswersReader]
-          case _                 => UserAnswersReader[LoadingDomain].map(Some(_))
+        SecurityDetailsTypePage.reader.apply(_).flatMap {
+          case ReaderSuccess(NoSecurityDetails, pages) =>
+            UserAnswersReader.none.apply(pages)
+          case ReaderSuccess(_, pages) =>
+            LoadingDomain.userAnswersReader.apply(pages).map(_.toOption)
         }
       case Phase.PostTransition =>
-        AdditionalDeclarationTypePage.reader.flatMap {
-          case PreLodge => AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[LoadingDomain])
-          case _        => UserAnswersReader[LoadingDomain].map(Some(_))
+        AdditionalDeclarationTypePage.reader.apply(_).flatMap {
+          case ReaderSuccess(PreLodge, pages) =>
+            AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(LoadingDomain.userAnswersReader).apply(pages)
+          case ReaderSuccess(_, pages) =>
+            LoadingDomain.userAnswersReader.apply(pages).map(_.toOption)
         }
     }
 
-  implicit def unloadingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[UnloadingDomain]] = {
-    lazy val mandatoryReader: UserAnswersReader[Option[UnloadingDomain]] =
-      UserAnswersReader[UnloadingDomain].map(Some(_))
+  def unloadingReader(implicit phaseConfig: PhaseConfig): Read[Option[UnloadingDomain]] = {
+    lazy val mandatoryReader: Read[Option[UnloadingDomain]] =
+      UnloadingDomain.userAnswersReader.apply(_).map(_.toOption)
 
-    lazy val optionalReader: UserAnswersReader[Option[UnloadingDomain]] =
-      AddPlaceOfUnloadingPage.filterOptionalDependent(identity)(UserAnswersReader[UnloadingDomain])
+    lazy val optionalReader: Read[Option[UnloadingDomain]] =
+      AddPlaceOfUnloadingPage.filterOptionalDependent(identity)(UnloadingDomain.userAnswersReader)
 
     phaseConfig.phase match {
       case Phase.Transition =>
-        SecurityDetailsTypePage.reader.flatMap {
-          case NoSecurityDetails => none[UnloadingDomain].pure[UserAnswersReader]
-          case _ =>
-            SpecificCircumstanceIndicatorPage.optionalReader.flatMap {
-              case Some(SpecificCircumstanceIndicator(XXX, _)) => optionalReader
-              case _                                           => mandatoryReader
+        SecurityDetailsTypePage.reader.apply(_).flatMap {
+          case ReaderSuccess(NoSecurityDetails, pages) =>
+            UserAnswersReader.none.apply(pages)
+          case ReaderSuccess(_, pages) =>
+            SpecificCircumstanceIndicatorPage.optionalReader.apply(pages).flatMap {
+              case ReaderSuccess(Some(SpecificCircumstanceIndicator(XXX, _)), pages) => optionalReader(pages)
+              case ReaderSuccess(_, pages)                                           => mandatoryReader(pages)
             }
         }
       case Phase.PostTransition =>
-        SecurityDetailsTypePage.reader.flatMap {
-          case NoSecurityDetails                     => none[UnloadingDomain].pure[UserAnswersReader]
-          case ExitSummaryDeclarationSecurityDetails => optionalReader
-          case _                                     => mandatoryReader
+        SecurityDetailsTypePage.reader.apply(_).flatMap {
+          case ReaderSuccess(NoSecurityDetails, pages)                     => UserAnswersReader.none.apply(pages)
+          case ReaderSuccess(ExitSummaryDeclarationSecurityDetails, pages) => optionalReader(pages)
+          case ReaderSuccess(_, pages)                                     => mandatoryReader(pages)
         }
     }
   }
 
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[LoadingAndUnloadingDomain] =
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[LoadingAndUnloadingDomain] =
     (
-      UserAnswersReader[Option[LoadingDomain]],
-      UserAnswersReader[Option[UnloadingDomain]]
-    ).tupled.map((LoadingAndUnloadingDomain.apply _).tupled)
+      loadingReader,
+      unloadingReader
+    ).mapReads(LoadingAndUnloadingDomain.apply)
 }

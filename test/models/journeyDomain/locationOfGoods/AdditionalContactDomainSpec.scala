@@ -18,7 +18,7 @@ package models.journeyDomain.locationOfGoods
 
 import base.SpecBase
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import org.scalacheck.Gen
 import pages.locationOfGoods.contact._
 
@@ -41,9 +41,11 @@ class AdditionalContactDomainSpec extends SpecBase with Generators {
           telephoneNumber = telephoneNumber
         )
 
-        val result: EitherType[AdditionalContactDomain] = UserAnswersReader[AdditionalContactDomain].run(userAnswers)
+        val result = UserAnswersReader[AdditionalContactDomain](
+          AdditionalContactDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
       }
     }
 
@@ -56,7 +58,9 @@ class AdditionalContactDomainSpec extends SpecBase with Generators {
         val userAnswers = emptyUserAnswers
           .setValue(TelephoneNumberPage, telephoneNumber)
 
-        val result: EitherType[AdditionalContactDomain] = UserAnswersReader[AdditionalContactDomain].run(userAnswers)
+        val result = UserAnswersReader[AdditionalContactDomain](
+          AdditionalContactDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe NamePage
       }
@@ -67,7 +71,9 @@ class AdditionalContactDomainSpec extends SpecBase with Generators {
         val userAnswers = emptyUserAnswers
           .setValue(NamePage, name)
 
-        val result: EitherType[AdditionalContactDomain] = UserAnswersReader[AdditionalContactDomain].run(userAnswers)
+        val result = UserAnswersReader[AdditionalContactDomain](
+          AdditionalContactDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe TelephoneNumberPage
       }

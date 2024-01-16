@@ -18,7 +18,7 @@ package models.journeyDomain.loadingAndUnloading.loading
 
 import base.SpecBase
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -42,9 +42,11 @@ class AdditionalInformationDomainSpec extends SpecBase with Generators {
           location = loadingPlace1
         )
 
-        val result: EitherType[AdditionalInformationDomain] = UserAnswersReader[AdditionalInformationDomain].run(userAnswers)
+        val result = UserAnswersReader[AdditionalInformationDomain](
+          AdditionalInformationDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
       }
     }
 
@@ -57,7 +59,9 @@ class AdditionalInformationDomainSpec extends SpecBase with Generators {
         val userAnswers = emptyUserAnswers
           .setValue(LocationPage, placeOfLoading)
 
-        val result: EitherType[AdditionalInformationDomain] = UserAnswersReader[AdditionalInformationDomain].run(userAnswers)
+        val result = UserAnswersReader[AdditionalInformationDomain](
+          AdditionalInformationDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe CountryPage
       }
@@ -68,7 +72,9 @@ class AdditionalInformationDomainSpec extends SpecBase with Generators {
         val userAnswers = emptyUserAnswers
           .setValue(CountryPage, country1)
 
-        val result: EitherType[AdditionalInformationDomain] = UserAnswersReader[AdditionalInformationDomain].run(userAnswers)
+        val result = UserAnswersReader[AdditionalInformationDomain](
+          AdditionalInformationDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe LocationPage
       }

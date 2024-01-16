@@ -19,7 +19,8 @@ package models.journeyDomain.routing
 import cats.implicits._
 import config.Constants.SecurityType._
 import config.PhaseConfig
-import models.domain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
+import models.domain._
+import models.journeyDomain.ReaderSuccess
 import models.{Index, Phase, RichJsArray}
 import pages.external.SecurityDetailsTypePage
 import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage}
@@ -27,25 +28,28 @@ import pages.sections.routing.CountriesOfRoutingSection
 
 object CountriesOfRoutingDomain {
 
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Seq[CountryOfRoutingDomain]] = {
-    val arrayReader: UserAnswersReader[Seq[CountryOfRoutingDomain]] = CountriesOfRoutingSection.arrayReader.flatMap {
-      case x if x.isEmpty =>
-        UserAnswersReader[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(Index(0))).map(Seq(_))
-      case x =>
-        x.traverse[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader)
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[Seq[CountryOfRoutingDomain]] = pages => {
+    lazy val arrayReader: Read[Seq[CountryOfRoutingDomain]] = CountriesOfRoutingSection.arrayReader.apply(_).flatMap {
+      case ReaderSuccess(x, pages) if x.isEmpty =>
+        UserAnswersReader[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(Index(0))(pages)).map(_.toSeq)
+      case ReaderSuccess(x, pages) =>
+        x.traverse[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(_)(_)).apply(pages)
     }
 
     for {
-      securityDetailsType       <- SecurityDetailsTypePage.reader
-      followingBindingItinerary <- BindingItineraryPage.reader
-      reader <- (securityDetailsType, followingBindingItinerary, phaseConfig.phase) match {
-        case (NoSecurityDetails, _, Phase.Transition) => UserAnswersReader(Seq.empty[CountryOfRoutingDomain])
+      a <- SecurityDetailsTypePage.reader.apply(pages)
+      b <- BindingItineraryPage.reader.apply(a.pages)
+      reader <- (a.value, b.value, phaseConfig.phase) match {
+        case (NoSecurityDetails, _, Phase.Transition) =>
+          UserAnswersReader.emptyList[CountryOfRoutingDomain].apply(pages)
         case (NoSecurityDetails, false, Phase.PostTransition) =>
-          AddCountryOfRoutingYesNoPage.reader.flatMap {
-            case true  => arrayReader
-            case false => UserAnswersReader(Seq.empty[CountryOfRoutingDomain])
+          AddCountryOfRoutingYesNoPage.reader.apply(b.pages).flatMap {
+            case ReaderSuccess(true, pages) =>
+              arrayReader(pages)
+            case ReaderSuccess(false, pages) =>
+              UserAnswersReader.emptyList[CountryOfRoutingDomain].apply(pages)
           }
-        case _ => arrayReader
+        case _ => arrayReader(pages)
       }
     } yield reader
   }

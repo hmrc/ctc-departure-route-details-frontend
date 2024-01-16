@@ -17,7 +17,8 @@
 package pages.sections.routing
 
 import models.Index
-import models.domain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
+import models.domain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, Read, UserAnswersReader}
+import models.journeyDomain.ReaderSuccess
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page}
 import pages.sections.Section
 import play.api.libs.json.{JsArray, JsPath}
@@ -28,39 +29,37 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
 
   override def toString: String = "countriesOfRouting"
 
-  def atLeastOneCountryOfRoutingNotInCL147: UserAnswersReader[Boolean] =
-    for {
-      numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)
-      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(false)) {
-        (acc, index) =>
-          for {
-            areAnyCountriesOfRoutingNotInCL147SoFar <- acc
-            isThisCountryOfRoutingNotInCL147        <- CountryOfRoutingInCL147Page(Index(index)).reader.map(!_)
-          } yield areAnyCountriesOfRoutingNotInCL147SoFar || isThisCountryOfRoutingNotInCL147
-      }
-    } yield reader
+  def atLeastOneCountryOfRoutingIsInCL147: Read[Boolean] = pages => {
+    this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
+      case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
+        (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader.success(false).apply(pages)) {
+          (acc, index) =>
+            acc.flatMap {
+              case ReaderSuccess(areAnyCountriesOfRoutingInCL147SoFar, pages) =>
+                CountryOfRoutingInCL147Page(Index(index)).reader.apply(pages).map {
+                  case ReaderSuccess(isThisCountryOfRoutingInCL147, pages) =>
+                    val result = areAnyCountriesOfRoutingInCL147SoFar || isThisCountryOfRoutingInCL147
+                    ReaderSuccess(result, pages)
+                }
+            }
+        }
+    }
+  }
 
-  def atLeastOneCountryOfRoutingIsInCL147: UserAnswersReader[Boolean] =
-    for {
-      numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)
-      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(false)) {
-        (acc, index) =>
-          for {
-            areAnyCountriesOfRoutingInCL147SoFar <- acc
-            isThisCountryOfRoutingInCL147        <- CountryOfRoutingInCL147Page(Index(index)).reader
-          } yield areAnyCountriesOfRoutingInCL147SoFar || isThisCountryOfRoutingInCL147
-      }
-    } yield reader
+  def anyCountriesOfRoutingInCL112: Read[Boolean] = pages =>
+    this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
+      case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
+        (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader.success(false).apply(pages)) {
+          (acc, index) =>
+            acc.flatMap {
+              case ReaderSuccess(areAnyCountriesOfRoutingInCL112SoFar, pages) =>
+                CountryOfRoutingInCL112Page(Index(index)).reader.apply(pages).map {
+                  case ReaderSuccess(isThisCountryOfRoutingInCL112, pages) =>
+                    val result = areAnyCountriesOfRoutingInCL112SoFar || isThisCountryOfRoutingInCL112
+                    ReaderSuccess(result, pages)
 
-  def anyCountriesOfRoutingInCL112: UserAnswersReader[Boolean] =
-    for {
-      numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)
-      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(false)) {
-        (acc, index) =>
-          for {
-            areAnyCountriesOfRoutingInCL112SoFar <- acc
-            isThisCountryOfRoutingInCL112        <- CountryOfRoutingInCL112Page(Index(index)).reader
-          } yield areAnyCountriesOfRoutingInCL112SoFar || isThisCountryOfRoutingInCL112
-      }
-    } yield reader
+                }
+            }
+        }
+    }
 }

@@ -21,7 +21,7 @@ import config.Constants.SecurityType.NoSecurityDetails
 import config.PhaseConfig
 import generators.Generators
 import models.Phase
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.reference.Country
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
@@ -55,11 +55,11 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             additionalInformation = Some(AdditionalInformationDomain(country, country.description))
           )
 
-          val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
-            UnloadingDomain.userAnswersReader(mockPhaseConfig)
+          val result = UserAnswersReader[UnloadingDomain](
+            UnloadingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
           ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
 
         "when add a place of unloading UN/LOCODE is yes and additional information is no" in {
@@ -73,11 +73,11 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             additionalInformation = None
           )
 
-          val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
-            UnloadingDomain.userAnswersReader(mockPhaseConfig)
+          val result = UserAnswersReader[UnloadingDomain](
+            UnloadingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
           ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
 
         "when add a place of unloading UN/LOCODE is no" in {
@@ -91,11 +91,11 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             additionalInformation = Some(AdditionalInformationDomain(country, country.description))
           )
 
-          val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
-            UnloadingDomain.userAnswersReader(mockPhaseConfig)
+          val result = UserAnswersReader[UnloadingDomain](
+            UnloadingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
           ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
         }
       }
     }
@@ -110,8 +110,8 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           "and add country and location yes/no is unanswered" in {
             val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, NoSecurityDetails)
 
-            val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
-              UnloadingDomain.userAnswersReader(mockPhaseConfig)
+            val result = UserAnswersReader[UnloadingDomain](
+              UnloadingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
             result.left.value.page mustBe AddExtraInformationYesNoPage
@@ -124,8 +124,8 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
               securityDetails =>
                 val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityDetails)
 
-                val result: EitherType[UnloadingDomain] = UserAnswersReader[UnloadingDomain](
-                  UnloadingDomain.userAnswersReader(mockPhaseConfig)
+                val result = UserAnswersReader[UnloadingDomain](
+                  UnloadingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
                 ).run(userAnswers)
 
                 result.left.value.page mustBe UnLocodeYesNoPage

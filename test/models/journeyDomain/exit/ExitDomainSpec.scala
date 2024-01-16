@@ -19,7 +19,7 @@ package models.journeyDomain.exit
 import base.SpecBase
 import generators.Generators
 import models.Index
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.exit.index._
@@ -47,9 +47,15 @@ class ExitDomainSpec extends SpecBase with Generators {
           )
         )
 
-        val result: EitherType[ExitDomain] = UserAnswersReader[ExitDomain].run(userAnswers)
+        val result = UserAnswersReader[ExitDomain](
+          ExitDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          OfficeOfExitCountryPage(index),
+          OfficeOfExitPage(index)
+        )
       }
     }
 
@@ -57,7 +63,9 @@ class ExitDomainSpec extends SpecBase with Generators {
       "when no offices of exit" in {
         val userAnswers = emptyUserAnswers
 
-        val result: EitherType[ExitDomain] = UserAnswersReader[ExitDomain].run(userAnswers)
+        val result = UserAnswersReader[ExitDomain](
+          ExitDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe OfficeOfExitCountryPage(Index(0))
       }

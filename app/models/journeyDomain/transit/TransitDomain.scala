@@ -18,9 +18,9 @@ package models.journeyDomain.transit
 
 import config.Constants.DeclarationType._
 import config.PhaseConfig
-import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
+import models.domain._
 import models.journeyDomain.transit.TransitDomain.OfficesOfTransit
-import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, Stage}
 import models.{Index, Mode, RichJsArray, UserAnswers}
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage}
 import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
@@ -44,68 +44,71 @@ object TransitDomain {
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[TransitDomain] = {
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[TransitDomain] = {
 
-    implicit val officesOfTransitReader: UserAnswersReader[OfficesOfTransit] =
-      OfficesOfTransitSection.arrayReader.flatMap {
-        case x if x.isEmpty =>
+    val officesOfTransitReader: Read[OfficesOfTransit] =
+      OfficesOfTransitSection.arrayReader.apply(_).flatMap {
+        case ReaderSuccess(x, pages) if x.isEmpty =>
           UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(Index(0))
-          ).map(Seq(_))
-        case x =>
+            OfficeOfTransitDomain.userAnswersReader(Index(0)).apply(pages)
+          ).map(_.toSeq)
+        case ReaderSuccess(x, pages) =>
           x.traverse[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader
-          )
+            (index, pages) => OfficeOfTransitDomain.userAnswersReader(index).apply(pages)
+          ).apply(pages)
       }
 
-    lazy val addOfficesOfTransitReader: UserAnswersReader[OfficesOfTransit] =
+    lazy val addOfficesOfTransitReader: Read[OfficesOfTransit] =
       AddOfficeOfTransitYesNoPage
         .filterOptionalDependent(identity)(officesOfTransitReader)
-        .map(_.getOrElse(Nil))
+        .apply(_)
+        .map(_.to(_.getOrElse(Nil)))
 
-    for {
-      officeOfDeparture          <- OfficeOfDeparturePage.reader
-      officeOfDepartureInCL112   <- OfficeOfDepartureInCL112Page.reader
-      officeOfDestination        <- OfficeOfDestinationPage.reader
-      officeOfDestinationInCL112 <- OfficeOfDestinationInCL112Page.reader
-      reader <- {
-        def countriesOfRoutingReader(isT2DeclarationType: Option[Boolean]): UserAnswersReader[TransitDomain] = {
-          val officesOfTransit = if (officeOfDepartureInCL112 || officeOfDestinationInCL112) {
-            UserAnswersReader[OfficesOfTransit]
+    (
+      OfficeOfDeparturePage.reader,
+      OfficeOfDepartureInCL112Page.reader,
+      OfficeOfDestinationPage.reader,
+      OfficeOfDestinationInCL112Page.reader
+    ).tupleIt {
+      case (officeOfDeparture, officeOfDepartureInCL112, officeOfDestination, officeOfDestinationInCL112) =>
+        pages =>
+          def countriesOfRoutingReader(isT2DeclarationType: Option[Boolean]): Read[TransitDomain] = pages => {
+            val officesOfTransit = if (officeOfDepartureInCL112 || officeOfDestinationInCL112) {
+              officesOfTransitReader(pages)
+            } else {
+              for {
+                a <- CountriesOfRoutingSection.anyCountriesOfRoutingInCL112(pages)
+                anyCountriesOfRoutingInCL112 = a.value
+                reader <-
+                  if (anyCountriesOfRoutingInCL112) {
+                    officesOfTransitReader(a.pages)
+                  } else {
+                    addOfficesOfTransitReader(a.pages)
+                  }
+              } yield reader
+            }
+
+            officesOfTransit.map(_.to(TransitDomain(isT2DeclarationType, _)))
+          }
+
+          if (officeOfDepartureInCL112 && officeOfDestinationInCL112 && officeOfDeparture.countryCode == officeOfDestination.countryCode) {
+            addOfficesOfTransitReader.apply(pages).map(_.to(TransitDomain(None, _)))
           } else {
-            for {
-              anyCountriesOfRoutingInCL112 <- CountriesOfRoutingSection.anyCountriesOfRoutingInCL112
-              reader <-
-                if (anyCountriesOfRoutingInCL112) {
-                  UserAnswersReader[OfficesOfTransit]
-                } else {
-                  addOfficesOfTransitReader
+            DeclarationTypePage.reader.apply(pages).flatMap {
+              case ReaderSuccess(T2, pages) =>
+                officesOfTransitReader(pages).map(_.to(TransitDomain(None, _)))
+              case ReaderSuccess(T, pages) =>
+                T2DeclarationTypeYesNoPage.reader.apply(pages).flatMap {
+                  case ReaderSuccess(true, pages) =>
+                    officesOfTransitReader(pages).map(_.to(TransitDomain(Some(true), _)))
+                  case ReaderSuccess(false, pages) =>
+                    countriesOfRoutingReader(Some(false))(pages)
                 }
-            } yield reader
+              case ReaderSuccess(_, pages) =>
+                countriesOfRoutingReader(None)(pages)
+            }
           }
-
-          officesOfTransit.map(TransitDomain(isT2DeclarationType, _))
-        }
-
-        if (officeOfDepartureInCL112 && officeOfDestinationInCL112 && officeOfDeparture.countryCode == officeOfDestination.countryCode) {
-          addOfficesOfTransitReader.map(TransitDomain(None, _))
-        } else {
-          DeclarationTypePage.reader.flatMap {
-            case T2 =>
-              UserAnswersReader[OfficesOfTransit].map(TransitDomain(None, _))
-            case T =>
-              T2DeclarationTypeYesNoPage.reader.flatMap {
-                case true =>
-                  UserAnswersReader[OfficesOfTransit].map(TransitDomain(Some(true), _))
-                case false =>
-                  countriesOfRoutingReader(Some(false))
-              }
-            case _ =>
-              countriesOfRoutingReader(None)
-          }
-        }
-      }
-    } yield reader
+    }
   }
   // scalastyle:on cyclomatic.complexity
   // scalastyle:on method.length

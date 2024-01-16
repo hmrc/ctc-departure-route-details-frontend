@@ -16,9 +16,8 @@
 
 package models.journeyDomain.routing
 
-import cats.implicits.catsSyntaxTuple4Semigroupal
 import config.PhaseConfig
-import models.domain.{GettableAsReaderOps, UserAnswersReader}
+import models.domain._
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice}
 import models.{Mode, UserAnswers}
@@ -38,11 +37,11 @@ case class RoutingDomain(
 
 object RoutingDomain {
 
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[RoutingDomain] =
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[RoutingDomain] =
     (
       CountryOfDestinationPage.reader,
       OfficeOfDestinationPage.reader,
       BindingItineraryPage.reader,
-      UserAnswersReader[Seq[CountryOfRoutingDomain]]
-    ).tupled.map((RoutingDomain.apply _).tupled)
+      CountriesOfRoutingDomain.userAnswersReader.apply(_)
+    ).mapReads(RoutingDomain.apply)
 }

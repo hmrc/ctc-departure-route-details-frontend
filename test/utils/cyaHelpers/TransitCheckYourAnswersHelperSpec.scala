@@ -148,8 +148,8 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
           forAll(arbitraryOfficeOfTransitAnswers(emptyUserAnswers, index), arbitrary[Mode]) {
             (userAnswers, mode) =>
               val officeOfExit = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)
-              ).run(userAnswers).value
+                OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
+              ).run(userAnswers).value.value
 
               val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.officeOfTransit(index).get

@@ -16,8 +16,8 @@
 
 package models.journeyDomain.exit
 
-import models.domain.{JsArrayGettableAsReaderOps, UserAnswersReader}
-import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.domain._
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, Stage}
 import models.{Index, Mode, RichJsArray, UserAnswers}
 import pages.sections.exit.OfficesOfExitSection
 import play.api.mvc.Call
@@ -32,20 +32,16 @@ case class ExitDomain(
 
 object ExitDomain {
 
-  implicit val userAnswersReader: UserAnswersReader[ExitDomain] = {
+  implicit val userAnswersReader: Read[ExitDomain] = {
 
-    implicit val officesOfExitReader: UserAnswersReader[Seq[OfficeOfExitDomain]] =
-      OfficesOfExitSection.arrayReader.flatMap {
-        case x if x.isEmpty =>
-          UserAnswersReader[OfficeOfExitDomain](
-            OfficeOfExitDomain.userAnswersReader(Index(0))
-          ).map(Seq(_))
-        case x =>
-          x.traverse[OfficeOfExitDomain](
-            OfficeOfExitDomain.userAnswersReader
-          )
+    implicit def officesOfExitReader: Read[Seq[OfficeOfExitDomain]] =
+      OfficesOfExitSection.arrayReader.apply(_).flatMap {
+        case ReaderSuccess(x, pages) if x.isEmpty =>
+          OfficeOfExitDomain.userAnswersReader(Index(0))(pages).map(_.toSeq)
+        case ReaderSuccess(x, pages) =>
+          x.traverse[OfficeOfExitDomain](OfficeOfExitDomain.userAnswersReader(_)(_)).apply(pages)
       }
 
-    UserAnswersReader[Seq[OfficeOfExitDomain]].map(ExitDomain(_))
+    pages => UserAnswersReader[Seq[OfficeOfExitDomain]](officesOfExitReader(pages)).map(_.to(ExitDomain(_)))
   }
 }

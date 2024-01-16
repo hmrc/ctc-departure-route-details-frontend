@@ -21,7 +21,7 @@ import config.Constants.AdditionalDeclarationType._
 import config.Constants.DeclarationType._
 import config.Constants.SecurityType._
 import config.PhaseConfig
-import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
+import models.domain._
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
@@ -51,55 +51,69 @@ case class RouteDetailsDomain(
 
 object RouteDetailsDomain {
 
-  implicit val specificCircumstanceIndicatorReader: UserAnswersReader[Option[SpecificCircumstanceIndicator]] =
-    SecurityDetailsTypePage.reader.flatMap {
-      case ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
-        AddSpecificCircumstanceIndicatorYesNoPage.filterOptionalDependent(identity)(SpecificCircumstanceIndicatorPage.reader)
-      case _ => none[SpecificCircumstanceIndicator].pure[UserAnswersReader]
+  implicit val specificCircumstanceIndicatorReader: Read[Option[SpecificCircumstanceIndicator]] =
+    SecurityDetailsTypePage.reader.apply(_).flatMap {
+      case ReaderSuccess(ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails, pages) =>
+        AddSpecificCircumstanceIndicatorYesNoPage.filterOptionalDependent(identity)(SpecificCircumstanceIndicatorPage.reader).apply(pages)
+      case ReaderSuccess(_, pages) =>
+        UserAnswersReader.none.apply(pages)
     }
 
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[RouteDetailsDomain] =
-    for {
-      specificCircumstanceIndicator <- UserAnswersReader[Option[SpecificCircumstanceIndicator]]
-      routing                       <- UserAnswersReader[RoutingDomain]
-      transit                       <- UserAnswersReader[Option[TransitDomain]]
-      exit                          <- UserAnswersReader[Option[ExitDomain]](exitReader(transit))
-      locationOfGoods               <- UserAnswersReader[Option[LocationOfGoodsDomain]]
-      loadingAndUnloading           <- UserAnswersReader[LoadingAndUnloadingDomain]
-    } yield RouteDetailsDomain(
-      specificCircumstanceIndicator,
-      routing,
-      transit,
-      exit,
-      locationOfGoods,
-      loadingAndUnloading
-    )
-
-  implicit def transitReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[TransitDomain]] =
-    DeclarationTypePage.reader.flatMap {
-      case TIR => none[TransitDomain].pure[UserAnswersReader]
-      case _   => UserAnswersReader[TransitDomain].map(Some(_))
+    specificCircumstanceIndicatorReader(Nil).flatMap {
+      case ReaderSuccess(specificCircumstanceIndicator, pages) =>
+        RoutingDomain.userAnswersReader.apply(pages).flatMap {
+          case ReaderSuccess(routing, pages) =>
+            transitReader.apply(pages).flatMap {
+              case ReaderSuccess(transit, pages) =>
+                exitReader(transit)(pages).flatMap {
+                  case ReaderSuccess(exit, pages) =>
+                    locationOfGoodsReader.apply(pages).flatMap {
+                      case ReaderSuccess(locationOfGoods, pages) =>
+                        LoadingAndUnloadingDomain.userAnswersReader.apply(pages).flatMap {
+                          case ReaderSuccess(loadingAndUnloading, pages) =>
+                            val routeDetails = RouteDetailsDomain(
+                              specificCircumstanceIndicator,
+                              routing,
+                              transit,
+                              exit,
+                              locationOfGoods,
+                              loadingAndUnloading
+                            )
+                            UserAnswersReader.success(routeDetails).apply(pages)
+                        }
+                    }
+                }
+            }
+        }
     }
 
-  implicit def exitReader(transit: Option[TransitDomain]): UserAnswersReader[Option[ExitDomain]] =
-    for {
-      declarationType                   <- DeclarationTypePage.reader
-      securityDetails                   <- SecurityDetailsTypePage.reader
-      atLeastOneCountryOfRoutingInCL147 <- CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147
-      reader <- {
-        if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147, transit)) {
-          UserAnswersReader[ExitDomain].map(Some(_))
-        } else {
-          (atLeastOneCountryOfRoutingInCL147, transit) match {
-            case (true, Some(TransitDomain(_, list))) if list.nonEmpty =>
-              AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity) {
-                UserAnswersReader[ExitDomain]
-              }
-            case _ => none[ExitDomain].pure[UserAnswersReader]
-          }
+  implicit def transitReader(implicit phaseConfig: PhaseConfig): Read[Option[TransitDomain]] =
+    DeclarationTypePage.reader.apply(_).flatMap {
+      case ReaderSuccess(TIR, pages) => UserAnswersReader.none.apply(pages)
+      case ReaderSuccess(_, pages)   => TransitDomain.userAnswersReader.apply(pages).map(_.toOption)
+    }
+
+  implicit def exitReader(transit: Option[TransitDomain]): Read[Option[ExitDomain]] =
+    DeclarationTypePage.reader.apply(_).flatMap {
+      case ReaderSuccess(declarationType, pages) =>
+        SecurityDetailsTypePage.reader.apply(pages).flatMap {
+          case ReaderSuccess(securityDetails, pages) =>
+            CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147(pages).flatMap {
+              case ReaderSuccess(atLeastOneCountryOfRoutingInCL147, pages) =>
+                if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147, transit)) {
+                  ExitDomain.userAnswersReader(pages).map(_.toOption)
+                } else {
+                  (atLeastOneCountryOfRoutingInCL147, transit) match {
+                    case (true, Some(TransitDomain(_, list))) if list.nonEmpty =>
+                      AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity)(ExitDomain.userAnswersReader(_)).apply(pages)
+                    case _ =>
+                      UserAnswersReader.none.apply(pages)
+                  }
+                }
+            }
         }
-      }
-    } yield reader
+    }
 
   private def exitRequired(
     declarationType: String,
@@ -114,19 +128,21 @@ object RouteDetailsDomain {
       case _                                                                     => true
     }
 
-  implicit def locationOfGoodsReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[LocationOfGoodsDomain]] = {
-    lazy val optionalReader = AddLocationOfGoodsPage.filterOptionalDependent(identity)(UserAnswersReader[LocationOfGoodsDomain])
+  implicit def locationOfGoodsReader(implicit phaseConfig: PhaseConfig): Read[Option[LocationOfGoodsDomain]] = {
+    lazy val optionalReader: Read[Option[LocationOfGoodsDomain]] =
+      AddLocationOfGoodsPage.filterOptionalDependent(identity)(LocationOfGoodsDomain.userAnswersReader)
+
     phaseConfig.phase match {
       case Phase.Transition =>
-        optionalReader
+        optionalReader(_)
       case Phase.PostTransition =>
-        AdditionalDeclarationTypePage.reader.flatMap {
-          case PreLodge =>
-            optionalReader
-          case _ =>
-            OfficeOfDepartureInCL147Page.reader.flatMap {
-              case true  => optionalReader
-              case false => UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
+        AdditionalDeclarationTypePage.reader.apply(_).flatMap {
+          case ReaderSuccess(PreLodge, pages) =>
+            optionalReader(pages)
+          case ReaderSuccess(_, pages) =>
+            OfficeOfDepartureInCL147Page.reader.apply(pages).flatMap {
+              case ReaderSuccess(true, pages)  => optionalReader(pages)
+              case ReaderSuccess(false, pages) => LocationOfGoodsDomain.userAnswersReader(pages).map(_.toOption)
             }
         }
     }

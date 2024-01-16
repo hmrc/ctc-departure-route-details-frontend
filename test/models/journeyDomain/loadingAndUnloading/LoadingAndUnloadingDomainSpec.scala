@@ -22,7 +22,7 @@ import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
 import models.Phase
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.reference.SpecificCircumstanceIndicator
@@ -48,11 +48,11 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
             val userAnswers = emptyUserAnswers
               .setValue(SecurityDetailsTypePage, NoSecurityDetails)
 
-            val result: EitherType[LoadingAndUnloadingDomain] = UserAnswersReader[LoadingAndUnloadingDomain](
-              LoadingAndUnloadingDomain.userAnswersReader(mockPhaseConfig)
+            val result = UserAnswersReader[LoadingAndUnloadingDomain](
+              LoadingAndUnloadingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
-            result.value mustBe LoadingAndUnloadingDomain(None, None)
+            result.value.value mustBe LoadingAndUnloadingDomain(None, None)
           }
         }
       }
@@ -70,22 +70,22 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
 
             forAll(arbitraryUnloadingAnswers(initialAnswers)) {
               answers =>
-                val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-                  LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+                val result = UserAnswersReader[Option[UnloadingDomain]](
+                  LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig).apply(Nil)
                 ).run(answers)
 
-                result.value mustBe defined
+                result.value.value mustBe defined
             }
           }
 
           "when SecurityType is in Set{0}" in {
             val initialAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, NoSecurityDetails)
 
-            val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-              LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+            val result = UserAnswersReader[Option[UnloadingDomain]](
+              LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig).apply(Nil)
             ).run(initialAnswers)
 
-            result.value must not be defined
+            result.value.value must not be defined
           }
 
           "when SecurityType is in Set{2}" - {
@@ -96,11 +96,11 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
 
               forAll(arbitraryUnloadingAnswers(initialAnswers)) {
                 answers =>
-                  val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-                    LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+                  val result = UserAnswersReader[Option[UnloadingDomain]](
+                    LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig).apply(Nil)
                   ).run(answers)
 
-                  result.value mustBe defined
+                  result.value.value mustBe defined
               }
             }
 
@@ -109,11 +109,11 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                 .setValue(SecurityDetailsTypePage, ExitSummaryDeclarationSecurityDetails)
                 .setValue(AddPlaceOfUnloadingPage, false)
 
-              val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-                LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+              val result = UserAnswersReader[Option[UnloadingDomain]](
+                LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig).apply(Nil)
               ).run(initialAnswers)
 
-              result.value must not be defined
+              result.value.value must not be defined
             }
           }
         }
@@ -137,8 +137,8 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                       .setValue(SecurityDetailsTypePage, security)
                       .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
 
-                    val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-                      LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+                    val result = UserAnswersReader[Option[UnloadingDomain]](
+                      LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig).apply(Nil)
                     ).run(userAnswers)
 
                     result.left.value.page mustBe AddPlaceOfUnloadingPage
@@ -154,8 +154,8 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                       .setValue(SecurityDetailsTypePage, securityType)
                       .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
 
-                    val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-                      LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+                    val result = UserAnswersReader[Option[UnloadingDomain]](
+                      LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig).apply(Nil)
                     ).run(userAnswers)
 
                     result.left.value.page mustBe unloading.UnLocodeYesNoPage
@@ -170,11 +170,11 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
               val userAnswers = emptyUserAnswers
                 .setValue(SecurityDetailsTypePage, NoSecurityDetails)
 
-              val result: EitherType[Option[UnloadingDomain]] = UserAnswersReader[Option[UnloadingDomain]](
-                LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig)
+              val result = UserAnswersReader[Option[UnloadingDomain]](
+                LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig).apply(Nil)
               ).run(userAnswers)
 
-              result.value must not be defined
+              result.value.value must not be defined
             }
           }
         }
@@ -190,11 +190,11 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
           "and no security" in {
             val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, NoSecurityDetails)
 
-            val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
-              LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+            val result = UserAnswersReader[Option[LoadingDomain]](
+              LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig).apply(Nil)
             ).run(userAnswers)
 
-            result.value mustBe None
+            result.value.value mustBe None
           }
         }
 
@@ -206,11 +206,11 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
             val userAnswers = emptyUserAnswers.setValue(AdditionalDeclarationTypePage, Standard)
             forAll(arbitraryLoadingAnswers(userAnswers)) {
               answers =>
-                val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
-                  LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+                val result = UserAnswersReader[Option[LoadingDomain]](
+                  LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig).apply(Nil)
                 ).run(answers)
 
-                result.value mustBe defined
+                result.value.value mustBe defined
             }
           }
 
@@ -222,11 +222,11 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
 
               forAll(arbitraryLoadingAnswers(userAnswers)) {
                 answers =>
-                  val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
-                    LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+                  val result = UserAnswersReader[Option[LoadingDomain]](
+                    LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig).apply(Nil)
                   ).run(answers)
 
-                  result.value mustBe defined
+                  result.value.value mustBe defined
               }
             }
             "when addPlaceOfLoading is no" in {
@@ -235,11 +235,11 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                 .setValue(AddPlaceOfLoadingYesNoPage, false)
               forAll(arbitraryLoadingAnswers(userAnswers)) {
                 answers =>
-                  val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
-                    LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+                  val result = UserAnswersReader[Option[LoadingDomain]](
+                    LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig).apply(Nil)
                   ).run(answers)
 
-                  result.value must not be defined
+                  result.value.value must not be defined
               }
             }
           }
@@ -257,8 +257,8 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                 security =>
                   val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, security)
 
-                  val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
-                    LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+                  val result = UserAnswersReader[Option[LoadingDomain]](
+                    LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig).apply(Nil)
                   ).run(userAnswers)
 
                   result.left.value.page mustBe loading.AddUnLocodeYesNoPage
@@ -276,8 +276,8 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
               security =>
                 val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, security)
 
-                val result: EitherType[Option[LoadingDomain]] = UserAnswersReader[Option[LoadingDomain]](
-                  LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig)
+                val result = UserAnswersReader[Option[LoadingDomain]](
+                  LoadingAndUnloadingDomain.loadingReader(mockPhaseConfig).apply(Nil)
                 ).run(userAnswers)
 
                 result.left.value.page mustBe loading.AddUnLocodeYesNoPage
