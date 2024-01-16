@@ -60,7 +60,6 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               ).run(userAnswers)
 
               result.value.value mustBe defined
-
           }
         }
 
@@ -75,9 +74,8 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               ).run(userAnswers)
 
               result.value.value must not be defined
-
+              result.value.pages mustBe Nil
           }
-
         }
       }
     }
@@ -92,6 +90,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           ).run(userAnswers)
 
           result.value.value must not be defined
+          result.value.pages mustBe Nil
         }
 
         "when not a TIR declaration type" in {
@@ -145,6 +144,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             ).run(userAnswers)
 
             result.value.value must not be defined
+            result.value.pages mustBe Nil
           }
 
           "and security is not in set {0,1}" - {
@@ -257,6 +257,9 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               ).run(userAnswers)
 
               result.value.value must not be defined
+              result.value.pages mustBe Seq(
+                AddLocationOfGoodsPage
+              )
             }
 
             "and adding a location of goods type" in {
@@ -308,6 +311,9 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             ).run(emptyUserAnswers)
 
             result.left.value.page mustBe AddLocationOfGoodsPage
+            result.left.value.pages mustBe Seq(
+              AddLocationOfGoodsPage
+            )
           }
         }
 
@@ -324,6 +330,9 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               ).run(userAnswers)
 
               result.left.value.page mustBe AddLocationOfGoodsPage
+              result.left.value.pages mustBe Seq(
+                AddLocationOfGoodsPage
+              )
             }
           }
         }

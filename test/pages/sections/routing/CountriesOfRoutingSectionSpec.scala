@@ -33,11 +33,7 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
         val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.apply(Nil).run(userAnswers).value
 
         result.value mustBe true
-        result.pages mustBe Seq(
-          CountryOfRoutingInCL147Page(Index(0)),
-          CountryOfRoutingInCL147Page(Index(1)),
-          CountryOfRoutingInCL147Page(Index(2))
-        )
+        result.pages mustBe Nil
       }
 
       "when some countries of routing are in CL147" in {
@@ -49,11 +45,7 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
         val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.apply(Nil).run(userAnswers).value
 
         result.value mustBe true
-        result.pages mustBe Seq(
-          CountryOfRoutingInCL147Page(Index(0)),
-          CountryOfRoutingInCL147Page(Index(1)),
-          CountryOfRoutingInCL147Page(Index(2))
-        )
+        result.pages mustBe Nil
       }
     }
 
@@ -67,11 +59,7 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
         val result = CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147.apply(Nil).run(userAnswers).value
 
         result.value mustBe false
-        result.pages mustBe Seq(
-          CountryOfRoutingInCL147Page(Index(0)),
-          CountryOfRoutingInCL147Page(Index(1)),
-          CountryOfRoutingInCL147Page(Index(2))
-        )
+        result.pages mustBe Nil
       }
 
       "when no countries of routing" in {
@@ -94,11 +82,7 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
         val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.apply(Nil).run(userAnswers).value
 
         result.value mustBe true
-        result.pages mustBe Seq(
-          CountryOfRoutingInCL112Page(Index(0)),
-          CountryOfRoutingInCL112Page(Index(1)),
-          CountryOfRoutingInCL112Page(Index(2))
-        )
+        result.pages mustBe Nil
       }
 
       "when some countries of routing are in CL112" in {
@@ -110,11 +94,7 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
         val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.apply(Nil).run(userAnswers).value
 
         result.value mustBe true
-        result.pages mustBe Seq(
-          CountryOfRoutingInCL112Page(Index(0)),
-          CountryOfRoutingInCL112Page(Index(1)),
-          CountryOfRoutingInCL112Page(Index(2))
-        )
+        result.pages mustBe Nil
       }
     }
 
@@ -128,11 +108,7 @@ class CountriesOfRoutingSectionSpec extends SpecBase {
         val result = CountriesOfRoutingSection.anyCountriesOfRoutingInCL112.apply(Nil).run(userAnswers).value
 
         result.value mustBe false
-        result.pages mustBe Seq(
-          CountryOfRoutingInCL112Page(Index(0)),
-          CountryOfRoutingInCL112Page(Index(1)),
-          CountryOfRoutingInCL112Page(Index(2))
-        )
+        result.pages mustBe Nil
       }
 
       "when there are no countries of routing" in {

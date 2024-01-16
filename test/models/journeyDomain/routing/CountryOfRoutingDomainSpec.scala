@@ -28,7 +28,7 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
   "CountryOfRoutingDomain" - {
 
     "can be parsed from UserAnswers" - {
-      "when country of routing not answered at index" in {
+      "when country of routing answered at index" in {
         val country = arbitrary[Country].sample.value
 
         val userAnswers = emptyUserAnswers
@@ -43,6 +43,9 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          CountryOfRoutingPage(index)
+        )
       }
     }
 
@@ -55,6 +58,9 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe CountryOfRoutingPage(index)
+        result.left.value.pages mustBe Seq(
+          CountryOfRoutingPage(index)
+        )
       }
     }
   }

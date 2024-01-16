@@ -18,8 +18,8 @@ package pages.locationOfGoods
 
 import controllers.locationOfGoods.routes
 import models.{LocationType, Mode, UserAnswers}
-import pages.QuestionPage
 import pages.sections.locationOfGoods.LocationOfGoodsSection
+import pages.{InferredPage, QuestionPage}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
@@ -53,7 +53,7 @@ case object LocationTypePage extends BaseLocationTypePage {
     userAnswers.remove(InferredLocationTypePage)
 }
 
-case object InferredLocationTypePage extends BaseLocationTypePage {
+case object InferredLocationTypePage extends BaseLocationTypePage with InferredPage[LocationType] {
   override def toString: String = "inferredTypeOfLocation"
 
   override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =

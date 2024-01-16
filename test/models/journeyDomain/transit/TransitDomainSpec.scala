@@ -60,6 +60,10 @@ class TransitDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          OfficeOfDestinationPage,
+          AddOfficeOfTransitYesNoPage
+        )
       }
 
       "when T2 declaration type" in {
@@ -84,6 +88,12 @@ class TransitDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          OfficeOfDestinationPage,
+          OfficeOfTransitCountryPage(index),
+          OfficeOfTransitPage(index),
+          AddOfficeOfTransitETAYesNoPage(index)
+        )
       }
 
       "when T declaration type" - {
@@ -111,6 +121,13 @@ class TransitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfDestinationPage,
+            T2DeclarationTypeYesNoPage,
+            OfficeOfTransitCountryPage(index),
+            OfficeOfTransitPage(index),
+            AddOfficeOfTransitETAYesNoPage(index)
+          )
         }
 
         "and no items are T2 declaration type" - {
@@ -137,6 +154,13 @@ class TransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              T2DeclarationTypeYesNoPage,
+              OfficeOfTransitCountryPage(index),
+              OfficeOfTransitPage(index),
+              AddOfficeOfTransitETAYesNoPage(index)
+            )
           }
 
           "and country code for office of destination is in set CL112" - {
@@ -165,6 +189,12 @@ class TransitDomainSpec extends SpecBase with Generators {
               ).run(userAnswers)
 
               result.value.value mustBe expectedResult
+              result.value.pages mustBe Seq(
+                OfficeOfDestinationPage,
+                T2DeclarationTypeYesNoPage,
+                OfficeOfTransitPage(index),
+                AddOfficeOfTransitETAYesNoPage(index)
+              )
             }
 
             "when is transition" in {
@@ -193,6 +223,13 @@ class TransitDomainSpec extends SpecBase with Generators {
               ).run(userAnswers)
 
               result.value.value mustBe expectedResult
+              result.value.pages mustBe Seq(
+                OfficeOfDestinationPage,
+                T2DeclarationTypeYesNoPage,
+                OfficeOfTransitCountryPage(index),
+                OfficeOfTransitPage(index),
+                AddOfficeOfTransitETAYesNoPage(index)
+              )
             }
           }
 
@@ -224,6 +261,13 @@ class TransitDomainSpec extends SpecBase with Generators {
               ).run(userAnswers)
 
               result.value.value mustBe expectedResult
+              result.value.pages mustBe Seq(
+                OfficeOfDestinationPage,
+                T2DeclarationTypeYesNoPage,
+                OfficeOfTransitCountryPage(index),
+                OfficeOfTransitPage(index),
+                AddOfficeOfTransitETAYesNoPage(index)
+              )
             }
 
             "and no countries of routing are in set CL112" in {
@@ -250,6 +294,11 @@ class TransitDomainSpec extends SpecBase with Generators {
               ).run(userAnswers)
 
               result.value.value mustBe expectedResult
+              result.value.pages mustBe Seq(
+                OfficeOfDestinationPage,
+                T2DeclarationTypeYesNoPage,
+                AddOfficeOfTransitYesNoPage
+              )
             }
           }
         }
@@ -281,6 +330,12 @@ class TransitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfDestinationPage,
+            OfficeOfTransitCountryPage(index),
+            OfficeOfTransitPage(index),
+            AddOfficeOfTransitETAYesNoPage(index)
+          )
         }
 
         "and country code for office of destination is in set CL112" - {
@@ -309,6 +364,11 @@ class TransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              OfficeOfTransitPage(index),
+              AddOfficeOfTransitETAYesNoPage(index)
+            )
           }
 
           "when is transition" in {
@@ -336,6 +396,12 @@ class TransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              OfficeOfTransitCountryPage(index),
+              OfficeOfTransitPage(index),
+              AddOfficeOfTransitETAYesNoPage(index)
+            )
           }
         }
 
@@ -366,6 +432,12 @@ class TransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              OfficeOfTransitCountryPage(index),
+              OfficeOfTransitPage(index),
+              AddOfficeOfTransitETAYesNoPage(index)
+            )
           }
 
           "and no countries of routing are in set CL112" in {
@@ -391,6 +463,10 @@ class TransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              AddOfficeOfTransitYesNoPage
+            )
           }
         }
       }

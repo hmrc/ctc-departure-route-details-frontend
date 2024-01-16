@@ -18,8 +18,8 @@ package pages.locationOfGoods
 
 import controllers.locationOfGoods.routes
 import models.{LocationOfGoodsIdentification, Mode, UserAnswers}
-import pages.QuestionPage
 import pages.sections.locationOfGoods.{LocationOfGoodsIdentifierSection, LocationOfGoodsSection}
+import pages.{InferredPage, QuestionPage}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
@@ -48,7 +48,7 @@ case object IdentificationPage extends BaseIdentificationPage {
     userAnswers.remove(InferredIdentificationPage)
 }
 
-case object InferredIdentificationPage extends BaseIdentificationPage {
+case object InferredIdentificationPage extends BaseIdentificationPage with InferredPage[LocationOfGoodsIdentification] {
   override def toString: String = "inferredQualifierOfIdentification"
 
   override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =

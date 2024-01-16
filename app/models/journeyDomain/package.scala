@@ -20,7 +20,7 @@ import cats.data.ReaderT
 import models.journeyDomain.OpsError.ReaderError
 import models.journeyDomain.ReaderSuccess
 import pages.sections.Section
-import pages.{Page, ReadOnlyPage}
+import pages.{InferredPage, Page, ReadOnlyPage}
 import play.api.libs.json.{JsArray, Reads}
 import queries.Gettable
 
@@ -50,11 +50,10 @@ package object domain {
     }
 
     def readInferred[A](page: Gettable[A], inferredPage: Gettable[A])(implicit reads: Reads[A]): Read[A] =
-      pages =>
-        inferredPage.optionalReader.apply(Nil).flatMap {
-          case ReaderSuccess(Some(value), _) => UserAnswersReader.success(value).apply(pages)
-          case ReaderSuccess(None, _)        => page.reader.apply(pages)
-        }
+      inferredPage.optionalReader.apply(_).flatMap {
+        case ReaderSuccess(Some(value), pages) => UserAnswersReader.success(value).apply(pages)
+        case ReaderSuccess(None, pages)        => page.reader.apply(pages)
+      }
   }
 
   implicit class GettableAsFilterForNextReaderOps[A: Reads](a: Gettable[A]) {
@@ -163,6 +162,7 @@ package object domain {
     def append(page: Page): Pages =
       page match {
         case _: Section[_]             => pages
+        case _: InferredPage[_]        => pages
         case _: ReadOnlyPage[_]        => pages
         case _ if pages.contains(page) => pages
         case _                         => pages :+ page

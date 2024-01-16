@@ -53,6 +53,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
             ).run(userAnswers)
 
             result.value.value mustBe LoadingAndUnloadingDomain(None, None)
+            result.value.pages mustBe Nil
           }
         }
       }

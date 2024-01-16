@@ -59,6 +59,11 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            CustomsOfficeIdentifierPage
+          )
         }
 
         "is W (Coordinate identifier)" in {
@@ -82,6 +87,12 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            CoordinatesPage,
+            AddContactYesNoPage
+          )
         }
 
         "is X (EORI number) and AddIdentifierYesNoPage is answered No" in {
@@ -107,6 +118,13 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            EoriPage,
+            AddIdentifierYesNoPage,
+            AddContactYesNoPage
+          )
         }
 
         "is X (EORI number) and AddIdentifierYesNoPage is answered Yes" in {
@@ -133,6 +151,14 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            EoriPage,
+            AddIdentifierYesNoPage,
+            AdditionalIdentifierPage,
+            AddContactYesNoPage
+          )
         }
 
         "is Y (Authorisation number) and AddIdentifierYesNoPage is answered No" in {
@@ -158,6 +184,11 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            AuthorisationNumberPage,
+            AddIdentifierYesNoPage,
+            AddContactYesNoPage
+          )
         }
 
         "is Y (Authorisation number) and AddIdentifierYesNoPage is answered Yes" in {
@@ -184,6 +215,13 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            AuthorisationNumberPage,
+            AddIdentifierYesNoPage,
+            AdditionalIdentifierPage,
+            AddContactYesNoPage
+          )
         }
 
         "is Z (Address)" in {
@@ -210,6 +248,13 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            CountryPage,
+            AddressPage,
+            AddContactYesNoPage
+          )
         }
 
         "is U (UnLocode)" in {
@@ -233,6 +278,12 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            UnLocodePage,
+            AddContactYesNoPage
+          )
         }
 
         "is T (PostalCode)" in {
@@ -256,6 +307,12 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            PostalCodePage,
+            AddContactYesNoPage
+          )
         }
 
       }
@@ -286,6 +343,15 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         )
 
         result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          LocationTypePage,
+          AuthorisationNumberPage,
+          AddIdentifierYesNoPage,
+          AdditionalIdentifierPage,
+          AddContactYesNoPage,
+          contact.NamePage,
+          contact.TelephoneNumberPage
+        )
       }
 
     }
@@ -338,7 +404,12 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe AdditionalIdentifierPage
-
+        result.left.value.pages mustBe Seq(
+          LocationTypePage,
+          AuthorisationNumberPage,
+          AddIdentifierYesNoPage,
+          AdditionalIdentifierPage
+        )
       }
 
       "when is Y(Authorisation Number) and contact name details is missing when required" in {
@@ -358,6 +429,14 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe contact.NamePage
+        result.left.value.pages mustBe Seq(
+          LocationTypePage,
+          AuthorisationNumberPage,
+          AddIdentifierYesNoPage,
+          AdditionalIdentifierPage,
+          AddContactYesNoPage,
+          contact.NamePage
+        )
       }
 
       "when is Y(Authorisation Number) and contact phone number details is missing when required" in {
@@ -378,6 +457,15 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe contact.TelephoneNumberPage
+        result.left.value.pages mustBe Seq(
+          LocationTypePage,
+          AuthorisationNumberPage,
+          AddIdentifierYesNoPage,
+          AdditionalIdentifierPage,
+          AddContactYesNoPage,
+          contact.NamePage,
+          contact.TelephoneNumberPage
+        )
       }
 
       "when type is Z (address) and country page is missing" in {
@@ -392,6 +480,11 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe CountryPage
+        result.left.value.pages mustBe Seq(
+          LocationTypePage,
+          IdentificationPage,
+          CountryPage
+        )
       }
     }
   }

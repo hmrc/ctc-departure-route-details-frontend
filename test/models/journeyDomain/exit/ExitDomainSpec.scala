@@ -68,6 +68,9 @@ class ExitDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe OfficeOfExitCountryPage(Index(0))
+        result.left.value.pages mustBe Seq(
+          OfficeOfExitCountryPage(Index(0))
+        )
       }
     }
   }

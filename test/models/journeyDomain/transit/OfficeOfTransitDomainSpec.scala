@@ -58,7 +58,6 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           "and office of destination is in set CL112" in {
             val userAnswers = emptyUserAnswers
               .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice)
               .setValue(OfficeOfDestinationInCL112Page, true)
               .setValue(OfficeOfTransitPage(index), officeOfTransit)
               .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
@@ -74,6 +73,10 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfTransitPage(index),
+              AddOfficeOfTransitETAYesNoPage(index)
+            )
           }
 
           "and office of destination is in 'AD'" in {
@@ -95,6 +98,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              OfficeOfTransitPage(index),
+              AddOfficeOfTransitETAYesNoPage(index)
+            )
           }
 
           "and office of destination is not in 'AD'" in {
@@ -117,6 +125,12 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              OfficeOfTransitCountryPage(index),
+              OfficeOfTransitPage(index),
+              AddOfficeOfTransitETAYesNoPage(index)
+            )
           }
         }
 
@@ -125,7 +139,6 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
           val userAnswers = emptyUserAnswers
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-            .setValue(OfficeOfDestinationPage, customsOffice)
             .setValue(OfficeOfDestinationInCL112Page, false)
             .setValue(OfficeOfTransitCountryPage(Index(0)), country)
             .setValue(OfficeOfTransitCountryPage(index), country)
@@ -144,6 +157,12 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfTransitCountryPage(index),
+            OfficeOfTransitPage(index),
+            AddOfficeOfTransitETAYesNoPage(index),
+            OfficeOfTransitETAPage(index)
+          )
         }
 
         "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
@@ -168,6 +187,12 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              OfficeOfTransitCountryPage(index),
+              OfficeOfTransitPage(index),
+              OfficeOfTransitETAPage(index)
+            )
           }
 
           "and office of transit is not in CL147" in {
@@ -191,6 +216,12 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              OfficeOfTransitCountryPage(index),
+              OfficeOfTransitPage(index),
+              AddOfficeOfTransitETAYesNoPage(index)
+            )
           }
         }
 
@@ -215,8 +246,15 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfDestinationPage,
+            OfficeOfTransitCountryPage(index),
+            OfficeOfTransitPage(index),
+            AddOfficeOfTransitETAYesNoPage(index)
+          )
         }
       }
+
       "when is transition" - {
         val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
         when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
@@ -242,6 +280,11 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfDestinationPage,
+            OfficeOfTransitPage(index),
+            AddOfficeOfTransitETAYesNoPage(index)
+          )
         }
 
         "and office of destination is not in 'AD'" in {
@@ -264,6 +307,12 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfDestinationPage,
+            OfficeOfTransitCountryPage(index),
+            OfficeOfTransitPage(index),
+            AddOfficeOfTransitETAYesNoPage(index)
+          )
         }
 
         "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration' or 'exitSummaryDeclaration'" - {
@@ -289,6 +338,12 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              OfficeOfTransitCountryPage(index),
+              OfficeOfTransitPage(index),
+              OfficeOfTransitETAPage(index)
+            )
           }
 
           "and office of transit is not in CL010 or office of departure is in CL010" in {
@@ -313,6 +368,12 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              OfficeOfTransitCountryPage(index),
+              OfficeOfTransitPage(index),
+              AddOfficeOfTransitETAYesNoPage(index)
+            )
           }
         }
 
@@ -338,6 +399,12 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfDestinationPage,
+            OfficeOfTransitCountryPage(index),
+            OfficeOfTransitPage(index),
+            AddOfficeOfTransitETAYesNoPage(index)
+          )
         }
       }
     }

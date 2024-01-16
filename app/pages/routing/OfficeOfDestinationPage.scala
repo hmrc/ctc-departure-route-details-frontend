@@ -19,7 +19,7 @@ package pages.routing
 import controllers.routing.routes
 import models.reference.CustomsOffice
 import models.{Mode, UserAnswers}
-import pages.QuestionPage
+import pages.{InferredPage, QuestionPage}
 import pages.sections.routing.RoutingSection
 import pages.sections.transit.TransitSection
 import play.api.libs.json.JsPath
@@ -43,7 +43,7 @@ case object OfficeOfDestinationPage extends QuestionPage[CustomsOffice] {
 
 }
 
-case object OfficeOfDestinationInCL112Page extends QuestionPage[Boolean] {
+case object OfficeOfDestinationInCL112Page extends InferredPage[Boolean] {
 
   override def path: JsPath = OfficeOfDestinationPage.path \ toString
 

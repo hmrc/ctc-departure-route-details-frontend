@@ -69,6 +69,12 @@ class RoutingDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              CountryOfDestinationPage,
+              OfficeOfDestinationPage,
+              BindingItineraryPage,
+              CountryOfRoutingPage(index)
+            )
           }
 
           "and not following binding itinerary" in {
@@ -92,6 +98,12 @@ class RoutingDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              CountryOfDestinationPage,
+              OfficeOfDestinationPage,
+              BindingItineraryPage,
+              AddCountryOfRoutingYesNoPage
+            )
           }
         }
 
@@ -122,6 +134,12 @@ class RoutingDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              CountryOfDestinationPage,
+              OfficeOfDestinationPage,
+              BindingItineraryPage,
+              CountryOfRoutingPage(index)
+            )
           }
 
           "and not following binding itinerary" in {
@@ -147,6 +165,12 @@ class RoutingDomainSpec extends SpecBase with Generators {
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              CountryOfDestinationPage,
+              OfficeOfDestinationPage,
+              BindingItineraryPage,
+              CountryOfRoutingPage(index)
+            )
           }
         }
       }
@@ -178,6 +202,11 @@ class RoutingDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            CountryOfDestinationPage,
+            OfficeOfDestinationPage,
+            BindingItineraryPage
+          )
         }
 
         "when there is security" in {
@@ -205,7 +234,12 @@ class RoutingDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
-
+          result.value.pages mustBe Seq(
+            CountryOfDestinationPage,
+            OfficeOfDestinationPage,
+            BindingItineraryPage,
+            CountryOfRoutingPage(index)
+          )
         }
       }
     }
@@ -222,6 +256,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe CountryOfDestinationPage
+        result.left.value.pages mustBe Seq(
+          CountryOfDestinationPage
+        )
       }
 
       "when office of destination page is missing" in {
@@ -236,6 +273,10 @@ class RoutingDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe OfficeOfDestinationPage
+        result.left.value.pages mustBe Seq(
+          CountryOfDestinationPage,
+          OfficeOfDestinationPage
+        )
       }
 
       "when binding itinerary page is missing" in {
@@ -251,6 +292,11 @@ class RoutingDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe BindingItineraryPage
+        result.left.value.pages mustBe Seq(
+          CountryOfDestinationPage,
+          OfficeOfDestinationPage,
+          BindingItineraryPage
+        )
       }
 
       "when post transition" - {
@@ -270,6 +316,12 @@ class RoutingDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.left.value.page mustBe AddCountryOfRoutingYesNoPage
+          result.left.value.pages mustBe Seq(
+            CountryOfDestinationPage,
+            OfficeOfDestinationPage,
+            BindingItineraryPage,
+            AddCountryOfRoutingYesNoPage
+          )
         }
 
         "when binding itinerary is true and no countries added" in {
@@ -286,6 +338,12 @@ class RoutingDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.left.value.page mustBe CountryOfRoutingPage(Index(0))
+          result.left.value.pages mustBe Seq(
+            CountryOfDestinationPage,
+            OfficeOfDestinationPage,
+            BindingItineraryPage,
+            CountryOfRoutingPage(Index(0))
+          )
         }
 
         "when add country is true and no countries added" in {
@@ -302,6 +360,13 @@ class RoutingDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.left.value.page mustBe CountryOfRoutingPage(Index(0))
+          result.left.value.pages mustBe Seq(
+            CountryOfDestinationPage,
+            OfficeOfDestinationPage,
+            BindingItineraryPage,
+            AddCountryOfRoutingYesNoPage,
+            CountryOfRoutingPage(Index(0))
+          )
         }
       }
 
@@ -320,6 +385,12 @@ class RoutingDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe CountryOfRoutingPage(Index(0))
+        result.left.value.pages mustBe Seq(
+          CountryOfDestinationPage,
+          OfficeOfDestinationPage,
+          BindingItineraryPage,
+          CountryOfRoutingPage(Index(0))
+        )
       }
     }
   }

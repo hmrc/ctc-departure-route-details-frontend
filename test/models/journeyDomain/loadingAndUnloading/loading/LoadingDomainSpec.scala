@@ -52,6 +52,13 @@ class LoadingDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          AddUnLocodeYesNoPage,
+          UnLocodePage,
+          AddExtraInformationYesNoPage,
+          CountryPage,
+          LocationPage
+        )
       }
 
       "when addUnLocode is No" in {
@@ -70,6 +77,11 @@ class LoadingDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          AddUnLocodeYesNoPage,
+          CountryPage,
+          LocationPage
+        )
       }
     }
 
@@ -84,6 +96,10 @@ class LoadingDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe UnLocodePage
+        result.left.value.pages mustBe Seq(
+          AddUnLocodeYesNoPage,
+          UnLocodePage
+        )
       }
     }
   }

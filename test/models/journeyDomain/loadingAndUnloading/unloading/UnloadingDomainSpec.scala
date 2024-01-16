@@ -60,6 +60,13 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            UnLocodeYesNoPage,
+            UnLocodePage,
+            AddExtraInformationYesNoPage,
+            CountryPage,
+            LocationPage
+          )
         }
 
         "when add a place of unloading UN/LOCODE is yes and additional information is no" in {
@@ -78,6 +85,11 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            UnLocodeYesNoPage,
+            UnLocodePage,
+            AddExtraInformationYesNoPage
+          )
         }
 
         "when add a place of unloading UN/LOCODE is no" in {
@@ -96,6 +108,11 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            UnLocodeYesNoPage,
+            CountryPage,
+            LocationPage
+          )
         }
       }
     }
@@ -115,6 +132,9 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             ).run(userAnswers)
 
             result.left.value.page mustBe AddExtraInformationYesNoPage
+            result.left.value.pages mustBe Seq(
+              AddExtraInformationYesNoPage
+            )
           }
         }
 
@@ -129,6 +149,9 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
                 ).run(userAnswers)
 
                 result.left.value.page mustBe UnLocodeYesNoPage
+                result.left.value.pages mustBe Seq(
+                  UnLocodeYesNoPage
+                )
             }
           }
         }

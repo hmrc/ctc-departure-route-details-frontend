@@ -48,6 +48,10 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfExitCountryPage(index),
+            OfficeOfExitPage(index)
+          )
         }
 
         "and country is inferred" in {
@@ -65,6 +69,9 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfExitPage(index)
+          )
         }
       }
     }
@@ -78,6 +85,9 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
         ).run(userAnswers)
 
         result.left.value.page mustBe OfficeOfExitCountryPage(index)
+        result.left.value.pages mustBe Seq(
+          OfficeOfExitCountryPage(index)
+        )
       }
 
       "when office missing" - {
@@ -90,6 +100,10 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.left.value.page mustBe OfficeOfExitPage(index)
+          result.left.value.pages mustBe Seq(
+            OfficeOfExitCountryPage(index),
+            OfficeOfExitPage(index)
+          )
         }
 
         "and inferred country defined" in {
@@ -101,6 +115,9 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
           ).run(userAnswers)
 
           result.left.value.page mustBe OfficeOfExitPage(index)
+          result.left.value.pages mustBe Seq(
+            OfficeOfExitPage(index)
+          )
         }
       }
     }
