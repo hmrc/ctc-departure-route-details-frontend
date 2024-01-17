@@ -38,7 +38,7 @@ object LoadingDomain {
         case ReaderSuccess(true, pages) =>
           AddExtraInformationYesNoPage.filterOptionalDependent(identity)(AdditionalInformationDomain.userAnswersReader).apply(pages)
         case ReaderSuccess(false, pages) =>
-          AdditionalInformationDomain.userAnswersReader.apply(pages).map(_.toOption)
+          AdditionalInformationDomain.userAnswersReader.toOption.apply(pages)
       }
 
     (

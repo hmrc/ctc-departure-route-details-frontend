@@ -42,5 +42,5 @@ case class CountryOfRoutingDomain(
 object CountryOfRoutingDomain {
 
   implicit def userAnswersReader(index: Index): Read[CountryOfRoutingDomain] =
-    CountryOfRoutingPage(index).reader.apply(_).map(_.to(CountryOfRoutingDomain(_)(index)))
+    CountryOfRoutingPage(index).reader.map(CountryOfRoutingDomain(_)(index))
 }

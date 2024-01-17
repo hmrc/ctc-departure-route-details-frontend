@@ -37,13 +37,13 @@ object UnloadingDomain {
       UnLocodeYesNoPage.reader.apply(_).flatMap {
         case ReaderSuccess(true, pages) =>
           (
-            UnLocodePage.reader.map(_.toOption),
+            UnLocodePage.reader.toOption,
             optionalAdditionalInformationReader
           ).map(UnloadingDomain.apply).apply(pages)
         case ReaderSuccess(false, pages) =>
           (
             UserAnswersReader.none,
-            AdditionalInformationDomain.userAnswersReader.map(_.toOption)
+            AdditionalInformationDomain.userAnswersReader.toOption
           ).map(UnloadingDomain.apply).apply(pages)
       }
 

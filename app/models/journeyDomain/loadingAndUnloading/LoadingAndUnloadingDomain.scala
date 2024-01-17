@@ -54,20 +54,20 @@ object LoadingAndUnloadingDomain {
           case ReaderSuccess(NoSecurityDetails, pages) =>
             UserAnswersReader.none.apply(pages)
           case ReaderSuccess(_, pages) =>
-            LoadingDomain.userAnswersReader.apply(pages).map(_.toOption)
+            LoadingDomain.userAnswersReader.toOption.apply(pages)
         }
       case Phase.PostTransition =>
         AdditionalDeclarationTypePage.reader.apply(_).flatMap {
           case ReaderSuccess(PreLodge, pages) =>
             AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(LoadingDomain.userAnswersReader).apply(pages)
           case ReaderSuccess(_, pages) =>
-            LoadingDomain.userAnswersReader.apply(pages).map(_.toOption)
+            LoadingDomain.userAnswersReader.toOption.apply(pages)
         }
     }
 
   def unloadingReader(implicit phaseConfig: PhaseConfig): Read[Option[UnloadingDomain]] = {
     lazy val mandatoryReader: Read[Option[UnloadingDomain]] =
-      UnloadingDomain.userAnswersReader.apply(_).map(_.toOption)
+      UnloadingDomain.userAnswersReader.toOption
 
     lazy val optionalReader: Read[Option[UnloadingDomain]] =
       AddPlaceOfUnloadingPage.filterOptionalDependent(identity)(UnloadingDomain.userAnswersReader)

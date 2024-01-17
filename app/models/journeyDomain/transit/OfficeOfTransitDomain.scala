@@ -61,7 +61,7 @@ object OfficeOfTransitDomain {
             case ReaderSuccess(EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails, pages) =>
               OfficeOfTransitInCL147Page(index).reader.apply(pages).flatMap {
                 case ReaderSuccess(true, pages) =>
-                  OfficeOfTransitETAPage(index).reader.apply(pages).map(_.toOption)
+                  OfficeOfTransitETAPage(index).reader.toOption.apply(pages)
                 case ReaderSuccess(false, pages) =>
                   AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader).apply(pages)
               }
@@ -78,7 +78,7 @@ object OfficeOfTransitDomain {
                 OfficeOfTransitInCL010Page(index).reader,
                 OfficeOfDepartureInCL010Page.reader
               ).pmap[Option[DateTime]] {
-                case (true, false) => OfficeOfTransitETAPage(index).reader.apply(_).map(_.toOption)
+                case (true, false) => OfficeOfTransitETAPage(index).reader.toOption
                 case _             => AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
               }.apply(pages)
           }
@@ -93,7 +93,7 @@ object OfficeOfTransitDomain {
 
     lazy val readsWithCountry: Read[OfficeOfTransitDomain] =
       (
-        UserAnswersReader.readInferred(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index)).map(_.toOption),
+        UserAnswersReader.readInferred(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index)).toOption,
         OfficeOfTransitPage(index).reader,
         etaReads
       ).map(OfficeOfTransitDomain.apply(_, _, _)(index))
@@ -110,7 +110,7 @@ object OfficeOfTransitDomain {
             }
         }
       case (_, Phase.Transition) =>
-        OfficeOfDestinationPage.reader.apply(_).map(_.to(_.countryCode)).flatMap {
+        OfficeOfDestinationPage.reader.map(_.countryCode).apply(_).flatMap {
           case ReaderSuccess(AD, pages) => readsWithoutCountry(pages)
           case ReaderSuccess(_, pages)  => readsWithCountry(pages)
         }

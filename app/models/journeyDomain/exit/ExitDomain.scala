@@ -37,11 +37,11 @@ object ExitDomain {
     implicit def officesOfExitReader: Read[Seq[OfficeOfExitDomain]] =
       OfficesOfExitSection.arrayReader.apply(_).flatMap {
         case ReaderSuccess(x, pages) if x.isEmpty =>
-          OfficeOfExitDomain.userAnswersReader(Index(0))(pages).map(_.toSeq)
+          OfficeOfExitDomain.userAnswersReader(Index(0)).map(Seq(_)).apply(pages)
         case ReaderSuccess(x, pages) =>
-          x.traverse[OfficeOfExitDomain](OfficeOfExitDomain.userAnswersReader(_)(_)).apply(pages)
+          x.traverse[OfficeOfExitDomain](OfficeOfExitDomain.userAnswersReader(_).apply(_)).apply(pages)
       }
 
-    officesOfExitReader(_).map(_.to(ExitDomain(_)))
+    officesOfExitReader.map(ExitDomain.apply)
   }
 }

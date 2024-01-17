@@ -91,7 +91,7 @@ object RouteDetailsDomain {
   implicit def transitReader(implicit phaseConfig: PhaseConfig): Read[Option[TransitDomain]] =
     DeclarationTypePage.reader.apply(_).flatMap {
       case ReaderSuccess(TIR, pages) => UserAnswersReader.none.apply(pages)
-      case ReaderSuccess(_, pages)   => TransitDomain.userAnswersReader.apply(pages).map(_.toOption)
+      case ReaderSuccess(_, pages)   => TransitDomain.userAnswersReader.toOption.apply(pages)
     }
 
   implicit def exitReader(transit: Option[TransitDomain]): Read[Option[ExitDomain]] =
@@ -102,7 +102,7 @@ object RouteDetailsDomain {
             CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147(pages).flatMap {
               case ReaderSuccess(atLeastOneCountryOfRoutingInCL147, pages) =>
                 if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147, transit)) {
-                  ExitDomain.userAnswersReader(pages).map(_.toOption)
+                  ExitDomain.userAnswersReader.toOption.apply(pages)
                 } else {
                   (atLeastOneCountryOfRoutingInCL147, transit) match {
                     case (true, Some(TransitDomain(_, list))) if list.nonEmpty =>
@@ -142,7 +142,7 @@ object RouteDetailsDomain {
           case ReaderSuccess(_, pages) =>
             OfficeOfDepartureInCL147Page.reader.apply(pages).flatMap {
               case ReaderSuccess(true, pages)  => optionalReader(pages)
-              case ReaderSuccess(false, pages) => LocationOfGoodsDomain.userAnswersReader(pages).map(_.toOption)
+              case ReaderSuccess(false, pages) => LocationOfGoodsDomain.userAnswersReader.toOption.apply(pages)
             }
         }
     }

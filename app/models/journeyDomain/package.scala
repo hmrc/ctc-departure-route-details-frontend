@@ -162,7 +162,9 @@ package object domain {
   }
 
   implicit class RichRead[A](value: Read[A]) {
-    def map[B](f: ReaderSuccess[A] => ReaderSuccess[B]): Read[B] = value.apply(_).map(f)
+    def map[B](f: A => B): Read[B] = value(_).map(_.to(f(_)))
+
+    def toOption: Read[Option[A]] = map(Option(_))
   }
 
   implicit class RichTuple2[A, B](value: (Read[A], Read[B])) {

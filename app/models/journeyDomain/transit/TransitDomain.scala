@@ -49,13 +49,9 @@ object TransitDomain {
     val officesOfTransitReader: Read[OfficesOfTransit] =
       OfficesOfTransitSection.arrayReader.apply(_).flatMap {
         case ReaderSuccess(x, pages) if x.isEmpty =>
-          UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(Index(0)).apply(pages)
-          ).map(_.toSeq)
+          OfficeOfTransitDomain.userAnswersReader(Index(0)).map(Seq(_)).apply(pages)
         case ReaderSuccess(x, pages) =>
-          x.traverse[OfficeOfTransitDomain](
-            (index, pages) => OfficeOfTransitDomain.userAnswersReader(index).apply(pages)
-          ).apply(pages)
+          x.traverse[OfficeOfTransitDomain](OfficeOfTransitDomain.userAnswersReader(_).apply(_)).apply(pages)
       }
 
     lazy val addOfficesOfTransitReader: Read[OfficesOfTransit] =
@@ -79,7 +75,6 @@ object TransitDomain {
               CountriesOfRoutingSection.anyCountriesOfRoutingInCL112(pages).flatMap {
                 case ReaderSuccess(true, pages)  => officesOfTransitReader(pages)
                 case ReaderSuccess(false, pages) => addOfficesOfTransitReader(pages)
-
               }
             }
 

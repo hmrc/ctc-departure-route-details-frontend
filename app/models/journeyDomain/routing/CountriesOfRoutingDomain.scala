@@ -32,9 +32,9 @@ object CountriesOfRoutingDomain {
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[Seq[CountryOfRoutingDomain]] = {
     lazy val arrayReader: Read[Seq[CountryOfRoutingDomain]] = CountriesOfRoutingSection.arrayReader.apply(_).flatMap {
       case ReaderSuccess(x, pages) if x.isEmpty =>
-        UserAnswersReader[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(Index(0))(pages)).map(_.toSeq)
+        CountryOfRoutingDomain.userAnswersReader(Index(0)).map(Seq(_)).apply(pages)
       case ReaderSuccess(x, pages) =>
-        x.traverse[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(_)(_)).apply(pages)
+        x.traverse[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(_).apply(_)).apply(pages)
     }
 
     (
