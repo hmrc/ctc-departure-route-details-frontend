@@ -23,7 +23,7 @@ import models.{NormalMode, SelectableList}
 import navigation.OfficeOfExitNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.exit.index.OfficeOfExitPage
+import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -53,7 +53,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
       .overrides(bind(classOf[OfficeOfExitNavigatorProvider]).toInstance(fakeOfficeOfExitNavigatorProvider))
       .overrides(bind(classOf[CustomsOfficesService]).toInstance(mockCustomsOfficesService))
 
-  private val baseAnswers = emptyUserAnswers.setOfficeOfExitCountry(country)
+  private val baseAnswers = emptyUserAnswers.setValue(OfficeOfExitCountryPage(index), country)
 
   "OfficeOfExit Controller" - {
 

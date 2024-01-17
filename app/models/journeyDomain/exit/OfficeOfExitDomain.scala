@@ -22,7 +22,7 @@ import models.domain.{GettableAsReaderOps, UserAnswersReader}
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode, UserAnswers}
-import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage, OfficeOfExitPage}
+import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
 import play.api.mvc.Call
 
 case class OfficeOfExitDomain(
@@ -43,7 +43,7 @@ object OfficeOfExitDomain {
     index: Index
   ): UserAnswersReader[OfficeOfExitDomain] =
     (
-      InferredOfficeOfExitCountryPage(index).reader orElse OfficeOfExitCountryPage(index).reader,
+      OfficeOfExitCountryPage(index).reader,
       OfficeOfExitPage(index).reader
     ).mapN {
       (country, office) => OfficeOfExitDomain(country, office)(index)

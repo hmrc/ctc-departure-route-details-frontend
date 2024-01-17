@@ -21,13 +21,12 @@ import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import forms.SelectableFormProvider
 import generators.Generators
 import models.reference.CustomsOffice
-import models.{NormalMode, SelectableList, UserAnswers}
+import models.{NormalMode, SelectableList}
 import navigation.OfficeOfExitNavigatorProvider
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
-import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage}
+import pages.exit.index.OfficeOfExitCountryPage
 import pages.routing.CountryOfDestinationPage
 import play.api.data.FormError
 import play.api.inject.bind

@@ -18,8 +18,8 @@ package controllers.exit.index
 
 import config.PhaseConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
+import controllers.actions._
 import forms.SelectableFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
