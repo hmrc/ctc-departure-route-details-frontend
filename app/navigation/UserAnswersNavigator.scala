@@ -86,9 +86,7 @@ object UserAnswersNavigator extends Logging {
     answeredPages: Pages,
     userAnswers: UserAnswers,
     mode: Mode
-  ): Option[Call] = {
-    println("***")
-    answeredPages.foreach(println)
+  ): Option[Call] =
     mode match {
       case NormalMode =>
         @tailrec
@@ -103,5 +101,4 @@ object UserAnswersNavigator extends Logging {
       case CheckMode =>
         userAnswersReaderResult
     }
-  }
 }
