@@ -35,7 +35,7 @@ class RedirectController @Inject() (
   def redirect(lrn: LocalReferenceNumber): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
       val navigator: UserAnswersNavigator = navigatorProvider(NormalMode)
-      Redirect(navigator.nextPage(request.userAnswers))
+      Redirect(navigator.nextPage(request.userAnswers, None))
   }
 
 }

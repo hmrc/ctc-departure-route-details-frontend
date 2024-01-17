@@ -22,6 +22,7 @@ import controllers.routing.index.{routes => indexRoutes}
 import forms.AddAnotherFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
+import pages.sections.routing.CountriesOfRoutingSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
@@ -70,7 +71,7 @@ class AddAnotherCountryOfRoutingController @Inject() (
               Redirect(indexRoutes.CountryOfRoutingController.onPageLoad(lrn, mode, viewModel.nextIndex))
             case false =>
               val navigator: UserAnswersNavigator = navigatorProvider(mode)
-              Redirect(navigator.nextPage(request.userAnswers))
+              Redirect(navigator.nextPage(request.userAnswers, Some(CountriesOfRoutingSection)))
           }
         )
   }

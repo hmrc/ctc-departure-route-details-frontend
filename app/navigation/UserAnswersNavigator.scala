@@ -40,9 +40,6 @@ trait UserAnswersNavigator extends Navigator {
 
   val mode: Mode
 
-  def nextPage(userAnswers: UserAnswers): Call =
-    nextPage(userAnswers, None)
-
   override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call =
     UserAnswersNavigator.nextPage[T](userAnswers, currentPage, mode)
 }

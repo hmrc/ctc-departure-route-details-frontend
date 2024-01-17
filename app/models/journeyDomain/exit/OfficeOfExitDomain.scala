@@ -42,5 +42,5 @@ object OfficeOfExitDomain {
     (
       UserAnswersReader.readInferred(OfficeOfExitCountryPage(index), InferredOfficeOfExitCountryPage(index)),
       OfficeOfExitPage(index).reader
-    ).mapReads(OfficeOfExitDomain.apply(_, _)(index))
+    ).map(OfficeOfExitDomain.apply(_, _)(index))
 }

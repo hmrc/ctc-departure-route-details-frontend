@@ -36,7 +36,7 @@ class OfficeOfExitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           forAll(arbitraryOfficeOfExitAnswers(emptyUserAnswers, index)) {
             answers =>
               navigator
-                .nextPage(answers)
+                .nextPage(answers, None)
                 .mustBe(controllers.exit.index.routes.CheckOfficeOfExitAnswersController.onPageLoad(lrn, index, mode))
           }
         }
@@ -54,7 +54,7 @@ class OfficeOfExitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           forAll(arbitraryRouteDetailsAnswers(emptyUserAnswers)) {
             answers =>
               navigator
-                .nextPage(answers)
+                .nextPage(answers, None)
                 .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }

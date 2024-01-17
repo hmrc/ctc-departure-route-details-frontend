@@ -167,12 +167,12 @@ package object domain {
 
   implicit class RichTuple2[A, B](value: (Read[A], Read[B])) {
 
-    def mapReads[T](f: (A, B) => T): Read[T] =
-      tupleIt {
+    def map[T](f: (A, B) => T): Read[T] =
+      pmap {
         case (a, b) => pages => UserAnswersReader.success(f(a, b)).apply(pages)
       }
 
-    def tupleIt[T](f: (A, B) => Read[T]): Read[T] = pages =>
+    def pmap[T](f: (A, B) => Read[T]): Read[T] = pages =>
       for {
         a      <- value._1(pages)
         b      <- value._2(a.pages)
@@ -182,12 +182,12 @@ package object domain {
 
   implicit class RichTuple3[A, B, C](value: (Read[A], Read[B], Read[C])) {
 
-    def mapReads[T](f: (A, B, C) => T): Read[T] =
-      tupleIt {
+    def map[T](f: (A, B, C) => T): Read[T] =
+      pmap {
         case (a, b, c) => pages => UserAnswersReader.success(f(a, b, c)).apply(pages)
       }
 
-    def tupleIt[T](f: (A, B, C) => Read[T]): Read[T] = pages =>
+    def pmap[T](f: (A, B, C) => Read[T]): Read[T] = pages =>
       for {
         a      <- value._1(pages)
         b      <- value._2(a.pages)
@@ -198,12 +198,12 @@ package object domain {
 
   implicit class RichTuple4[A, B, C, D](value: (Read[A], Read[B], Read[C], Read[D])) {
 
-    def mapReads[T](f: (A, B, C, D) => T): Read[T] =
-      tupleIt {
+    def map[T](f: (A, B, C, D) => T): Read[T] =
+      pmap {
         case (a, b, c, d) => pages => UserAnswersReader.success(f(a, b, c, d)).apply(pages)
       }
 
-    def tupleIt[T](f: (A, B, C, D) => Read[T]): Read[T] = pages =>
+    def pmap[T](f: (A, B, C, D) => Read[T]): Read[T] = pages =>
       for {
         a      <- value._1(pages)
         b      <- value._2(a.pages)

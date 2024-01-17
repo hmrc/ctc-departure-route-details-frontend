@@ -44,6 +44,6 @@ object LoadingDomain {
     (
       unLocodeReads,
       additionalInformationReads
-    ).mapReads(LoadingDomain.apply)
+    ).map(LoadingDomain.apply)
   }
 }

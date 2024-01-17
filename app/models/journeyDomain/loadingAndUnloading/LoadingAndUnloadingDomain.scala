@@ -96,5 +96,5 @@ object LoadingAndUnloadingDomain {
     (
       loadingReader,
       unloadingReader
-    ).mapReads(LoadingAndUnloadingDomain.apply)
+    ).map(LoadingAndUnloadingDomain.apply)
 }

@@ -77,7 +77,7 @@ object OfficeOfTransitDomain {
               (
                 OfficeOfTransitInCL010Page(index).reader,
                 OfficeOfDepartureInCL010Page.reader
-              ).tupleIt[Option[DateTime]] {
+              ).pmap[Option[DateTime]] {
                 case (true, false) => OfficeOfTransitETAPage(index).reader.apply(_).map(_.toOption)
                 case _             => AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
               }.apply(pages)
@@ -89,14 +89,14 @@ object OfficeOfTransitDomain {
       (
         OfficeOfTransitPage(index).reader,
         etaReads
-      ).mapReads(OfficeOfTransitDomain.apply(None, _, _)(index))
+      ).map(OfficeOfTransitDomain.apply(None, _, _)(index))
 
     lazy val readsWithCountry: Read[OfficeOfTransitDomain] =
       (
         UserAnswersReader.readInferred(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index)).map(_.toOption),
         OfficeOfTransitPage(index).reader,
         etaReads
-      ).mapReads(OfficeOfTransitDomain.apply(_, _, _)(index))
+      ).map(OfficeOfTransitDomain.apply(_, _, _)(index))
 
     (index.position, phaseConfig.phase) match {
       case (0, Phase.PostTransition) =>

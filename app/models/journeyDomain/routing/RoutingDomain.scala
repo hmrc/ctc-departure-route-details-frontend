@@ -43,5 +43,5 @@ object RoutingDomain {
       OfficeOfDestinationPage.reader,
       BindingItineraryPage.reader,
       CountriesOfRoutingDomain.userAnswersReader
-    ).mapReads(RoutingDomain.apply)
+    ).map(RoutingDomain.apply)
 }

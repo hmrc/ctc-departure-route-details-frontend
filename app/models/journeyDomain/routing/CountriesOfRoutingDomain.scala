@@ -40,8 +40,9 @@ object CountriesOfRoutingDomain {
     (
       SecurityDetailsTypePage.reader,
       BindingItineraryPage.reader
-    ).tupleIt {
-      case (NoSecurityDetails, _) if phaseConfig.phase == Transition => pages => UserAnswersReader.emptyList[CountryOfRoutingDomain].apply(pages)
+    ).pmap {
+      case (NoSecurityDetails, _) if phaseConfig.phase == Transition =>
+        pages => UserAnswersReader.emptyList[CountryOfRoutingDomain].apply(pages)
       case (NoSecurityDetails, false) if phaseConfig.phase == PostTransition =>
         pages =>
           AddCountryOfRoutingYesNoPage.reader.apply(pages).flatMap {

@@ -69,7 +69,7 @@ object TransitDomain {
       OfficeOfDepartureInCL112Page.reader,
       OfficeOfDestinationPage.reader,
       OfficeOfDestinationInCL112Page.reader
-    ).tupleIt {
+    ).pmap {
       case (officeOfDeparture, officeOfDepartureInCL112, officeOfDestination, officeOfDestinationInCL112) =>
         pages =>
           def countriesOfRoutingReader(isT2DeclarationType: Option[Boolean]): Read[TransitDomain] = pages => {

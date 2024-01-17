@@ -36,7 +36,7 @@ class TransitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with G
           forAll(arbitraryTransitAnswers(emptyUserAnswers)) {
             answers =>
               navigator
-                .nextPage(answers)
+                .nextPage(answers, None)
                 .mustBe(controllers.transit.routes.AddAnotherOfficeOfTransitController.onPageLoad(answers.lrn, mode))
           }
         }
@@ -54,7 +54,7 @@ class TransitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with G
           forAll(arbitraryRouteDetailsAnswers(emptyUserAnswers)) {
             answers =>
               navigator
-                .nextPage(answers)
+                .nextPage(answers, None)
                 .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }

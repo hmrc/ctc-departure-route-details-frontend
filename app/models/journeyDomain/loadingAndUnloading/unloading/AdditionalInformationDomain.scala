@@ -32,6 +32,6 @@ object AdditionalInformationDomain {
     (
       CountryPage.reader,
       LocationPage.reader
-    ).mapReads(AdditionalInformationDomain.apply)
+    ).map(AdditionalInformationDomain.apply)
 
 }

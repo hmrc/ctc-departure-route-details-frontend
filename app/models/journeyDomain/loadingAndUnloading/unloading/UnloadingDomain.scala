@@ -39,12 +39,12 @@ object UnloadingDomain {
           (
             UnLocodePage.reader.map(_.toOption),
             optionalAdditionalInformationReader
-          ).mapReads(UnloadingDomain.apply).apply(pages)
+          ).map(UnloadingDomain.apply).apply(pages)
         case ReaderSuccess(false, pages) =>
           (
             UserAnswersReader.none,
             AdditionalInformationDomain.userAnswersReader.map(_.toOption)
-          ).mapReads(UnloadingDomain.apply).apply(pages)
+          ).map(UnloadingDomain.apply).apply(pages)
       }
 
     lazy val optionalAdditionalInformationReader: Read[Option[AdditionalInformationDomain]] =
@@ -57,7 +57,7 @@ object UnloadingDomain {
             (
               UserAnswersReader.none,
               optionalAdditionalInformationReader
-            ).mapReads(UnloadingDomain.apply).apply(pages)
+            ).map(UnloadingDomain.apply).apply(pages)
           case ReaderSuccess(_, pages) =>
             unLocodeAndAdditionalInformationReader(pages)
         }

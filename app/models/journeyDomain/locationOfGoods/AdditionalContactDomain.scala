@@ -31,5 +31,5 @@ object AdditionalContactDomain {
     (
       NamePage.reader,
       TelephoneNumberPage.reader
-    ).mapReads(AdditionalContactDomain.apply)
+    ).map(AdditionalContactDomain.apply)
 }

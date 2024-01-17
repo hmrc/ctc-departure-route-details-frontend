@@ -65,7 +65,7 @@ object LocationOfGoodsV {
     (
       UserAnswersReader.success(typeOfLocation),
       CustomsOfficeIdentifierPage.reader
-    ).mapReads(LocationOfGoodsV.apply)
+    ).map(LocationOfGoodsV.apply)
 }
 
 case class LocationOfGoodsX(
@@ -83,7 +83,7 @@ object LocationOfGoodsX {
       EoriPage.reader,
       AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).mapReads(LocationOfGoodsX.apply)
+    ).map(LocationOfGoodsX.apply)
 }
 
 case class LocationOfGoodsY(
@@ -101,7 +101,7 @@ object LocationOfGoodsY {
       AuthorisationNumberPage.reader,
       AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).mapReads(LocationOfGoodsY.apply)
+    ).map(LocationOfGoodsY.apply)
 }
 
 case class LocationOfGoodsW(
@@ -117,7 +117,7 @@ object LocationOfGoodsW {
       UserAnswersReader.success(typeOfLocation),
       CoordinatesPage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).mapReads(LocationOfGoodsW.apply)
+    ).map(LocationOfGoodsW.apply)
 }
 
 case class LocationOfGoodsZ(
@@ -135,7 +135,7 @@ object LocationOfGoodsZ {
       CountryPage.reader,
       AddressPage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).mapReads(LocationOfGoodsZ.apply)
+    ).map(LocationOfGoodsZ.apply)
 }
 
 case class LocationOfGoodsU(
@@ -151,7 +151,7 @@ object LocationOfGoodsU {
       UserAnswersReader.success(typeOfLocation),
       UnLocodePage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).mapReads(LocationOfGoodsU.apply)
+    ).map(LocationOfGoodsU.apply)
 }
 
 case class LocationOfGoodsT(
@@ -167,6 +167,6 @@ object LocationOfGoodsT {
       UserAnswersReader.success(typeOfLocation),
       PostalCodePage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).mapReads(LocationOfGoodsT.apply)
+    ).map(LocationOfGoodsT.apply)
 
 }
