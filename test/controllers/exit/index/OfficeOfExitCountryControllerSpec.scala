@@ -68,32 +68,9 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
 
   "OfficeOfExitCountry Controller" - {
 
-    "must set inferred answer and redirect to next page" - {
-      "when only one country to choose from" in {
-
-        when(mockCountriesService.getOfficeOfExitCountries(any(), any())(any()))
-          .thenReturn(Future.successful(SelectableList(Seq(country1))))
-
-        setExistingUserAnswers(baseAnswers)
-
-        val request = FakeRequest(GET, officeOfExitCountryRoute)
-
-        val result = route(app, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual onwardRoute.url
-
-        val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-        verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
-        userAnswersCaptor.getValue.get(OfficeOfExitCountryPage(index)) must not be defined
-        userAnswersCaptor.getValue.getValue(InferredOfficeOfExitCountryPage(index)) mustBe country1
-      }
-    }
-
     "must return OK and the correct view for a GET" in {
 
-      when(mockCountriesService.getOfficeOfExitCountries(any(), any())(any()))
+      when(mockCountriesService.getCountries()(any()))
         .thenReturn(Future.successful(countryList))
 
       setExistingUserAnswers(baseAnswers)
@@ -112,7 +89,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockCountriesService.getOfficeOfExitCountries(any(), any())(any()))
+      when(mockCountriesService.getCountries()(any()))
         .thenReturn(Future.successful(countryList))
 
       val userAnswers = baseAnswers.setValue(OfficeOfExitCountryPage(index), country1)
@@ -136,7 +113,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
 
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
-      when(mockCountriesService.getOfficeOfExitCountries(any(), any())(any()))
+      when(mockCountriesService.getCountries()(any()))
         .thenReturn(Future.successful(countryList))
 
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any()))
@@ -156,7 +133,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockCountriesService.getOfficeOfExitCountries(any(), any())(any()))
+      when(mockCountriesService.getCountries()(any()))
         .thenReturn(Future.successful(countryList))
 
       setExistingUserAnswers(baseAnswers)
@@ -178,7 +155,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
 
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
-      when(mockCountriesService.getOfficeOfExitCountries(any(), any())(any()))
+      when(mockCountriesService.getCountries()(any()))
         .thenReturn(Future.successful(countryList))
 
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any()))
@@ -189,7 +166,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
       val request = FakeRequest(POST, officeOfExitCountryRoute).withFormUrlEncodedBody(("value", country1.code.code))
 
       val boundForm = form
-        .withError(FormError("value", "You cannot use this country as it does not have any offices of exit"))
+        .withError(FormError("value", "This country does not have any offices of exit for transit. Select another country."))
 
       val result = route(app, request).value
 

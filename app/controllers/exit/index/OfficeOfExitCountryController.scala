@@ -21,16 +21,12 @@ import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
-import models.reference.Country
-import models.requests.SpecificDataRequestProvider1
-import models.{Index, LocalReferenceNumber, Mode, SelectableList}
+import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
-import pages.QuestionPage
-import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage}
-import pages.routing.CountryOfDestinationPage
+import pages.exit.index.OfficeOfExitCountryPage
 import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{CountriesService, CustomsOfficesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -48,25 +44,19 @@ class OfficeOfExitCountryController @Inject() (
   countriesService: CountriesService,
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
-  view: OfficeOfExitCountryView,
-  getMandatoryPage: SpecificDataRequiredActionProvider
+  view: OfficeOfExitCountryView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   private val prefix: String = "exit.index.officeOfExitCountry"
 
-  private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[_]
-
   def onPageLoad(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
-    .andThen(getMandatoryPage(CountryOfDestinationPage))
     .async {
       implicit request =>
-        countriesService.getOfficeOfExitCountries(request.userAnswers, request.arg).flatMap {
-          case SelectableList(country :: Nil) =>
-            redirect(mode, index, InferredOfficeOfExitCountryPage, country)
-          case countryList =>
+        countriesService.getCountries().flatMap {
+          countryList =>
             val form = formProvider(prefix, countryList)
             val preparedForm = request.userAnswers.get(OfficeOfExitCountryPage(index)) match {
               case None        => form
@@ -79,10 +69,9 @@ class OfficeOfExitCountryController @Inject() (
 
   def onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
-    .andThen(getMandatoryPage(CountryOfDestinationPage))
     .async {
       implicit request =>
-        countriesService.getOfficeOfExitCountries(request.userAnswers, request.arg).flatMap {
+        countriesService.getCountries().flatMap {
           countryList =>
             val form = formProvider(prefix, countryList)
             form
@@ -93,7 +82,13 @@ class OfficeOfExitCountryController @Inject() (
                   customsOfficesService
                     .getCustomsOfficesOfExitForCountry(value.code)
                     .flatMap {
-                      _ => redirect(mode, index, OfficeOfExitCountryPage, value)
+                      _ =>
+                        implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                        OfficeOfExitCountryPage(index)
+                          .writeToUserAnswers(value)
+                          .updateTask()
+                          .writeToSession()
+                          .navigate()
                     }
                     .recover {
                       case _: NoReferenceDataFoundException =>
@@ -103,18 +98,4 @@ class OfficeOfExitCountryController @Inject() (
               )
         }
     }
-
-  private def redirect(
-    mode: Mode,
-    index: Index,
-    page: Index => QuestionPage[Country],
-    country: Country
-  )(implicit request: Request): Future[Result] = {
-    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
-    page(index)
-      .writeToUserAnswers(country)
-      .updateTask()
-      .writeToSession()
-      .navigate()
-  }
 }
