@@ -143,6 +143,9 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                     ).run(userAnswers)
 
                     result.left.value.page mustBe AddPlaceOfUnloadingPage
+                    result.left.value.pages mustBe Seq(
+                      AddPlaceOfUnloadingPage
+                    )
                 }
               }
             }
@@ -160,22 +163,11 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                     ).run(userAnswers)
 
                     result.left.value.page mustBe unloading.UnLocodeYesNoPage
+                    result.left.value.pages mustBe Seq(
+                      unloading.UnLocodeYesNoPage
+                    )
                 }
               }
-            }
-          }
-
-          "and security is 0" - {
-
-            "and add place of unloading is unanswered" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-
-              val result = UserAnswersReader[Option[UnloadingDomain]](
-                LoadingAndUnloadingDomain.unloadingReader(mockPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.value.value must not be defined
             }
           }
         }
@@ -196,6 +188,7 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
             ).run(userAnswers)
 
             result.value.value mustBe None
+            result.value.pages mustBe Nil
           }
         }
 
@@ -263,6 +256,9 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                   ).run(userAnswers)
 
                   result.left.value.page mustBe loading.AddUnLocodeYesNoPage
+                  result.left.value.pages mustBe Seq(
+                    loading.AddUnLocodeYesNoPage
+                  )
               }
             }
           }
@@ -282,6 +278,9 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
                 ).run(userAnswers)
 
                 result.left.value.page mustBe loading.AddUnLocodeYesNoPage
+                result.left.value.pages mustBe Seq(
+                  loading.AddUnLocodeYesNoPage
+                )
             }
           }
         }

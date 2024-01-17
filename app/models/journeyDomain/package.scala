@@ -114,16 +114,8 @@ package object domain {
       UserAnswersReader(fn)
     }
 
-    def mandatoryReader(predicate: A => Boolean)(implicit reads: Reads[A]): Read[A] = pages => {
-      val fn: UserAnswers => EitherType[ReaderSuccess[A]] = _.get(a) match {
-        case Some(value) if predicate(value) => Right(ReaderSuccess(value, pages.append(a)))
-        case _                               => Left(ReaderError(a, pages.append(a)))
-      }
-      UserAnswersReader(fn)
-    }
-
     def optionalReader(implicit reads: Reads[A]): Read[Option[A]] = pages => {
-      val fn: UserAnswers => EitherType[ReaderSuccess[Option[A]]] = ua => Right(ReaderSuccess(ua.get(a), pages.append(a)))
+      val fn: UserAnswers => EitherType[ReaderSuccess[Option[A]]] = ua => Right(ReaderSuccess(ua.get(a), pages))
       UserAnswersReader(fn)
     }
   }
