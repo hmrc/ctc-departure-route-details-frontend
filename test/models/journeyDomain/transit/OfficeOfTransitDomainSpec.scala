@@ -29,6 +29,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import pages.external.{OfficeOfDepartureInCL010Page, SecurityDetailsTypePage}
 import pages.routing._
+import pages.sections.transit.OfficeOfTransitSection
 import pages.transit.index._
 
 class OfficeOfTransitDomainSpec extends SpecBase with Generators {
@@ -75,7 +76,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             result.value.value mustBe expectedResult
             result.value.pages mustBe Seq(
               OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index)
+              AddOfficeOfTransitETAYesNoPage(index),
+              OfficeOfTransitSection(index)
             )
           }
 
@@ -101,7 +103,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             result.value.pages mustBe Seq(
               OfficeOfDestinationPage,
               OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index)
+              AddOfficeOfTransitETAYesNoPage(index),
+              OfficeOfTransitSection(index)
             )
           }
 
@@ -129,7 +132,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               OfficeOfDestinationPage,
               OfficeOfTransitCountryPage(index),
               OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index)
+              AddOfficeOfTransitETAYesNoPage(index),
+              OfficeOfTransitSection(index)
             )
           }
         }
@@ -161,7 +165,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitCountryPage(index),
             OfficeOfTransitPage(index),
             AddOfficeOfTransitETAYesNoPage(index),
-            OfficeOfTransitETAPage(index)
+            OfficeOfTransitETAPage(index),
+            OfficeOfTransitSection(index)
           )
         }
 
@@ -191,7 +196,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               OfficeOfDestinationPage,
               OfficeOfTransitCountryPage(index),
               OfficeOfTransitPage(index),
-              OfficeOfTransitETAPage(index)
+              OfficeOfTransitETAPage(index),
+              OfficeOfTransitSection(index)
             )
           }
 
@@ -220,7 +226,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               OfficeOfDestinationPage,
               OfficeOfTransitCountryPage(index),
               OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index)
+              AddOfficeOfTransitETAYesNoPage(index),
+              OfficeOfTransitSection(index)
             )
           }
         }
@@ -250,7 +257,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfDestinationPage,
             OfficeOfTransitCountryPage(index),
             OfficeOfTransitPage(index),
-            AddOfficeOfTransitETAYesNoPage(index)
+            AddOfficeOfTransitETAYesNoPage(index),
+            OfficeOfTransitSection(index)
           )
         }
       }
@@ -283,7 +291,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           result.value.pages mustBe Seq(
             OfficeOfDestinationPage,
             OfficeOfTransitPage(index),
-            AddOfficeOfTransitETAYesNoPage(index)
+            AddOfficeOfTransitETAYesNoPage(index),
+            OfficeOfTransitSection(index)
           )
         }
 
@@ -311,7 +320,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfDestinationPage,
             OfficeOfTransitCountryPage(index),
             OfficeOfTransitPage(index),
-            AddOfficeOfTransitETAYesNoPage(index)
+            AddOfficeOfTransitETAYesNoPage(index),
+            OfficeOfTransitSection(index)
           )
         }
 
@@ -342,7 +352,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               OfficeOfDestinationPage,
               OfficeOfTransitCountryPage(index),
               OfficeOfTransitPage(index),
-              OfficeOfTransitETAPage(index)
+              OfficeOfTransitETAPage(index),
+              OfficeOfTransitSection(index)
             )
           }
 
@@ -372,7 +383,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               OfficeOfDestinationPage,
               OfficeOfTransitCountryPage(index),
               OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index)
+              AddOfficeOfTransitETAYesNoPage(index),
+              OfficeOfTransitSection(index)
             )
           }
         }
@@ -403,7 +415,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfDestinationPage,
             OfficeOfTransitCountryPage(index),
             OfficeOfTransitPage(index),
-            AddOfficeOfTransitETAYesNoPage(index)
+            AddOfficeOfTransitETAYesNoPage(index),
+            OfficeOfTransitSection(index)
           )
         }
       }

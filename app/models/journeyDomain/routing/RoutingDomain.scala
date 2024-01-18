@@ -18,21 +18,20 @@ package models.journeyDomain.routing
 
 import config.PhaseConfig
 import models.domain._
-import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.journeyDomain.JourneyDomainModel
 import models.reference.{Country, CustomsOffice}
-import models.{Mode, UserAnswers}
 import pages.routing.{BindingItineraryPage, CountryOfDestinationPage, OfficeOfDestinationPage}
-import play.api.mvc.Call
+import pages.sections.Section
+import pages.sections.routing.RoutingSection
 
 case class RoutingDomain(
   countryOfDestination: Country,
   officeOfDestination: CustomsOffice,
   bindingItinerary: Boolean,
-  countriesOfRouting: Seq[CountryOfRoutingDomain]
+  countriesOfRouting: CountriesOfRoutingDomain
 ) extends JourneyDomainModel {
 
-  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(controllers.routing.routes.CheckYourAnswersController.onPageLoad(userAnswers.lrn, mode))
+  override def section: Option[Section[_]] = Some(RoutingSection)
 }
 
 object RoutingDomain {
@@ -43,5 +42,5 @@ object RoutingDomain {
       OfficeOfDestinationPage.reader,
       BindingItineraryPage.reader,
       CountriesOfRoutingDomain.userAnswersReader
-    ).map(RoutingDomain.apply)
+    ).jdmap(RoutingDomain.apply)
 }

@@ -28,6 +28,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import pages.external.SecurityDetailsTypePage
 import pages.routing._
 import pages.routing.index.CountryOfRoutingPage
+import pages.sections.routing.{CountriesOfRoutingSection, RoutingSection}
 
 class RoutingDomainSpec extends SpecBase with Generators {
 
@@ -59,8 +60,10 @@ class RoutingDomainSpec extends SpecBase with Generators {
               countryOfDestination = country,
               officeOfDestination = officeOfDestination,
               bindingItinerary = true,
-              countriesOfRouting = Seq(
-                CountryOfRoutingDomain(country)(index)
+              countriesOfRouting = CountriesOfRoutingDomain(
+                Seq(
+                  CountryOfRoutingDomain(country)(index)
+                )
               )
             )
 
@@ -73,7 +76,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
               CountryOfDestinationPage,
               OfficeOfDestinationPage,
               BindingItineraryPage,
-              CountryOfRoutingPage(index)
+              CountryOfRoutingPage(index),
+              CountriesOfRoutingSection,
+              RoutingSection
             )
           }
 
@@ -90,7 +95,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
               countryOfDestination = country,
               officeOfDestination = officeOfDestination,
               bindingItinerary = false,
-              countriesOfRouting = Nil
+              countriesOfRouting = CountriesOfRoutingDomain(Nil)
             )
 
             val result = UserAnswersReader[RoutingDomain](
@@ -102,7 +107,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
               CountryOfDestinationPage,
               OfficeOfDestinationPage,
               BindingItineraryPage,
-              AddCountryOfRoutingYesNoPage
+              AddCountryOfRoutingYesNoPage,
+              RoutingSection
             )
           }
         }
@@ -124,8 +130,10 @@ class RoutingDomainSpec extends SpecBase with Generators {
               countryOfDestination = country,
               officeOfDestination = officeOfDestination,
               bindingItinerary = true,
-              countriesOfRouting = Seq(
-                CountryOfRoutingDomain(country)(index)
+              countriesOfRouting = CountriesOfRoutingDomain(
+                Seq(
+                  CountryOfRoutingDomain(country)(index)
+                )
               )
             )
 
@@ -138,7 +146,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
               CountryOfDestinationPage,
               OfficeOfDestinationPage,
               BindingItineraryPage,
-              CountryOfRoutingPage(index)
+              CountryOfRoutingPage(index),
+              CountriesOfRoutingSection,
+              RoutingSection
             )
           }
 
@@ -155,8 +165,10 @@ class RoutingDomainSpec extends SpecBase with Generators {
               countryOfDestination = country,
               officeOfDestination = officeOfDestination,
               bindingItinerary = false,
-              countriesOfRouting = Seq(
-                CountryOfRoutingDomain(country)(index)
+              countriesOfRouting = CountriesOfRoutingDomain(
+                Seq(
+                  CountryOfRoutingDomain(country)(index)
+                )
               )
             )
 
@@ -169,7 +181,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
               CountryOfDestinationPage,
               OfficeOfDestinationPage,
               BindingItineraryPage,
-              CountryOfRoutingPage(index)
+              CountryOfRoutingPage(index),
+              CountriesOfRoutingSection,
+              RoutingSection
             )
           }
         }
@@ -194,7 +208,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
             countryOfDestination = country,
             officeOfDestination = officeOfDestination,
             bindingItinerary = bindingItinerary,
-            countriesOfRouting = Nil
+            countriesOfRouting = CountriesOfRoutingDomain(Nil)
           )
 
           val result = UserAnswersReader[RoutingDomain](
@@ -205,7 +219,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
           result.value.pages mustBe Seq(
             CountryOfDestinationPage,
             OfficeOfDestinationPage,
-            BindingItineraryPage
+            BindingItineraryPage,
+            RoutingSection
           )
         }
 
@@ -224,8 +239,10 @@ class RoutingDomainSpec extends SpecBase with Generators {
             countryOfDestination = country,
             officeOfDestination = officeOfDestination,
             bindingItinerary = bindingItinerary,
-            countriesOfRouting = Seq(
-              CountryOfRoutingDomain(country)(index)
+            countriesOfRouting = CountriesOfRoutingDomain(
+              Seq(
+                CountryOfRoutingDomain(country)(index)
+              )
             )
           )
 
@@ -238,7 +255,9 @@ class RoutingDomainSpec extends SpecBase with Generators {
             CountryOfDestinationPage,
             OfficeOfDestinationPage,
             BindingItineraryPage,
-            CountryOfRoutingPage(index)
+            CountryOfRoutingPage(index),
+            CountriesOfRoutingSection,
+            RoutingSection
           )
         }
       }

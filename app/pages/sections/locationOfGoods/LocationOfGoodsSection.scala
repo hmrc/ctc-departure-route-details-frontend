@@ -16,13 +16,18 @@
 
 package pages.sections.locationOfGoods
 
-import pages.sections.Section
-import pages.sections.RouteDetailsSection
+import controllers.locationOfGoods.routes
+import models.{Mode, UserAnswers}
+import pages.sections.{RouteDetailsSection, Section}
 import play.api.libs.json.{JsObject, JsPath}
+import play.api.mvc.Call
 
 case object LocationOfGoodsSection extends Section[JsObject] {
 
   override def path: JsPath = RouteDetailsSection.path \ toString
 
   override def toString: String = "locationOfGoods"
+
+  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
+    Some(routes.CheckYourAnswersController.onPageLoad(userAnswers.lrn, mode))
 }

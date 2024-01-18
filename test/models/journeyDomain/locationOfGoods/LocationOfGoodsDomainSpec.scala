@@ -27,6 +27,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.QuestionPage
 import pages.locationOfGoods._
+import pages.sections.locationOfGoods.LocationOfGoodsSection
 
 class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
@@ -62,7 +63,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           result.value.pages mustBe Seq(
             LocationTypePage,
             IdentificationPage,
-            CustomsOfficeIdentifierPage
+            CustomsOfficeIdentifierPage,
+            LocationOfGoodsSection
           )
         }
 
@@ -91,7 +93,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationTypePage,
             IdentificationPage,
             CoordinatesPage,
-            AddContactYesNoPage
+            AddContactYesNoPage,
+            LocationOfGoodsSection
           )
         }
 
@@ -123,7 +126,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             IdentificationPage,
             EoriPage,
             AddIdentifierYesNoPage,
-            AddContactYesNoPage
+            AddContactYesNoPage,
+            LocationOfGoodsSection
           )
         }
 
@@ -157,7 +161,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             EoriPage,
             AddIdentifierYesNoPage,
             AdditionalIdentifierPage,
-            AddContactYesNoPage
+            AddContactYesNoPage,
+            LocationOfGoodsSection
           )
         }
 
@@ -187,7 +192,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           result.value.pages mustBe Seq(
             AuthorisationNumberPage,
             AddIdentifierYesNoPage,
-            AddContactYesNoPage
+            AddContactYesNoPage,
+            LocationOfGoodsSection
           )
         }
 
@@ -220,7 +226,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             AuthorisationNumberPage,
             AddIdentifierYesNoPage,
             AdditionalIdentifierPage,
-            AddContactYesNoPage
+            AddContactYesNoPage,
+            LocationOfGoodsSection
           )
         }
 
@@ -253,7 +260,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             IdentificationPage,
             CountryPage,
             AddressPage,
-            AddContactYesNoPage
+            AddContactYesNoPage,
+            LocationOfGoodsSection
           )
         }
 
@@ -282,7 +290,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationTypePage,
             IdentificationPage,
             UnLocodePage,
-            AddContactYesNoPage
+            AddContactYesNoPage,
+            LocationOfGoodsSection
           )
         }
 
@@ -311,7 +320,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationTypePage,
             IdentificationPage,
             PostalCodePage,
-            AddContactYesNoPage
+            AddContactYesNoPage,
+            LocationOfGoodsSection
           )
         }
 
@@ -350,7 +360,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           AdditionalIdentifierPage,
           AddContactYesNoPage,
           contact.NamePage,
-          contact.TelephoneNumberPage
+          contact.TelephoneNumberPage,
+          LocationOfGoodsSection
         )
       }
 

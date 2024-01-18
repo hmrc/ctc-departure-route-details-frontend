@@ -29,6 +29,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.routing._
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingPage}
+import pages.sections.transit.{OfficeOfTransitSection, OfficesOfTransitSection}
 import pages.transit._
 import pages.transit.index._
 
@@ -52,7 +53,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
         val expectedResult = TransitDomain(
           isT2DeclarationType = None,
-          officesOfTransit = Nil
+          officesOfTransit = None
         )
 
         val result = UserAnswersReader[TransitDomain](
@@ -80,7 +81,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
         val expectedResult = TransitDomain(
           isT2DeclarationType = None,
-          officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
+          officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
         )
 
         val result = UserAnswersReader[TransitDomain](
@@ -92,7 +93,9 @@ class TransitDomainSpec extends SpecBase with Generators {
           OfficeOfDestinationPage,
           OfficeOfTransitCountryPage(index),
           OfficeOfTransitPage(index),
-          AddOfficeOfTransitETAYesNoPage(index)
+          AddOfficeOfTransitETAYesNoPage(index),
+          OfficeOfTransitSection(index),
+          OfficesOfTransitSection
         )
       }
 
@@ -113,7 +116,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
           val expectedResult = TransitDomain(
             isT2DeclarationType = Some(true),
-            officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
+            officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
           )
 
           val result = UserAnswersReader[TransitDomain](
@@ -126,7 +129,9 @@ class TransitDomainSpec extends SpecBase with Generators {
             T2DeclarationTypeYesNoPage,
             OfficeOfTransitCountryPage(index),
             OfficeOfTransitPage(index),
-            AddOfficeOfTransitETAYesNoPage(index)
+            AddOfficeOfTransitETAYesNoPage(index),
+            OfficeOfTransitSection(index),
+            OfficesOfTransitSection
           )
         }
 
@@ -146,7 +151,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
             val expectedResult = TransitDomain(
               isT2DeclarationType = Some(false),
-              officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
+              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
             )
 
             val result = UserAnswersReader[TransitDomain](
@@ -159,7 +164,9 @@ class TransitDomainSpec extends SpecBase with Generators {
               T2DeclarationTypeYesNoPage,
               OfficeOfTransitCountryPage(index),
               OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index)
+              AddOfficeOfTransitETAYesNoPage(index),
+              OfficeOfTransitSection(index),
+              OfficesOfTransitSection
             )
           }
 
@@ -181,7 +188,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
               val expectedResult = TransitDomain(
                 isT2DeclarationType = Some(false),
-                officesOfTransit = Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))
+                officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))))
               )
 
               val result = UserAnswersReader[TransitDomain](
@@ -193,7 +200,9 @@ class TransitDomainSpec extends SpecBase with Generators {
                 OfficeOfDestinationPage,
                 T2DeclarationTypeYesNoPage,
                 OfficeOfTransitPage(index),
-                AddOfficeOfTransitETAYesNoPage(index)
+                AddOfficeOfTransitETAYesNoPage(index),
+                OfficeOfTransitSection(index),
+                OfficesOfTransitSection
               )
             }
 
@@ -215,7 +224,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
               val expectedResult = TransitDomain(
                 isT2DeclarationType = Some(false),
-                officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
+                officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
               )
 
               val result = UserAnswersReader[TransitDomain](
@@ -228,7 +237,9 @@ class TransitDomainSpec extends SpecBase with Generators {
                 T2DeclarationTypeYesNoPage,
                 OfficeOfTransitCountryPage(index),
                 OfficeOfTransitPage(index),
-                AddOfficeOfTransitETAYesNoPage(index)
+                AddOfficeOfTransitETAYesNoPage(index),
+                OfficeOfTransitSection(index),
+                OfficesOfTransitSection
               )
             }
           }
@@ -253,7 +264,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
               val expectedResult = TransitDomain(
                 isT2DeclarationType = Some(false),
-                officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
+                officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
               )
 
               val result = UserAnswersReader[TransitDomain](
@@ -266,7 +277,9 @@ class TransitDomainSpec extends SpecBase with Generators {
                 T2DeclarationTypeYesNoPage,
                 OfficeOfTransitCountryPage(index),
                 OfficeOfTransitPage(index),
-                AddOfficeOfTransitETAYesNoPage(index)
+                AddOfficeOfTransitETAYesNoPage(index),
+                OfficeOfTransitSection(index),
+                OfficesOfTransitSection
               )
             }
 
@@ -286,7 +299,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
               val expectedResult = TransitDomain(
                 isT2DeclarationType = Some(false),
-                officesOfTransit = Nil
+                officesOfTransit = None
               )
 
               val result = UserAnswersReader[TransitDomain](
@@ -322,7 +335,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
           val expectedResult = TransitDomain(
             isT2DeclarationType = None,
-            officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
+            officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
           )
 
           val result = UserAnswersReader[TransitDomain](
@@ -334,7 +347,9 @@ class TransitDomainSpec extends SpecBase with Generators {
             OfficeOfDestinationPage,
             OfficeOfTransitCountryPage(index),
             OfficeOfTransitPage(index),
-            AddOfficeOfTransitETAYesNoPage(index)
+            AddOfficeOfTransitETAYesNoPage(index),
+            OfficeOfTransitSection(index),
+            OfficesOfTransitSection
           )
         }
 
@@ -356,7 +371,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
             val expectedResult = TransitDomain(
               isT2DeclarationType = None,
-              officesOfTransit = Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))
+              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))))
             )
 
             val result = UserAnswersReader[TransitDomain](
@@ -367,7 +382,9 @@ class TransitDomainSpec extends SpecBase with Generators {
             result.value.pages mustBe Seq(
               OfficeOfDestinationPage,
               OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index)
+              AddOfficeOfTransitETAYesNoPage(index),
+              OfficeOfTransitSection(index),
+              OfficesOfTransitSection
             )
           }
 
@@ -388,7 +405,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
             val expectedResult = TransitDomain(
               isT2DeclarationType = None,
-              officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
+              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
             )
 
             val result = UserAnswersReader[TransitDomain](
@@ -400,7 +417,9 @@ class TransitDomainSpec extends SpecBase with Generators {
               OfficeOfDestinationPage,
               OfficeOfTransitCountryPage(index),
               OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index)
+              AddOfficeOfTransitETAYesNoPage(index),
+              OfficeOfTransitSection(index),
+              OfficesOfTransitSection
             )
           }
         }
@@ -424,7 +443,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
             val expectedResult = TransitDomain(
               isT2DeclarationType = None,
-              officesOfTransit = Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))
+              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
             )
 
             val result = UserAnswersReader[TransitDomain](
@@ -436,7 +455,9 @@ class TransitDomainSpec extends SpecBase with Generators {
               OfficeOfDestinationPage,
               OfficeOfTransitCountryPage(index),
               OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index)
+              AddOfficeOfTransitETAYesNoPage(index),
+              OfficeOfTransitSection(index),
+              OfficesOfTransitSection
             )
           }
 
@@ -455,7 +476,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
             val expectedResult = TransitDomain(
               isT2DeclarationType = None,
-              officesOfTransit = Nil
+              officesOfTransit = None
             )
 
             val result = UserAnswersReader[TransitDomain](

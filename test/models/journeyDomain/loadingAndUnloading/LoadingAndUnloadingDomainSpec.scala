@@ -33,6 +33,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.SpecificCircumstanceIndicatorPage
 import pages.external.{AdditionalDeclarationTypePage, SecurityDetailsTypePage}
 import pages.loadingAndUnloading.{loading, unloading, AddPlaceOfLoadingYesNoPage, AddPlaceOfUnloadingPage}
+import pages.sections.LoadingAndUnloadingSection
 
 class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -53,7 +54,9 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
             ).run(userAnswers)
 
             result.value.value mustBe LoadingAndUnloadingDomain(None, None)
-            result.value.pages mustBe Nil
+            result.value.pages mustBe Seq(
+              LoadingAndUnloadingSection
+            )
           }
         }
       }

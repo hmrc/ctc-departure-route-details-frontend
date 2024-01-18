@@ -30,6 +30,7 @@ import models.{Mode, Phase, UserAnswers}
 import pages.SpecificCircumstanceIndicatorPage
 import pages.external.{AdditionalDeclarationTypePage, SecurityDetailsTypePage}
 import pages.loadingAndUnloading.{AddPlaceOfLoadingYesNoPage, AddPlaceOfUnloadingPage}
+import pages.sections.{LoadingAndUnloadingSection, Section}
 import play.api.mvc.Call
 
 case class LoadingAndUnloadingDomain(
@@ -37,11 +38,13 @@ case class LoadingAndUnloadingDomain(
   unloading: Option[UnloadingDomain]
 ) extends JourneyDomainModel {
 
+  override def section: Option[Section[_]] = Some(LoadingAndUnloadingSection)
+
   override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
     if (loading.isEmpty && unloading.isEmpty) {
       Some(controllers.routes.RouteDetailsAnswersController.onPageLoad(userAnswers.lrn))
     } else {
-      Some(controllers.loadingAndUnloading.routes.LoadingAndUnloadingAnswersController.onPageLoad(userAnswers.lrn, mode))
+      super.routeIfCompleted(userAnswers, mode, stage)
     }
 }
 
@@ -96,5 +99,5 @@ object LoadingAndUnloadingDomain {
     (
       loadingReader,
       unloadingReader
-    ).map(LoadingAndUnloadingDomain.apply)
+    ).jdmap(LoadingAndUnloadingDomain.apply)
 }

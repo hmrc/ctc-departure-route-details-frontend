@@ -21,13 +21,14 @@ import config.Constants.CountryCode._
 import config.Constants.SecurityType._
 import config.PhaseConfig
 import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, Stage}
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
 import models.reference.{Country, CustomsOffice}
-import models.{DateTime, Index, Mode, Phase, UserAnswers}
+import models.{DateTime, Index, Phase}
 import pages.external.{OfficeOfDepartureInCL010Page, SecurityDetailsTypePage}
 import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
+import pages.sections.Section
+import pages.sections.transit.OfficeOfTransitSection
 import pages.transit.index._
-import play.api.mvc.Call
 
 case class OfficeOfTransitDomain(
   country: Option[Country],
@@ -36,10 +37,7 @@ case class OfficeOfTransitDomain(
 )(index: Index)
     extends JourneyDomainModel {
 
-  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(
-      controllers.transit.index.routes.CheckOfficeOfTransitAnswersController.onPageLoad(userAnswers.lrn, mode, index)
-    )
+  override def section: Option[Section[_]] = Some(OfficeOfTransitSection(index))
 
   val label: String = country match {
     case Some(value) => s"$value - $customsOffice"
@@ -77,7 +75,7 @@ object OfficeOfTransitDomain {
               (
                 OfficeOfTransitInCL010Page(index).reader,
                 OfficeOfDepartureInCL010Page.reader
-              ).pmap[Option[DateTime]] {
+              ).rmap[Option[DateTime]] {
                 case (true, false) => OfficeOfTransitETAPage(index).reader.toOption
                 case _             => AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
               }.apply(pages)
@@ -89,14 +87,14 @@ object OfficeOfTransitDomain {
       (
         OfficeOfTransitPage(index).reader,
         etaReads
-      ).map(OfficeOfTransitDomain.apply(None, _, _)(index))
+      ).jdmap(OfficeOfTransitDomain.apply(None, _, _)(index))
 
     lazy val readsWithCountry: Read[OfficeOfTransitDomain] =
       (
         UserAnswersReader.readInferred(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index)).toOption,
         OfficeOfTransitPage(index).reader,
         etaReads
-      ).map(OfficeOfTransitDomain.apply(_, _, _)(index))
+      ).jdmap(OfficeOfTransitDomain.apply(_, _, _)(index))
 
     (index.position, phaseConfig.phase) match {
       case (0, Phase.PostTransition) =>
@@ -104,7 +102,7 @@ object OfficeOfTransitDomain {
           case ReaderSuccess(true, pages) =>
             readsWithoutCountry(pages)
           case ReaderSuccess(false, pages) =>
-            OfficeOfDestinationPage.reader.apply(pages).map(_.to(_.countryCode)).flatMap {
+            OfficeOfDestinationPage.reader.map(_.countryCode).apply(pages).flatMap {
               case ReaderSuccess(AD, pages) => readsWithoutCountry(pages)
               case ReaderSuccess(_, pages)  => readsWithCountry(pages)
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,34 @@
  * limitations under the License.
  */
 
-package models.journeyDomain.exit
+package models.journeyDomain.transit
 
+import config.PhaseConfig
 import models.domain._
 import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
 import models.{Index, RichJsArray}
 import pages.sections.Section
-import pages.sections.exit.{ExitSection, OfficesOfExitSection}
+import pages.sections.transit.OfficesOfTransitSection
 
-case class ExitDomain(
-  officesOfExit: Seq[OfficeOfExitDomain]
+case class OfficesOfTransitDomain(
+  officesOfTransit: Seq[OfficeOfTransitDomain]
 ) extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] = Some(ExitSection)
+  override def section: Option[Section[_]] = Some(OfficesOfTransitSection)
 }
 
-object ExitDomain {
+object OfficesOfTransitDomain {
 
-  implicit val userAnswersReader: Read[ExitDomain] = {
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[OfficesOfTransitDomain] = {
 
-    implicit def officesOfExitReader: Read[Seq[OfficeOfExitDomain]] =
-      OfficesOfExitSection.arrayReader.apply(_).flatMap {
+    implicit val officesOfTransitReader: Read[Seq[OfficeOfTransitDomain]] =
+      OfficesOfTransitSection.arrayReader.apply(_).flatMap {
         case ReaderSuccess(x, pages) if x.isEmpty =>
-          OfficeOfExitDomain.userAnswersReader(Index(0)).map(Seq(_)).apply(pages)
+          OfficeOfTransitDomain.userAnswersReader(Index(0)).map(Seq(_)).apply(pages)
         case ReaderSuccess(x, pages) =>
-          x.traverse[OfficeOfExitDomain](OfficeOfExitDomain.userAnswersReader(_).apply(_)).apply(pages)
+          x.traverse[OfficeOfTransitDomain](OfficeOfTransitDomain.userAnswersReader(_).apply(_)).apply(pages)
       }
 
-    officesOfExitReader.jdmap(ExitDomain.apply)
+    officesOfTransitReader.jdmap(OfficesOfTransitDomain.apply)
   }
 }

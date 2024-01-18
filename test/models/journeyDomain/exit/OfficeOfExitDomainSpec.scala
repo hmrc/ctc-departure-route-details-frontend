@@ -22,6 +22,7 @@ import models.domain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.exit.index._
+import pages.sections.exit.OfficeOfExitSection
 
 class OfficeOfExitDomainSpec extends SpecBase with Generators {
 
@@ -50,7 +51,8 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
           result.value.value mustBe expectedResult
           result.value.pages mustBe Seq(
             OfficeOfExitCountryPage(index),
-            OfficeOfExitPage(index)
+            OfficeOfExitPage(index),
+            OfficeOfExitSection(index)
           )
         }
 
@@ -70,7 +72,8 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
 
           result.value.value mustBe expectedResult
           result.value.pages mustBe Seq(
-            OfficeOfExitPage(index)
+            OfficeOfExitPage(index),
+            OfficeOfExitSection(index)
           )
         }
       }

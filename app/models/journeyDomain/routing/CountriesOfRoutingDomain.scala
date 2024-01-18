@@ -21,15 +21,23 @@ import config.Constants.SecurityType._
 import config.PhaseConfig
 import models.Phase.{PostTransition, Transition}
 import models.domain._
-import models.journeyDomain.ReaderSuccess
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
 import models.{Index, RichJsArray}
 import pages.external.SecurityDetailsTypePage
 import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage}
+import pages.sections.Section
 import pages.sections.routing.CountriesOfRoutingSection
+
+case class CountriesOfRoutingDomain(
+  countriesOfRouting: Seq[CountryOfRoutingDomain]
+) extends JourneyDomainModel {
+
+  override def section: Option[Section[_]] = Some(CountriesOfRoutingSection)
+}
 
 object CountriesOfRoutingDomain {
 
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[Seq[CountryOfRoutingDomain]] = {
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[CountriesOfRoutingDomain] = {
     lazy val arrayReader: Read[Seq[CountryOfRoutingDomain]] = CountriesOfRoutingSection.arrayReader.apply(_).flatMap {
       case ReaderSuccess(x, pages) if x.isEmpty =>
         CountryOfRoutingDomain.userAnswersReader(Index(0)).map(Seq(_)).apply(pages)
@@ -37,21 +45,24 @@ object CountriesOfRoutingDomain {
         x.traverse[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(_).apply(_)).apply(pages)
     }
 
+    lazy val emptyArrayReader: Read[CountriesOfRoutingDomain] =
+      UserAnswersReader.emptyList[CountryOfRoutingDomain].map(CountriesOfRoutingDomain.apply)
+
     (
       SecurityDetailsTypePage.reader,
       BindingItineraryPage.reader
-    ).pmap {
+    ).rmap {
       case (NoSecurityDetails, _) if phaseConfig.phase == Transition =>
-        pages => UserAnswersReader.emptyList[CountryOfRoutingDomain].apply(pages)
+        emptyArrayReader
       case (NoSecurityDetails, false) if phaseConfig.phase == PostTransition =>
         pages =>
           AddCountryOfRoutingYesNoPage.reader.apply(pages).flatMap {
             case ReaderSuccess(true, pages) =>
-              arrayReader(pages)
+              arrayReader.jdmap(CountriesOfRoutingDomain.apply).apply(pages)
             case ReaderSuccess(false, pages) =>
-              UserAnswersReader.emptyList[CountryOfRoutingDomain].apply(pages)
+              emptyArrayReader.apply(pages)
           }
-      case _ => pages => arrayReader(pages)
+      case _ => pages => arrayReader.jdmap(CountriesOfRoutingDomain.apply).apply(pages)
     }
   }
 }

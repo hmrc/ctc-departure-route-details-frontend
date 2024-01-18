@@ -16,11 +16,17 @@
 
 package pages.sections
 
+import controllers.loadingAndUnloading.routes
+import models.{Mode, UserAnswers}
 import play.api.libs.json.{JsObject, JsPath}
+import play.api.mvc.Call
 
 case object LoadingAndUnloadingSection extends Section[JsObject] {
 
   override def path: JsPath = RouteDetailsSection.path \ toString
 
   override def toString: String = "loadingAndUnloading"
+
+  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
+    Some(routes.LoadingAndUnloadingAnswersController.onPageLoad(userAnswers.lrn, mode))
 }

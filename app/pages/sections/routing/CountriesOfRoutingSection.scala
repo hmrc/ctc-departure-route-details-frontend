@@ -16,12 +16,14 @@
 
 package pages.sections.routing
 
-import models.Index
-import models.domain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, Read, UserAnswersReader}
+import controllers.routing.routes
+import models.domain._
 import models.journeyDomain.ReaderSuccess
+import models.{Index, Mode, UserAnswers}
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page}
 import pages.sections.Section
 import play.api.libs.json.{JsArray, JsPath}
+import play.api.mvc.Call
 
 case object CountriesOfRoutingSection extends Section[JsArray] {
 
@@ -29,8 +31,11 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
 
   override def toString: String = "countriesOfRouting"
 
+  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
+    Some(routes.AddAnotherCountryOfRoutingController.onPageLoad(userAnswers.lrn, mode))
+
   def atLeastOneCountryOfRoutingIsInCL147: Read[Boolean] = pages => {
-    this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
+    this.arrayReader.map(_.value.length).apply(pages).flatMap {
       case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
         (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader.success(false).apply(pages)) {
           (acc, index) =>
@@ -47,7 +52,7 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
   }
 
   def anyCountriesOfRoutingInCL112: Read[Boolean] = pages =>
-    this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
+    this.arrayReader.map(_.value.length).apply(pages).flatMap {
       case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
         (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader.success(false).apply(pages)) {
           (acc, index) =>

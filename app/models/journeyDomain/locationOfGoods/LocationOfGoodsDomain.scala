@@ -20,19 +20,19 @@ import cats.implicits._
 import config.Constants.LocationOfGoodsIdentifier._
 import models._
 import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, Stage}
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
 import models.reference.{Country, CustomsOffice}
 import pages.locationOfGoods._
-import play.api.mvc.Call
+import pages.sections.Section
+import pages.sections.locationOfGoods.LocationOfGoodsSection
 
 sealed trait LocationOfGoodsDomain extends JourneyDomainModel {
+
+  override def section: Option[Section[_]] = Some(LocationOfGoodsSection)
 
   val typeOfLocation: LocationType
 
   val additionalContact: Option[AdditionalContactDomain] = None
-
-  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(controllers.locationOfGoods.routes.CheckYourAnswersController.onPageLoad(userAnswers.lrn, mode))
 }
 
 object LocationOfGoodsDomain {
@@ -40,7 +40,7 @@ object LocationOfGoodsDomain {
   implicit val userAnswersReader: Read[LocationOfGoodsDomain] =
     UserAnswersReader.readInferred(LocationTypePage, InferredLocationTypePage).apply(_).flatMap {
       case ReaderSuccess(typeOfLocation, pages) =>
-        UserAnswersReader.readInferred(IdentificationPage, InferredIdentificationPage).apply(pages).map(_.to(_.qualifier)).flatMap {
+        UserAnswersReader.readInferred(IdentificationPage, InferredIdentificationPage).map(_.qualifier).apply(pages).flatMap {
           case ReaderSuccess(CustomsOfficeIdentifier, pages)       => LocationOfGoodsV.userAnswersReader(typeOfLocation)(pages)
           case ReaderSuccess(EoriNumberIdentifier, pages)          => LocationOfGoodsX.userAnswersReader(typeOfLocation)(pages)
           case ReaderSuccess(AuthorisationNumberIdentifier, pages) => LocationOfGoodsY.userAnswersReader(typeOfLocation)(pages)
@@ -65,7 +65,7 @@ object LocationOfGoodsV {
     (
       UserAnswersReader.success(typeOfLocation),
       CustomsOfficeIdentifierPage.reader
-    ).map(LocationOfGoodsV.apply)
+    ).jdmap(LocationOfGoodsV.apply)
 }
 
 case class LocationOfGoodsX(
@@ -83,7 +83,7 @@ object LocationOfGoodsX {
       EoriPage.reader,
       AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).map(LocationOfGoodsX.apply)
+    ).jdmap(LocationOfGoodsX.apply)
 }
 
 case class LocationOfGoodsY(
@@ -101,7 +101,7 @@ object LocationOfGoodsY {
       AuthorisationNumberPage.reader,
       AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).map(LocationOfGoodsY.apply)
+    ).jdmap(LocationOfGoodsY.apply)
 }
 
 case class LocationOfGoodsW(
@@ -117,7 +117,7 @@ object LocationOfGoodsW {
       UserAnswersReader.success(typeOfLocation),
       CoordinatesPage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).map(LocationOfGoodsW.apply)
+    ).jdmap(LocationOfGoodsW.apply)
 }
 
 case class LocationOfGoodsZ(
@@ -135,7 +135,7 @@ object LocationOfGoodsZ {
       CountryPage.reader,
       AddressPage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).map(LocationOfGoodsZ.apply)
+    ).jdmap(LocationOfGoodsZ.apply)
 }
 
 case class LocationOfGoodsU(
@@ -151,7 +151,7 @@ object LocationOfGoodsU {
       UserAnswersReader.success(typeOfLocation),
       UnLocodePage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).map(LocationOfGoodsU.apply)
+    ).jdmap(LocationOfGoodsU.apply)
 }
 
 case class LocationOfGoodsT(
@@ -167,6 +167,6 @@ object LocationOfGoodsT {
       UserAnswersReader.success(typeOfLocation),
       PostalCodePage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).map(LocationOfGoodsT.apply)
+    ).jdmap(LocationOfGoodsT.apply)
 
 }

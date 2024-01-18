@@ -21,6 +21,7 @@ import config.Constants.AdditionalDeclarationType._
 import config.Constants.DeclarationType._
 import config.Constants.SecurityType._
 import config.PhaseConfig
+import models.Phase
 import models.domain._
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
@@ -28,13 +29,12 @@ import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.SpecificCircumstanceIndicator
-import models.{Mode, Phase, UserAnswers}
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.sections.routing.CountriesOfRoutingSection
+import pages.sections.{RouteDetailsSection, Section}
 import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
-import play.api.mvc.Call
 
 case class RouteDetailsDomain(
   specificCircumstanceIndicator: Option[SpecificCircumstanceIndicator],
@@ -45,8 +45,7 @@ case class RouteDetailsDomain(
   loadingAndUnloading: LoadingAndUnloadingDomain
 ) extends JourneyDomainModel {
 
-  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(controllers.routes.RouteDetailsAnswersController.onPageLoad(userAnswers.lrn))
+  override def section: Option[Section[_]] = Some(RouteDetailsSection)
 }
 
 object RouteDetailsDomain {
@@ -70,7 +69,7 @@ object RouteDetailsDomain {
                   case ReaderSuccess(exit, pages) =>
                     locationOfGoodsReader.apply(pages).flatMap {
                       case ReaderSuccess(locationOfGoods, pages) =>
-                        LoadingAndUnloadingDomain.userAnswersReader.apply(pages).flatMap {
+                        LoadingAndUnloadingDomain.userAnswersReader.apply(pages).map {
                           case ReaderSuccess(loadingAndUnloading, pages) =>
                             val routeDetails = RouteDetailsDomain(
                               specificCircumstanceIndicator,
@@ -80,7 +79,7 @@ object RouteDetailsDomain {
                               locationOfGoods,
                               loadingAndUnloading
                             )
-                            UserAnswersReader.success(routeDetails).apply(pages)
+                            ReaderSuccess(routeDetails, pages.append(routeDetails.section))
                         }
                     }
                 }

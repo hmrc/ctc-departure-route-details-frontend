@@ -19,78 +19,66 @@ package models.journeyDomain.transit
 import config.Constants.DeclarationType._
 import config.PhaseConfig
 import models.domain._
-import models.journeyDomain.transit.TransitDomain.OfficesOfTransit
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, Stage}
-import models.{Index, Mode, RichJsArray, UserAnswers}
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage}
 import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
+import pages.sections.Section
 import pages.sections.routing.CountriesOfRoutingSection
-import pages.sections.transit.OfficesOfTransitSection
+import pages.sections.transit.TransitSection
 import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
-import play.api.mvc.Call
 
 case class TransitDomain(
   isT2DeclarationType: Option[Boolean],
-  officesOfTransit: OfficesOfTransit
+  officesOfTransit: Option[OfficesOfTransitDomain]
 ) extends JourneyDomainModel {
 
-  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(controllers.transit.routes.AddAnotherOfficeOfTransitController.onPageLoad(userAnswers.lrn, mode))
+  override def section: Option[Section[_]] = Some(TransitSection)
 }
 
 object TransitDomain {
-
-  type OfficesOfTransit = Seq[OfficeOfTransitDomain]
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[TransitDomain] = {
 
-    val officesOfTransitReader: Read[OfficesOfTransit] =
-      OfficesOfTransitSection.arrayReader.apply(_).flatMap {
-        case ReaderSuccess(x, pages) if x.isEmpty =>
-          OfficeOfTransitDomain.userAnswersReader(Index(0)).map(Seq(_)).apply(pages)
-        case ReaderSuccess(x, pages) =>
-          x.traverse[OfficeOfTransitDomain](OfficeOfTransitDomain.userAnswersReader(_).apply(_)).apply(pages)
-      }
+    val officesOfTransitReader: Read[Option[OfficesOfTransitDomain]] =
+      OfficesOfTransitDomain.userAnswersReader.toOption
 
-    lazy val addOfficesOfTransitReader: Read[OfficesOfTransit] =
-      AddOfficeOfTransitYesNoPage
-        .filterOptionalDependent(identity)(officesOfTransitReader)
-        .apply(_)
-        .map(_.to(_.getOrElse(Nil)))
+    lazy val addOfficesOfTransitReader: Read[Option[OfficesOfTransitDomain]] =
+      AddOfficeOfTransitYesNoPage.filterOptionalDependent(identity)(OfficesOfTransitDomain.userAnswersReader)
 
     (
       OfficeOfDeparturePage.reader,
       OfficeOfDepartureInCL112Page.reader,
       OfficeOfDestinationPage.reader,
       OfficeOfDestinationInCL112Page.reader
-    ).pmap {
+    ).rmap {
       case (officeOfDeparture, officeOfDepartureInCL112, officeOfDestination, officeOfDestinationInCL112) =>
         pages =>
-          def countriesOfRoutingReader(isT2DeclarationType: Option[Boolean]): Read[TransitDomain] = pages => {
-            val officesOfTransit = if (officeOfDepartureInCL112 || officeOfDestinationInCL112) {
-              officesOfTransitReader(pages)
-            } else {
-              CountriesOfRoutingSection.anyCountriesOfRoutingInCL112(pages).flatMap {
-                case ReaderSuccess(true, pages)  => officesOfTransitReader(pages)
-                case ReaderSuccess(false, pages) => addOfficesOfTransitReader(pages)
+          def countriesOfRoutingReader(isT2DeclarationType: Option[Boolean]): Read[TransitDomain] = {
+            val officesOfTransit: Read[Option[OfficesOfTransitDomain]] =
+              if (officeOfDepartureInCL112 || officeOfDestinationInCL112) {
+                officesOfTransitReader
+              } else {
+                CountriesOfRoutingSection.anyCountriesOfRoutingInCL112(_).flatMap {
+                  case ReaderSuccess(true, pages)  => officesOfTransitReader.apply(pages)
+                  case ReaderSuccess(false, pages) => addOfficesOfTransitReader.apply(pages)
+                }
               }
-            }
 
-            officesOfTransit.map(_.to(TransitDomain(isT2DeclarationType, _)))
+            officesOfTransit.map(TransitDomain(isT2DeclarationType, _))
           }
 
           if (officeOfDepartureInCL112 && officeOfDestinationInCL112 && officeOfDeparture.countryCode == officeOfDestination.countryCode) {
-            addOfficesOfTransitReader.apply(pages).map(_.to(TransitDomain(None, _)))
+            addOfficesOfTransitReader.map(TransitDomain.apply(None, _)).apply(pages)
           } else {
             DeclarationTypePage.reader.apply(pages).flatMap {
               case ReaderSuccess(T2, pages) =>
-                officesOfTransitReader(pages).map(_.to(TransitDomain(None, _)))
+                officesOfTransitReader.map(TransitDomain(None, _)).apply(pages)
               case ReaderSuccess(T, pages) =>
                 T2DeclarationTypeYesNoPage.reader.apply(pages).flatMap {
                   case ReaderSuccess(true, pages) =>
-                    officesOfTransitReader(pages).map(_.to(TransitDomain(Some(true), _)))
+                    officesOfTransitReader.map(TransitDomain(Some(true), _)).apply(pages)
                   case ReaderSuccess(false, pages) =>
                     countriesOfRoutingReader(Some(false))(pages)
                 }
