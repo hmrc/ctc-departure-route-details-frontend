@@ -160,7 +160,7 @@ package object domain {
         case _                         => pages :+ page
       }
 
-    def append(page: Option[Page]): Pages =
+    def append(page: Option[Section[_]]): Pages =
       page.fold(pages) {
         case x if pages.contains(x) => pages
         case x                      => pages :+ x
