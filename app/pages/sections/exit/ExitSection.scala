@@ -16,7 +16,6 @@
 
 package pages.sections.exit
 
-import controllers.exit.routes
 import models.{Mode, UserAnswers}
 import pages.sections.{RouteDetailsSection, Section}
 import play.api.libs.json.{JsObject, JsPath}
@@ -29,5 +28,5 @@ case object ExitSection extends Section[JsObject] {
   override def toString: String = "exit"
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
-    Some(routes.AddAnotherOfficeOfExitController.onPageLoad(userAnswers.lrn, mode))
+    OfficesOfExitSection.route(userAnswers, mode)
 }

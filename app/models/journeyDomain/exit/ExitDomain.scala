@@ -17,13 +17,12 @@
 package models.journeyDomain.exit
 
 import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
-import models.{Index, RichJsArray}
+import models.journeyDomain.JourneyDomainModel
 import pages.sections.Section
-import pages.sections.exit.{ExitSection, OfficesOfExitSection}
+import pages.sections.exit.ExitSection
 
 case class ExitDomain(
-  officesOfExit: Seq[OfficeOfExitDomain]
+  officesOfExit: OfficesOfExitDomain
 ) extends JourneyDomainModel {
 
   override def section: Option[Section[_]] = Some(ExitSection)
@@ -31,16 +30,6 @@ case class ExitDomain(
 
 object ExitDomain {
 
-  implicit val userAnswersReader: Read[ExitDomain] = {
-
-    implicit def officesOfExitReader: Read[Seq[OfficeOfExitDomain]] =
-      OfficesOfExitSection.arrayReader.apply(_).flatMap {
-        case ReaderSuccess(x, pages) if x.isEmpty =>
-          OfficeOfExitDomain.userAnswersReader(Index(0)).map(Seq(_)).apply(pages)
-        case ReaderSuccess(x, pages) =>
-          x.traverse[OfficeOfExitDomain](OfficeOfExitDomain.userAnswersReader(_).apply(_)).apply(pages)
-      }
-
-    officesOfExitReader.jdmap(ExitDomain.apply)
-  }
+  implicit val userAnswersReader: Read[ExitDomain] =
+    OfficesOfExitDomain.userAnswersReader.map(ExitDomain.apply)
 }
