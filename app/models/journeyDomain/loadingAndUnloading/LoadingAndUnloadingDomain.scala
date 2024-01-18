@@ -38,7 +38,7 @@ case class LoadingAndUnloadingDomain(
   unloading: Option[UnloadingDomain]
 ) extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] =
+  override def page: Option[Section[_]] =
     (loading, unloading) match {
       case (None, None) => None
       case _            => Some(LoadingAndUnloadingSection)
@@ -73,7 +73,7 @@ object LoadingAndUnloadingDomain {
 
   def unloadingReader(implicit phaseConfig: PhaseConfig): Read[Option[UnloadingDomain]] = {
     lazy val mandatoryReader: Read[Option[UnloadingDomain]] =
-      UnloadingDomain.userAnswersReader.toOption
+      UnloadingDomain.userAnswersReader.apply(_).map(_.toOption)
 
     lazy val optionalReader: Read[Option[UnloadingDomain]] =
       AddPlaceOfUnloadingPage.filterOptionalDependent(identity)(UnloadingDomain.userAnswersReader)
@@ -102,5 +102,5 @@ object LoadingAndUnloadingDomain {
     (
       loadingReader,
       unloadingReader
-    ).jdmap(LoadingAndUnloadingDomain.apply)
+    ).map(LoadingAndUnloadingDomain.apply)
 }

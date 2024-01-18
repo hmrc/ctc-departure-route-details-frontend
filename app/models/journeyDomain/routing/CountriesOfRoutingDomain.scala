@@ -32,7 +32,10 @@ case class CountriesOfRoutingDomain(
   countriesOfRouting: Seq[CountryOfRoutingDomain]
 ) extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] = Some(CountriesOfRoutingSection)
+  override def page: Option[Section[_]] = countriesOfRouting match {
+    case Nil => None
+    case _   => Some(CountriesOfRoutingSection)
+  }
 }
 
 object CountriesOfRoutingDomain {
@@ -40,7 +43,7 @@ object CountriesOfRoutingDomain {
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[CountriesOfRoutingDomain] = {
     lazy val arrayReader: Read[Seq[CountryOfRoutingDomain]] = CountriesOfRoutingSection.arrayReader.apply(_).flatMap {
       case ReaderSuccess(x, pages) if x.isEmpty =>
-        CountryOfRoutingDomain.userAnswersReader(Index(0)).map(Seq(_)).apply(pages)
+        CountryOfRoutingDomain.userAnswersReader(Index(0)).toSeq.apply(pages)
       case ReaderSuccess(x, pages) =>
         x.traverse[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(_).apply(_)).apply(pages)
     }
@@ -51,18 +54,18 @@ object CountriesOfRoutingDomain {
     (
       SecurityDetailsTypePage.reader,
       BindingItineraryPage.reader
-    ).rmap {
+    ).apply {
       case (NoSecurityDetails, _) if phaseConfig.phase == Transition =>
         emptyArrayReader
       case (NoSecurityDetails, false) if phaseConfig.phase == PostTransition =>
         pages =>
           AddCountryOfRoutingYesNoPage.reader.apply(pages).flatMap {
             case ReaderSuccess(true, pages) =>
-              arrayReader.jdmap(CountriesOfRoutingDomain.apply).apply(pages)
+              arrayReader.map(CountriesOfRoutingDomain.apply).apply(pages)
             case ReaderSuccess(false, pages) =>
               emptyArrayReader.apply(pages)
           }
-      case _ => pages => arrayReader.jdmap(CountriesOfRoutingDomain.apply).apply(pages)
+      case _ => pages => arrayReader.map(CountriesOfRoutingDomain.apply).apply(pages)
     }
   }
 }

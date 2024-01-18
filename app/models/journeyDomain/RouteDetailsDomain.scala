@@ -45,7 +45,7 @@ case class RouteDetailsDomain(
   loadingAndUnloading: LoadingAndUnloadingDomain
 ) extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] = Some(RouteDetailsSection)
+  override def page: Option[Section[_]] = Some(RouteDetailsSection)
 }
 
 object RouteDetailsDomain {
@@ -79,7 +79,7 @@ object RouteDetailsDomain {
                               locationOfGoods,
                               loadingAndUnloading
                             )
-                            ReaderSuccess(routeDetails, pages.append(routeDetails.section))
+                            ReaderSuccess(routeDetails, pages.append(routeDetails.page))
                         }
                     }
                 }

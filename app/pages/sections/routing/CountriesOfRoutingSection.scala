@@ -35,7 +35,7 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
     Some(routes.AddAnotherCountryOfRoutingController.onPageLoad(userAnswers.lrn, mode))
 
   def atLeastOneCountryOfRoutingIsInCL147: Read[Boolean] = pages => {
-    this.arrayReader.map(_.value.length).apply(pages).flatMap {
+    this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
       case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
         (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader.success(false).apply(pages)) {
           (acc, index) =>
@@ -52,7 +52,7 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
   }
 
   def anyCountriesOfRoutingInCL112: Read[Boolean] = pages =>
-    this.arrayReader.map(_.value.length).apply(pages).flatMap {
+    this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
       case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
         (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader.success(false).apply(pages)) {
           (acc, index) =>

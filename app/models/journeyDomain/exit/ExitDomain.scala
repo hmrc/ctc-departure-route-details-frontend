@@ -17,15 +17,17 @@
 package models.journeyDomain.exit
 
 import models.domain._
-import models.journeyDomain.JourneyDomainModel
-import pages.sections.Section
-import pages.sections.exit.ExitSection
+import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.{Mode, UserAnswers}
+import pages.sections.exit.OfficesOfExitSection
+import play.api.mvc.Call
 
 case class ExitDomain(
   officesOfExit: OfficesOfExitDomain
 ) extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] = Some(ExitSection)
+  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
+    OfficesOfExitSection.route(userAnswers, mode)
 }
 
 object ExitDomain {

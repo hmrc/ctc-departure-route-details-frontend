@@ -30,7 +30,7 @@ case class OfficeOfExitDomain(
 )(index: Index)
     extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] = Some(OfficeOfExitSection(index))
+  override def page: Option[Section[_]] = Some(OfficeOfExitSection(index))
 
   val label: String = s"$country - $customsOffice"
 }
@@ -41,5 +41,5 @@ object OfficeOfExitDomain {
     (
       UserAnswersReader.readInferred(OfficeOfExitCountryPage(index), InferredOfficeOfExitCountryPage(index)),
       OfficeOfExitPage(index).reader
-    ).jdmap(OfficeOfExitDomain.apply(_, _)(index))
+    ).map(OfficeOfExitDomain.apply(_, _)(index))
 }

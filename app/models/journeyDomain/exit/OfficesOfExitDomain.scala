@@ -26,7 +26,10 @@ case class OfficesOfExitDomain(
   officesOfExit: Seq[OfficeOfExitDomain]
 ) extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] = Some(OfficesOfExitSection)
+  override def page: Option[Section[_]] = officesOfExit match {
+    case Nil => None
+    case _   => Some(OfficesOfExitSection)
+  }
 }
 
 object OfficesOfExitDomain {
@@ -36,11 +39,11 @@ object OfficesOfExitDomain {
     implicit def officesOfExitReader: Read[Seq[OfficeOfExitDomain]] =
       OfficesOfExitSection.arrayReader.apply(_).flatMap {
         case ReaderSuccess(x, pages) if x.isEmpty =>
-          OfficeOfExitDomain.userAnswersReader(Index(0)).map(Seq(_)).apply(pages)
+          OfficeOfExitDomain.userAnswersReader(Index(0)).toSeq.apply(pages)
         case ReaderSuccess(x, pages) =>
           x.traverse[OfficeOfExitDomain](OfficeOfExitDomain.userAnswersReader(_).apply(_)).apply(pages)
       }
 
-    officesOfExitReader.jdmap(OfficesOfExitDomain.apply)
+    officesOfExitReader.map(OfficesOfExitDomain.apply)
   }
 }

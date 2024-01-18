@@ -16,10 +16,19 @@
 
 package models.journeyDomain
 
-import models.domain.Pages
+import models.domain.{Pages, UserAnswersReader}
 
 case class ReaderSuccess[A](value: A, pages: Pages) {
 
   def to[T](f: A => T): ReaderSuccess[T] =
     ReaderSuccess(f(value), pages)
+
+  def toSeq: ReaderSuccess[Seq[A]] =
+    to(Seq(_))
+
+  def toOption: ReaderSuccess[Option[A]] =
+    to(Option(_))
+
+  def toUserAnswersReader: UserAnswersReader[A] =
+    UserAnswersReader.success(value).apply(pages)
 }

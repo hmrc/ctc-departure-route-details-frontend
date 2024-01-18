@@ -19,20 +19,22 @@ package models.journeyDomain.transit
 import config.Constants.DeclarationType._
 import config.PhaseConfig
 import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, Stage}
+import models.{Mode, UserAnswers}
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage}
 import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
-import pages.sections.Section
 import pages.sections.routing.CountriesOfRoutingSection
-import pages.sections.transit.TransitSection
+import pages.sections.transit.OfficesOfTransitSection
 import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
+import play.api.mvc.Call
 
 case class TransitDomain(
   isT2DeclarationType: Option[Boolean],
   officesOfTransit: Option[OfficesOfTransitDomain]
 ) extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] = Some(TransitSection)
+  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
+    OfficesOfTransitSection.route(userAnswers, mode)
 }
 
 object TransitDomain {
@@ -52,7 +54,7 @@ object TransitDomain {
       OfficeOfDepartureInCL112Page.reader,
       OfficeOfDestinationPage.reader,
       OfficeOfDestinationInCL112Page.reader
-    ).rmap {
+    ).apply {
       case (officeOfDeparture, officeOfDepartureInCL112, officeOfDestination, officeOfDestinationInCL112) =>
         pages =>
           def countriesOfRoutingReader(isT2DeclarationType: Option[Boolean]): Read[TransitDomain] = {

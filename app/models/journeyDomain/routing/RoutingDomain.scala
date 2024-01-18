@@ -31,7 +31,7 @@ case class RoutingDomain(
   countriesOfRouting: CountriesOfRoutingDomain
 ) extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] = Some(RoutingSection)
+  override def page: Option[Section[_]] = Some(RoutingSection)
 }
 
 object RoutingDomain {
@@ -42,5 +42,5 @@ object RoutingDomain {
       OfficeOfDestinationPage.reader,
       BindingItineraryPage.reader,
       CountriesOfRoutingDomain.userAnswersReader
-    ).jdmap(RoutingDomain.apply)
+    ).map(RoutingDomain.apply)
 }

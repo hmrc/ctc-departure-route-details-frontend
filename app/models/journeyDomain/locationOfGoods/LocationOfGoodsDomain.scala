@@ -28,7 +28,7 @@ import pages.sections.locationOfGoods.LocationOfGoodsSection
 
 sealed trait LocationOfGoodsDomain extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] = Some(LocationOfGoodsSection)
+  override def page: Option[Section[_]] = Some(LocationOfGoodsSection)
 
   val typeOfLocation: LocationType
 
@@ -40,7 +40,7 @@ object LocationOfGoodsDomain {
   implicit val userAnswersReader: Read[LocationOfGoodsDomain] =
     UserAnswersReader.readInferred(LocationTypePage, InferredLocationTypePage).apply(_).flatMap {
       case ReaderSuccess(typeOfLocation, pages) =>
-        UserAnswersReader.readInferred(IdentificationPage, InferredIdentificationPage).map(_.qualifier).apply(pages).flatMap {
+        UserAnswersReader.readInferred(IdentificationPage, InferredIdentificationPage).apply(pages).map(_.to(_.qualifier)).flatMap {
           case ReaderSuccess(CustomsOfficeIdentifier, pages)       => LocationOfGoodsV.userAnswersReader(typeOfLocation)(pages)
           case ReaderSuccess(EoriNumberIdentifier, pages)          => LocationOfGoodsX.userAnswersReader(typeOfLocation)(pages)
           case ReaderSuccess(AuthorisationNumberIdentifier, pages) => LocationOfGoodsY.userAnswersReader(typeOfLocation)(pages)
@@ -65,7 +65,7 @@ object LocationOfGoodsV {
     (
       UserAnswersReader.success(typeOfLocation),
       CustomsOfficeIdentifierPage.reader
-    ).jdmap(LocationOfGoodsV.apply)
+    ).map(LocationOfGoodsV.apply)
 }
 
 case class LocationOfGoodsX(
@@ -83,7 +83,7 @@ object LocationOfGoodsX {
       EoriPage.reader,
       AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).jdmap(LocationOfGoodsX.apply)
+    ).map(LocationOfGoodsX.apply)
 }
 
 case class LocationOfGoodsY(
@@ -101,7 +101,7 @@ object LocationOfGoodsY {
       AuthorisationNumberPage.reader,
       AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).jdmap(LocationOfGoodsY.apply)
+    ).map(LocationOfGoodsY.apply)
 }
 
 case class LocationOfGoodsW(
@@ -117,7 +117,7 @@ object LocationOfGoodsW {
       UserAnswersReader.success(typeOfLocation),
       CoordinatesPage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).jdmap(LocationOfGoodsW.apply)
+    ).map(LocationOfGoodsW.apply)
 }
 
 case class LocationOfGoodsZ(
@@ -135,7 +135,7 @@ object LocationOfGoodsZ {
       CountryPage.reader,
       AddressPage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).jdmap(LocationOfGoodsZ.apply)
+    ).map(LocationOfGoodsZ.apply)
 }
 
 case class LocationOfGoodsU(
@@ -151,7 +151,7 @@ object LocationOfGoodsU {
       UserAnswersReader.success(typeOfLocation),
       UnLocodePage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).jdmap(LocationOfGoodsU.apply)
+    ).map(LocationOfGoodsU.apply)
 }
 
 case class LocationOfGoodsT(
@@ -167,6 +167,6 @@ object LocationOfGoodsT {
       UserAnswersReader.success(typeOfLocation),
       PostalCodePage.reader,
       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-    ).jdmap(LocationOfGoodsT.apply)
+    ).map(LocationOfGoodsT.apply)
 
 }

@@ -37,7 +37,7 @@ case class OfficeOfTransitDomain(
 )(index: Index)
     extends JourneyDomainModel {
 
-  override def section: Option[Section[_]] = Some(OfficeOfTransitSection(index))
+  override def page: Option[Section[_]] = Some(OfficeOfTransitSection(index))
 
   val label: String = country match {
     case Some(value) => s"$value - $customsOffice"
@@ -75,7 +75,7 @@ object OfficeOfTransitDomain {
               (
                 OfficeOfTransitInCL010Page(index).reader,
                 OfficeOfDepartureInCL010Page.reader
-              ).rmap[Option[DateTime]] {
+              ).apply[Option[DateTime]] {
                 case (true, false) => OfficeOfTransitETAPage(index).reader.toOption
                 case _             => AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
               }.apply(pages)
@@ -87,14 +87,14 @@ object OfficeOfTransitDomain {
       (
         OfficeOfTransitPage(index).reader,
         etaReads
-      ).jdmap(OfficeOfTransitDomain.apply(None, _, _)(index))
+      ).map(OfficeOfTransitDomain.apply(None, _, _)(index))
 
     lazy val readsWithCountry: Read[OfficeOfTransitDomain] =
       (
         UserAnswersReader.readInferred(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index)).toOption,
         OfficeOfTransitPage(index).reader,
         etaReads
-      ).jdmap(OfficeOfTransitDomain.apply(_, _, _)(index))
+      ).map(OfficeOfTransitDomain.apply(_, _, _)(index))
 
     (index.position, phaseConfig.phase) match {
       case (0, Phase.PostTransition) =>
@@ -102,13 +102,13 @@ object OfficeOfTransitDomain {
           case ReaderSuccess(true, pages) =>
             readsWithoutCountry(pages)
           case ReaderSuccess(false, pages) =>
-            OfficeOfDestinationPage.reader.map(_.countryCode).apply(pages).flatMap {
+            OfficeOfDestinationPage.reader.apply(pages).map(_.to(_.countryCode)).flatMap {
               case ReaderSuccess(AD, pages) => readsWithoutCountry(pages)
               case ReaderSuccess(_, pages)  => readsWithCountry(pages)
             }
         }
       case (_, Phase.Transition) =>
-        OfficeOfDestinationPage.reader.map(_.countryCode).apply(_).flatMap {
+        OfficeOfDestinationPage.reader.apply(_).map(_.to(_.countryCode)).flatMap {
           case ReaderSuccess(AD, pages) => readsWithoutCountry(pages)
           case ReaderSuccess(_, pages)  => readsWithCountry(pages)
         }
