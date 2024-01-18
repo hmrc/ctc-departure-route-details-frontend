@@ -54,7 +54,50 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
             ).run(userAnswers)
 
             result.value.value mustBe LoadingAndUnloadingDomain(None, None)
+            result.value.pages mustBe Nil
+          }
+        }
+
+        "and security is not 0" - {
+          "then loading and unloading are skipped" in {
+            val security  = arbitrary[String](arbitrarySomeSecurityDetailsType).sample.value
+            val unlocode1 = Gen.alphaNumStr.sample.value
+            val unlocode2 = Gen.alphaNumStr.sample.value
+
+            val userAnswers = emptyUserAnswers
+              .setValue(SecurityDetailsTypePage, security)
+              .setValue(loading.AddUnLocodeYesNoPage, true)
+              .setValue(loading.UnLocodePage, unlocode1)
+              .setValue(loading.AddExtraInformationYesNoPage, false)
+              .setValue(unloading.UnLocodeYesNoPage, true)
+              .setValue(unloading.UnLocodePage, unlocode2)
+              .setValue(unloading.AddExtraInformationYesNoPage, false)
+
+            val result = UserAnswersReader[LoadingAndUnloadingDomain](
+              LoadingAndUnloadingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
+
+            result.value.value mustBe LoadingAndUnloadingDomain(
+              loading = Some(
+                LoadingDomain(
+                  unLocode = Some(unlocode1),
+                  additionalInformation = None
+                )
+              ),
+              unloading = Some(
+                UnloadingDomain(
+                  unLocode = Some(unlocode2),
+                  additionalInformation = None
+                )
+              )
+            )
             result.value.pages mustBe Seq(
+              loading.AddUnLocodeYesNoPage,
+              loading.UnLocodePage,
+              loading.AddExtraInformationYesNoPage,
+              unloading.UnLocodeYesNoPage,
+              unloading.UnLocodePage,
+              unloading.AddExtraInformationYesNoPage,
               LoadingAndUnloadingSection
             )
           }
