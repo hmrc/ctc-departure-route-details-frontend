@@ -37,34 +37,39 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
   def atLeastOneCountryOfRoutingIsInCL147: Read[Boolean] = pages => {
     this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
       case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
-        (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader.success(false).apply(pages)) {
-          (acc, index) =>
-            acc.flatMap {
-              case ReaderSuccess(areAnyCountriesOfRoutingInCL147SoFar, pages) =>
-                CountryOfRoutingInCL147Page(Index(index)).reader.apply(pages).map {
-                  case ReaderSuccess(isThisCountryOfRoutingInCL147, pages) =>
+        (0 until numberOfCountriesOfRouting)
+          .foldLeft(UserAnswersReader.success(false)) {
+            (acc, index) =>
+              (
+                acc,
+                CountryOfRoutingInCL147Page(Index(index)).reader
+              ).apply {
+                case (areAnyCountriesOfRoutingInCL147SoFar, isThisCountryOfRoutingInCL147) =>
+                  pages =>
                     val result = areAnyCountriesOfRoutingInCL147SoFar || isThisCountryOfRoutingInCL147
-                    ReaderSuccess(result, pages)
-                }
-            }
-        }
+                    ReaderSuccess(result, pages).toUserAnswersReader
+              }
+          }
+          .apply(pages)
     }
   }
 
   def anyCountriesOfRoutingInCL112: Read[Boolean] = pages =>
     this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
       case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
-        (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader.success(false).apply(pages)) {
-          (acc, index) =>
-            acc.flatMap {
-              case ReaderSuccess(areAnyCountriesOfRoutingInCL112SoFar, pages) =>
-                CountryOfRoutingInCL112Page(Index(index)).reader.apply(pages).map {
-                  case ReaderSuccess(isThisCountryOfRoutingInCL112, pages) =>
+        (0 until numberOfCountriesOfRouting)
+          .foldLeft(UserAnswersReader.success(false)) {
+            (acc, index) =>
+              (
+                acc,
+                CountryOfRoutingInCL112Page(Index(index)).reader
+              ).apply {
+                case (areAnyCountriesOfRoutingInCL112SoFar, isThisCountryOfRoutingInCL112) =>
+                  pages =>
                     val result = areAnyCountriesOfRoutingInCL112SoFar || isThisCountryOfRoutingInCL112
-                    ReaderSuccess(result, pages)
-
-                }
-            }
-        }
+                    ReaderSuccess(result, pages).toUserAnswersReader
+              }
+          }
+          .apply(pages)
     }
 }
