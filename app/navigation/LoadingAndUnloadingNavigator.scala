@@ -47,5 +47,5 @@ class LoadingAndUnloadingNavigator(override val mode: Mode)(implicit override va
   override type T = LoadingAndUnloadingDomain
 
   implicit override val reader: UserAnswersReader[LoadingAndUnloadingDomain] =
-    LoadingAndUnloadingDomain.userAnswersReader
+    LoadingAndUnloadingDomain.userAnswersReader.apply(Nil)
 }

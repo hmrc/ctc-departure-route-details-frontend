@@ -36,7 +36,7 @@ class RoutingNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with G
           forAll(arbitraryRoutingAnswers(emptyUserAnswers)) {
             answers =>
               navigator
-                .nextPage(answers)
+                .nextPage(answers, None)
                 .mustBe(controllers.routing.routes.CheckYourAnswersController.onPageLoad(answers.lrn, mode))
           }
         }
@@ -54,7 +54,7 @@ class RoutingNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with G
           forAll(arbitraryRouteDetailsAnswers(emptyUserAnswers)) {
             answers =>
               navigator
-                .nextPage(answers)
+                .nextPage(answers, None)
                 .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }

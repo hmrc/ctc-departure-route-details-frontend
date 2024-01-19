@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package models.journeyDomain.loadingAndUnloading.loading
+package pages.sections
 
-import models.domain._
-import models.journeyDomain.JourneyDomainModel
-import models.reference.Country
-import pages.loadingAndUnloading.loading.{CountryPage, LocationPage}
+import controllers.loadingAndUnloading.routes
+import models.{Mode, UserAnswers}
+import play.api.libs.json.{JsObject, JsPath}
+import play.api.mvc.Call
 
-case class AdditionalInformationDomain(
-  country: Country,
-  location: String
-) extends JourneyDomainModel
+case object LoadingAndUnloadingSection extends Section[JsObject] {
 
-object AdditionalInformationDomain {
+  override def path: JsPath = RouteDetailsSection.path \ toString
 
-  implicit val userAnswersReader: Read[AdditionalInformationDomain] =
-    (
-      CountryPage.reader,
-      LocationPage.reader
-    ).map(AdditionalInformationDomain.apply)
+  override def toString: String = "loadingAndUnloading"
 
+  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
+    Some(routes.LoadingAndUnloadingAnswersController.onPageLoad(userAnswers.lrn, mode))
 }

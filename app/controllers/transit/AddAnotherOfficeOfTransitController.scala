@@ -22,6 +22,7 @@ import controllers.transit.index.{routes => indexRoutes}
 import forms.AddAnotherFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
+import pages.sections.transit.OfficesOfTransitSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -69,7 +70,7 @@ class AddAnotherOfficeOfTransitController @Inject() (
             case true => Redirect(indexRoutes.OfficeOfTransitCountryController.onPageLoad(lrn, mode, viewModel.nextIndex))
             case false =>
               val navigator: UserAnswersNavigator = navigatorProvider(mode)
-              Redirect(navigator.nextPage(request.userAnswers))
+              Redirect(navigator.nextPage(request.userAnswers, Some(OfficesOfTransitSection)))
           }
         )
   }

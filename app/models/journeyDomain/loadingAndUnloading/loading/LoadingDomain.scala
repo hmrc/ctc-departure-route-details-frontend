@@ -17,8 +17,8 @@
 package models.journeyDomain.loadingAndUnloading.loading
 
 import cats.implicits._
-import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
-import models.journeyDomain.JourneyDomainModel
+import models.domain._
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
 import pages.loadingAndUnloading.loading.{AddExtraInformationYesNoPage, AddUnLocodeYesNoPage, UnLocodePage}
 
 case class LoadingDomain(
@@ -28,20 +28,22 @@ case class LoadingDomain(
 
 object LoadingDomain {
 
-  implicit val userAnswersReader: UserAnswersReader[LoadingDomain] = {
+  implicit val userAnswersReader: Read[LoadingDomain] = {
 
-    implicit val unLocodeReads: UserAnswersReader[Option[String]] =
+    lazy val unLocodeReads: Read[Option[String]] =
       AddUnLocodeYesNoPage.filterOptionalDependent(identity)(UnLocodePage.reader)
 
-    implicit val additionalInformationReads: UserAnswersReader[Option[AdditionalInformationDomain]] =
-      AddUnLocodeYesNoPage.reader.flatMap {
-        case true  => AddExtraInformationYesNoPage.filterOptionalDependent(identity)(UserAnswersReader[AdditionalInformationDomain])
-        case false => UserAnswersReader[AdditionalInformationDomain].map(Some(_))
+    lazy val additionalInformationReads: Read[Option[AdditionalInformationDomain]] =
+      AddUnLocodeYesNoPage.reader.apply(_).flatMap {
+        case ReaderSuccess(true, pages) =>
+          AddExtraInformationYesNoPage.filterOptionalDependent(identity)(AdditionalInformationDomain.userAnswersReader).apply(pages)
+        case ReaderSuccess(false, pages) =>
+          AdditionalInformationDomain.userAnswersReader.toOption.apply(pages)
       }
 
     (
-      UserAnswersReader[Option[String]],
-      UserAnswersReader[Option[AdditionalInformationDomain]]
-    ).tupled.map((LoadingDomain.apply _).tupled)
+      unLocodeReads,
+      additionalInformationReads
+    ).map(LoadingDomain.apply)
   }
 }

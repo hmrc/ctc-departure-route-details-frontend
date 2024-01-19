@@ -16,11 +16,16 @@
 
 package pages.sections.transit
 
-import models.Index
+import controllers.transit.index.routes
+import models.{Index, Mode, UserAnswers}
 import pages.sections.Section
 import play.api.libs.json.{JsObject, JsPath}
+import play.api.mvc.Call
 
 case class OfficeOfTransitSection(index: Index) extends Section[JsObject] {
 
   override def path: JsPath = OfficesOfTransitSection.path \ index.position
+
+  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
+    Some(routes.CheckOfficeOfTransitAnswersController.onPageLoad(userAnswers.lrn, mode, index))
 }

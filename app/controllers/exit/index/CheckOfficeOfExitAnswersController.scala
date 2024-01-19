@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{ExitNavigatorProvider, UserAnswersNavigator}
+import pages.sections.exit.OfficeOfExitSection
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -48,6 +49,6 @@ class CheckOfficeOfExitAnswersController @Inject() (
   def onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
       val navigator: UserAnswersNavigator = navigatorProvider(mode)
-      Redirect(navigator.nextPage(request.userAnswers))
+      Redirect(navigator.nextPage(request.userAnswers, Some(OfficeOfExitSection(index))))
   }
 }

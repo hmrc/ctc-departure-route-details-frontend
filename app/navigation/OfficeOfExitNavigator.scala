@@ -49,5 +49,5 @@ class OfficeOfExitNavigator(
   override type T = OfficeOfExitDomain
 
   implicit override val reader: UserAnswersReader[OfficeOfExitDomain] =
-    OfficeOfExitDomain.userAnswersReader(index)
+    OfficeOfExitDomain.userAnswersReader(index).apply(Nil)
 }

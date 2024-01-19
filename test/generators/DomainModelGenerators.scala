@@ -16,7 +16,7 @@
 
 package generators
 
-import models.journeyDomain.transit.{OfficeOfTransitDomain, TransitDomain}
+import models.journeyDomain.transit.{OfficeOfTransitDomain, OfficesOfTransitDomain, TransitDomain}
 import models.reference.{Country, CustomsOffice}
 import models.{DateTime, Index}
 import org.scalacheck.Arbitrary.arbitrary
@@ -37,7 +37,7 @@ trait DomainModelGenerators {
   lazy val arbitraryEmptyTransitDomain: Arbitrary[Option[TransitDomain]] = Arbitrary {
     Gen.oneOf(
       None,
-      Some(TransitDomain(None, Nil))
+      Some(TransitDomain(None, None))
     )
   }
 
@@ -45,6 +45,6 @@ trait DomainModelGenerators {
     for {
       isT2DeclarationType <- Gen.option(arbitrary[Boolean])
       officesOfTransit    <- listWithMaxLength[OfficeOfTransitDomain]()
-    } yield Some(TransitDomain(isT2DeclarationType, officesOfTransit))
+    } yield Some(TransitDomain(isT2DeclarationType, Some(OfficesOfTransitDomain(officesOfTransit))))
   }
 }

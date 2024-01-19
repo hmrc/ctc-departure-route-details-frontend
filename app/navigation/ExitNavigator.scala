@@ -46,5 +46,5 @@ class ExitNavigator(override val mode: Mode)(implicit override val config: Front
   override type T = ExitDomain
 
   implicit override val reader: UserAnswersReader[ExitDomain] =
-    ExitDomain.userAnswersReader
+    ExitDomain.userAnswersReader.apply(Nil)
 }

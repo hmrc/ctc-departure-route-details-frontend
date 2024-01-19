@@ -46,5 +46,5 @@ class LocationOfGoodsNavigator(override val mode: Mode)(implicit override val co
   override type T = LocationOfGoodsDomain
 
   implicit override val reader: UserAnswersReader[LocationOfGoodsDomain] =
-    LocationOfGoodsDomain.userAnswersReader
+    LocationOfGoodsDomain.userAnswersReader.apply(Nil)
 }

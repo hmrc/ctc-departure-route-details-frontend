@@ -22,7 +22,7 @@ import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
 import models.Phase
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.transit.TransitDomain
@@ -55,12 +55,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .setValue(AddSpecificCircumstanceIndicatorYesNoPage, true)
                 .setValue(SpecificCircumstanceIndicatorPage, specificCircumstanceIndicator)
 
-              val result: EitherType[Option[SpecificCircumstanceIndicator]] = UserAnswersReader[Option[SpecificCircumstanceIndicator]](
-                RouteDetailsDomain.specificCircumstanceIndicatorReader
+              val result = UserAnswersReader[Option[SpecificCircumstanceIndicator]](
+                RouteDetailsDomain.specificCircumstanceIndicatorReader.apply(Nil)
               ).run(userAnswers)
 
-              result.value mustBe defined
-
+              result.value.value mustBe defined
           }
         }
 
@@ -70,14 +69,13 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             securityDetailType =>
               val userAnswers = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityDetailType)
 
-              val result: EitherType[Option[SpecificCircumstanceIndicator]] = UserAnswersReader[Option[SpecificCircumstanceIndicator]](
-                RouteDetailsDomain.specificCircumstanceIndicatorReader
+              val result = UserAnswersReader[Option[SpecificCircumstanceIndicator]](
+                RouteDetailsDomain.specificCircumstanceIndicatorReader.apply(Nil)
               ).run(userAnswers)
 
-              result.value must not be defined
-
+              result.value.value must not be defined
+              result.value.pages mustBe Nil
           }
-
         }
       }
     }
@@ -87,11 +85,12 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
         "when TIR declaration type" in {
           val userAnswers = emptyUserAnswers.setValue(DeclarationTypePage, TIR)
 
-          val result: EitherType[Option[TransitDomain]] = UserAnswersReader[Option[TransitDomain]](
-            RouteDetailsDomain.transitReader
+          val result = UserAnswersReader[Option[TransitDomain]](
+            RouteDetailsDomain.transitReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value must not be defined
+          result.value.value must not be defined
+          result.value.pages mustBe Nil
         }
 
         "when not a TIR declaration type" in {
@@ -101,11 +100,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               forAll(arbitraryTransitAnswers(initialAnswers)) {
                 answers =>
-                  val result: EitherType[Option[TransitDomain]] = UserAnswersReader[Option[TransitDomain]](
-                    RouteDetailsDomain.transitReader
+                  val result = UserAnswersReader[Option[TransitDomain]](
+                    RouteDetailsDomain.transitReader.apply(Nil)
                   ).run(answers)
 
-                  result.value mustBe defined
+                  result.value.value mustBe defined
               }
           }
         }
@@ -122,11 +121,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .setValue(DeclarationTypePage, TIR)
                 .setValue(SecurityDetailsTypePage, security)
 
-              val result: EitherType[Option[ExitDomain]] = UserAnswersReader[Option[ExitDomain]](
-                RouteDetailsDomain.exitReader(None)
+              val result = UserAnswersReader[Option[ExitDomain]](
+                RouteDetailsDomain.exitReader(None).apply(Nil)
               ).run(userAnswers)
 
-              result.value must not be defined
+              result.value.value must not be defined
           }
         }
 
@@ -140,11 +139,12 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               .setValue(DeclarationTypePage, declarationType)
               .setValue(SecurityDetailsTypePage, security)
 
-            val result: EitherType[Option[ExitDomain]] = UserAnswersReader[Option[ExitDomain]](
-              RouteDetailsDomain.exitReader(None)
+            val result = UserAnswersReader[Option[ExitDomain]](
+              RouteDetailsDomain.exitReader(None).apply(Nil)
             ).run(userAnswers)
 
-            result.value must not be defined
+            result.value.value must not be defined
+            result.value.pages mustBe Nil
           }
 
           "and security is not in set {0,1}" - {
@@ -162,11 +162,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 forAll(arbitrary[Option[TransitDomain]](arbitraryPopulatedTransitDomain)) {
                   transit =>
-                    val result: EitherType[Option[ExitDomain]] = UserAnswersReader[Option[ExitDomain]](
-                      RouteDetailsDomain.exitReader(transit)
+                    val result = UserAnswersReader[Option[ExitDomain]](
+                      RouteDetailsDomain.exitReader(transit).apply(Nil)
                     ).run(answers)
 
-                    result.value must not be defined
+                    result.value.value must not be defined
                 }
               }
 
@@ -184,11 +184,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                   arbitrary[Option[TransitDomain]](arbitraryEmptyTransitDomain)
                 ) {
                   (answers, transit) =>
-                    val result: EitherType[Option[ExitDomain]] = UserAnswersReader[Option[ExitDomain]](
-                      RouteDetailsDomain.exitReader(transit)
+                    val result = UserAnswersReader[Option[ExitDomain]](
+                      RouteDetailsDomain.exitReader(transit).apply(Nil)
                     ).run(answers)
 
-                    result.value mustBe defined
+                    result.value.value mustBe defined
                 }
               }
 
@@ -205,11 +205,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                   arbitrary[Option[TransitDomain]](arbitraryEmptyTransitDomain)
                 ) {
                   (answers, transit) =>
-                    val result: EitherType[Option[ExitDomain]] = UserAnswersReader[Option[ExitDomain]](
-                      RouteDetailsDomain.exitReader(transit)
+                    val result = UserAnswersReader[Option[ExitDomain]](
+                      RouteDetailsDomain.exitReader(transit).apply(Nil)
                     ).run(answers)
 
-                    result.value mustBe defined
+                    result.value.value mustBe defined
                 }
               }
             }
@@ -224,11 +224,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               forAll(arbitraryOfficeOfExitAnswers(initialAnswers, index)) {
                 answers =>
-                  val result: EitherType[Option[ExitDomain]] = UserAnswersReader[Option[ExitDomain]](
-                    RouteDetailsDomain.exitReader(None)
+                  val result = UserAnswersReader[Option[ExitDomain]](
+                    RouteDetailsDomain.exitReader(None).apply(Nil)
                   ).run(answers)
 
-                  result.value mustBe defined
+                  result.value.value mustBe defined
               }
             }
           }
@@ -252,11 +252,14 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .setValue(OfficeOfDepartureInCL147Page, true)
                 .setValue(AddLocationOfGoodsPage, false)
 
-              val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
+              val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
               ).run(userAnswers)
 
-              result.value must not be defined
+              result.value.value must not be defined
+              result.value.pages mustBe Seq(
+                AddLocationOfGoodsPage
+              )
             }
 
             "and adding a location of goods type" in {
@@ -268,11 +271,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
                 answers =>
-                  val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                    RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
+                  val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                    RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
                   ).run(answers)
 
-                  result.value mustBe defined
+                  result.value.value mustBe defined
               }
             }
           }
@@ -287,11 +290,11 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
               answers =>
-                val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                  RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
+                val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                  RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
                 ).run(answers)
 
-                result.value mustBe defined
+                result.value.value mustBe defined
             }
           }
         }
@@ -303,11 +306,14 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
           "and add location of goods type yes/no is unanswered" in {
-            val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-              RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
+            val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+              RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
             ).run(emptyUserAnswers)
 
             result.left.value.page mustBe AddLocationOfGoodsPage
+            result.left.value.pages mustBe Seq(
+              AddLocationOfGoodsPage
+            )
           }
         }
 
@@ -319,11 +325,14 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             "and add location of goods type yes/no is unanswered" in {
               val userAnswers = emptyUserAnswers.setValue(AdditionalDeclarationTypePage, "D")
 
-              val result: EitherType[Option[LocationOfGoodsDomain]] = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig)
+              val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
               ).run(userAnswers)
 
               result.left.value.page mustBe AddLocationOfGoodsPage
+              result.left.value.pages mustBe Seq(
+                AddLocationOfGoodsPage
+              )
             }
           }
         }

@@ -16,36 +16,22 @@
 
 package models.journeyDomain.exit
 
-import models.domain.{JsArrayGettableAsReaderOps, UserAnswersReader}
+import models.domain._
 import models.journeyDomain.{JourneyDomainModel, Stage}
-import models.{Index, Mode, RichJsArray, UserAnswers}
+import models.{Mode, UserAnswers}
 import pages.sections.exit.OfficesOfExitSection
 import play.api.mvc.Call
 
 case class ExitDomain(
-  officesOfExit: Seq[OfficeOfExitDomain]
+  officesOfExit: OfficesOfExitDomain
 ) extends JourneyDomainModel {
 
   override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(controllers.exit.routes.AddAnotherOfficeOfExitController.onPageLoad(userAnswers.lrn, mode))
+    OfficesOfExitSection.route(userAnswers, mode)
 }
 
 object ExitDomain {
 
-  implicit val userAnswersReader: UserAnswersReader[ExitDomain] = {
-
-    implicit val officesOfExitReader: UserAnswersReader[Seq[OfficeOfExitDomain]] =
-      OfficesOfExitSection.arrayReader.flatMap {
-        case x if x.isEmpty =>
-          UserAnswersReader[OfficeOfExitDomain](
-            OfficeOfExitDomain.userAnswersReader(Index(0))
-          ).map(Seq(_))
-        case x =>
-          x.traverse[OfficeOfExitDomain](
-            OfficeOfExitDomain.userAnswersReader
-          )
-      }
-
-    UserAnswersReader[Seq[OfficeOfExitDomain]].map(ExitDomain(_))
-  }
+  implicit val userAnswersReader: Read[ExitDomain] =
+    OfficesOfExitDomain.userAnswersReader.map(ExitDomain.apply)
 }

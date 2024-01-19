@@ -16,7 +16,7 @@
 
 package viewModels
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.CheckMode
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
@@ -36,18 +36,27 @@ import viewModels.sections.Section
 import viewModels.transit.TransitAnswersViewModel
 import viewModels.transit.TransitAnswersViewModel.TransitAnswersViewModelProvider
 
-class RouteDetailsAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class RouteDetailsAnswersViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+
+  private val mockRoutingAnswersViewModelProvider             = mock[RoutingAnswersViewModelProvider]
+  private val mockTransitAnswersViewModelProvider             = mock[TransitAnswersViewModelProvider]
+  private val mockExitAnswersViewModelProvider                = mock[ExitAnswersViewModelProvider]
+  private val mockLocationOfGoodsAnswersViewModelProvider     = mock[LocationOfGoodsAnswersViewModelProvider]
+  private val mockLoadingAndUnloadingAnswersViewModelProvider = mock[LoadingAndUnloadingAnswersViewModelProvider]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockRoutingAnswersViewModelProvider)
+    reset(mockTransitAnswersViewModelProvider)
+    reset(mockExitAnswersViewModelProvider)
+    reset(mockLocationOfGoodsAnswersViewModelProvider)
+    reset(mockLoadingAndUnloadingAnswersViewModelProvider)
+  }
 
   "apply" - {
     "must pass CheckMode to view models" in {
       def dummySection  = arbitrary[Section].sample.value
       def dummySections = arbitrary[List[Section]].sample.value
-
-      val mockRoutingAnswersViewModelProvider             = mock[RoutingAnswersViewModelProvider]
-      val mockTransitAnswersViewModelProvider             = mock[TransitAnswersViewModelProvider]
-      val mockExitAnswersViewModelProvider                = mock[ExitAnswersViewModelProvider]
-      val mockLocationOfGoodsAnswersViewModelProvider     = mock[LocationOfGoodsAnswersViewModelProvider]
-      val mockLoadingAndUnloadingAnswersViewModelProvider = mock[LoadingAndUnloadingAnswersViewModelProvider]
 
       val viewModelProvider = new RouteDetailsAnswersViewModelProvider(
         mockRoutingAnswersViewModelProvider,
@@ -59,13 +68,7 @@ class RouteDetailsAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyC
 
       forAll(arbitraryRouteDetailsAnswers(emptyUserAnswers)) {
         answers =>
-          reset(
-            mockRoutingAnswersViewModelProvider,
-            mockTransitAnswersViewModelProvider,
-            mockExitAnswersViewModelProvider,
-            mockLocationOfGoodsAnswersViewModelProvider,
-            mockLoadingAndUnloadingAnswersViewModelProvider
-          )
+          beforeEach()
 
           when(mockRoutingAnswersViewModelProvider.apply(any(), any())(any(), any())).thenReturn(RoutingAnswersViewModel(dummySections))
           when(mockTransitAnswersViewModelProvider.apply(any(), any())(any(), any(), any())).thenReturn(TransitAnswersViewModel(dummySections))

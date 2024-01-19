@@ -84,7 +84,7 @@ class RoutingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implic
     prefix = "checkYourAnswers.routing.countryOfRouting",
     id = Some(s"change-country-of-routing-${index.display}"),
     args = index.display
-  )(CountryOfRoutingDomain.userAnswersReader(index))
+  )(CountryOfRoutingDomain.userAnswersReader(index)(Nil))
 
   def addOrRemoveCountriesOfRouting: Option[Link] = buildLink(CountriesOfRoutingSection) {
     Link(
@@ -101,6 +101,6 @@ class RoutingCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode)(implic
           nameWhenComplete = _.country.toString,
           nameWhenInProgress = userAnswers.get(CountryOfRoutingPage(index)).map(_.toString),
           removeRoute = Some(routes.RemoveCountryOfRoutingYesNoController.onPageLoad(userAnswers.lrn, mode, index))
-        )(CountryOfRoutingDomain.userAnswersReader(index))
+        )(CountryOfRoutingDomain.userAnswersReader(index)(Nil))
     }
 }

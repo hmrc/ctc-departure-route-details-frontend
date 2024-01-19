@@ -19,8 +19,8 @@ package pages.transit.index
 import controllers.transit.index.routes
 import models.reference.Country
 import models.{Index, Mode, UserAnswers}
-import pages.QuestionPage
 import pages.sections.transit.OfficeOfTransitSection
+import pages.{InferredPage, QuestionPage}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
@@ -49,7 +49,7 @@ case class OfficeOfTransitCountryPage(index: Index) extends BaseOfficeOfTransitC
     userAnswers.remove(InferredOfficeOfTransitCountryPage(index))
 }
 
-case class InferredOfficeOfTransitCountryPage(index: Index) extends BaseOfficeOfTransitCountryPage(index) {
+case class InferredOfficeOfTransitCountryPage(index: Index) extends BaseOfficeOfTransitCountryPage(index) with InferredPage[Country] {
   override def toString: String = "inferredOfficeOfTransitCountry"
 
   override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =

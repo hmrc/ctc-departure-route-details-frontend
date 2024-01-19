@@ -35,7 +35,7 @@ class RouteDetailsNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
             val navigator         = navigatorProvider.apply(mode)
 
             navigator
-              .nextPage(answers)
+              .nextPage(answers, None)
               .mustBe(routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
         }
       }

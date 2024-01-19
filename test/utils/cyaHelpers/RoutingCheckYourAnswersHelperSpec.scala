@@ -322,8 +322,8 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
           forAll(arbitraryCountryOfRoutingAnswers(emptyUserAnswers, index), arbitrary[Mode]) {
             (userAnswers, mode) =>
               val countryOfRouting = UserAnswersReader[CountryOfRoutingDomain](
-                CountryOfRoutingDomain.userAnswersReader(index)
-              ).run(userAnswers).value
+                CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
+              ).run(userAnswers).value.value
 
               val helper = new RoutingCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.countryOfRouting(index).get

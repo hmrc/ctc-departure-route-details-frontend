@@ -48,5 +48,5 @@ class TransitNavigator(
   override type T = TransitDomain
 
   implicit override val reader: UserAnswersReader[TransitDomain] =
-    TransitDomain.userAnswersReader
+    TransitDomain.userAnswersReader.apply(Nil)
 }

@@ -16,33 +16,31 @@
 
 package models.journeyDomain.routing
 
-import cats.implicits.catsSyntaxTuple4Semigroupal
 import config.PhaseConfig
-import models.domain.{GettableAsReaderOps, UserAnswersReader}
-import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.domain._
+import models.journeyDomain.JourneyDomainModel
 import models.reference.{Country, CustomsOffice}
-import models.{Mode, UserAnswers}
 import pages.routing.{BindingItineraryPage, CountryOfDestinationPage, OfficeOfDestinationPage}
-import play.api.mvc.Call
+import pages.sections.Section
+import pages.sections.routing.RoutingSection
 
 case class RoutingDomain(
   countryOfDestination: Country,
   officeOfDestination: CustomsOffice,
   bindingItinerary: Boolean,
-  countriesOfRouting: Seq[CountryOfRoutingDomain]
+  countriesOfRouting: CountriesOfRoutingDomain
 ) extends JourneyDomainModel {
 
-  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(controllers.routing.routes.CheckYourAnswersController.onPageLoad(userAnswers.lrn, mode))
+  override def page: Option[Section[_]] = Some(RoutingSection)
 }
 
 object RoutingDomain {
 
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[RoutingDomain] =
+  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[RoutingDomain] =
     (
       CountryOfDestinationPage.reader,
       OfficeOfDestinationPage.reader,
       BindingItineraryPage.reader,
-      UserAnswersReader[Seq[CountryOfRoutingDomain]]
-    ).tupled.map((RoutingDomain.apply _).tupled)
+      CountriesOfRoutingDomain.userAnswersReader
+    ).map(RoutingDomain.apply)
 }

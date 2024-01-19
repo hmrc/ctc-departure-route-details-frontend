@@ -17,31 +17,43 @@
 package models
 
 import cats.data.ReaderT
-import cats.implicits.{catsSyntaxApplicativeId, none}
 import models.journeyDomain.OpsError.ReaderError
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
+import pages.sections.Section
+import pages.{InferredPage, Page, ReadOnlyPage}
 import play.api.libs.json.{JsArray, Reads}
 import queries.Gettable
 
 package object domain {
 
   type EitherType[A]        = Either[ReaderError, A]
-  type UserAnswersReader[A] = ReaderT[EitherType, UserAnswers, A]
+  type UserAnswersReader[A] = ReaderT[EitherType, UserAnswers, ReaderSuccess[A]]
 
   object UserAnswersReader {
     def apply[A](implicit ev: UserAnswersReader[A]): UserAnswersReader[A] = ev
 
-    def apply[A](fn: UserAnswers => EitherType[A]): UserAnswersReader[A] =
-      ReaderT[EitherType, UserAnswers, A](fn)
+    def apply[A](fn: UserAnswers => EitherType[ReaderSuccess[A]]): UserAnswersReader[A] =
+      ReaderT[EitherType, UserAnswers, ReaderSuccess[A]](fn)
 
-    def apply[A](a: A): UserAnswersReader[A] = {
-      val fn: UserAnswers => EitherType[A] = _ => Right(a)
+    def success[A](a: A): Read[A] = pages => {
+      val fn: UserAnswers => EitherType[ReaderSuccess[A]] = _ => Right(ReaderSuccess(a, pages))
       apply(fn)
     }
 
-    def fail[A](page: Gettable[_], message: Option[String] = None): UserAnswersReader[A] = {
-      val fn: UserAnswers => EitherType[A] = _ => Left(ReaderError(page, message))
+    def none[A]: Read[Option[A]] = pages => success[Option[A]](None).apply(pages)
+
+    def emptyList[A]: Read[Seq[A]] = pages => success[Seq[A]](Seq.empty[A]).apply(pages)
+
+    def error[A](page: Gettable[_], message: Option[String] = None): Read[A] = pages => {
+      val fn: UserAnswers => EitherType[ReaderSuccess[A]] = _ => Left(ReaderError(page, pages.append(page), message))
       apply(fn)
     }
+
+    def readInferred[A](page: Gettable[A], inferredPage: Gettable[A])(implicit reads: Reads[A]): Read[A] =
+      inferredPage.optionalReader.apply(_).flatMap {
+        case ReaderSuccess(Some(value), pages) => UserAnswersReader.success(value).apply(pages)
+        case ReaderSuccess(None, pages)        => page.reader.apply(pages)
+      }
   }
 
   implicit class GettableAsFilterForNextReaderOps[A: Reads](a: Gettable[A]) {
@@ -52,15 +64,15 @@ package object domain {
       * will fail returning a ReaderError. If the result of UserAnswerReader[A] is not defined then the overall reader will fail and
       * `next` will not be run
       */
-
-    def filterMandatoryDependent[B](predicate: A => Boolean)(next: => UserAnswersReader[B]): UserAnswersReader[B] =
+    def filterMandatoryDependent[B](predicate: A => Boolean)(next: => Read[B]): Read[B] = pages =>
       a.reader(s"Reader for ${a.path} failed before reaching predicate")
+        .apply(pages)
         .flatMap {
-          x =>
+          case ReaderSuccess(x, pages) =>
             if (predicate(x)) {
-              next
+              next(pages)
             } else {
-              UserAnswersReader.fail[B](a, Some(s"Mandatory predicate failed for ${a.path}"))
+              UserAnswersReader.error[B](a, Some(s"Mandatory predicate failed for ${a.path}")).apply(pages.append(a))
             }
         }
 
@@ -70,14 +82,15 @@ package object domain {
       * will return None. If the result of UserAnswerReader[A] is not defined then the overall reader will fail and
       * `next` will not be run
       */
-    def filterOptionalDependent[B](predicate: A => Boolean)(next: => UserAnswersReader[B]): UserAnswersReader[Option[B]] =
+    def filterOptionalDependent[B](predicate: A => Boolean)(next: => Read[B]): Read[Option[B]] = pages =>
       a.reader(s"Reader for ${a.path} failed before reaching predicate")
+        .apply(pages)
         .flatMap {
-          x =>
+          case ReaderSuccess(x, pages) =>
             if (predicate(x)) {
-              next.map(Option(_))
+              next.toOption.apply(pages)
             } else {
-              none[B].pure[UserAnswersReader]
+              UserAnswersReader.none.apply(pages)
             }
         }
   }
@@ -89,52 +102,166 @@ package object domain {
       * and will fail if it is not defined
       */
 
-    def reader(implicit reads: Reads[A]): UserAnswersReader[A] = reader(None)
+    def reader(implicit reads: Reads[A]): Read[A] = reader(None)
 
-    def reader(message: String)(implicit reads: Reads[A]): UserAnswersReader[A] = reader(Some(message))
+    def reader(message: String)(implicit reads: Reads[A]): Read[A] = reader(Some(message))
 
-    private def reader(message: Option[String])(implicit reads: Reads[A]): UserAnswersReader[A] = {
-      val fn: UserAnswers => EitherType[A] = _.get(a) match {
-        case Some(value) => Right(value)
-        case None        => Left(ReaderError(a, message))
+    private def reader(message: Option[String])(implicit reads: Reads[A]): Read[A] = pages => {
+      val fn: UserAnswers => EitherType[ReaderSuccess[A]] = _.get(a) match {
+        case Some(value) => Right(ReaderSuccess(value, pages.append(a)))
+        case None        => Left(ReaderError(a, pages.append(a), message))
       }
       UserAnswersReader(fn)
     }
 
-    def mandatoryReader(predicate: A => Boolean)(implicit reads: Reads[A]): UserAnswersReader[A] = {
-      val fn: UserAnswers => EitherType[A] = _.get(a) match {
-        case Some(value) if predicate(value) => Right(value)
-        case _                               => Left(ReaderError(a))
-      }
-      UserAnswersReader(fn)
-    }
-
-    def optionalReader(implicit reads: Reads[A]): UserAnswersReader[Option[A]] = {
-      val fn: UserAnswers => EitherType[Option[A]] = ua => Right(ua.get(a))
+    def optionalReader(implicit reads: Reads[A]): Read[Option[A]] = pages => {
+      val fn: UserAnswers => EitherType[ReaderSuccess[Option[A]]] = ua => Right(ReaderSuccess(ua.get(a), pages))
       UserAnswersReader(fn)
     }
   }
 
   implicit class JsArrayGettableAsReaderOps(jsArray: Gettable[JsArray]) {
 
-    def arrayReader(implicit reads: Reads[JsArray]): UserAnswersReader[JsArray] = {
-      val fn: UserAnswers => EitherType[JsArray] = ua => Right(ua.get(jsArray).getOrElse(JsArray()))
+    def arrayReader(implicit reads: Reads[JsArray]): Read[JsArray] = pages => {
+      val fn: UserAnswers => EitherType[ReaderSuccess[JsArray]] =
+        ua => Right(ReaderSuccess(ua.get(jsArray).getOrElse(JsArray()), pages.append(jsArray)))
+
       UserAnswersReader(fn)
     }
 
-    def fieldReader[T](page: Index => Gettable[T])(implicit rds: Reads[T]): UserAnswersReader[Seq[T]] = {
-      val fn: UserAnswers => EitherType[Seq[T]] = ua => {
+    def fieldReader[T](page: Index => Gettable[T])(implicit rds: Reads[T]): Read[Seq[T]] = pages => {
+      val fn: UserAnswers => EitherType[ReaderSuccess[Seq[T]]] = ua => {
         Right {
-          ua.get(jsArray).getOrElse(JsArray()).value.indices.foldLeft[Seq[T]](Nil) {
-            (acc, i) =>
-              ua.get(page(Index(i))) match {
-                case Some(value) => acc :+ value
-                case None        => acc
+          ua.get(jsArray).getOrElse(JsArray()).value.indices.foldLeft[ReaderSuccess[Seq[T]]](ReaderSuccess(Nil, pages)) {
+            case (ReaderSuccess(ts, pages), i) =>
+              val gettable = page(Index(i))
+              ua.get(gettable) match {
+                case Some(t) => ReaderSuccess(ts :+ t, pages.append(gettable))
+                case None    => ReaderSuccess(ts, pages.append(gettable))
               }
           }
         }
       }
       UserAnswersReader(fn)
     }
+  }
+
+  type Pages   = Seq[Page]
+  type Read[T] = Pages => UserAnswersReader[T]
+
+  object Read {
+    def apply[T](value: T): Read[T] = UserAnswersReader.success(value).apply(_)
+  }
+
+  implicit class RichPages(pages: Pages) {
+
+    def append(page: Page): Pages =
+      page match {
+        case _: Section[_]             => pages
+        case _: InferredPage[_]        => pages
+        case _: ReadOnlyPage[_]        => pages
+        case _ if pages.contains(page) => pages
+        case _                         => pages :+ page
+      }
+
+    def append(page: Option[Section[_]]): Pages =
+      page.fold(pages) {
+        case x if pages.contains(x) => pages
+        case x                      => pages :+ x
+      }
+  }
+
+  implicit class RichRead[A](value: Read[A]) {
+
+    def map[T <: JourneyDomainModel](fun: A => T): Read[T] =
+      apply {
+        a =>
+          val t = fun(a)
+          pages => ReaderSuccess(t, pages.append(t.page)).toUserAnswersReader
+      }
+
+    def apply[T](fun: A => Read[T]): Read[T] = pages =>
+      for {
+        a      <- value(pages)
+        reader <- fun(a.value)(a.pages)
+      } yield reader
+
+    def toOption: Read[Option[A]] = value(_).map(_.toOption)
+    def toSeq: Read[Seq[A]]       = value(_).map(_.toSeq)
+  }
+
+  implicit class RichTuple2[A, B](value: (Read[A], Read[B])) {
+
+    def map[T <: JourneyDomainModel](fun: (A, B) => T): Read[T] =
+      apply {
+        case (a, b) =>
+          val t = fun(a, b)
+          pages => ReaderSuccess(t, pages.append(t.page)).toUserAnswersReader
+      }
+
+    def apply[T](fun: (A, B) => Read[T]): Read[T] = pages =>
+      for {
+        a      <- value._1(pages)
+        b      <- value._2(a.pages)
+        reader <- fun(a.value, b.value)(b.pages)
+      } yield reader
+  }
+
+  implicit class RichTuple3[A, B, C](value: (Read[A], Read[B], Read[C])) {
+
+    def map[T <: JourneyDomainModel](fun: (A, B, C) => T): Read[T] =
+      apply {
+        case (a, b, c) =>
+          val t = fun(a, b, c)
+          pages => ReaderSuccess(t, pages.append(t.page)).toUserAnswersReader
+      }
+
+    def apply[T](fun: (A, B, C) => Read[T]): Read[T] = pages =>
+      for {
+        a      <- value._1(pages)
+        b      <- value._2(a.pages)
+        c      <- value._3(b.pages)
+        reader <- fun(a.value, b.value, c.value)(c.pages)
+      } yield reader
+  }
+
+  implicit class RichTuple4[A, B, C, D](value: (Read[A], Read[B], Read[C], Read[D])) {
+
+    def map[T <: JourneyDomainModel](fun: (A, B, C, D) => T): Read[T] =
+      apply {
+        case (a, b, c, d) =>
+          val t = fun(a, b, c, d)
+          pages => ReaderSuccess(t, pages.append(t.page)).toUserAnswersReader
+      }
+
+    def apply[T](fun: (A, B, C, D) => Read[T]): Read[T] = pages =>
+      for {
+        a      <- value._1(pages)
+        b      <- value._2(a.pages)
+        c      <- value._3(b.pages)
+        d      <- value._4(c.pages)
+        reader <- fun(a.value, b.value, c.value, d.value)(d.pages)
+      } yield reader
+  }
+
+  implicit class RichTuple6[A, B, C, D, E, F](value: (Read[A], Read[B], Read[C], Read[D], Read[E], Read[F])) {
+
+    def map[T <: JourneyDomainModel](fun: (A, B, C, D, E, F) => T): Read[T] =
+      apply {
+        case (a, b, c, d, e, f) =>
+          val t = fun(a, b, c, d, e, f)
+          pages => ReaderSuccess(t, pages.append(t.page)).toUserAnswersReader
+      }
+
+    def apply[T](fun: (A, B, C, D, E, F) => Read[T]): Read[T] = pages =>
+      for {
+        a      <- value._1(pages)
+        b      <- value._2(a.pages)
+        c      <- value._3(b.pages)
+        d      <- value._4(c.pages)
+        e      <- value._5(d.pages)
+        f      <- value._6(e.pages)
+        reader <- fun(a.value, b.value, c.value, d.value, e.value, f.value)(f.pages)
+      } yield reader
   }
 }

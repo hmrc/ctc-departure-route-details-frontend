@@ -16,13 +16,13 @@
 
 package models.journeyDomain.routing
 
-import config.PhaseConfig
-import models.domain.{GettableAsReaderOps, UserAnswersReader}
+import models.domain._
 import models.journeyDomain.Stage._
 import models.journeyDomain.{JourneyDomainModel, Stage}
 import models.reference.Country
 import models.{Index, Mode, UserAnswers}
 import pages.routing.index.CountryOfRoutingPage
+import pages.sections.routing.CountriesOfRoutingSection
 import play.api.mvc.Call
 
 case class CountryOfRoutingDomain(
@@ -30,21 +30,17 @@ case class CountryOfRoutingDomain(
 )(index: Index)
     extends JourneyDomainModel {
 
-  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] = Some {
+  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
     stage match {
       case AccessingJourney =>
-        controllers.routing.index.routes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index)
+        Some(controllers.routing.index.routes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index))
       case CompletingJourney =>
-        controllers.routing.routes.AddAnotherCountryOfRoutingController.onPageLoad(userAnswers.lrn, mode)
+        CountriesOfRoutingSection.route(userAnswers, mode)
     }
-  }
 }
 
 object CountryOfRoutingDomain {
 
-  implicit def userAnswersReader(index: Index): UserAnswersReader[CountryOfRoutingDomain] =
+  implicit def userAnswersReader(index: Index): Read[CountryOfRoutingDomain] =
     CountryOfRoutingPage(index).reader.map(CountryOfRoutingDomain(_)(index))
-
-  implicit def countriesOfRoutingReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Seq[CountryOfRoutingDomain]] =
-    CountriesOfRoutingDomain.userAnswersReader
 }

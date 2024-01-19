@@ -36,7 +36,7 @@ class ExitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
           forAll(arbitraryExitAnswers(emptyUserAnswers)) {
             answers =>
               navigator
-                .nextPage(answers)
+                .nextPage(answers, None)
                 .mustBe(controllers.exit.routes.AddAnotherOfficeOfExitController.onPageLoad(answers.lrn, mode))
           }
         }
@@ -54,7 +54,7 @@ class ExitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
           forAll(arbitraryRouteDetailsAnswers(emptyUserAnswers)) {
             answers =>
               navigator
-                .nextPage(answers)
+                .nextPage(answers, None)
                 .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }

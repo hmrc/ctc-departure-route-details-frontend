@@ -19,8 +19,8 @@ package pages.exit.index
 import controllers.exit.index.routes
 import models.reference.Country
 import models.{Index, Mode, UserAnswers}
-import pages.QuestionPage
 import pages.sections.exit.OfficeOfExitSection
+import pages.{InferredPage, QuestionPage}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
@@ -49,7 +49,7 @@ case class OfficeOfExitCountryPage(index: Index) extends BaseOfficeOfExitCountry
     userAnswers.remove(InferredOfficeOfExitCountryPage(index))
 }
 
-case class InferredOfficeOfExitCountryPage(index: Index) extends BaseOfficeOfExitCountryPage(index) {
+case class InferredOfficeOfExitCountryPage(index: Index) extends BaseOfficeOfExitCountryPage(index) with InferredPage[Country] {
   override def toString: String = "inferredOfficeOfExitCountry"
 
   override def cleanup(userAnswers: UserAnswers): Try[UserAnswers] =

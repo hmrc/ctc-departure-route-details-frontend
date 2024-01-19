@@ -18,7 +18,7 @@ package models.journeyDomain.loadingAndUnloading.loading
 
 import base.SpecBase
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -47,9 +47,18 @@ class LoadingDomainSpec extends SpecBase with Generators {
           additionalInformation = Some(AdditionalInformationDomain(country, loadingPlace))
         )
 
-        val result: EitherType[LoadingDomain] = UserAnswersReader[LoadingDomain].run(userAnswers)
+        val result = UserAnswersReader[LoadingDomain](
+          LoadingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          AddUnLocodeYesNoPage,
+          UnLocodePage,
+          AddExtraInformationYesNoPage,
+          CountryPage,
+          LocationPage
+        )
       }
 
       "when addUnLocode is No" in {
@@ -63,9 +72,16 @@ class LoadingDomainSpec extends SpecBase with Generators {
           additionalInformation = Some(AdditionalInformationDomain(country, loadingPlace))
         )
 
-        val result: EitherType[LoadingDomain] = UserAnswersReader[LoadingDomain].run(userAnswers)
+        val result = UserAnswersReader[LoadingDomain](
+          LoadingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          AddUnLocodeYesNoPage,
+          CountryPage,
+          LocationPage
+        )
       }
     }
 
@@ -75,9 +91,15 @@ class LoadingDomainSpec extends SpecBase with Generators {
         val userAnswers = emptyUserAnswers
           .setValue(AddUnLocodeYesNoPage, true)
 
-        val result: EitherType[LoadingDomain] = UserAnswersReader[LoadingDomain].run(userAnswers)
+        val result = UserAnswersReader[LoadingDomain](
+          LoadingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe UnLocodePage
+        result.left.value.pages mustBe Seq(
+          AddUnLocodeYesNoPage,
+          UnLocodePage
+        )
       }
     }
   }

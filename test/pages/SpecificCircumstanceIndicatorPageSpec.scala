@@ -17,7 +17,9 @@
 package pages
 
 import models.reference.SpecificCircumstanceIndicator
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
 
 class SpecificCircumstanceIndicatorPageSpec extends PageBehaviours {
 
@@ -28,5 +30,40 @@ class SpecificCircumstanceIndicatorPageSpec extends PageBehaviours {
     beSettable[SpecificCircumstanceIndicator](SpecificCircumstanceIndicatorPage)
 
     beRemovable[SpecificCircumstanceIndicator](SpecificCircumstanceIndicatorPage)
+
+    "cleanup" - {
+      "must remove add place of unloading yes/no" - {
+        "when answer changes" in {
+          forAll(arbitrary[SpecificCircumstanceIndicator]) {
+            sci1 =>
+              forAll(arbitrary[SpecificCircumstanceIndicator].retryUntil(_ != sci1)) {
+                sci2 =>
+                  val userAnswers = emptyUserAnswers
+                    .setValue(SpecificCircumstanceIndicatorPage, sci1)
+                    .setValue(AddPlaceOfUnloadingPage, true)
+
+                  val result = userAnswers.setValue(SpecificCircumstanceIndicatorPage, sci2)
+
+                  result.get(AddPlaceOfUnloadingPage) must not be defined
+              }
+          }
+        }
+      }
+
+      "must do nothing" - {
+        "when answer does not change" in {
+          forAll(arbitrary[SpecificCircumstanceIndicator]) {
+            sci =>
+              val userAnswers = emptyUserAnswers
+                .setValue(SpecificCircumstanceIndicatorPage, sci)
+                .setValue(AddPlaceOfUnloadingPage, true)
+
+              val result = userAnswers.setValue(SpecificCircumstanceIndicatorPage, sci)
+
+              result.get(AddPlaceOfUnloadingPage) mustBe defined
+          }
+        }
+      }
+    }
   }
 }

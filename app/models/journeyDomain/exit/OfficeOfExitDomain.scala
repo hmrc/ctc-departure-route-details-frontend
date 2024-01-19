@@ -16,14 +16,13 @@
 
 package models.journeyDomain.exit
 
-import cats.implicits._
-import controllers.exit.index.routes
-import models.domain.{GettableAsReaderOps, UserAnswersReader}
-import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.Index
+import models.domain._
+import models.journeyDomain.JourneyDomainModel
 import models.reference.{Country, CustomsOffice}
-import models.{Index, Mode, UserAnswers}
 import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage, OfficeOfExitPage}
-import play.api.mvc.Call
+import pages.sections.Section
+import pages.sections.exit.OfficeOfExitSection
 
 case class OfficeOfExitDomain(
   country: Country,
@@ -31,21 +30,16 @@ case class OfficeOfExitDomain(
 )(index: Index)
     extends JourneyDomainModel {
 
-  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(routes.CheckOfficeOfExitAnswersController.onPageLoad(userAnswers.lrn, index, mode))
+  override def page: Option[Section[_]] = Some(OfficeOfExitSection(index))
 
   val label: String = s"$country - $customsOffice"
 }
 
 object OfficeOfExitDomain {
 
-  implicit def userAnswersReader(
-    index: Index
-  ): UserAnswersReader[OfficeOfExitDomain] =
+  implicit def userAnswersReader(index: Index): Read[OfficeOfExitDomain] =
     (
-      InferredOfficeOfExitCountryPage(index).reader orElse OfficeOfExitCountryPage(index).reader,
+      UserAnswersReader.readInferred(OfficeOfExitCountryPage(index), InferredOfficeOfExitCountryPage(index)),
       OfficeOfExitPage(index).reader
-    ).mapN {
-      (country, office) => OfficeOfExitDomain(country, office)(index)
-    }
+    ).map(OfficeOfExitDomain.apply(_, _)(index))
 }

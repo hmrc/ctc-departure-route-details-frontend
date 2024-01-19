@@ -49,5 +49,5 @@ class CountryOfRoutingNavigator(
   override type T = CountryOfRoutingDomain
 
   implicit override val reader: UserAnswersReader[CountryOfRoutingDomain] =
-    CountryOfRoutingDomain.userAnswersReader(index)
+    CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
 }

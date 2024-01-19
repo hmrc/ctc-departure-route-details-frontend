@@ -16,13 +16,17 @@
 
 package pages.sections.transit
 
-import pages.sections.Section
-import pages.sections.RouteDetailsSection
+import models.{Mode, UserAnswers}
+import pages.sections.{RouteDetailsSection, Section}
 import play.api.libs.json.{JsObject, JsPath}
+import play.api.mvc.Call
 
 case object TransitSection extends Section[JsObject] {
 
   override def path: JsPath = RouteDetailsSection.path \ toString
 
   override def toString: String = "transit"
+
+  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
+    OfficesOfTransitSection.route(userAnswers, mode)
 }

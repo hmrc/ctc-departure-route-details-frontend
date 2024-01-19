@@ -52,8 +52,8 @@ class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChe
           forAll(arbitraryOfficeOfExitAnswers(emptyUserAnswers, index), arbitrary[Mode]) {
             (userAnswers, mode) =>
               val officeOfExit = UserAnswersReader[OfficeOfExitDomain](
-                OfficeOfExitDomain.userAnswersReader(index)
-              ).run(userAnswers).value
+                OfficeOfExitDomain.userAnswersReader(index).apply(Nil)
+              ).run(userAnswers).value.value
 
               val helper = new ExitCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.officeOfExit(index).get

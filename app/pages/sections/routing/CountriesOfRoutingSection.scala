@@ -16,11 +16,14 @@
 
 package pages.sections.routing
 
-import models.Index
-import models.domain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, UserAnswersReader}
+import controllers.routing.routes
+import models.domain._
+import models.journeyDomain.ReaderSuccess
+import models.{Index, Mode, UserAnswers}
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page}
 import pages.sections.Section
 import play.api.libs.json.{JsArray, JsPath}
+import play.api.mvc.Call
 
 case object CountriesOfRoutingSection extends Section[JsArray] {
 
@@ -28,39 +31,45 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
 
   override def toString: String = "countriesOfRouting"
 
-  def atLeastOneCountryOfRoutingNotInCL147: UserAnswersReader[Boolean] =
-    for {
-      numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)
-      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(false)) {
-        (acc, index) =>
-          for {
-            areAnyCountriesOfRoutingNotInCL147SoFar <- acc
-            isThisCountryOfRoutingNotInCL147        <- CountryOfRoutingInCL147Page(Index(index)).reader.map(!_)
-          } yield areAnyCountriesOfRoutingNotInCL147SoFar || isThisCountryOfRoutingNotInCL147
-      }
-    } yield reader
+  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
+    Some(routes.AddAnotherCountryOfRoutingController.onPageLoad(userAnswers.lrn, mode))
 
-  def atLeastOneCountryOfRoutingIsInCL147: UserAnswersReader[Boolean] =
-    for {
-      numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)
-      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(false)) {
-        (acc, index) =>
-          for {
-            areAnyCountriesOfRoutingInCL147SoFar <- acc
-            isThisCountryOfRoutingInCL147        <- CountryOfRoutingInCL147Page(Index(index)).reader
-          } yield areAnyCountriesOfRoutingInCL147SoFar || isThisCountryOfRoutingInCL147
-      }
-    } yield reader
+  def atLeastOneCountryOfRoutingIsInCL147: Read[Boolean] = pages => {
+    this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
+      case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
+        (0 until numberOfCountriesOfRouting)
+          .foldLeft(UserAnswersReader.success(false)) {
+            (acc, index) =>
+              (
+                acc,
+                CountryOfRoutingInCL147Page(Index(index)).reader
+              ).apply {
+                case (areAnyCountriesOfRoutingInCL147SoFar, isThisCountryOfRoutingInCL147) =>
+                  pages =>
+                    val result = areAnyCountriesOfRoutingInCL147SoFar || isThisCountryOfRoutingInCL147
+                    ReaderSuccess(result, pages).toUserAnswersReader
+              }
+          }
+          .apply(pages)
+    }
+  }
 
-  def anyCountriesOfRoutingInCL112: UserAnswersReader[Boolean] =
-    for {
-      numberOfCountriesOfRouting <- this.arrayReader.map(_.value.length)
-      reader <- (0 until numberOfCountriesOfRouting).foldLeft(UserAnswersReader(false)) {
-        (acc, index) =>
-          for {
-            areAnyCountriesOfRoutingInCL112SoFar <- acc
-            isThisCountryOfRoutingInCL112        <- CountryOfRoutingInCL112Page(Index(index)).reader
-          } yield areAnyCountriesOfRoutingInCL112SoFar || isThisCountryOfRoutingInCL112
-      }
-    } yield reader
+  def anyCountriesOfRoutingInCL112: Read[Boolean] = pages =>
+    this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
+      case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
+        (0 until numberOfCountriesOfRouting)
+          .foldLeft(UserAnswersReader.success(false)) {
+            (acc, index) =>
+              (
+                acc,
+                CountryOfRoutingInCL112Page(Index(index)).reader
+              ).apply {
+                case (areAnyCountriesOfRoutingInCL112SoFar, isThisCountryOfRoutingInCL112) =>
+                  pages =>
+                    val result = areAnyCountriesOfRoutingInCL112SoFar || isThisCountryOfRoutingInCL112
+                    ReaderSuccess(result, pages).toUserAnswersReader
+              }
+          }
+          .apply(pages)
+    }
 }

@@ -19,8 +19,7 @@ package models.journeyDomain.locationOfGoods
 import base.SpecBase
 import config.Constants.LocationOfGoodsIdentifier._
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
-import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain._
+import models.domain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
@@ -28,6 +27,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.QuestionPage
 import pages.locationOfGoods._
+import pages.sections.locationOfGoods.LocationOfGoodsSection
 
 class LocationOfGoodsDomainSpec extends SpecBase with Generators {
 
@@ -55,9 +55,17 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             customsOffice = customsOffice
           )
 
-          val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+          val result = UserAnswersReader[LocationOfGoodsDomain](
+            LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            CustomsOfficeIdentifierPage,
+            LocationOfGoodsSection
+          )
         }
 
         "is W (Coordinate identifier)" in {
@@ -76,9 +84,18 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             additionalContact = None
           )
 
-          val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+          val result = UserAnswersReader[LocationOfGoodsDomain](
+            LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            CoordinatesPage,
+            AddContactYesNoPage,
+            LocationOfGoodsSection
+          )
         }
 
         "is X (EORI number) and AddIdentifierYesNoPage is answered No" in {
@@ -99,9 +116,19 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             additionalContact = None
           )
 
-          val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+          val result = UserAnswersReader[LocationOfGoodsDomain](
+            LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            EoriPage,
+            AddIdentifierYesNoPage,
+            AddContactYesNoPage,
+            LocationOfGoodsSection
+          )
         }
 
         "is X (EORI number) and AddIdentifierYesNoPage is answered Yes" in {
@@ -123,9 +150,20 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             additionalContact = None
           )
 
-          val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+          val result = UserAnswersReader[LocationOfGoodsDomain](
+            LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            EoriPage,
+            AddIdentifierYesNoPage,
+            AdditionalIdentifierPage,
+            AddContactYesNoPage,
+            LocationOfGoodsSection
+          )
         }
 
         "is Y (Authorisation number) and AddIdentifierYesNoPage is answered No" in {
@@ -146,9 +184,17 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             additionalContact = None
           )
 
-          val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+          val result = UserAnswersReader[LocationOfGoodsDomain](
+            LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            AuthorisationNumberPage,
+            AddIdentifierYesNoPage,
+            AddContactYesNoPage,
+            LocationOfGoodsSection
+          )
         }
 
         "is Y (Authorisation number) and AddIdentifierYesNoPage is answered Yes" in {
@@ -170,9 +216,19 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             additionalContact = None
           )
 
-          val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+          val result = UserAnswersReader[LocationOfGoodsDomain](
+            LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            AuthorisationNumberPage,
+            AddIdentifierYesNoPage,
+            AdditionalIdentifierPage,
+            AddContactYesNoPage,
+            LocationOfGoodsSection
+          )
         }
 
         "is Z (Address)" in {
@@ -194,9 +250,19 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             additionalContact = None
           )
 
-          val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+          val result = UserAnswersReader[LocationOfGoodsDomain](
+            LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            CountryPage,
+            AddressPage,
+            AddContactYesNoPage,
+            LocationOfGoodsSection
+          )
         }
 
         "is U (UnLocode)" in {
@@ -215,9 +281,18 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             additionalContact = None
           )
 
-          val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+          val result = UserAnswersReader[LocationOfGoodsDomain](
+            LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            UnLocodePage,
+            AddContactYesNoPage,
+            LocationOfGoodsSection
+          )
         }
 
         "is T (PostalCode)" in {
@@ -236,9 +311,18 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             additionalContact = None
           )
 
-          val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+          val result = UserAnswersReader[LocationOfGoodsDomain](
+            LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            LocationTypePage,
+            IdentificationPage,
+            PostalCodePage,
+            AddContactYesNoPage,
+            LocationOfGoodsSection
+          )
         }
 
       }
@@ -257,7 +341,9 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           .setValue(contact.NamePage, contactName)
           .setValue(contact.TelephoneNumberPage, contactPhone)
 
-        val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+        val result = UserAnswersReader[LocationOfGoodsDomain](
+          LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         val expectedResult = LocationOfGoodsY(
           typeOfLocation = typeOfLocation,
@@ -266,7 +352,17 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           additionalContact = Some(AdditionalContactDomain(contactName, contactPhone))
         )
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          LocationTypePage,
+          AuthorisationNumberPage,
+          AddIdentifierYesNoPage,
+          AdditionalIdentifierPage,
+          AddContactYesNoPage,
+          contact.NamePage,
+          contact.TelephoneNumberPage,
+          LocationOfGoodsSection
+        )
       }
 
     }
@@ -295,7 +391,9 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           mandatoryPage =>
             val invalidUserAnswers = userAnswers.removeValue(mandatoryPage)
 
-            val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(invalidUserAnswers)
+            val result = UserAnswersReader[LocationOfGoodsDomain](
+              LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+            ).run(invalidUserAnswers)
 
             result.left.value.page mustBe mandatoryPage
         }
@@ -312,10 +410,17 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           .setValue(AddIdentifierYesNoPage, true)
           .setValue(AddContactYesNoPage, false)
 
-        val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+        val result = UserAnswersReader[LocationOfGoodsDomain](
+          LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe AdditionalIdentifierPage
-
+        result.left.value.pages mustBe Seq(
+          LocationTypePage,
+          AuthorisationNumberPage,
+          AddIdentifierYesNoPage,
+          AdditionalIdentifierPage
+        )
       }
 
       "when is Y(Authorisation Number) and contact name details is missing when required" in {
@@ -330,9 +435,19 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           .setValue(AdditionalIdentifierPage, "1234")
           .setValue(AddContactYesNoPage, true)
 
-        val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+        val result = UserAnswersReader[LocationOfGoodsDomain](
+          LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe contact.NamePage
+        result.left.value.pages mustBe Seq(
+          LocationTypePage,
+          AuthorisationNumberPage,
+          AddIdentifierYesNoPage,
+          AdditionalIdentifierPage,
+          AddContactYesNoPage,
+          contact.NamePage
+        )
       }
 
       "when is Y(Authorisation Number) and contact phone number details is missing when required" in {
@@ -348,9 +463,20 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           .setValue(AddContactYesNoPage, true)
           .setValue(contact.NamePage, contactName)
 
-        val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+        val result = UserAnswersReader[LocationOfGoodsDomain](
+          LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe contact.TelephoneNumberPage
+        result.left.value.pages mustBe Seq(
+          LocationTypePage,
+          AuthorisationNumberPage,
+          AddIdentifierYesNoPage,
+          AdditionalIdentifierPage,
+          AddContactYesNoPage,
+          contact.NamePage,
+          contact.TelephoneNumberPage
+        )
       }
 
       "when type is Z (address) and country page is missing" in {
@@ -360,9 +486,16 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           .setValue(LocationTypePage, typeOfLocation)
           .setValue(IdentificationPage, qualifierOfIdentification)
 
-        val result: EitherType[LocationOfGoodsDomain] = UserAnswersReader[LocationOfGoodsDomain].run(userAnswers)
+        val result = UserAnswersReader[LocationOfGoodsDomain](
+          LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe CountryPage
+        result.left.value.pages mustBe Seq(
+          LocationTypePage,
+          IdentificationPage,
+          CountryPage
+        )
       }
     }
   }

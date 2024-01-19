@@ -18,7 +18,7 @@ package models.journeyDomain.routing
 
 import base.SpecBase
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.domain.UserAnswersReader
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import pages.routing.index.CountryOfRoutingPage
@@ -28,7 +28,7 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
   "CountryOfRoutingDomain" - {
 
     "can be parsed from UserAnswers" - {
-      "when country of routing not answered at index" in {
+      "when country of routing answered at index" in {
         val country = arbitrary[Country].sample.value
 
         val userAnswers = emptyUserAnswers
@@ -38,11 +38,14 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
           country = country
         )(index)
 
-        val result: EitherType[CountryOfRoutingDomain] = UserAnswersReader[CountryOfRoutingDomain](
-          CountryOfRoutingDomain.userAnswersReader(index)
+        val result = UserAnswersReader[CountryOfRoutingDomain](
+          CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
         ).run(userAnswers)
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          CountryOfRoutingPage(index)
+        )
       }
     }
 
@@ -50,11 +53,14 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
       "when country of routing not answered at index" in {
         val userAnswers = emptyUserAnswers
 
-        val result: EitherType[CountryOfRoutingDomain] = UserAnswersReader[CountryOfRoutingDomain](
-          CountryOfRoutingDomain.userAnswersReader(index)
+        val result = UserAnswersReader[CountryOfRoutingDomain](
+          CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
         ).run(userAnswers)
 
         result.left.value.page mustBe CountryOfRoutingPage(index)
+        result.left.value.pages mustBe Seq(
+          CountryOfRoutingPage(index)
+        )
       }
     }
   }
