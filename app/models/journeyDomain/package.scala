@@ -149,6 +149,10 @@ package object domain {
   type Pages   = Seq[Page]
   type Read[T] = Pages => UserAnswersReader[T]
 
+  object Read {
+    def apply[T](value: T): Read[T] = UserAnswersReader.success(value).apply(_)
+  }
+
   implicit class RichPages(pages: Pages) {
 
     def append(page: Page): Pages =
@@ -169,17 +173,17 @@ package object domain {
 
   implicit class RichRead[A](value: Read[A]) {
 
-    def map[T <: JourneyDomainModel](f: A => T): Read[T] =
+    def map[T <: JourneyDomainModel](fun: A => T): Read[T] =
       apply {
         a =>
-          val t = f(a)
+          val t = fun(a)
           pages => ReaderSuccess(t, pages.append(t.page)).toUserAnswersReader
       }
 
-    def apply[T](f: A => Read[T]): Read[T] = pages =>
+    def apply[T](fun: A => Read[T]): Read[T] = pages =>
       for {
         a      <- value(pages)
-        reader <- f(a.value)(a.pages)
+        reader <- fun(a.value)(a.pages)
       } yield reader
 
     def toOption: Read[Option[A]] = value(_).map(_.toOption)
@@ -188,55 +192,76 @@ package object domain {
 
   implicit class RichTuple2[A, B](value: (Read[A], Read[B])) {
 
-    def map[T <: JourneyDomainModel](f: (A, B) => T): Read[T] =
+    def map[T <: JourneyDomainModel](fun: (A, B) => T): Read[T] =
       apply {
         case (a, b) =>
-          val t = f(a, b)
+          val t = fun(a, b)
           pages => ReaderSuccess(t, pages.append(t.page)).toUserAnswersReader
       }
 
-    def apply[T](f: (A, B) => Read[T]): Read[T] = pages =>
+    def apply[T](fun: (A, B) => Read[T]): Read[T] = pages =>
       for {
         a      <- value._1(pages)
         b      <- value._2(a.pages)
-        reader <- f(a.value, b.value)(b.pages)
+        reader <- fun(a.value, b.value)(b.pages)
       } yield reader
   }
 
   implicit class RichTuple3[A, B, C](value: (Read[A], Read[B], Read[C])) {
 
-    def map[T <: JourneyDomainModel](f: (A, B, C) => T): Read[T] =
+    def map[T <: JourneyDomainModel](fun: (A, B, C) => T): Read[T] =
       apply {
         case (a, b, c) =>
-          val t = f(a, b, c)
+          val t = fun(a, b, c)
           pages => ReaderSuccess(t, pages.append(t.page)).toUserAnswersReader
       }
 
-    def apply[T](f: (A, B, C) => Read[T]): Read[T] = pages =>
+    def apply[T](fun: (A, B, C) => Read[T]): Read[T] = pages =>
       for {
         a      <- value._1(pages)
         b      <- value._2(a.pages)
         c      <- value._3(b.pages)
-        reader <- f(a.value, b.value, c.value)(c.pages)
+        reader <- fun(a.value, b.value, c.value)(c.pages)
       } yield reader
   }
 
   implicit class RichTuple4[A, B, C, D](value: (Read[A], Read[B], Read[C], Read[D])) {
 
-    def map[T <: JourneyDomainModel](f: (A, B, C, D) => T): Read[T] =
+    def map[T <: JourneyDomainModel](fun: (A, B, C, D) => T): Read[T] =
       apply {
         case (a, b, c, d) =>
-          val t = f(a, b, c, d)
+          val t = fun(a, b, c, d)
           pages => ReaderSuccess(t, pages.append(t.page)).toUserAnswersReader
       }
 
-    def apply[T](f: (A, B, C, D) => Read[T]): Read[T] = pages =>
+    def apply[T](fun: (A, B, C, D) => Read[T]): Read[T] = pages =>
       for {
         a      <- value._1(pages)
         b      <- value._2(a.pages)
         c      <- value._3(b.pages)
         d      <- value._4(c.pages)
-        reader <- f(a.value, b.value, c.value, d.value)(d.pages)
+        reader <- fun(a.value, b.value, c.value, d.value)(d.pages)
+      } yield reader
+  }
+
+  implicit class RichTuple6[A, B, C, D, E, F](value: (Read[A], Read[B], Read[C], Read[D], Read[E], Read[F])) {
+
+    def map[T <: JourneyDomainModel](fun: (A, B, C, D, E, F) => T): Read[T] =
+      apply {
+        case (a, b, c, d, e, f) =>
+          val t = fun(a, b, c, d, e, f)
+          pages => ReaderSuccess(t, pages.append(t.page)).toUserAnswersReader
+      }
+
+    def apply[T](fun: (A, B, C, D, E, F) => Read[T]): Read[T] = pages =>
+      for {
+        a      <- value._1(pages)
+        b      <- value._2(a.pages)
+        c      <- value._3(b.pages)
+        d      <- value._4(c.pages)
+        e      <- value._5(d.pages)
+        f      <- value._6(e.pages)
+        reader <- fun(a.value, b.value, c.value, d.value, e.value, f.value)(f.pages)
       } yield reader
   }
 }

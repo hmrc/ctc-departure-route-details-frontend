@@ -59,33 +59,21 @@ object RouteDetailsDomain {
     }
 
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[RouteDetailsDomain] =
-    specificCircumstanceIndicatorReader(Nil).flatMap {
-      case ReaderSuccess(specificCircumstanceIndicator, pages) =>
-        RoutingDomain.userAnswersReader.apply(pages).flatMap {
-          case ReaderSuccess(routing, pages) =>
-            transitReader.apply(pages).flatMap {
-              case ReaderSuccess(transit, pages) =>
-                exitReader(transit)(pages).flatMap {
-                  case ReaderSuccess(exit, pages) =>
-                    locationOfGoodsReader.apply(pages).flatMap {
-                      case ReaderSuccess(locationOfGoods, pages) =>
-                        LoadingAndUnloadingDomain.userAnswersReader.apply(pages).map {
-                          case ReaderSuccess(loadingAndUnloading, pages) =>
-                            val routeDetails = RouteDetailsDomain(
-                              specificCircumstanceIndicator,
-                              routing,
-                              transit,
-                              exit,
-                              locationOfGoods,
-                              loadingAndUnloading
-                            )
-                            ReaderSuccess(routeDetails, pages.append(routeDetails.page))
-                        }
-                    }
-                }
-            }
-        }
-    }
+    (
+      specificCircumstanceIndicatorReader,
+      RoutingDomain.userAnswersReader,
+      transitReader
+    ).apply {
+      case (specificCircumstanceIndicator, routing, transit) =>
+        (
+          Read(specificCircumstanceIndicator),
+          Read(routing),
+          Read(transit),
+          exitReader(transit),
+          locationOfGoodsReader,
+          LoadingAndUnloadingDomain.userAnswersReader
+        ).map(RouteDetailsDomain.apply)
+    }.apply(Nil)
 
   implicit def transitReader(implicit phaseConfig: PhaseConfig): Read[Option[TransitDomain]] =
     DeclarationTypePage.reader.apply(_).flatMap {
