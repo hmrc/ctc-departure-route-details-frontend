@@ -18,13 +18,12 @@ package models
 
 import cats.data.ReaderT
 import models.journeyDomain.OpsError.ReaderError
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
 import pages.sections.Section
 import pages.{InferredPage, Page, ReadOnlyPage}
 import play.api.libs.json.{JsArray, Reads}
 import queries.Gettable
 
-package object domain {
+package object journeyDomain {
 
   type EitherType[A]        = Either[ReaderError, A]
   type UserAnswersReader[A] = ReaderT[EitherType, UserAnswers, ReaderSuccess[A]]

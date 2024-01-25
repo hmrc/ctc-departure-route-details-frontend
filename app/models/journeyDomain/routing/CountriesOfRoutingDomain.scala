@@ -20,8 +20,7 @@ import cats.implicits._
 import config.Constants.SecurityType._
 import config.PhaseConfig
 import models.Phase.{PostTransition, Transition}
-import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
+import models.journeyDomain._
 import models.{Index, RichJsArray}
 import pages.external.SecurityDetailsTypePage
 import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage}

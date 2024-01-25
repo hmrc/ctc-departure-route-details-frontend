@@ -19,7 +19,7 @@ package models.journeyDomain.locationOfGoods
 import base.SpecBase
 import config.Constants.LocationOfGoodsIdentifier._
 import generators.Generators
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary

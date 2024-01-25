@@ -18,7 +18,7 @@ package models.journeyDomain.routing
 
 import base.SpecBase
 import generators.Generators
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import pages.routing.index.CountryOfRoutingPage

@@ -17,7 +17,7 @@
 package navigation
 
 import config.{FrontendAppConfig, PhaseConfig}
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.{CheckMode, Mode, NormalMode}
 

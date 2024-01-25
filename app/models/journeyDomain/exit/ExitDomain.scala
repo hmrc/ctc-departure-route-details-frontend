@@ -16,8 +16,7 @@
 
 package models.journeyDomain.exit
 
-import models.domain._
-import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.journeyDomain._
 import models.{Mode, UserAnswers}
 import pages.sections.exit.OfficesOfExitSection
 import play.api.mvc.Call

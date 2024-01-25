@@ -16,8 +16,7 @@
 
 package models.journeyDomain.exit
 
-import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
+import models.journeyDomain._
 import models.{Index, RichJsArray}
 import pages.sections.Section
 import pages.sections.exit.OfficesOfExitSection

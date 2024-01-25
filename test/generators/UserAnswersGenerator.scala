@@ -17,7 +17,7 @@
 package generators
 
 import config.PhaseConfig
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.OpsError.ReaderError
 import models.journeyDomain.RouteDetailsDomain
 import models.{EoriNumber, LocalReferenceNumber, RichJsObject, UserAnswers}

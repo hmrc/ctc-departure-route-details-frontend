@@ -17,8 +17,7 @@
 package models.journeyDomain.routing
 
 import config.PhaseConfig
-import models.domain._
-import models.journeyDomain.JourneyDomainModel
+import models.journeyDomain.{JourneyDomainModel, _}
 import models.reference.{Country, CustomsOffice}
 import pages.routing.{BindingItineraryPage, CountryOfDestinationPage, OfficeOfDestinationPage}
 import pages.sections.Section

@@ -22,7 +22,7 @@ import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
 import models.Phase
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.reference.SpecificCircumstanceIndicator

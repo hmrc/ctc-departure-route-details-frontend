@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import models.domain.{Pages, Read, UserAnswersReader}
-import models.journeyDomain.ReaderSuccess
+import models.journeyDomain._
 import play.api.libs.json._
 
 import scala.annotation.nowarn

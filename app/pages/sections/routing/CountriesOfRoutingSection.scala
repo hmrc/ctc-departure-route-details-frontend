@@ -17,7 +17,7 @@
 package pages.sections.routing
 
 import controllers.routing.routes
-import models.domain._
+import models.journeyDomain._
 import models.journeyDomain.ReaderSuccess
 import models.{Index, Mode, UserAnswers}
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page}

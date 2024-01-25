@@ -20,8 +20,7 @@ import cats.implicits._
 import config.Constants.CountryCode._
 import config.Constants.SecurityType._
 import config.PhaseConfig
-import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
+import models.journeyDomain._
 import models.reference.{Country, CustomsOffice}
 import models.{DateTime, Index, Phase}
 import pages.external.{OfficeOfDepartureInCL010Page, SecurityDetailsTypePage}

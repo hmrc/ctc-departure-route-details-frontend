@@ -17,8 +17,7 @@
 package models.journeyDomain.exit
 
 import models.Index
-import models.domain._
-import models.journeyDomain.JourneyDomainModel
+import models.journeyDomain.{JourneyDomainModel, _}
 import models.reference.{Country, CustomsOffice}
 import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage, OfficeOfExitPage}
 import pages.sections.Section
