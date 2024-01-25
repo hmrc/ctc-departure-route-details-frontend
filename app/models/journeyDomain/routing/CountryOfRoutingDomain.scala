@@ -16,9 +16,8 @@
 
 package models.journeyDomain.routing
 
-import models.domain._
 import models.journeyDomain.Stage._
-import models.journeyDomain.{JourneyDomainModel, Stage}
+import models.journeyDomain._
 import models.reference.Country
 import models.{Index, Mode, UserAnswers}
 import pages.routing.index.CountryOfRoutingPage

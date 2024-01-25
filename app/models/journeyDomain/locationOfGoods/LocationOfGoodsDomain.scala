@@ -19,8 +19,7 @@ package models.journeyDomain.locationOfGoods
 import cats.implicits._
 import config.Constants.LocationOfGoodsIdentifier._
 import models._
-import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
+import models.journeyDomain._
 import models.reference.{Country, CustomsOffice}
 import pages.locationOfGoods._
 import pages.sections.Section

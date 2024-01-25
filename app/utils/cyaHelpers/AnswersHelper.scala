@@ -17,7 +17,7 @@
 package utils.cyaHelpers
 
 import config.FrontendAppConfig
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
 import models.journeyDomain.Stage.AccessingJourney
 import models.{Index, LocalReferenceNumber, Mode, RichJsArray, RichOptionalJsArray, UserAnswers}

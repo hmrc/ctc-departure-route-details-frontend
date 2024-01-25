@@ -16,8 +16,7 @@
 
 package models.journeyDomain.loadingAndUnloading.unloading
 
-import models.domain._
-import models.journeyDomain.JourneyDomainModel
+import models.journeyDomain.{JourneyDomainModel, _}
 import models.reference.Country
 import pages.loadingAndUnloading.unloading.{CountryPage, LocationPage}
 

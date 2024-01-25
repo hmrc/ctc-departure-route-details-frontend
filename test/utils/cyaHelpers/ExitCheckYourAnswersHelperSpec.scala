@@ -19,7 +19,7 @@ package utils.cyaHelpers
 import base.SpecBase
 import controllers.exit.index.routes
 import generators.Generators
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.exit.OfficeOfExitDomain
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode}

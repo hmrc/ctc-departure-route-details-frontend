@@ -21,7 +21,7 @@ import config.Constants.SecurityType._
 import config.PhaseConfig
 import controllers.transit.index.{routes => indexRoutes}
 import generators.Generators
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.transit.OfficeOfTransitDomain
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode, Phase}

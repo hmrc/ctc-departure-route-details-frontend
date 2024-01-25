@@ -18,7 +18,7 @@ package models.journeyDomain.locationOfGoods
 
 import base.SpecBase
 import generators.Generators
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import org.scalacheck.Gen
 import pages.locationOfGoods.contact._
 

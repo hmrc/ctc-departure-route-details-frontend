@@ -22,7 +22,6 @@ import config.Constants.DeclarationType._
 import config.Constants.SecurityType._
 import config.PhaseConfig
 import models.Phase
-import models.domain._
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain

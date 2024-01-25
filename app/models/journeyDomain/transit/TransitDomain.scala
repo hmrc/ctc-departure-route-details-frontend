@@ -18,8 +18,7 @@ package models.journeyDomain.transit
 
 import config.Constants.DeclarationType._
 import config.PhaseConfig
-import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, Stage}
+import models.journeyDomain._
 import models.{Mode, UserAnswers}
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage}
 import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}

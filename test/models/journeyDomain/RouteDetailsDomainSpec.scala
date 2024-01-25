@@ -22,7 +22,7 @@ import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
 import models.Phase
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.transit.TransitDomain

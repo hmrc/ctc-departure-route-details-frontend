@@ -16,8 +16,7 @@
 
 package models.journeyDomain.locationOfGoods
 
-import models.domain._
-import models.journeyDomain.JourneyDomainModel
+import models.journeyDomain.{JourneyDomainModel, _}
 import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
 
 case class AdditionalContactDomain(

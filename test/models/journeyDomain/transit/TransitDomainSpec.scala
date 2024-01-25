@@ -21,7 +21,7 @@ import config.Constants.DeclarationType._
 import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Phase}
 import org.mockito.Mockito.when

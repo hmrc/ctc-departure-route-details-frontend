@@ -16,8 +16,6 @@
 
 package models.journeyDomain
 
-import models.domain.{Pages, UserAnswersReader}
-
 case class ReaderSuccess[A](value: A, pages: Pages) {
 
   def to[T](f: A => T): ReaderSuccess[T] =

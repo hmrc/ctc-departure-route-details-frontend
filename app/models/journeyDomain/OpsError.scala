@@ -16,7 +16,6 @@
 
 package models.journeyDomain
 
-import models.domain.Pages
 import pages.Page
 import queries.{Gettable, Settable}
 

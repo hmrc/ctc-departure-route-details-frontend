@@ -17,8 +17,7 @@
 package models.journeyDomain.loadingAndUnloading.loading
 
 import cats.implicits._
-import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
+import models.journeyDomain._
 import pages.loadingAndUnloading.loading.{AddExtraInformationYesNoPage, AddUnLocodeYesNoPage, UnLocodePage}
 
 case class LoadingDomain(

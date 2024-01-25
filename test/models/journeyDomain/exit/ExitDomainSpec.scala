@@ -19,7 +19,7 @@ package models.journeyDomain.exit
 import base.SpecBase
 import generators.Generators
 import models.Index
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.exit.index._

@@ -21,10 +21,9 @@ import config.Constants.AdditionalDeclarationType._
 import config.Constants.SecurityType._
 import config.Constants.SpecificCircumstanceIndicator._
 import config.PhaseConfig
-import models.domain._
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, Stage}
+import models.journeyDomain._
 import models.reference.SpecificCircumstanceIndicator
 import models.{Mode, Phase, UserAnswers}
 import pages.SpecificCircumstanceIndicatorPage

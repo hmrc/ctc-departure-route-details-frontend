@@ -20,8 +20,7 @@ import cats.implicits._
 import config.Constants.SecurityType.NoSecurityDetails
 import config.PhaseConfig
 import models.Phase
-import models.domain._
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
+import models.journeyDomain._
 import pages.external.SecurityDetailsTypePage
 import pages.loadingAndUnloading.unloading.{AddExtraInformationYesNoPage, UnLocodePage, UnLocodeYesNoPage}
 

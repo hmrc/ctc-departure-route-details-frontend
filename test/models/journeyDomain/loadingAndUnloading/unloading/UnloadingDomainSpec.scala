@@ -21,7 +21,7 @@ import config.Constants.SecurityType.NoSecurityDetails
 import config.PhaseConfig
 import generators.Generators
 import models.Phase
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.reference.Country
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
