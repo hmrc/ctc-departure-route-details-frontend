@@ -18,7 +18,7 @@ package base
 
 import config.{FrontendAppConfig, PhaseConfig}
 import models.reference.Country
-import models.{EoriNumber, Index, LocalReferenceNumber, RichJsObject, UserAnswers}
+import models.{EoriNumber, Index, LocalReferenceNumber, RichJsObject, SubmissionState, UserAnswers}
 import org.scalacheck.Gen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -26,7 +26,6 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues, TryValues}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage}
 import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage}
 import pages.{QuestionPage, ReadOnlyPage}
 import play.api.i18n.{Messages, MessagesApi}
@@ -38,7 +37,6 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Content, Key, Value}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
-import models.SubmissionState
 
 trait SpecBase
     extends AnyFreeSpec
@@ -98,11 +96,6 @@ trait SpecBase
 
     def setOfficeOfTransitCountry(country: Country): UserAnswers = {
       val page = Gen.oneOf(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index))
-      userAnswers.setValue(page.sample.value, country)
-    }
-
-    def setOfficeOfExitCountry(country: Country): UserAnswers = {
-      val page = Gen.oneOf(OfficeOfExitCountryPage(index), InferredOfficeOfExitCountryPage(index))
       userAnswers.setValue(page.sample.value, country)
     }
   }

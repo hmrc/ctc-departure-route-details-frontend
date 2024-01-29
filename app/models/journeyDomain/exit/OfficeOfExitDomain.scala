@@ -19,7 +19,7 @@ package models.journeyDomain.exit
 import models.Index
 import models.journeyDomain.{JourneyDomainModel, _}
 import models.reference.{Country, CustomsOffice}
-import pages.exit.index.{InferredOfficeOfExitCountryPage, OfficeOfExitCountryPage, OfficeOfExitPage}
+import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
 import pages.sections.Section
 import pages.sections.exit.OfficeOfExitSection
 
@@ -38,7 +38,7 @@ object OfficeOfExitDomain {
 
   implicit def userAnswersReader(index: Index): Read[OfficeOfExitDomain] =
     (
-      UserAnswersReader.readInferred(OfficeOfExitCountryPage(index), InferredOfficeOfExitCountryPage(index)),
+      OfficeOfExitCountryPage(index).reader,
       OfficeOfExitPage(index).reader
     ).map(OfficeOfExitDomain.apply(_, _)(index))
 }
