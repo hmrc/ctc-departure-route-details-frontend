@@ -16,13 +16,12 @@
 
 package pages.sections.unloading
 
-import pages.sections.Section
-import pages.sections.RouteDetailsSection
+import pages.sections.{LoadingAndUnloadingSection, Section}
 import play.api.libs.json.{JsObject, JsPath}
 
 case object UnloadingSection extends Section[JsObject] {
 
-  override def path: JsPath = RouteDetailsSection.path \ toString
+  override def path: JsPath = LoadingAndUnloadingSection.path \ toString
 
   override def toString: String = "unloading"
 }

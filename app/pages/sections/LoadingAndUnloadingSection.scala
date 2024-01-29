@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package queries
+package pages.sections
 
-import models.UserAnswers
-import pages.Page
+import controllers.loadingAndUnloading.routes
+import models.{Mode, UserAnswers}
+import play.api.libs.json.{JsObject, JsPath}
+import play.api.mvc.Call
 
-import scala.util.{Success, Try}
+case object LoadingAndUnloadingSection extends Section[JsObject] {
 
-trait Gettable[A] extends Page
+  override def path: JsPath = RouteDetailsSection.path \ toString
 
-trait Settable[A] extends Page {
+  override def toString: String = "loadingAndUnloading"
 
-  def cleanup(value: Option[A], userAnswers: UserAnswers): Try[UserAnswers] =
-    Success(userAnswers)
+  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
+    Some(routes.LoadingAndUnloadingAnswersController.onPageLoad(userAnswers.lrn, mode))
 }

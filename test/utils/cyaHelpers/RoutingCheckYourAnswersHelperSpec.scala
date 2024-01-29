@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routing.index.{routes => indexRoutes}
 import controllers.routing.{routes => routingRoutes}
 import generators.Generators
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.routing.CountryOfRoutingDomain
 import models.reference.{Country, CustomsOffice, SpecificCircumstanceIndicator}
 import models.{Index, Mode}
@@ -322,8 +322,8 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
           forAll(arbitraryCountryOfRoutingAnswers(emptyUserAnswers, index), arbitrary[Mode]) {
             (userAnswers, mode) =>
               val countryOfRouting = UserAnswersReader[CountryOfRoutingDomain](
-                CountryOfRoutingDomain.userAnswersReader(index)
-              ).run(userAnswers).value
+                CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
+              ).run(userAnswers).value.value
 
               val helper = new RoutingCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.countryOfRouting(index).get

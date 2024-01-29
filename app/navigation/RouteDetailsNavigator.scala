@@ -18,7 +18,7 @@ package navigation
 
 import config.{FrontendAppConfig, PhaseConfig}
 import models.Mode
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.RouteDetailsDomain
 
 import javax.inject.{Inject, Singleton}

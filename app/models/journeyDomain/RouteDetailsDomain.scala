@@ -21,20 +21,19 @@ import config.Constants.AdditionalDeclarationType._
 import config.Constants.DeclarationType._
 import config.Constants.SecurityType._
 import config.PhaseConfig
-import models.domain.{GettableAsFilterForNextReaderOps, GettableAsReaderOps, UserAnswersReader}
+import models.Phase
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.SpecificCircumstanceIndicator
-import models.{Mode, Phase, UserAnswers}
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.sections.routing.CountriesOfRoutingSection
+import pages.sections.{RouteDetailsSection, Section}
 import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
-import play.api.mvc.Call
 
 case class RouteDetailsDomain(
   specificCircumstanceIndicator: Option[SpecificCircumstanceIndicator],
@@ -45,61 +44,62 @@ case class RouteDetailsDomain(
   loadingAndUnloading: LoadingAndUnloadingDomain
 ) extends JourneyDomainModel {
 
-  override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
-    Some(controllers.routes.RouteDetailsAnswersController.onPageLoad(userAnswers.lrn))
+  override def page: Option[Section[_]] = Some(RouteDetailsSection)
 }
 
 object RouteDetailsDomain {
 
-  implicit val specificCircumstanceIndicatorReader: UserAnswersReader[Option[SpecificCircumstanceIndicator]] =
-    SecurityDetailsTypePage.reader.flatMap {
-      case ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
-        AddSpecificCircumstanceIndicatorYesNoPage.filterOptionalDependent(identity)(SpecificCircumstanceIndicatorPage.reader)
-      case _ => none[SpecificCircumstanceIndicator].pure[UserAnswersReader]
+  implicit val specificCircumstanceIndicatorReader: Read[Option[SpecificCircumstanceIndicator]] =
+    SecurityDetailsTypePage.reader.apply(_).flatMap {
+      case ReaderSuccess(ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails, pages) =>
+        AddSpecificCircumstanceIndicatorYesNoPage.filterOptionalDependent(identity)(SpecificCircumstanceIndicatorPage.reader).apply(pages)
+      case ReaderSuccess(_, pages) =>
+        UserAnswersReader.none.apply(pages)
     }
 
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[RouteDetailsDomain] =
-    for {
-      specificCircumstanceIndicator <- UserAnswersReader[Option[SpecificCircumstanceIndicator]]
-      routing                       <- UserAnswersReader[RoutingDomain]
-      transit                       <- UserAnswersReader[Option[TransitDomain]]
-      exit                          <- UserAnswersReader[Option[ExitDomain]](exitReader(transit))
-      locationOfGoods               <- UserAnswersReader[Option[LocationOfGoodsDomain]]
-      loadingAndUnloading           <- UserAnswersReader[LoadingAndUnloadingDomain]
-    } yield RouteDetailsDomain(
-      specificCircumstanceIndicator,
-      routing,
-      transit,
-      exit,
-      locationOfGoods,
-      loadingAndUnloading
-    )
+    (
+      specificCircumstanceIndicatorReader,
+      RoutingDomain.userAnswersReader,
+      transitReader
+    ).apply {
+      case (specificCircumstanceIndicator, routing, transit) =>
+        (
+          Read(specificCircumstanceIndicator),
+          Read(routing),
+          Read(transit),
+          exitReader(transit),
+          locationOfGoodsReader,
+          LoadingAndUnloadingDomain.userAnswersReader
+        ).map(RouteDetailsDomain.apply)
+    }.apply(Nil)
 
-  implicit def transitReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[TransitDomain]] =
-    DeclarationTypePage.reader.flatMap {
-      case TIR => none[TransitDomain].pure[UserAnswersReader]
-      case _   => UserAnswersReader[TransitDomain].map(Some(_))
+  implicit def transitReader(implicit phaseConfig: PhaseConfig): Read[Option[TransitDomain]] =
+    DeclarationTypePage.reader.apply(_).flatMap {
+      case ReaderSuccess(TIR, pages) => UserAnswersReader.none.apply(pages)
+      case ReaderSuccess(_, pages)   => TransitDomain.userAnswersReader.toOption.apply(pages)
     }
 
-  implicit def exitReader(transit: Option[TransitDomain]): UserAnswersReader[Option[ExitDomain]] =
-    for {
-      declarationType                   <- DeclarationTypePage.reader
-      securityDetails                   <- SecurityDetailsTypePage.reader
-      atLeastOneCountryOfRoutingInCL147 <- CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147
-      reader <- {
-        if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147, transit)) {
-          UserAnswersReader[ExitDomain].map(Some(_))
-        } else {
-          (atLeastOneCountryOfRoutingInCL147, transit) match {
-            case (true, Some(TransitDomain(_, list))) if list.nonEmpty =>
-              AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity) {
-                UserAnswersReader[ExitDomain]
-              }
-            case _ => none[ExitDomain].pure[UserAnswersReader]
-          }
+  implicit def exitReader(transit: Option[TransitDomain]): Read[Option[ExitDomain]] =
+    DeclarationTypePage.reader.apply(_).flatMap {
+      case ReaderSuccess(declarationType, pages) =>
+        SecurityDetailsTypePage.reader.apply(pages).flatMap {
+          case ReaderSuccess(securityDetails, pages) =>
+            CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147(pages).flatMap {
+              case ReaderSuccess(atLeastOneCountryOfRoutingInCL147, pages) =>
+                if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147, transit)) {
+                  ExitDomain.userAnswersReader.toOption.apply(pages)
+                } else {
+                  (atLeastOneCountryOfRoutingInCL147, transit) match {
+                    case (true, Some(TransitDomain(_, list))) if list.nonEmpty =>
+                      AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity)(ExitDomain.userAnswersReader(_)).apply(pages)
+                    case _ =>
+                      UserAnswersReader.none.apply(pages)
+                  }
+                }
+            }
         }
-      }
-    } yield reader
+    }
 
   private def exitRequired(
     declarationType: String,
@@ -114,19 +114,21 @@ object RouteDetailsDomain {
       case _                                                                     => true
     }
 
-  implicit def locationOfGoodsReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[Option[LocationOfGoodsDomain]] = {
-    lazy val optionalReader = AddLocationOfGoodsPage.filterOptionalDependent(identity)(UserAnswersReader[LocationOfGoodsDomain])
+  implicit def locationOfGoodsReader(implicit phaseConfig: PhaseConfig): Read[Option[LocationOfGoodsDomain]] = {
+    lazy val optionalReader: Read[Option[LocationOfGoodsDomain]] =
+      AddLocationOfGoodsPage.filterOptionalDependent(identity)(LocationOfGoodsDomain.userAnswersReader)
+
     phaseConfig.phase match {
       case Phase.Transition =>
-        optionalReader
+        optionalReader(_)
       case Phase.PostTransition =>
-        AdditionalDeclarationTypePage.reader.flatMap {
-          case PreLodge =>
-            optionalReader
-          case _ =>
-            OfficeOfDepartureInCL147Page.reader.flatMap {
-              case true  => optionalReader
-              case false => UserAnswersReader[LocationOfGoodsDomain].map(Some(_))
+        AdditionalDeclarationTypePage.reader.apply(_).flatMap {
+          case ReaderSuccess(PreLodge, pages) =>
+            optionalReader(pages)
+          case ReaderSuccess(_, pages) =>
+            OfficeOfDepartureInCL147Page.reader.apply(pages).flatMap {
+              case ReaderSuccess(true, pages)  => optionalReader(pages)
+              case ReaderSuccess(false, pages) => LocationOfGoodsDomain.userAnswersReader.toOption.apply(pages)
             }
         }
     }

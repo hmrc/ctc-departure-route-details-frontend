@@ -19,7 +19,7 @@ package utils.cyaHelpers
 import base.SpecBase
 import controllers.exit.index.routes
 import generators.Generators
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.exit.OfficeOfExitDomain
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode}
@@ -52,8 +52,8 @@ class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChe
           forAll(arbitraryOfficeOfExitAnswers(emptyUserAnswers, index), arbitrary[Mode]) {
             (userAnswers, mode) =>
               val officeOfExit = UserAnswersReader[OfficeOfExitDomain](
-                OfficeOfExitDomain.userAnswersReader(index)
-              ).run(userAnswers).value
+                OfficeOfExitDomain.userAnswersReader(index).apply(Nil)
+              ).run(userAnswers).value.value
 
               val helper = new ExitCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.officeOfExit(index).get

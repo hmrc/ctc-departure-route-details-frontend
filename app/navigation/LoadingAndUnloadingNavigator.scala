@@ -17,7 +17,7 @@
 package navigation
 
 import config.{FrontendAppConfig, PhaseConfig}
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.{CheckMode, Mode, NormalMode}
 
@@ -47,5 +47,5 @@ class LoadingAndUnloadingNavigator(override val mode: Mode)(implicit override va
   override type T = LoadingAndUnloadingDomain
 
   implicit override val reader: UserAnswersReader[LoadingAndUnloadingDomain] =
-    LoadingAndUnloadingDomain.userAnswersReader
+    LoadingAndUnloadingDomain.userAnswersReader.apply(Nil)
 }

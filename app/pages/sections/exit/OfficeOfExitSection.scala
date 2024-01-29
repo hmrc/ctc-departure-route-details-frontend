@@ -16,12 +16,16 @@
 
 package pages.sections.exit
 
-import models.Index
+import controllers.exit.index.routes
+import models.{Index, Mode, UserAnswers}
 import pages.sections.Section
 import play.api.libs.json.{JsObject, JsPath}
+import play.api.mvc.Call
 
 case class OfficeOfExitSection(index: Index) extends Section[JsObject] {
 
   override def path: JsPath = OfficesOfExitSection.path \ index.position
 
+  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
+    Some(routes.CheckOfficeOfExitAnswersController.onPageLoad(userAnswers.lrn, index, mode))
 }

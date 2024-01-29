@@ -43,7 +43,7 @@ class ExitCheckYourAnswersHelper(
     prefix = "checkYourAnswers.exit.officeOfExit",
     id = Some(s"change-office-of-exit-${index.display}"),
     args = index.display
-  )(OfficeOfExitDomain.userAnswersReader(index))
+  )(OfficeOfExitDomain.userAnswersReader(index)(Nil))
 
   def addOrRemoveOfficesOfExit: Option[Link] = buildLink(OfficesOfExitSection) {
     Link(
@@ -67,6 +67,6 @@ class ExitCheckYourAnswersHelper(
           nameWhenComplete = _.label,
           nameWhenInProgress = userAnswers.get(OfficeOfExitCountryPage(index)).map(_.toString),
           removeRoute = Some(routes.ConfirmRemoveOfficeOfExitController.onPageLoad(userAnswers.lrn, index, mode))
-        )(OfficeOfExitDomain.userAnswersReader(index))
+        )(OfficeOfExitDomain.userAnswersReader(index)(Nil))
     }
 }

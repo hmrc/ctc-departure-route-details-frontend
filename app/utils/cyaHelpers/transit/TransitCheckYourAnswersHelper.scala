@@ -57,7 +57,7 @@ class TransitCheckYourAnswersHelper(
     prefix = "checkYourAnswers.transit.officeOfTransit",
     id = Some(s"change-office-of-transit-${index.display}"),
     args = index.display
-  )(OfficeOfTransitDomain.userAnswersReader(index))
+  )(OfficeOfTransitDomain.userAnswersReader(index).apply(Nil))
 
   def addOrRemoveOfficesOfTransit: Option[Link] = buildLink(OfficesOfTransitSection) {
     Link(
@@ -74,6 +74,6 @@ class TransitCheckYourAnswersHelper(
           nameWhenComplete = _.label,
           nameWhenInProgress = userAnswers.get(OfficeOfTransitCountryPage(index)).map(_.toString),
           removeRoute = Some(routes.ConfirmRemoveOfficeOfTransitController.onPageLoad(userAnswers.lrn, mode, index))
-        )(OfficeOfTransitDomain.userAnswersReader(index))
+        )(OfficeOfTransitDomain.userAnswersReader(index).apply(Nil))
     }.checkRemoveLinks(userAnswers.get(AddOfficeOfTransitYesNoPage).isEmpty)
 }

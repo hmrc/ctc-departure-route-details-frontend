@@ -18,7 +18,7 @@ import cats.data.ReaderT
 import config.PhaseConfig
 import models.TaskStatus.InProgress
 import models.UserAnswers
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.OpsError.WriterError
 import models.journeyDomain.RouteDetailsDomain
 import models.requests.MandatoryDataRequest
@@ -113,7 +113,7 @@ package object controllers {
 
     def navigate()(implicit navigator: UserAnswersNavigator, executionContext: ExecutionContext): Future[Result] =
       navigate {
-        case (_, userAnswers) => navigator.nextPage(userAnswers)
+        case (page, userAnswers) => navigator.nextPage(userAnswers, Some(page))
       }
 
     def navigateTo(call: Call)(implicit executionContext: ExecutionContext): Future[Result] =

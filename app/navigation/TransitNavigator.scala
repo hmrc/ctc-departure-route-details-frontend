@@ -17,7 +17,7 @@
 package navigation
 
 import config.{FrontendAppConfig, PhaseConfig}
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.transit.TransitDomain
 import models.{CheckMode, Mode, NormalMode}
 
@@ -48,5 +48,5 @@ class TransitNavigator(
   override type T = TransitDomain
 
   implicit override val reader: UserAnswersReader[TransitDomain] =
-    TransitDomain.userAnswersReader
+    TransitDomain.userAnswersReader.apply(Nil)
 }

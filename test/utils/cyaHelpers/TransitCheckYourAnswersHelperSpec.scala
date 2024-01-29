@@ -21,7 +21,7 @@ import config.Constants.SecurityType._
 import config.PhaseConfig
 import controllers.transit.index.{routes => indexRoutes}
 import generators.Generators
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.transit.OfficeOfTransitDomain
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Mode, Phase}
@@ -148,8 +148,8 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
           forAll(arbitraryOfficeOfTransitAnswers(emptyUserAnswers, index), arbitrary[Mode]) {
             (userAnswers, mode) =>
               val officeOfExit = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)
-              ).run(userAnswers).value
+                OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
+              ).run(userAnswers).value.value
 
               val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.officeOfTransit(index).get

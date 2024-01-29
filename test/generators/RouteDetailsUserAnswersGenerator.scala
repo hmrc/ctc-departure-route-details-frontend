@@ -35,36 +35,52 @@ trait RouteDetailsUserAnswersGenerator {
     buildUserAnswers[RouteDetailsDomain](userAnswers)
 
   def arbitraryRoutingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
-    buildUserAnswers[RoutingDomain](userAnswers)
+    buildUserAnswers[RoutingDomain](userAnswers)(
+      RoutingDomain.userAnswersReader.apply(Nil)
+    )
 
   def arbitraryCountryOfRoutingAnswers(userAnswers: UserAnswers, index: Index): Gen[UserAnswers] =
-    buildUserAnswers[CountryOfRoutingDomain](userAnswers)(CountryOfRoutingDomain.userAnswersReader(index))
+    buildUserAnswers[CountryOfRoutingDomain](userAnswers)(
+      CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
+    )
 
   def arbitraryTransitAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
-    buildUserAnswers[TransitDomain](userAnswers)
+    buildUserAnswers[TransitDomain](userAnswers)(
+      TransitDomain.userAnswersReader.apply(Nil)
+    )
 
   def arbitraryOfficeOfTransitAnswers(userAnswers: UserAnswers, index: Index)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[OfficeOfTransitDomain](userAnswers)(
-      OfficeOfTransitDomain.userAnswersReader(index)
+      OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
     )
 
   def arbitraryExitAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
-    buildUserAnswers[ExitDomain](userAnswers)
+    buildUserAnswers[ExitDomain](userAnswers)(
+      ExitDomain.userAnswersReader.apply(Nil)
+    )
 
   def arbitraryOfficeOfExitAnswers(userAnswers: UserAnswers, index: Index): Gen[UserAnswers] =
     buildUserAnswers[OfficeOfExitDomain](userAnswers)(
-      OfficeOfExitDomain.userAnswersReader(index)
+      OfficeOfExitDomain.userAnswersReader(index).apply(Nil)
     )
 
   def arbitraryLocationOfGoodsAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
-    buildUserAnswers[LocationOfGoodsDomain](userAnswers)
+    buildUserAnswers[LocationOfGoodsDomain](userAnswers)(
+      LocationOfGoodsDomain.userAnswersReader.apply(Nil)
+    )
 
   def arbitraryLoadingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
-    buildUserAnswers[LoadingDomain](userAnswers)
+    buildUserAnswers[LoadingDomain](userAnswers)(
+      LoadingDomain.userAnswersReader.apply(Nil)
+    )
 
   def arbitraryUnloadingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
-    buildUserAnswers[UnloadingDomain](userAnswers)
+    buildUserAnswers[UnloadingDomain](userAnswers)(
+      UnloadingDomain.userAnswersReader.apply(Nil)
+    )
 
   def arbitraryLoadingAndUnloadingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
-    buildUserAnswers[LoadingAndUnloadingDomain](userAnswers)
+    buildUserAnswers[LoadingAndUnloadingDomain](userAnswers)(
+      LoadingAndUnloadingDomain.userAnswersReader.apply(Nil)
+    )
 }

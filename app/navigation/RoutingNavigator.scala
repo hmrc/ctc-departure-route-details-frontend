@@ -17,7 +17,7 @@
 package navigation
 
 import config.{FrontendAppConfig, PhaseConfig}
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.routing.RoutingDomain
 import models.{CheckMode, Mode, NormalMode}
 
@@ -46,5 +46,5 @@ class RoutingNavigator(override val mode: Mode)(implicit override val config: Fr
   override type T = RoutingDomain
 
   implicit override val reader: UserAnswersReader[RoutingDomain] =
-    RoutingDomain.userAnswersReader
+    RoutingDomain.userAnswersReader.apply(Nil)
 }

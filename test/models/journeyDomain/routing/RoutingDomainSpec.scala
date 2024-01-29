@@ -20,7 +20,7 @@ import base.SpecBase
 import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import models.{Index, Phase}
 import org.mockito.Mockito.when
@@ -28,6 +28,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import pages.external.SecurityDetailsTypePage
 import pages.routing._
 import pages.routing.index.CountryOfRoutingPage
+import pages.sections.routing.{CountriesOfRoutingSection, RoutingSection}
 
 class RoutingDomainSpec extends SpecBase with Generators {
 
@@ -59,14 +60,26 @@ class RoutingDomainSpec extends SpecBase with Generators {
               countryOfDestination = country,
               officeOfDestination = officeOfDestination,
               bindingItinerary = true,
-              countriesOfRouting = Seq(
-                CountryOfRoutingDomain(country)(index)
+              countriesOfRouting = CountriesOfRoutingDomain(
+                Seq(
+                  CountryOfRoutingDomain(country)(index)
+                )
               )
             )
 
-            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+            val result = UserAnswersReader[RoutingDomain](
+              RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              CountryOfDestinationPage,
+              OfficeOfDestinationPage,
+              BindingItineraryPage,
+              CountryOfRoutingPage(index),
+              CountriesOfRoutingSection,
+              RoutingSection
+            )
           }
 
           "and not following binding itinerary" in {
@@ -82,12 +95,21 @@ class RoutingDomainSpec extends SpecBase with Generators {
               countryOfDestination = country,
               officeOfDestination = officeOfDestination,
               bindingItinerary = false,
-              countriesOfRouting = Nil
+              countriesOfRouting = CountriesOfRoutingDomain(Nil)
             )
 
-            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+            val result = UserAnswersReader[RoutingDomain](
+              RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              CountryOfDestinationPage,
+              OfficeOfDestinationPage,
+              BindingItineraryPage,
+              AddCountryOfRoutingYesNoPage,
+              RoutingSection
+            )
           }
         }
 
@@ -108,14 +130,26 @@ class RoutingDomainSpec extends SpecBase with Generators {
               countryOfDestination = country,
               officeOfDestination = officeOfDestination,
               bindingItinerary = true,
-              countriesOfRouting = Seq(
-                CountryOfRoutingDomain(country)(index)
+              countriesOfRouting = CountriesOfRoutingDomain(
+                Seq(
+                  CountryOfRoutingDomain(country)(index)
+                )
               )
             )
 
-            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+            val result = UserAnswersReader[RoutingDomain](
+              RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              CountryOfDestinationPage,
+              OfficeOfDestinationPage,
+              BindingItineraryPage,
+              CountryOfRoutingPage(index),
+              CountriesOfRoutingSection,
+              RoutingSection
+            )
           }
 
           "and not following binding itinerary" in {
@@ -131,14 +165,26 @@ class RoutingDomainSpec extends SpecBase with Generators {
               countryOfDestination = country,
               officeOfDestination = officeOfDestination,
               bindingItinerary = false,
-              countriesOfRouting = Seq(
-                CountryOfRoutingDomain(country)(index)
+              countriesOfRouting = CountriesOfRoutingDomain(
+                Seq(
+                  CountryOfRoutingDomain(country)(index)
+                )
               )
             )
 
-            val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+            val result = UserAnswersReader[RoutingDomain](
+              RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
 
-            result.value mustBe expectedResult
+            result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              CountryOfDestinationPage,
+              OfficeOfDestinationPage,
+              BindingItineraryPage,
+              CountryOfRoutingPage(index),
+              CountriesOfRoutingSection,
+              RoutingSection
+            )
           }
         }
       }
@@ -162,12 +208,20 @@ class RoutingDomainSpec extends SpecBase with Generators {
             countryOfDestination = country,
             officeOfDestination = officeOfDestination,
             bindingItinerary = bindingItinerary,
-            countriesOfRouting = Nil
+            countriesOfRouting = CountriesOfRoutingDomain(Nil)
           )
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+          val result = UserAnswersReader[RoutingDomain](
+            RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            CountryOfDestinationPage,
+            OfficeOfDestinationPage,
+            BindingItineraryPage,
+            RoutingSection
+          )
         }
 
         "when there is security" in {
@@ -185,15 +239,26 @@ class RoutingDomainSpec extends SpecBase with Generators {
             countryOfDestination = country,
             officeOfDestination = officeOfDestination,
             bindingItinerary = bindingItinerary,
-            countriesOfRouting = Seq(
-              CountryOfRoutingDomain(country)(index)
+            countriesOfRouting = CountriesOfRoutingDomain(
+              Seq(
+                CountryOfRoutingDomain(country)(index)
+              )
             )
           )
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+          val result = UserAnswersReader[RoutingDomain](
+            RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+          ).run(userAnswers)
 
-          result.value mustBe expectedResult
-
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            CountryOfDestinationPage,
+            OfficeOfDestinationPage,
+            BindingItineraryPage,
+            CountryOfRoutingPage(index),
+            CountriesOfRoutingSection,
+            RoutingSection
+          )
         }
       }
     }
@@ -205,9 +270,14 @@ class RoutingDomainSpec extends SpecBase with Generators {
         val securityType = arbitrary[String](arbitrarySecurityDetailsType).sample.value
         val userAnswers  = emptyUserAnswers.setValue(SecurityDetailsTypePage, securityType)
 
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+        val result = UserAnswersReader[RoutingDomain](
+          RoutingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe CountryOfDestinationPage
+        result.left.value.pages mustBe Seq(
+          CountryOfDestinationPage
+        )
       }
 
       "when office of destination page is missing" in {
@@ -217,9 +287,15 @@ class RoutingDomainSpec extends SpecBase with Generators {
           .setValue(SecurityDetailsTypePage, securityType)
           .setValue(CountryOfDestinationPage, country)
 
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+        val result = UserAnswersReader[RoutingDomain](
+          RoutingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe OfficeOfDestinationPage
+        result.left.value.pages mustBe Seq(
+          CountryOfDestinationPage,
+          OfficeOfDestinationPage
+        )
       }
 
       "when binding itinerary page is missing" in {
@@ -230,9 +306,16 @@ class RoutingDomainSpec extends SpecBase with Generators {
           .setValue(CountryOfDestinationPage, country)
           .setValue(OfficeOfDestinationPage, officeOfDestination)
 
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+        val result = UserAnswersReader[RoutingDomain](
+          RoutingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe BindingItineraryPage
+        result.left.value.pages mustBe Seq(
+          CountryOfDestinationPage,
+          OfficeOfDestinationPage,
+          BindingItineraryPage
+        )
       }
 
       "when post transition" - {
@@ -247,9 +330,17 @@ class RoutingDomainSpec extends SpecBase with Generators {
             .setValue(OfficeOfDestinationPage, officeOfDestination)
             .setValue(BindingItineraryPage, false)
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+          val result = UserAnswersReader[RoutingDomain](
+            RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+          ).run(userAnswers)
 
           result.left.value.page mustBe AddCountryOfRoutingYesNoPage
+          result.left.value.pages mustBe Seq(
+            CountryOfDestinationPage,
+            OfficeOfDestinationPage,
+            BindingItineraryPage,
+            AddCountryOfRoutingYesNoPage
+          )
         }
 
         "when binding itinerary is true and no countries added" in {
@@ -261,9 +352,17 @@ class RoutingDomainSpec extends SpecBase with Generators {
             .setValue(OfficeOfDestinationPage, officeOfDestination)
             .setValue(BindingItineraryPage, true)
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+          val result = UserAnswersReader[RoutingDomain](
+            RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+          ).run(userAnswers)
 
           result.left.value.page mustBe CountryOfRoutingPage(Index(0))
+          result.left.value.pages mustBe Seq(
+            CountryOfDestinationPage,
+            OfficeOfDestinationPage,
+            BindingItineraryPage,
+            CountryOfRoutingPage(Index(0))
+          )
         }
 
         "when add country is true and no countries added" in {
@@ -275,9 +374,18 @@ class RoutingDomainSpec extends SpecBase with Generators {
             .setValue(BindingItineraryPage, false)
             .setValue(AddCountryOfRoutingYesNoPage, true)
 
-          val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain](RoutingDomain.userAnswersReader(mockPhaseConfig)).run(userAnswers)
+          val result = UserAnswersReader[RoutingDomain](
+            RoutingDomain.userAnswersReader(mockPhaseConfig).apply(Nil)
+          ).run(userAnswers)
 
           result.left.value.page mustBe CountryOfRoutingPage(Index(0))
+          result.left.value.pages mustBe Seq(
+            CountryOfDestinationPage,
+            OfficeOfDestinationPage,
+            BindingItineraryPage,
+            AddCountryOfRoutingYesNoPage,
+            CountryOfRoutingPage(Index(0))
+          )
         }
       }
 
@@ -291,9 +399,17 @@ class RoutingDomainSpec extends SpecBase with Generators {
           .setValue(OfficeOfDestinationPage, officeOfDestination)
           .setValue(BindingItineraryPage, bindingItinerary)
 
-        val result: EitherType[RoutingDomain] = UserAnswersReader[RoutingDomain].run(userAnswers)
+        val result = UserAnswersReader[RoutingDomain](
+          RoutingDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe CountryOfRoutingPage(Index(0))
+        result.left.value.pages mustBe Seq(
+          CountryOfDestinationPage,
+          OfficeOfDestinationPage,
+          BindingItineraryPage,
+          CountryOfRoutingPage(Index(0))
+        )
       }
     }
   }

@@ -18,10 +18,11 @@ package models.journeyDomain.exit
 
 import base.SpecBase
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.exit.index._
+import pages.sections.exit.OfficeOfExitSection
 
 class OfficeOfExitDomainSpec extends SpecBase with Generators {
 
@@ -42,12 +43,16 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
           customsOffice = customsOffice
         )(index)
 
-        val result: EitherType[OfficeOfExitDomain] = UserAnswersReader[OfficeOfExitDomain](
-          OfficeOfExitDomain.userAnswersReader(index)
+        val result = UserAnswersReader[OfficeOfExitDomain](
+          OfficeOfExitDomain.userAnswersReader(index).apply(Nil)
         ).run(userAnswers)
 
-        result.value mustBe expectedResult
-
+        result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          OfficeOfExitCountryPage(index),
+          OfficeOfExitPage(index),
+          OfficeOfExitSection(index)
+        )
       }
     }
 
@@ -55,23 +60,31 @@ class OfficeOfExitDomainSpec extends SpecBase with Generators {
       "when country missing" in {
         val userAnswers = emptyUserAnswers
 
-        val result: EitherType[OfficeOfExitDomain] = UserAnswersReader[OfficeOfExitDomain](
-          OfficeOfExitDomain.userAnswersReader(index)
+        val result = UserAnswersReader[OfficeOfExitDomain](
+          OfficeOfExitDomain.userAnswersReader(index).apply(Nil)
         ).run(userAnswers)
 
         result.left.value.page mustBe OfficeOfExitCountryPage(index)
+        result.left.value.pages mustBe Seq(
+          OfficeOfExitCountryPage(index)
+        )
       }
 
       "when office missing" - {
-        val userAnswers = emptyUserAnswers
-          .setValue(OfficeOfExitCountryPage(index), country)
+        "and country defined" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(OfficeOfExitCountryPage(index), country)
 
-        val result: EitherType[OfficeOfExitDomain] = UserAnswersReader[OfficeOfExitDomain](
-          OfficeOfExitDomain.userAnswersReader(index)
-        ).run(userAnswers)
+          val result = UserAnswersReader[OfficeOfExitDomain](
+            OfficeOfExitDomain.userAnswersReader(index).apply(Nil)
+          ).run(userAnswers)
 
-        result.left.value.page mustBe OfficeOfExitPage(index)
-
+          result.left.value.page mustBe OfficeOfExitPage(index)
+          result.left.value.pages mustBe Seq(
+            OfficeOfExitCountryPage(index),
+            OfficeOfExitPage(index)
+          )
+        }
       }
     }
   }

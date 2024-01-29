@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.Actions
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{TransitNavigatorProvider, UserAnswersNavigator}
+import pages.sections.transit.OfficeOfTransitSection
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -47,6 +48,6 @@ class CheckOfficeOfTransitAnswersController @Inject() (
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn) {
     implicit request =>
       val navigator: UserAnswersNavigator = navigatorProvider(mode)
-      Redirect(navigator.nextPage(request.userAnswers))
+      Redirect(navigator.nextPage(request.userAnswers, Some(OfficeOfTransitSection(index))))
   }
 }

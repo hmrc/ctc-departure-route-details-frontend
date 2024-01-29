@@ -17,7 +17,7 @@
 package generators
 
 import config.PhaseConfig
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.OpsError.ReaderError
 import models.journeyDomain.RouteDetailsDomain
 import models.{EoriNumber, LocalReferenceNumber, RichJsObject, UserAnswers}
@@ -44,7 +44,7 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with RouteDetailsU
 
     def rec(userAnswers: UserAnswers): Gen[UserAnswers] =
       userAnswersReader.run(userAnswers) match {
-        case Left(ReaderError(page, _)) =>
+        case Left(ReaderError(page, _, _)) =>
           generateAnswer
             .apply(page)
             .map {

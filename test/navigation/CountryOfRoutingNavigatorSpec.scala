@@ -36,7 +36,7 @@ class CountryOfRoutingNavigatorSpec extends SpecBase with ScalaCheckPropertyChec
           forAll(arbitraryCountryOfRoutingAnswers(emptyUserAnswers, index)) {
             answers =>
               navigator
-                .nextPage(answers)
+                .nextPage(answers, None)
                 .mustBe(controllers.routing.routes.AddAnotherCountryOfRoutingController.onPageLoad(answers.lrn, mode))
           }
         }
@@ -54,7 +54,7 @@ class CountryOfRoutingNavigatorSpec extends SpecBase with ScalaCheckPropertyChec
           forAll(arbitraryRouteDetailsAnswers(emptyUserAnswers)) {
             answers =>
               navigator
-                .nextPage(answers)
+                .nextPage(answers, None)
                 .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }

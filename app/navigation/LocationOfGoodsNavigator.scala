@@ -17,7 +17,7 @@
 package navigation
 
 import config.{FrontendAppConfig, PhaseConfig}
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.{CheckMode, Mode, NormalMode}
 
@@ -46,5 +46,5 @@ class LocationOfGoodsNavigator(override val mode: Mode)(implicit override val co
   override type T = LocationOfGoodsDomain
 
   implicit override val reader: UserAnswersReader[LocationOfGoodsDomain] =
-    LocationOfGoodsDomain.userAnswersReader
+    LocationOfGoodsDomain.userAnswersReader.apply(Nil)
 }

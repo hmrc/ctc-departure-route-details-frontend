@@ -19,9 +19,12 @@ package pages
 import controllers.routes
 import models.reference.SpecificCircumstanceIndicator
 import models.{Mode, UserAnswers}
+import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
 import pages.sections.RouteDetailsSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
+
+import scala.util.Try
 
 case object SpecificCircumstanceIndicatorPage extends QuestionPage[SpecificCircumstanceIndicator] {
 
@@ -31,4 +34,10 @@ case object SpecificCircumstanceIndicatorPage extends QuestionPage[SpecificCircu
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.SpecificCircumstanceIndicatorController.onPageLoad(userAnswers.lrn, mode))
+
+  override def cleanup(value: Option[SpecificCircumstanceIndicator], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(_) => userAnswers.remove(AddPlaceOfUnloadingPage)
+      case None    => super.cleanup(value, userAnswers)
+    }
 }

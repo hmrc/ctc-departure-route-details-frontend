@@ -18,13 +18,14 @@ package models.journeyDomain.loadingAndUnloading.unloading
 
 import base.SpecBase
 import generators.Generators
-import models.domain.{EitherType, UserAnswersReader}
+import models.journeyDomain.UserAnswersReader
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import pages.loadingAndUnloading.unloading._
 
 class AdditionalInformationDomainSpec extends SpecBase with Generators {
+
   "AdditionalInformation" - {
 
     "can be parsed from UserAnswers" - {
@@ -42,9 +43,15 @@ class AdditionalInformationDomainSpec extends SpecBase with Generators {
           location = unLoadingPlace1
         )
 
-        val result: EitherType[AdditionalInformationDomain] = UserAnswersReader[AdditionalInformationDomain].run(userAnswers)
+        val result = UserAnswersReader[AdditionalInformationDomain](
+          AdditionalInformationDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
-        result.value mustBe expectedResult
+        result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          CountryPage,
+          LocationPage
+        )
       }
     }
 
@@ -57,9 +64,14 @@ class AdditionalInformationDomainSpec extends SpecBase with Generators {
         val userAnswers = emptyUserAnswers
           .setValue(LocationPage, placeOfUnloading)
 
-        val result: EitherType[AdditionalInformationDomain] = UserAnswersReader[AdditionalInformationDomain].run(userAnswers)
+        val result = UserAnswersReader[AdditionalInformationDomain](
+          AdditionalInformationDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe CountryPage
+        result.left.value.pages mustBe Seq(
+          CountryPage
+        )
       }
 
       "when additional information has no place of unloading" in {
@@ -68,9 +80,15 @@ class AdditionalInformationDomainSpec extends SpecBase with Generators {
         val userAnswers = emptyUserAnswers
           .setValue(CountryPage, country1)
 
-        val result: EitherType[AdditionalInformationDomain] = UserAnswersReader[AdditionalInformationDomain].run(userAnswers)
+        val result = UserAnswersReader[AdditionalInformationDomain](
+          AdditionalInformationDomain.userAnswersReader.apply(Nil)
+        ).run(userAnswers)
 
         result.left.value.page mustBe LocationPage
+        result.left.value.pages mustBe Seq(
+          CountryPage,
+          LocationPage
+        )
       }
     }
   }

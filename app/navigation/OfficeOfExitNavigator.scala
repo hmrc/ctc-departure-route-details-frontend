@@ -18,7 +18,7 @@ package navigation
 
 import config.{FrontendAppConfig, PhaseConfig}
 import models._
-import models.domain.UserAnswersReader
+import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.exit.OfficeOfExitDomain
 
 import javax.inject.{Inject, Singleton}
@@ -49,5 +49,5 @@ class OfficeOfExitNavigator(
   override type T = OfficeOfExitDomain
 
   implicit override val reader: UserAnswersReader[OfficeOfExitDomain] =
-    OfficeOfExitDomain.userAnswersReader(index)
+    OfficeOfExitDomain.userAnswersReader(index).apply(Nil)
 }

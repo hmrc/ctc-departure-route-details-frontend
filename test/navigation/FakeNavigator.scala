@@ -18,50 +18,51 @@ package navigation
 
 import config.{FrontendAppConfig, PhaseConfig}
 import models.{Index, Mode, UserAnswers}
+import pages.Page
 import play.api.mvc.Call
 
 class FakeNavigator(desiredRoute: Call) extends Navigator {
-  override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
+  override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call = desiredRoute
 }
 
 class FakeRouteDetailsNavigator(desiredRoute: Call, mode: Mode)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig)
     extends RouteDetailsNavigator(mode) {
-  override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
+  override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call = desiredRoute
 }
 
 class FakeExitNavigator(desiredRoute: Call, mode: Mode)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig) extends ExitNavigator(mode) {
-  override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
+  override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call = desiredRoute
 }
 
 class FakeOfficeOfExitNavigator(desiredRoute: Call, mode: Mode, index: Index)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig)
     extends OfficeOfExitNavigator(mode, index) {
-  override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
+  override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call = desiredRoute
 }
 
 class FakeLoadingAndUnloadingNavigator(desiredRoute: Call, mode: Mode)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig)
     extends LoadingAndUnloadingNavigator(mode) {
-  override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
+  override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call = desiredRoute
 }
 
 class FakeLocationOfGoodsNavigator(desiredRoute: Call, mode: Mode)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig)
     extends LocationOfGoodsNavigator(mode) {
-  override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
+  override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call = desiredRoute
 }
 
 class FakeRoutingNavigator(desiredRoute: Call, mode: Mode)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig) extends RoutingNavigator(mode) {
-  override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
+  override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call = desiredRoute
 }
 
 class FakeCountryOfRoutingNavigator(desiredRoute: Call, mode: Mode, index: Index)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig)
     extends CountryOfRoutingNavigator(mode, index) {
-  override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
+  override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call = desiredRoute
 }
 
 class FakeTransitNavigator(desiredRoute: Call, mode: Mode)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig) extends TransitNavigator(mode) {
-  override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
+  override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call = desiredRoute
 }
 
 class FakeOfficeOfTransitNavigator(desiredRoute: Call, mode: Mode, index: Index)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig)
     extends OfficeOfTransitNavigator(mode, index) {
-  override def nextPage(userAnswers: UserAnswers): Call = desiredRoute
+  override def nextPage(userAnswers: UserAnswers, currentPage: Option[Page]): Call = desiredRoute
 }

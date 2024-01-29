@@ -16,9 +16,7 @@
 
 package models.journeyDomain.loadingAndUnloading.unloading
 
-import cats.implicits.catsSyntaxTuple2Semigroupal
-import models.domain._
-import models.journeyDomain.JourneyDomainModel
+import models.journeyDomain.{JourneyDomainModel, _}
 import models.reference.Country
 import pages.loadingAndUnloading.unloading.{CountryPage, LocationPage}
 
@@ -29,10 +27,10 @@ case class AdditionalInformationDomain(
 
 object AdditionalInformationDomain {
 
-  implicit val userAnswersReader: UserAnswersReader[AdditionalInformationDomain] =
+  implicit val userAnswersReader: Read[AdditionalInformationDomain] =
     (
       CountryPage.reader,
       LocationPage.reader
-    ).tupled.map((AdditionalInformationDomain.apply _).tupled)
+    ).map(AdditionalInformationDomain.apply)
 
 }

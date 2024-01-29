@@ -19,7 +19,7 @@ package pages.transit.index
 import controllers.transit.index.routes
 import models.reference.CustomsOffice
 import models.{Index, Mode, UserAnswers}
-import pages.QuestionPage
+import pages.{InferredPage, QuestionPage}
 import pages.sections.exit.ExitSection
 import pages.sections.transit.OfficeOfTransitSection
 import play.api.libs.json.JsPath
@@ -43,14 +43,14 @@ case class OfficeOfTransitPage(index: Index) extends QuestionPage[CustomsOffice]
 
 }
 
-case class OfficeOfTransitInCL147Page(index: Index) extends QuestionPage[Boolean] {
+case class OfficeOfTransitInCL147Page(index: Index) extends InferredPage[Boolean] {
 
   override def path: JsPath = OfficeOfTransitPage(index).path \ toString
 
   override def toString: String = "isInCL147"
 }
 
-case class OfficeOfTransitInCL010Page(index: Index) extends QuestionPage[Boolean] {
+case class OfficeOfTransitInCL010Page(index: Index) extends InferredPage[Boolean] {
 
   override def path: JsPath = OfficeOfTransitPage(index).path \ toString
 
