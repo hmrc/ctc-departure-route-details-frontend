@@ -16,7 +16,6 @@
 
 package models.journeyDomain.loadingAndUnloading.loading
 
-import cats.implicits._
 import models.journeyDomain._
 import pages.loadingAndUnloading.loading.{AddExtraInformationYesNoPage, AddUnLocodeYesNoPage, UnLocodePage}
 
@@ -33,11 +32,11 @@ object LoadingDomain {
       AddUnLocodeYesNoPage.filterOptionalDependent(identity)(UnLocodePage.reader)
 
     lazy val additionalInformationReads: Read[Option[AdditionalInformationDomain]] =
-      AddUnLocodeYesNoPage.reader.apply(_).flatMap {
-        case ReaderSuccess(true, pages) =>
-          AddExtraInformationYesNoPage.filterOptionalDependent(identity)(AdditionalInformationDomain.userAnswersReader).apply(pages)
-        case ReaderSuccess(false, pages) =>
-          AdditionalInformationDomain.userAnswersReader.toOption.apply(pages)
+      AddUnLocodeYesNoPage.reader.to {
+        case true =>
+          AddExtraInformationYesNoPage.filterOptionalDependent(identity)(AdditionalInformationDomain.userAnswersReader)
+        case false =>
+          AdditionalInformationDomain.userAnswersReader.toOption
       }
 
     (

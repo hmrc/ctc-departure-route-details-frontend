@@ -36,11 +36,11 @@ object OfficesOfExitDomain {
   implicit val userAnswersReader: Read[OfficesOfExitDomain] = {
 
     implicit def officesOfExitReader: Read[Seq[OfficeOfExitDomain]] =
-      OfficesOfExitSection.arrayReader.apply(_).flatMap {
-        case ReaderSuccess(x, pages) if x.isEmpty =>
-          OfficeOfExitDomain.userAnswersReader(Index(0)).toSeq.apply(pages)
-        case ReaderSuccess(x, pages) =>
-          x.traverse[OfficeOfExitDomain](OfficeOfExitDomain.userAnswersReader(_).apply(_)).apply(pages)
+      OfficesOfExitSection.arrayReader.to {
+        case x if x.isEmpty =>
+          OfficeOfExitDomain.userAnswersReader(Index(0)).toSeq
+        case x =>
+          x.traverse[OfficeOfExitDomain](OfficeOfExitDomain.userAnswersReader(_).apply(_))
       }
 
     officesOfExitReader.map(OfficesOfExitDomain.apply)

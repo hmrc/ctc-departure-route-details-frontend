@@ -16,7 +16,6 @@
 
 package models.journeyDomain.loadingAndUnloading.unloading
 
-import cats.implicits._
 import config.Constants.SecurityType.NoSecurityDetails
 import config.PhaseConfig
 import models.Phase
@@ -33,17 +32,17 @@ object UnloadingDomain {
 
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[UnloadingDomain] = {
     lazy val unLocodeAndAdditionalInformationReader: Read[UnloadingDomain] =
-      UnLocodeYesNoPage.reader.apply(_).flatMap {
-        case ReaderSuccess(true, pages) =>
+      UnLocodeYesNoPage.reader.to {
+        case true =>
           (
             UnLocodePage.reader.toOption,
             optionalAdditionalInformationReader
-          ).map(UnloadingDomain.apply).apply(pages)
-        case ReaderSuccess(false, pages) =>
+          ).map(UnloadingDomain.apply)
+        case false =>
           (
             UserAnswersReader.none,
             AdditionalInformationDomain.userAnswersReader.toOption
-          ).map(UnloadingDomain.apply).apply(pages)
+          ).map(UnloadingDomain.apply)
       }
 
     lazy val optionalAdditionalInformationReader: Read[Option[AdditionalInformationDomain]] =
@@ -51,17 +50,17 @@ object UnloadingDomain {
 
     phaseConfig.phase match {
       case Phase.Transition =>
-        SecurityDetailsTypePage.reader.apply(_).flatMap {
-          case ReaderSuccess(NoSecurityDetails, pages) =>
+        SecurityDetailsTypePage.reader.to {
+          case NoSecurityDetails =>
             (
               UserAnswersReader.none,
               optionalAdditionalInformationReader
-            ).map(UnloadingDomain.apply).apply(pages)
-          case ReaderSuccess(_, pages) =>
-            unLocodeAndAdditionalInformationReader(pages)
+            ).map(UnloadingDomain.apply)
+          case _ =>
+            unLocodeAndAdditionalInformationReader
         }
       case Phase.PostTransition =>
-        unLocodeAndAdditionalInformationReader(_)
+        unLocodeAndAdditionalInformationReader
     }
   }
 }

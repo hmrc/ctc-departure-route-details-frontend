@@ -16,7 +16,6 @@
 
 package models.journeyDomain.routing
 
-import cats.implicits._
 import config.Constants.SecurityType._
 import config.PhaseConfig
 import models.Phase.{PostTransition, Transition}
@@ -40,12 +39,13 @@ case class CountriesOfRoutingDomain(
 object CountriesOfRoutingDomain {
 
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[CountriesOfRoutingDomain] = {
-    lazy val arrayReader: Read[Seq[CountryOfRoutingDomain]] = CountriesOfRoutingSection.arrayReader.apply(_).flatMap {
-      case ReaderSuccess(x, pages) if x.isEmpty =>
-        CountryOfRoutingDomain.userAnswersReader(Index(0)).toSeq.apply(pages)
-      case ReaderSuccess(x, pages) =>
-        x.traverse[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(_).apply(_)).apply(pages)
-    }
+    lazy val arrayReader: Read[Seq[CountryOfRoutingDomain]] =
+      CountriesOfRoutingSection.arrayReader.to {
+        case x if x.isEmpty =>
+          CountryOfRoutingDomain.userAnswersReader(Index(0)).toSeq
+        case x =>
+          x.traverse[CountryOfRoutingDomain](CountryOfRoutingDomain.userAnswersReader(_).apply(_))
+      }
 
     lazy val emptyArrayReader: Read[CountriesOfRoutingDomain] =
       UserAnswersReader.emptyList[CountryOfRoutingDomain].map(CountriesOfRoutingDomain.apply)
@@ -53,18 +53,17 @@ object CountriesOfRoutingDomain {
     (
       SecurityDetailsTypePage.reader,
       BindingItineraryPage.reader
-    ).apply {
+    ).to {
       case (NoSecurityDetails, _) if phaseConfig.phase == Transition =>
         emptyArrayReader
       case (NoSecurityDetails, false) if phaseConfig.phase == PostTransition =>
-        pages =>
-          AddCountryOfRoutingYesNoPage.reader.apply(pages).flatMap {
-            case ReaderSuccess(true, pages) =>
-              arrayReader.map(CountriesOfRoutingDomain.apply).apply(pages)
-            case ReaderSuccess(false, pages) =>
-              emptyArrayReader.apply(pages)
-          }
-      case _ => pages => arrayReader.map(CountriesOfRoutingDomain.apply).apply(pages)
+        AddCountryOfRoutingYesNoPage.reader.to {
+          case true =>
+            arrayReader.map(CountriesOfRoutingDomain.apply)
+          case false =>
+            emptyArrayReader
+        }
+      case _ => arrayReader.map(CountriesOfRoutingDomain.apply)
     }
   }
 }

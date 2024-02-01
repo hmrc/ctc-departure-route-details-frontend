@@ -17,8 +17,7 @@
 package pages.sections.routing
 
 import controllers.routing.routes
-import models.journeyDomain._
-import models.journeyDomain.ReaderSuccess
+import models.journeyDomain.{ReaderSuccess, _}
 import models.{Index, Mode, UserAnswers}
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page}
 import pages.sections.Section
@@ -34,8 +33,8 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.AddAnotherCountryOfRoutingController.onPageLoad(userAnswers.lrn, mode))
 
-  def atLeastOneCountryOfRoutingIsInCL147: Read[Boolean] = pages => {
-    this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
+  def atLeastOneCountryOfRoutingIsInCL147: Read[Boolean] =
+    this.arrayReader.apply(_).map(_.to(_.value.length)).flatMap {
       case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
         (0 until numberOfCountriesOfRouting)
           .foldLeft(UserAnswersReader.success(false)) {
@@ -43,7 +42,7 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
               (
                 acc,
                 CountryOfRoutingInCL147Page(Index(index)).reader
-              ).apply {
+              ).to {
                 case (areAnyCountriesOfRoutingInCL147SoFar, isThisCountryOfRoutingInCL147) =>
                   pages =>
                     val result = areAnyCountriesOfRoutingInCL147SoFar || isThisCountryOfRoutingInCL147
@@ -52,10 +51,9 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
           }
           .apply(pages)
     }
-  }
 
-  def anyCountriesOfRoutingInCL112: Read[Boolean] = pages =>
-    this.arrayReader.apply(pages).map(_.to(_.value.length)).flatMap {
+  def anyCountriesOfRoutingInCL112: Read[Boolean] =
+    this.arrayReader.apply(_).map(_.to(_.value.length)).flatMap {
       case ReaderSuccess(numberOfCountriesOfRouting, pages) =>
         (0 until numberOfCountriesOfRouting)
           .foldLeft(UserAnswersReader.success(false)) {
@@ -63,7 +61,7 @@ case object CountriesOfRoutingSection extends Section[JsArray] {
               (
                 acc,
                 CountryOfRoutingInCL112Page(Index(index)).reader
-              ).apply {
+              ).to {
                 case (areAnyCountriesOfRoutingInCL112SoFar, isThisCountryOfRoutingInCL112) =>
                   pages =>
                     val result = areAnyCountriesOfRoutingInCL112SoFar || isThisCountryOfRoutingInCL112
