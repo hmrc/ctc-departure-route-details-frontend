@@ -16,7 +16,6 @@
 
 package models.journeyDomain
 
-import cats.implicits._
 import config.Constants.AdditionalDeclarationType._
 import config.Constants.DeclarationType._
 import config.Constants.SecurityType._
@@ -50,11 +49,11 @@ case class RouteDetailsDomain(
 object RouteDetailsDomain {
 
   implicit val specificCircumstanceIndicatorReader: Read[Option[SpecificCircumstanceIndicator]] =
-    SecurityDetailsTypePage.reader.apply(_).flatMap {
-      case ReaderSuccess(ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails, pages) =>
-        AddSpecificCircumstanceIndicatorYesNoPage.filterOptionalDependent(identity)(SpecificCircumstanceIndicatorPage.reader).apply(pages)
-      case ReaderSuccess(_, pages) =>
-        UserAnswersReader.none.apply(pages)
+    SecurityDetailsTypePage.reader.to {
+      case ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
+        AddSpecificCircumstanceIndicatorYesNoPage.filterOptionalDependent(identity)(SpecificCircumstanceIndicatorPage.reader)
+      case _ =>
+        UserAnswersReader.none
     }
 
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[RouteDetailsDomain] =
@@ -62,7 +61,7 @@ object RouteDetailsDomain {
       specificCircumstanceIndicatorReader,
       RoutingDomain.userAnswersReader,
       transitReader
-    ).apply {
+    ).to {
       case (specificCircumstanceIndicator, routing, transit) =>
         (
           Read(specificCircumstanceIndicator),
@@ -75,29 +74,27 @@ object RouteDetailsDomain {
     }.apply(Nil)
 
   implicit def transitReader(implicit phaseConfig: PhaseConfig): Read[Option[TransitDomain]] =
-    DeclarationTypePage.reader.apply(_).flatMap {
-      case ReaderSuccess(TIR, pages) => UserAnswersReader.none.apply(pages)
-      case ReaderSuccess(_, pages)   => TransitDomain.userAnswersReader.toOption.apply(pages)
+    DeclarationTypePage.reader.to {
+      case TIR => UserAnswersReader.none
+      case _   => TransitDomain.userAnswersReader.toOption
     }
 
   implicit def exitReader(transit: Option[TransitDomain]): Read[Option[ExitDomain]] =
-    DeclarationTypePage.reader.apply(_).flatMap {
-      case ReaderSuccess(declarationType, pages) =>
-        SecurityDetailsTypePage.reader.apply(pages).flatMap {
-          case ReaderSuccess(securityDetails, pages) =>
-            CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147(pages).flatMap {
-              case ReaderSuccess(atLeastOneCountryOfRoutingInCL147, pages) =>
-                if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147, transit)) {
-                  ExitDomain.userAnswersReader.toOption.apply(pages)
-                } else {
-                  (atLeastOneCountryOfRoutingInCL147, transit) match {
-                    case (true, Some(TransitDomain(_, list))) if list.nonEmpty =>
-                      AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity)(ExitDomain.userAnswersReader(_)).apply(pages)
-                    case _ =>
-                      UserAnswersReader.none.apply(pages)
-                  }
-                }
-            }
+    (
+      DeclarationTypePage.reader,
+      SecurityDetailsTypePage.reader,
+      CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147
+    ).to {
+      case (declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147) =>
+        if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147, transit)) {
+          ExitDomain.userAnswersReader.toOption
+        } else {
+          (atLeastOneCountryOfRoutingInCL147, transit) match {
+            case (true, Some(TransitDomain(_, list))) if list.nonEmpty =>
+              AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity)(ExitDomain.userAnswersReader(_))
+            case _ =>
+              UserAnswersReader.none
+          }
         }
     }
 
@@ -120,15 +117,15 @@ object RouteDetailsDomain {
 
     phaseConfig.phase match {
       case Phase.Transition =>
-        optionalReader(_)
+        optionalReader
       case Phase.PostTransition =>
-        AdditionalDeclarationTypePage.reader.apply(_).flatMap {
-          case ReaderSuccess(PreLodge, pages) =>
-            optionalReader(pages)
-          case ReaderSuccess(_, pages) =>
-            OfficeOfDepartureInCL147Page.reader.apply(pages).flatMap {
-              case ReaderSuccess(true, pages)  => optionalReader(pages)
-              case ReaderSuccess(false, pages) => LocationOfGoodsDomain.userAnswersReader.toOption.apply(pages)
+        AdditionalDeclarationTypePage.reader.to {
+          case PreLodge =>
+            optionalReader
+          case _ =>
+            OfficeOfDepartureInCL147Page.reader.to {
+              case true  => optionalReader
+              case false => LocationOfGoodsDomain.userAnswersReader.toOption
             }
         }
     }

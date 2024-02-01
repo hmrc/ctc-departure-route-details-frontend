@@ -21,9 +21,9 @@ import config.Constants.AdditionalDeclarationType._
 import config.Constants.SecurityType._
 import config.Constants.SpecificCircumstanceIndicator._
 import config.PhaseConfig
+import models.journeyDomain._
 import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
-import models.journeyDomain._
 import models.reference.SpecificCircumstanceIndicator
 import models.{Mode, Phase, UserAnswers}
 import pages.SpecificCircumstanceIndicatorPage
@@ -55,18 +55,18 @@ object LoadingAndUnloadingDomain {
   def loadingReader(implicit phaseConfig: PhaseConfig): Read[Option[LoadingDomain]] =
     phaseConfig.phase match {
       case Phase.Transition =>
-        SecurityDetailsTypePage.reader.apply(_).flatMap {
-          case ReaderSuccess(NoSecurityDetails, pages) =>
-            UserAnswersReader.none.apply(pages)
-          case ReaderSuccess(_, pages) =>
-            LoadingDomain.userAnswersReader.toOption.apply(pages)
+        SecurityDetailsTypePage.reader.to {
+          case NoSecurityDetails =>
+            UserAnswersReader.none
+          case _ =>
+            LoadingDomain.userAnswersReader.toOption
         }
       case Phase.PostTransition =>
-        AdditionalDeclarationTypePage.reader.apply(_).flatMap {
-          case ReaderSuccess(PreLodge, pages) =>
-            AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(LoadingDomain.userAnswersReader).apply(pages)
-          case ReaderSuccess(_, pages) =>
-            LoadingDomain.userAnswersReader.toOption.apply(pages)
+        AdditionalDeclarationTypePage.reader.to {
+          case PreLodge =>
+            AddPlaceOfLoadingYesNoPage.filterOptionalDependent(identity)(LoadingDomain.userAnswersReader)
+          case _ =>
+            LoadingDomain.userAnswersReader.toOption
         }
     }
 
@@ -79,20 +79,20 @@ object LoadingAndUnloadingDomain {
 
     phaseConfig.phase match {
       case Phase.Transition =>
-        SecurityDetailsTypePage.reader.apply(_).flatMap {
-          case ReaderSuccess(NoSecurityDetails, pages) =>
-            UserAnswersReader.none.apply(pages)
-          case ReaderSuccess(_, pages) =>
-            SpecificCircumstanceIndicatorPage.optionalReader.apply(pages).flatMap {
-              case ReaderSuccess(Some(SpecificCircumstanceIndicator(XXX, _)), pages) => optionalReader(pages)
-              case ReaderSuccess(_, pages)                                           => mandatoryReader(pages)
+        SecurityDetailsTypePage.reader.to {
+          case NoSecurityDetails =>
+            UserAnswersReader.none
+          case _ =>
+            SpecificCircumstanceIndicatorPage.optionalReader.to {
+              case Some(SpecificCircumstanceIndicator(XXX, _)) => optionalReader
+              case _                                           => mandatoryReader
             }
         }
       case Phase.PostTransition =>
-        SecurityDetailsTypePage.reader.apply(_).flatMap {
-          case ReaderSuccess(NoSecurityDetails, pages)                     => UserAnswersReader.none.apply(pages)
-          case ReaderSuccess(ExitSummaryDeclarationSecurityDetails, pages) => optionalReader(pages)
-          case ReaderSuccess(_, pages)                                     => mandatoryReader(pages)
+        SecurityDetailsTypePage.reader.to {
+          case NoSecurityDetails                     => UserAnswersReader.none
+          case ExitSummaryDeclarationSecurityDetails => optionalReader
+          case _                                     => mandatoryReader
         }
     }
   }

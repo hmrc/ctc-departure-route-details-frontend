@@ -37,11 +37,11 @@ object OfficesOfTransitDomain {
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[OfficesOfTransitDomain] = {
 
     implicit val officesOfTransitReader: Read[Seq[OfficeOfTransitDomain]] =
-      OfficesOfTransitSection.arrayReader.apply(_).flatMap {
-        case ReaderSuccess(x, pages) if x.isEmpty =>
-          OfficeOfTransitDomain.userAnswersReader(Index(0)).toSeq.apply(pages)
-        case ReaderSuccess(x, pages) =>
-          x.traverse[OfficeOfTransitDomain](OfficeOfTransitDomain.userAnswersReader(_).apply(_)).apply(pages)
+      OfficesOfTransitSection.arrayReader.to {
+        case x if x.isEmpty =>
+          OfficeOfTransitDomain.userAnswersReader(Index(0)).toSeq
+        case x =>
+          x.traverse[OfficeOfTransitDomain](OfficeOfTransitDomain.userAnswersReader(_).apply(_))
       }
 
     officesOfTransitReader.map(OfficesOfTransitDomain.apply)

@@ -16,7 +16,6 @@
 
 package models.journeyDomain.locationOfGoods
 
-import cats.implicits._
 import config.Constants.LocationOfGoodsIdentifier._
 import models._
 import models.journeyDomain._
@@ -37,17 +36,19 @@ sealed trait LocationOfGoodsDomain extends JourneyDomainModel {
 object LocationOfGoodsDomain {
 
   implicit val userAnswersReader: Read[LocationOfGoodsDomain] =
-    UserAnswersReader.readInferred(LocationTypePage, InferredLocationTypePage).apply(_).flatMap {
-      case ReaderSuccess(typeOfLocation, pages) =>
-        UserAnswersReader.readInferred(IdentificationPage, InferredIdentificationPage).apply(pages).map(_.to(_.qualifier)).flatMap {
-          case ReaderSuccess(CustomsOfficeIdentifier, pages)       => LocationOfGoodsV.userAnswersReader(typeOfLocation)(pages)
-          case ReaderSuccess(EoriNumberIdentifier, pages)          => LocationOfGoodsX.userAnswersReader(typeOfLocation)(pages)
-          case ReaderSuccess(AuthorisationNumberIdentifier, pages) => LocationOfGoodsY.userAnswersReader(typeOfLocation)(pages)
-          case ReaderSuccess(UnlocodeIdentifier, pages)            => LocationOfGoodsU.userAnswersReader(typeOfLocation)(pages)
-          case ReaderSuccess(CoordinatesIdentifier, pages)         => LocationOfGoodsW.userAnswersReader(typeOfLocation)(pages)
-          case ReaderSuccess(AddressIdentifier, pages)             => LocationOfGoodsZ.userAnswersReader(typeOfLocation)(pages)
-          case ReaderSuccess(PostalCodeIdentifier, pages)          => LocationOfGoodsT.userAnswersReader(typeOfLocation)(pages)
-          case ReaderSuccess(x, _)                                 => throw new Exception(s"Unexpected Location of goods identifier value $x")
+    UserAnswersReader.readInferred(LocationTypePage, InferredLocationTypePage).to {
+      typeOfLocation =>
+        UserAnswersReader.readInferred(IdentificationPage, InferredIdentificationPage).to {
+          _.qualifier match {
+            case CustomsOfficeIdentifier       => LocationOfGoodsV.userAnswersReader(typeOfLocation)
+            case EoriNumberIdentifier          => LocationOfGoodsX.userAnswersReader(typeOfLocation)
+            case AuthorisationNumberIdentifier => LocationOfGoodsY.userAnswersReader(typeOfLocation)
+            case UnlocodeIdentifier            => LocationOfGoodsU.userAnswersReader(typeOfLocation)
+            case CoordinatesIdentifier         => LocationOfGoodsW.userAnswersReader(typeOfLocation)
+            case AddressIdentifier             => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
+            case PostalCodeIdentifier          => LocationOfGoodsT.userAnswersReader(typeOfLocation)
+            case x                             => throw new Exception(s"Unexpected Location of goods identifier value $x")
+          }
         }
     }
 
