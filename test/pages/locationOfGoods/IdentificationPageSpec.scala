@@ -16,10 +16,11 @@
 
 package pages.locationOfGoods
 
+import config.Constants.LocationOfGoodsIdentifier.CustomsOfficeIdentifier
 import models.LocationOfGoodsIdentification
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
-import pages.sections.locationOfGoods.LocationOfGoodsIdentifierSection
+import pages.sections.locationOfGoods.{LocationOfGoodsContactSection, LocationOfGoodsIdentifierSection}
 import play.api.libs.json.Json
 
 class IdentificationPageSpec extends PageBehaviours {
@@ -34,17 +35,40 @@ class IdentificationPageSpec extends PageBehaviours {
 
     "cleanup" - {
       "must clean up LocationOfGoodsIdentifierSection and inferred value" in {
-        forAll(arbitrary[LocationOfGoodsIdentification]) {
+        forAll(arbitrary[LocationOfGoodsIdentification].retryUntil(_.code != CustomsOfficeIdentifier)) {
           qualifierOfIdentification =>
             val userAnswers = emptyUserAnswers
               .setValue(InferredIdentificationPage, qualifierOfIdentification)
               .setValue(LocationOfGoodsIdentifierSection, Json.obj("foo" -> "bar"))
+              .setValue(AddContactYesNoPage, true)
+              .setValue(LocationOfGoodsContactSection, Json.obj("foo" -> "bar"))
 
             val result = userAnswers.setValue(IdentificationPage, qualifierOfIdentification)
 
             result.get(IdentificationPage) mustBe defined
             result.get(InferredIdentificationPage) must not be defined
             result.get(LocationOfGoodsIdentifierSection) must not be defined
+            result.get(AddContactYesNoPage) mustBe defined
+            result.get(LocationOfGoodsContactSection) mustBe defined
+        }
+      }
+
+      "must clean up contact when customs office identifier chosen" in {
+        forAll(arbitrary[LocationOfGoodsIdentification]) {
+          qualifierOfIdentification =>
+            val userAnswers = emptyUserAnswers
+              .setValue(InferredIdentificationPage, qualifierOfIdentification)
+              .setValue(LocationOfGoodsIdentifierSection, Json.obj("foo" -> "bar"))
+              .setValue(AddContactYesNoPage, true)
+              .setValue(LocationOfGoodsContactSection, Json.obj("foo" -> "bar"))
+
+            val result = userAnswers.setValue(IdentificationPage, qualifierOfIdentification.copy(qualifier = CustomsOfficeIdentifier))
+
+            result.get(IdentificationPage) mustBe defined
+            result.get(InferredIdentificationPage) must not be defined
+            result.get(LocationOfGoodsIdentifierSection) must not be defined
+            result.get(AddContactYesNoPage) must not be defined
+            result.get(LocationOfGoodsContactSection) must not be defined
         }
       }
     }
@@ -63,17 +87,40 @@ class InferredIdentificationPageSpec extends PageBehaviours {
 
     "cleanup" - {
       "must clean up LocationOfGoodsIdentifierSection and non-inferred value" in {
-        forAll(arbitrary[LocationOfGoodsIdentification]) {
+        forAll(arbitrary[LocationOfGoodsIdentification].retryUntil(_.code != CustomsOfficeIdentifier)) {
           qualifierOfIdentification =>
             val userAnswers = emptyUserAnswers
               .setValue(IdentificationPage, qualifierOfIdentification)
               .setValue(LocationOfGoodsIdentifierSection, Json.obj("foo" -> "bar"))
+              .setValue(AddContactYesNoPage, true)
+              .setValue(LocationOfGoodsContactSection, Json.obj("foo" -> "bar"))
 
             val result = userAnswers.setValue(InferredIdentificationPage, qualifierOfIdentification)
 
             result.get(InferredIdentificationPage) mustBe defined
             result.get(IdentificationPage) must not be defined
             result.get(LocationOfGoodsIdentifierSection) must not be defined
+            result.get(AddContactYesNoPage) mustBe defined
+            result.get(LocationOfGoodsContactSection) mustBe defined
+        }
+      }
+
+      "must clean up contact when customs office identifier chosen" in {
+        forAll(arbitrary[LocationOfGoodsIdentification]) {
+          qualifierOfIdentification =>
+            val userAnswers = emptyUserAnswers
+              .setValue(IdentificationPage, qualifierOfIdentification)
+              .setValue(LocationOfGoodsIdentifierSection, Json.obj("foo" -> "bar"))
+              .setValue(AddContactYesNoPage, true)
+              .setValue(LocationOfGoodsContactSection, Json.obj("foo" -> "bar"))
+
+            val result = userAnswers.setValue(InferredIdentificationPage, qualifierOfIdentification.copy(qualifier = CustomsOfficeIdentifier))
+
+            result.get(InferredIdentificationPage) mustBe defined
+            result.get(IdentificationPage) must not be defined
+            result.get(LocationOfGoodsIdentifierSection) must not be defined
+            result.get(AddContactYesNoPage) must not be defined
+            result.get(LocationOfGoodsContactSection) must not be defined
         }
       }
     }

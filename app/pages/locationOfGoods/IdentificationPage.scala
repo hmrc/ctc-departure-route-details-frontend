@@ -16,14 +16,15 @@
 
 package pages.locationOfGoods
 
+import config.Constants.LocationOfGoodsIdentifier.CustomsOfficeIdentifier
 import controllers.locationOfGoods.routes
 import models.{LocationOfGoodsIdentification, Mode, UserAnswers}
-import pages.sections.locationOfGoods.{LocationOfGoodsIdentifierSection, LocationOfGoodsSection}
+import pages.sections.locationOfGoods.{LocationOfGoodsContactSection, LocationOfGoodsIdentifierSection, LocationOfGoodsSection}
 import pages.{InferredPage, QuestionPage}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
 trait BaseIdentificationPage extends QuestionPage[LocationOfGoodsIdentification] {
 
@@ -34,11 +35,23 @@ trait BaseIdentificationPage extends QuestionPage[LocationOfGoodsIdentification]
 
   def cleanup(userAnswers: UserAnswers): Try[UserAnswers]
 
-  override def cleanup(value: Option[LocationOfGoodsIdentification], userAnswers: UserAnswers): Try[UserAnswers] =
+  override def cleanup(value: Option[LocationOfGoodsIdentification], userAnswers: UserAnswers): Try[UserAnswers] = {
+    def removeContactPerson(value: LocationOfGoodsIdentification, userAnswers: UserAnswers): Try[UserAnswers] =
+      value.code match {
+        case CustomsOfficeIdentifier => userAnswers.remove(AddContactYesNoPage).flatMap(_.remove(LocationOfGoodsContactSection))
+        case _                       => Success(userAnswers)
+      }
+
     value match {
-      case Some(_) => userAnswers.remove(LocationOfGoodsIdentifierSection).flatMap(cleanup)
-      case None    => super.cleanup(value, userAnswers)
+      case Some(value) =>
+        userAnswers
+          .remove(LocationOfGoodsIdentifierSection)
+          .flatMap(cleanup)
+          .flatMap(removeContactPerson(value, _))
+      case None =>
+        super.cleanup(value, userAnswers)
     }
+  }
 }
 
 case object IdentificationPage extends BaseIdentificationPage {
