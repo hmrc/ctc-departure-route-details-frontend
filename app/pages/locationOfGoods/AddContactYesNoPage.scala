@@ -19,7 +19,7 @@ package pages.locationOfGoods
 import controllers.locationOfGoods.routes
 import models.{Mode, UserAnswers}
 import pages.QuestionPage
-import pages.sections.locationOfGoods.{LocationOfGoodsContactSection, LocationOfGoodsIdentifierSection}
+import pages.sections.locationOfGoods.{LocationOfGoodsContactSection, LocationOfGoodsSection}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
@@ -27,7 +27,7 @@ import scala.util.Try
 
 case object AddContactYesNoPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = LocationOfGoodsIdentifierSection.path \ toString
+  override def path: JsPath = LocationOfGoodsSection.path \ toString
 
   override def toString: String = "addContact"
 
