@@ -43,26 +43,21 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
     getCountries("CountryCodesCommonTransit")
 
   def getAddressPostcodeBasedCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    referenceDataConnector
-      .getAddressPostcodeBasedCountries()
-      .map(sort)
+    getCountries("CountryAddressPostcodeBased")
 
   def getCommunityCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryCodesCommunity")
 
   def getCustomsSecurityAgreementAreaCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    referenceDataConnector
-      .getCustomsSecurityAgreementAreaCountries()
-      .map(sort)
+    getCountries("CountryCustomsSecurityAgreementArea")
 
   def getCountryCodesCTC()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    referenceDataConnector
-      .getCountryCodesCTC()
-      .map(sort)
+    getCountries("CountryCodesCTC")
 
   def getCountriesWithoutZip()(implicit hc: HeaderCarrier): Future[Seq[CountryCode]] =
     referenceDataConnector
       .getCountriesWithoutZip()
+      .map(_.toSeq)
 
   def getOfficeOfTransitCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads) match {
@@ -77,17 +72,15 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
           .map(_.values)
           .map(countries.filterNot(_ == countryOfDestination).intersect(_))
           .map(SelectableList(_))
-      case _ => getCountries()
+      case _ =>
+        getCountries()
     }
 
   private def getCountries(listName: String)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     referenceDataConnector
       .getCountries(listName)
-      .map(sort)
+      .map(SelectableList(_))
 
   def doesCountryRequireZip(country: Country)(implicit hc: HeaderCarrier): Future[Boolean] =
     getCountriesWithoutZip().map(!_.contains(country.code))
-
-  private def sort(countries: Seq[Country]): SelectableList[Country] =
-    SelectableList(countries.sortBy(_.description.toLowerCase))
 }

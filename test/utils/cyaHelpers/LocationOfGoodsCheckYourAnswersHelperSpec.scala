@@ -19,8 +19,8 @@ package utils.cyaHelpers
 import base.SpecBase
 import controllers.locationOfGoods.{contact, routes}
 import generators.Generators
-import models.reference.{Country, CustomsOffice}
-import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, Mode, PostalCodeAddress}
+import models.reference.{Country, CustomsOffice, LocationOfGoodsIdentification, LocationType}
+import models.{Coordinates, DynamicAddress, Mode, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package models
+import cats.data.NonEmptySet
 
-import play.api.libs.json.{Format, Json}
+package object services {
 
-case class LocationType(`type`: String, description: String) extends Radioable[LocationType] {
-  override val messageKeyPrefix: String = LocationType.messageKeyPrefix
-  override def toString: String         = s"$description"
-
-  override val code: String = `type`
-}
-
-object LocationType extends DynamicEnumerableType[LocationType] {
-  implicit val format: Format[LocationType] = Json.format[LocationType]
-
-  val messageKeyPrefix = "locationOfGoods.locationType"
+  implicit class RichNonEmptySet[T](value: NonEmptySet[T]) {
+    def toSeq: Seq[T] = value.toNonEmptyList.toList
+  }
 }

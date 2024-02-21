@@ -17,8 +17,8 @@
 package utils.cyaHelpers.locationOfGoods
 
 import config.FrontendAppConfig
-import models.reference.{Country, CustomsOffice}
-import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, Mode, PostalCodeAddress, UserAnswers}
+import models.reference.{Country, CustomsOffice, LocationOfGoodsIdentification, LocationType}
+import models.{Coordinates, DynamicAddress, Mode, PostalCodeAddress, UserAnswers}
 import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
 import pages.locationOfGoods._
 import play.api.i18n.Messages

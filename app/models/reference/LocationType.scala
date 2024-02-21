@@ -17,21 +17,20 @@
 package models.reference
 
 import cats.Order
-import play.api.libs.json._
+import models.{DynamicEnumerableType, Radioable}
+import play.api.libs.json.{Format, Json}
 
-case class CountryCode(code: String)
+case class LocationType(`type`: String, description: String) extends Radioable[LocationType] {
+  override val messageKeyPrefix: String = "locationOfGoods.locationType"
+  override def toString: String         = s"$description"
 
-object CountryCode {
+  override val code: String = `type`
+}
 
-  implicit val countryCodeWrites: Writes[CountryCode] = (countryCode: CountryCode) => JsString(countryCode.code)
+object LocationType extends DynamicEnumerableType[LocationType] {
+  implicit val format: Format[LocationType] = Json.format[LocationType]
 
-  implicit val countryCodeReads: Reads[CountryCode] = {
-    case JsObject(mapping) => JsSuccess(CountryCode(mapping("code").as[String]))
-    case JsString(code)    => JsSuccess(CountryCode(code))
-    case x                 => JsError(s"Expected a string, got a ${x.getClass}")
-  }
-
-  implicit val order: Order[CountryCode] = (x: CountryCode, y: CountryCode) => {
-    x.code.compareToIgnoreCase(y.code)
+  implicit val order: Order[LocationType] = (x: LocationType, y: LocationType) => {
+    x.`type`.compareToIgnoreCase(y.`type`)
   }
 }

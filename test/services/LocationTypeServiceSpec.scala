@@ -17,8 +17,10 @@
 package services
 
 import base.SpecBase
+import cats.data.NonEmptySet
 import connectors.ReferenceDataConnector
-import models.{LocationType, ProcedureType}
+import models.ProcedureType
+import models.reference.LocationType
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -35,7 +37,7 @@ class LocationTypeServiceSpec extends SpecBase with BeforeAndAfterEach {
   private val lt2 = LocationType("C", "Approved place")
   private val lt3 = LocationType("B", "Authorised place")
   private val lt4 = LocationType("A", "Designated location")
-  private val lts = Seq(lt1, lt2, lt3, lt4)
+  private val lts = NonEmptySet.of(lt1, lt2, lt3, lt4)
 
   override def beforeEach(): Unit = {
     reset(mockRefDataConnector)

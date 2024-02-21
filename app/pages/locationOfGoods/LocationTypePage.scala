@@ -17,7 +17,8 @@
 package pages.locationOfGoods
 
 import controllers.locationOfGoods.routes
-import models.{LocationType, Mode, UserAnswers}
+import models.reference.LocationType
+import models.{Mode, UserAnswers}
 import pages.sections.locationOfGoods.LocationOfGoodsSection
 import pages.{InferredPage, QuestionPage}
 import play.api.libs.json.JsPath

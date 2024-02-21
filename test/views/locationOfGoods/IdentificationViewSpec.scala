@@ -18,7 +18,8 @@ package views.locationOfGoods
 
 import config.Constants.LocationOfGoodsIdentifier._
 import forms.EnumerableFormProvider
-import models.{LocationOfGoodsIdentification, NormalMode}
+import models.NormalMode
+import models.reference.LocationOfGoodsIdentification
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem

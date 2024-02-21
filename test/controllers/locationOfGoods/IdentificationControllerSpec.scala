@@ -19,7 +19,8 @@ package controllers.locationOfGoods
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.EnumerableFormProvider
 import generators.Generators
-import models.{LocationOfGoodsIdentification, LocationType, NormalMode, UserAnswers}
+import models.reference.{LocationOfGoodsIdentification, LocationType}
+import models.{NormalMode, UserAnswers}
 import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any

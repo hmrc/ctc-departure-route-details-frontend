@@ -19,7 +19,7 @@ package services
 import config.Constants.LocationOfGoodsIdentifier._
 import config.Constants.LocationType._
 import connectors.ReferenceDataConnector
-import models.{LocationOfGoodsIdentification, LocationType}
+import models.reference.{LocationOfGoodsIdentification, LocationType}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -46,11 +46,7 @@ class LocationOfGoodsIdentificationTypeService @Inject() (
 
     referenceDataConnector
       .getQualifierOfTheIdentifications()
-      .map(sort)
+      .map(_.toSeq)
       .map(filter)
   }
-
-  private def sort(locationOfGoodsIdentification: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
-    locationOfGoodsIdentification.sortBy(_.qualifier.toLowerCase)
-
 }

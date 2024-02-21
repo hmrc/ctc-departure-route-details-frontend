@@ -30,7 +30,9 @@ class UnLocodesService @Inject() (
   def doesUnLocodeExist(unLocode: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     referenceDataConnector
       .getUnLocode(unLocode)
-      .map(_.nonEmpty)
+      .map {
+        _ => true
+      }
       .recover {
         case _: NoReferenceDataFoundException => false
       }

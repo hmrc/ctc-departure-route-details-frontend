@@ -17,6 +17,7 @@
 package models
 
 import generators.Generators
+import models.reference.LocationType
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec

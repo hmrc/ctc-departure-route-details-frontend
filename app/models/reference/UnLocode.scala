@@ -16,6 +16,7 @@
 
 package models.reference
 
+import cats.Order
 import models.Selectable
 import play.api.libs.json.{Json, OFormat}
 
@@ -31,4 +32,8 @@ case class UnLocode(
 
 object UnLocode {
   implicit val format: OFormat[UnLocode] = Json.format[UnLocode]
+
+  implicit val order: Order[UnLocode] = (x: UnLocode, y: UnLocode) => {
+    x.name.compareToIgnoreCase(y.name)
+  }
 }
