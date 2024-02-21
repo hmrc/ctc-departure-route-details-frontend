@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package models.reference
 
+import cats.Order
+import models.{DynamicEnumerableType, Radioable}
 import play.api.libs.json.{Format, Json}
 
 case class LocationOfGoodsIdentification(qualifier: String, description: String) extends Radioable[LocationOfGoodsIdentification] {
-  override val messageKeyPrefix: String = LocationOfGoodsIdentification.messageKeyPrefix
+  override val messageKeyPrefix: String = "locationOfGoods.identification"
   override def toString: String         = s"$description"
 
   override val code: String = qualifier
@@ -30,5 +32,7 @@ case class LocationOfGoodsIdentification(qualifier: String, description: String)
 object LocationOfGoodsIdentification extends DynamicEnumerableType[LocationOfGoodsIdentification] {
   implicit val format: Format[LocationOfGoodsIdentification] = Json.format[LocationOfGoodsIdentification]
 
-  val messageKeyPrefix = "locationOfGoods.identification"
+  implicit val order: Order[LocationOfGoodsIdentification] = (x: LocationOfGoodsIdentification, y: LocationOfGoodsIdentification) => {
+    x.qualifier.compareToIgnoreCase(y.qualifier)
+  }
 }

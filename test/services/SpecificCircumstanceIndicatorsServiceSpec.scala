@@ -17,6 +17,7 @@
 package services
 
 import base.SpecBase
+import cats.data.NonEmptySet
 import connectors.ReferenceDataConnector
 import models.reference.SpecificCircumstanceIndicator
 import org.mockito.ArgumentMatchers.any
@@ -33,7 +34,7 @@ class SpecificCircumstanceIndicatorsServiceSpec extends SpecBase with BeforeAndA
 
   private val sci1                           = SpecificCircumstanceIndicator("A20", "Express consignments")
   private val sci2                           = SpecificCircumstanceIndicator("XXX", "Authorised Economic Operator")
-  private val specificCircumstanceIndicators = Seq(sci1, sci2)
+  private val specificCircumstanceIndicators = NonEmptySet.of(sci1, sci2)
 
   override def beforeEach(): Unit = {
     reset(mockRefDataConnector)

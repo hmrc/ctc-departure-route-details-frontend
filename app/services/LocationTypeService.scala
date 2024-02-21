@@ -18,7 +18,8 @@ package services
 
 import config.Constants.LocationType.AuthorisedPlace
 import connectors.ReferenceDataConnector
-import models.{LocationType, ProcedureType}
+import models.ProcedureType
+import models.reference.LocationType
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -36,8 +37,8 @@ class LocationTypeService @Inject() (
 
     referenceDataConnector
       .getTypesOfLocation()
+      .map(_.toSeq)
       .map(filter)
-      .map(_.sortBy(_.`type`.toLowerCase))
   }
 
 }

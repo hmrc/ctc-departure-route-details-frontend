@@ -17,7 +17,7 @@
 package pages.locationOfGoods
 
 import config.Constants.LocationOfGoodsIdentifier.CustomsOfficeIdentifier
-import models.LocationOfGoodsIdentification
+import models.reference.LocationOfGoodsIdentification
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.sections.locationOfGoods.{LocationOfGoodsContactSection, LocationOfGoodsIdentifierSection}

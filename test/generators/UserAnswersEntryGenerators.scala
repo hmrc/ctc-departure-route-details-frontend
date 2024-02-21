@@ -18,7 +18,7 @@ package generators
 
 import config.Constants.AdditionalDeclarationType._
 import models.reference._
-import models.{Coordinates, DateTime, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
+import models.{Coordinates, DateTime, DynamicAddress, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import pages.exit.AddCustomsOfficeOfExitYesNoPage

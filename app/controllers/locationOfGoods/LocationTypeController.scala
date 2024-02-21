@@ -20,8 +20,9 @@ import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.EnumerableFormProvider
+import models.reference.LocationType
 import models.requests.MandatoryDataRequest
-import models.{LocalReferenceNumber, LocationType, Mode}
+import models.{LocalReferenceNumber, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
 import pages.QuestionPage
 import pages.external.ProcedureTypePage

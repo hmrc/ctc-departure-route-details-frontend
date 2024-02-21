@@ -19,7 +19,7 @@ package models.journeyDomain.locationOfGoods
 import config.Constants.LocationOfGoodsIdentifier._
 import models._
 import models.journeyDomain._
-import models.reference.{Country, CustomsOffice}
+import models.reference.{Country, CustomsOffice, LocationType}
 import pages.locationOfGoods._
 import pages.sections.Section
 import pages.sections.locationOfGoods.LocationOfGoodsSection

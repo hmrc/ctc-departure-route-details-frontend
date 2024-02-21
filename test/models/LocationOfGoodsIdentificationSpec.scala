@@ -18,7 +18,8 @@ package models
 
 import base.SpecBase
 import generators.Generators
-import models.LocationOfGoodsIdentification._
+import models.reference.LocationOfGoodsIdentification
+import models.reference.LocationOfGoodsIdentification._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

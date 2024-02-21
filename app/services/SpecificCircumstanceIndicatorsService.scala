@@ -30,9 +30,5 @@ class SpecificCircumstanceIndicatorsService @Inject() (
   def getSpecificCircumstanceIndicators()(implicit hc: HeaderCarrier): Future[Seq[SpecificCircumstanceIndicator]] =
     referenceDataConnector
       .getSpecificCircumstanceIndicators()
-      .map(sort)
-
-  private def sort(specificCircumstanceIndicators: Seq[SpecificCircumstanceIndicator]): Seq[SpecificCircumstanceIndicator] =
-    specificCircumstanceIndicators.sortBy(_.description.toLowerCase)
-
+      .map(_.toSeq)
 }

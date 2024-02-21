@@ -17,10 +17,11 @@
 package services
 
 import base.SpecBase
+import cats.data.NonEmptySet
 import config.Constants.LocationOfGoodsIdentifier._
 import config.Constants.LocationType._
 import connectors.ReferenceDataConnector
-import models.{LocationOfGoodsIdentification, LocationType}
+import models.reference.{LocationOfGoodsIdentification, LocationType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -41,8 +42,8 @@ class LocationOfGoodsIdentificationTypeServiceSpec extends SpecBase with BeforeA
   private val addressIdentifier: LocationOfGoodsIdentification       = LocationOfGoodsIdentification(AddressIdentifier, "test6")
   private val postalCode: LocationOfGoodsIdentification              = LocationOfGoodsIdentification(PostalCodeIdentifier, "test7")
 
-  private val identifiers: Seq[LocationOfGoodsIdentification] =
-    Seq(postalCode, unlocodeIdentifier, customsOfficeIdentifier, coordinatesIdentifier, eoriNumberIdentifier, authorisationNumber, addressIdentifier)
+  private val identifiers =
+    NonEmptySet.of(postalCode, unlocodeIdentifier, customsOfficeIdentifier, coordinatesIdentifier, eoriNumberIdentifier, authorisationNumber, addressIdentifier)
 
   override def beforeEach(): Unit = {
     reset(mockRefDataConnector)

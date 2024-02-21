@@ -18,7 +18,8 @@ package pages.locationOfGoods
 
 import config.Constants.LocationOfGoodsIdentifier.CustomsOfficeIdentifier
 import controllers.locationOfGoods.routes
-import models.{LocationOfGoodsIdentification, Mode, UserAnswers}
+import models.reference.LocationOfGoodsIdentification
+import models.{Mode, UserAnswers}
 import pages.sections.locationOfGoods.{LocationOfGoodsContactSection, LocationOfGoodsIdentifierSection, LocationOfGoodsSection}
 import pages.{InferredPage, QuestionPage}
 import play.api.libs.json.JsPath

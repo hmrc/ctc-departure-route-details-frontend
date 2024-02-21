@@ -29,12 +29,10 @@ import scala.concurrent.Future
 
 class UnLocodesServiceSpec extends SpecBase with BeforeAndAfterEach {
 
-  val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
-  val service                                      = new UnLocodesService(mockRefDataConnector)
+  private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
+  private val service                                      = new UnLocodesService(mockRefDataConnector)
 
-  val unLocode1: UnLocode = UnLocode("ADALV", "Andorra la Vella")
-  val unLocode2: UnLocode = UnLocode("ADCAN", "Canillo")
-  val unLocodes           = Seq(unLocode1, unLocode2)
+  private val unLocode: UnLocode = UnLocode("ADALV", "Andorra la Vella")
 
   override def beforeEach(): Unit = {
     reset(mockRefDataConnector)
@@ -48,33 +46,23 @@ class UnLocodesServiceSpec extends SpecBase with BeforeAndAfterEach {
         "when UN/LOCODE exists" in {
 
           when(mockRefDataConnector.getUnLocode(any())(any(), any()))
-            .thenReturn(Future.successful(Seq(unLocode1)))
+            .thenReturn(Future.successful(unLocode))
 
-          service.doesUnLocodeExist(unLocode1.unLocodeExtendedCode).futureValue mustBe true
+          service.doesUnLocodeExist(unLocode.unLocodeExtendedCode).futureValue mustBe true
 
-          verify(mockRefDataConnector).getUnLocode(eqTo(unLocode1.unLocodeExtendedCode))(any(), any())
+          verify(mockRefDataConnector).getUnLocode(eqTo(unLocode.unLocodeExtendedCode))(any(), any())
         }
       }
 
       "must return false" - {
-        "when UN/LOCODE does not exist" in {
-
-          when(mockRefDataConnector.getUnLocode(any())(any(), any()))
-            .thenReturn(Future.successful(Seq.empty))
-
-          service.doesUnLocodeExist(unLocode1.unLocodeExtendedCode).futureValue mustBe false
-
-          verify(mockRefDataConnector).getUnLocode(eqTo(unLocode1.unLocodeExtendedCode))(any(), any())
-        }
-
         "when UN/LOCODE does not exist in reference data" in {
 
           when(mockRefDataConnector.getUnLocode(any())(any(), any()))
             .thenReturn(Future.failed(new NoReferenceDataFoundException))
 
-          service.doesUnLocodeExist(unLocode1.unLocodeExtendedCode).futureValue mustBe false
+          service.doesUnLocodeExist(unLocode.unLocodeExtendedCode).futureValue mustBe false
 
-          verify(mockRefDataConnector).getUnLocode(eqTo(unLocode1.unLocodeExtendedCode))(any(), any())
+          verify(mockRefDataConnector).getUnLocode(eqTo(unLocode.unLocodeExtendedCode))(any(), any())
         }
       }
     }

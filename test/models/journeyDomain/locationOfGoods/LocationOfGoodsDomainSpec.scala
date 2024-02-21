@@ -20,8 +20,8 @@ import base.SpecBase
 import config.Constants.LocationOfGoodsIdentifier._
 import generators.Generators
 import models.journeyDomain.UserAnswersReader
-import models.reference.{Country, CustomsOffice}
-import models.{Coordinates, DynamicAddress, LocationOfGoodsIdentification, LocationType, PostalCodeAddress}
+import models.reference.{Country, CustomsOffice, LocationOfGoodsIdentification, LocationType}
+import models.{Coordinates, DynamicAddress, PostalCodeAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll

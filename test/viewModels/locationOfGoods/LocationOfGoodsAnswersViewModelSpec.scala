@@ -19,7 +19,8 @@ package viewModels.locationOfGoods
 import base.SpecBase
 import config.Constants.LocationOfGoodsIdentifier._
 import generators.Generators
-import models.{LocationOfGoodsIdentification, Mode}
+import models.Mode
+import models.reference.LocationOfGoodsIdentification
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.locationOfGoods.{AddContactYesNoPage, AddIdentifierYesNoPage, AddLocationOfGoodsPage, IdentificationPage}
