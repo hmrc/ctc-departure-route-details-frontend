@@ -153,7 +153,7 @@ class CountryOfDestinationControllerSpec extends SpecBase with AppWithDefaultMoc
       when(mockCountriesService.getDestinationCountries(any())(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
-        .thenReturn(Future.failed(new NoReferenceDataFoundException))
+        .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
       setExistingUserAnswers(emptyUserAnswers)
 
