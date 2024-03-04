@@ -178,7 +178,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
       when(mockCountriesService.getCountries()(any()))
         .thenReturn(Future.successful(countryList))
       when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
-        .thenReturn(Future.failed(new NoReferenceDataFoundException))
+        .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
       setExistingUserAnswers(emptyUserAnswers)
 

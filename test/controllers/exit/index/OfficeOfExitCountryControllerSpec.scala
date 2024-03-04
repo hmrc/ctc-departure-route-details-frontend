@@ -158,7 +158,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
         .thenReturn(Future.successful(countryList))
 
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any()))
-        .thenReturn(Future.failed(new NoReferenceDataFoundException))
+        .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
       setExistingUserAnswers(baseAnswers)
 
