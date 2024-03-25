@@ -31,6 +31,7 @@ import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.sections.routing.CountriesOfRoutingSection
+import pages.sections.transit.OfficesOfTransitSection
 import pages.sections.{RouteDetailsSection, Section}
 import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 
@@ -79,22 +80,35 @@ object RouteDetailsDomain {
       case _   => TransitDomain.userAnswersReader.toOption
     }
 
-  implicit def exitReader(transit: Option[TransitDomain]): Read[Option[ExitDomain]] =
-    (
-      DeclarationTypePage.reader,
-      SecurityDetailsTypePage.reader,
-      CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147
-    ).to {
-      case (declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147) =>
-        if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147, transit)) {
-          ExitDomain.userAnswersReader.toOption
-        } else {
-          (atLeastOneCountryOfRoutingInCL147, transit) match {
-            case (true, Some(TransitDomain(_, list))) if list.nonEmpty =>
-              AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity)(ExitDomain.userAnswersReader(_))
-            case _ =>
-              UserAnswersReader.none
-          }
+  implicit def exitReader(transit: Option[TransitDomain])(implicit phaseConfig: PhaseConfig): Read[Option[ExitDomain]] =
+    phaseConfig.phase match {
+      case Phase.Transition =>
+        (
+          SecurityDetailsTypePage.reader,
+          OfficesOfTransitSection.atLeastOneOfficeOfTransitIsInCL147
+        ).to {
+          case (ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails, false) =>
+            AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity)(ExitDomain.userAnswersReader(_))
+          case _ =>
+            UserAnswersReader.none
+        }
+      case Phase.PostTransition =>
+        (
+          DeclarationTypePage.reader,
+          SecurityDetailsTypePage.reader,
+          CountriesOfRoutingSection.atLeastOneCountryOfRoutingIsInCL147
+        ).to {
+          case (declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147) =>
+            if (exitRequired(declarationType, securityDetails, atLeastOneCountryOfRoutingInCL147, transit)) {
+              ExitDomain.userAnswersReader.toOption
+            } else {
+              (atLeastOneCountryOfRoutingInCL147, transit) match {
+                case (true, Some(TransitDomain(_, list))) if list.nonEmpty =>
+                  AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity)(ExitDomain.userAnswersReader(_))
+                case _ =>
+                  UserAnswersReader.none
+              }
+            }
         }
     }
 
