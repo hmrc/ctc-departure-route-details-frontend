@@ -17,7 +17,9 @@
 package models.reference
 
 import base.SpecBase
+import cats.data.NonEmptySet
 import generators.Generators
+import models.SelectableList
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -68,6 +70,22 @@ class CountrySpec extends SpecBase with ScalaCheckPropertyChecks with Generators
         country =>
           country.toString mustBe s"${country.description} - ${country.code.code}"
       }
+    }
+
+    "must order" in {
+      val country1 = Country(CountryCode("RS"), "Serbia")
+      val country2 = Country(CountryCode("XS"), "Serbia")
+      val country3 = Country(CountryCode("FR"), "France")
+
+      val countries = NonEmptySet.of(country1, country2, country3)
+
+      val result = SelectableList(countries).values
+
+      result mustBe Seq(
+        country3,
+        country1,
+        country2
+      )
     }
   }
 

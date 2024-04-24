@@ -85,7 +85,7 @@ class OfficeOfDestinationController @Inject() (
                 value =>
                   for {
                     ctcCountries <- countriesService.getCountryCodesCTC().map(_.values)
-                    isInCL112 = ctcCountries.map(_.code.code).contains(value.countryCode)
+                    isInCL112 = ctcCountries.map(_.code.code).contains(value.countryId)
                     result <- {
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                       OfficeOfDestinationPage

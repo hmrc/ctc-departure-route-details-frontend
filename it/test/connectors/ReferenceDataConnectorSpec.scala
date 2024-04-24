@@ -246,8 +246,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         )
 
         val expectedResult = NonEmptySet.of(
-          CustomsOffice("GB1", "testName1", None),
-          CustomsOffice("GB2", "testName2", None)
+          CustomsOffice("GB1", "testName1", None, "GB"),
+          CustomsOffice("GB2", "testName2", None, "GB")
         )
 
         connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue mustBe expectedResult

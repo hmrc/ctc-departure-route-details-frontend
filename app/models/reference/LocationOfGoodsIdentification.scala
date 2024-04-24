@@ -33,6 +33,6 @@ object LocationOfGoodsIdentification extends DynamicEnumerableType[LocationOfGoo
   implicit val format: Format[LocationOfGoodsIdentification] = Json.format[LocationOfGoodsIdentification]
 
   implicit val order: Order[LocationOfGoodsIdentification] = (x: LocationOfGoodsIdentification, y: LocationOfGoodsIdentification) => {
-    x.qualifier.compareToIgnoreCase(y.qualifier)
+    (x, y).compareBy(_.qualifier)
   }
 }

@@ -84,7 +84,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           "and office of destination is in 'AD'" in {
             val userAnswers = emptyUserAnswers
               .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice.copy(id = AD))
+              .setValue(OfficeOfDestinationPage, customsOffice.copy(countryId = AD))
               .setValue(OfficeOfDestinationInCL112Page, false)
               .setValue(OfficeOfTransitPage(index), officeOfTransit)
               .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
@@ -272,7 +272,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
         "and office of destination is in 'AD'" in {
           val userAnswers = emptyUserAnswers
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-            .setValue(OfficeOfDestinationPage, customsOffice.copy(id = AD))
+            .setValue(OfficeOfDestinationPage, customsOffice.copy(countryId = AD))
             .setValue(OfficeOfDestinationInCL112Page, inCL112)
             .setValue(OfficeOfTransitPage(index), officeOfTransit)
             .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
