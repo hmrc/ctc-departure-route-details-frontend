@@ -99,7 +99,8 @@ trait ModelGenerators {
         id          <- nonEmptyString
         name        <- nonEmptyString
         phoneNumber <- Gen.option(Gen.alphaNumStr)
-      } yield CustomsOffice(id, name, phoneNumber)
+        countryId   <- nonEmptyString
+      } yield CustomsOffice(id, name, phoneNumber, countryId)
     }
 
   implicit lazy val arbitraryUnLocode: Arbitrary[String] =
@@ -220,7 +221,7 @@ trait ModelGenerators {
         id          <- stringsWithMaxLength(stringMaxLength)
         name        <- stringsWithMaxLength(stringMaxLength)
         phoneNumber <- Gen.option(stringsWithMaxLength(stringMaxLength))
-      } yield CustomsOffice(id, name, phoneNumber)
+      } yield CustomsOffice(id, name, phoneNumber, "XI")
     }
 
   lazy val arbitraryGbCustomsOffice: Arbitrary[CustomsOffice] =
@@ -229,7 +230,7 @@ trait ModelGenerators {
         id          <- stringsWithMaxLength(stringMaxLength)
         name        <- stringsWithMaxLength(stringMaxLength)
         phoneNumber <- Gen.option(stringsWithMaxLength(stringMaxLength))
-      } yield CustomsOffice(id, name, phoneNumber)
+      } yield CustomsOffice(id, name, phoneNumber, "GB")
     }
 
   lazy val arbitraryOfficeOfDeparture: Arbitrary[CustomsOffice] =

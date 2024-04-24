@@ -34,6 +34,6 @@ object UnLocode {
   implicit val format: OFormat[UnLocode] = Json.format[UnLocode]
 
   implicit val order: Order[UnLocode] = (x: UnLocode, y: UnLocode) => {
-    x.name.compareToIgnoreCase(y.name)
+    (x, y).compareBy(_.name)
   }
 }

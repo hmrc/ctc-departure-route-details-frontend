@@ -96,7 +96,7 @@ object OfficeOfTransitDomain {
 
     lazy val reads: Read[OfficeOfTransitDomain] =
       OfficeOfDestinationPage.reader.to {
-        _.countryCode match {
+        _.countryId match {
           case AD => readsWithoutCountry
           case _  => readsWithCountry
         }

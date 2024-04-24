@@ -69,7 +69,7 @@ object TransitDomain {
           officesOfTransit.map(TransitDomain(isT2DeclarationType, _))
         }
 
-        if (officeOfDepartureInCL112 && officeOfDestinationInCL112 && officeOfDeparture.countryCode == officeOfDestination.countryCode) {
+        if (officeOfDepartureInCL112 && officeOfDestinationInCL112 && officeOfDeparture.countryId == officeOfDestination.countryId) {
           addOfficesOfTransitReader.map(TransitDomain.apply(None, _))
         } else {
           DeclarationTypePage.reader.to {
