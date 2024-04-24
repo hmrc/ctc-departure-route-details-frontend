@@ -203,12 +203,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(locationTypesResponseJson))
         )
 
-        val expectedResult = List(
+        val expectedResult = NonEmptySet.of(
           LocationType("A", "Designated location"),
           LocationType("B", "Authorised place")
         )
 
-        connector.getTypesOfLocation().futureValue.toNonEmptyList.toList mustEqual expectedResult
+        connector.getTypesOfLocation().futureValue mustEqual expectedResult
       }
 
       "should throw a NoReferenceDataFoundException for an empty list of location types" in {
@@ -239,12 +239,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(customsOfficesResponseJson))
         )
 
-        val expectedResult = List(
+        val expectedResult = NonEmptySet.of(
           CustomsOffice("GB1", "testName1", None, "GB"),
           CustomsOffice("GB2", "testName2", None, "GB")
         )
 
-        connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue.toNonEmptyList.toList mustBe expectedResult
+        connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue mustBe expectedResult
       }
 
       "should throw a NoReferenceDataFoundException for an empty list of customs offices" in {
@@ -275,12 +275,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(countriesResponseJson("CountryCodesFullList")))
         )
 
-        val expectedResult = List(
+        val expectedResult = NonEmptySet.of(
           Country(CountryCode("AD"), "Andorra"),
           Country(CountryCode("GB"), "United Kingdom")
         )
 
-        connector.getCountries("CountryCodesFullList").futureValue.toNonEmptyList.toList mustEqual expectedResult
+        connector.getCountries("CountryCodesFullList").futureValue mustEqual expectedResult
       }
 
       "must return an exception when an error response is returned" in {
@@ -297,12 +297,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(countriesResponseJson("CountryWithoutZip")))
         )
 
-        val expectedResult = List(
+        val expectedResult = NonEmptySet.of(
           CountryCode("AD"),
           CountryCode("GB")
         )
 
-        connector.getCountriesWithoutZip().futureValue.toNonEmptyList.toList mustEqual expectedResult
+        connector.getCountriesWithoutZip().futureValue mustEqual expectedResult
       }
 
       "must return an exception when an error response is returned" in {
@@ -339,12 +339,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(specificCircumstanceIndicatorsResponseJson))
         )
 
-        val expectedResult = List(
+        val expectedResult = NonEmptySet.of(
           SpecificCircumstanceIndicator("SCI1", "testName1"),
           SpecificCircumstanceIndicator("SCI2", "testName2")
         )
 
-        connector.getSpecificCircumstanceIndicators().futureValue.toNonEmptyList.toList mustEqual expectedResult
+        connector.getSpecificCircumstanceIndicators().futureValue mustEqual expectedResult
       }
 
       "must return an exception when an error response is returned" in {

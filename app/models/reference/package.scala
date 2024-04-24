@@ -24,7 +24,7 @@ package object reference {
       value match {
         case (x, y) =>
           fs.toList match {
-            case Nil => 1
+            case Nil => 0
             case f :: tail =>
               f(x).compareToIgnoreCase(f(y)) match {
                 case 0      => compareBy(tail: _*)
