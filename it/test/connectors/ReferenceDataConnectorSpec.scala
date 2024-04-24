@@ -18,7 +18,6 @@ package connectors
 
 import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import itbase.{ItSpecBase, WireMockServerHandler}
 import models.reference._
@@ -194,11 +193,6 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       |}
       |""".stripMargin
 
-  def queryParams(role: String): Seq[(String, StringValuePattern)] = Seq(
-    "data.countryId"  -> equalTo("GB"),
-    "data.roles.role" -> equalTo(role)
-  )
-
   "Reference Data" - {
 
     "getTypeOfLocation" - {
@@ -209,12 +203,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(locationTypesResponseJson))
         )
 
-        val expectedResult = NonEmptySet.of(
+        val expectedResult = List(
           LocationType("A", "Designated location"),
           LocationType("B", "Authorised place")
         )
 
-        connector.getTypesOfLocation().futureValue mustEqual expectedResult
+        connector.getTypesOfLocation().futureValue.toNonEmptyList.toList mustEqual expectedResult
       }
 
       "should throw a NoReferenceDataFoundException for an empty list of location types" in {
@@ -245,12 +239,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(customsOfficesResponseJson))
         )
 
-        val expectedResult = NonEmptySet.of(
+        val expectedResult = List(
           CustomsOffice("GB1", "testName1", None, "GB"),
           CustomsOffice("GB2", "testName2", None, "GB")
         )
 
-        connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue mustBe expectedResult
+        connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue.toNonEmptyList.toList mustBe expectedResult
       }
 
       "should throw a NoReferenceDataFoundException for an empty list of customs offices" in {
@@ -281,12 +275,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(countriesResponseJson("CountryCodesFullList")))
         )
 
-        val expectedResult = NonEmptySet.of(
-          Country(CountryCode("GB"), "United Kingdom"),
-          Country(CountryCode("AD"), "Andorra")
+        val expectedResult = List(
+          Country(CountryCode("AD"), "Andorra"),
+          Country(CountryCode("GB"), "United Kingdom")
         )
 
-        connector.getCountries("CountryCodesFullList").futureValue mustEqual expectedResult
+        connector.getCountries("CountryCodesFullList").futureValue.toNonEmptyList.toList mustEqual expectedResult
       }
 
       "must return an exception when an error response is returned" in {
@@ -303,12 +297,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(countriesResponseJson("CountryWithoutZip")))
         )
 
-        val expectedResult = NonEmptySet.of(
-          CountryCode("GB"),
-          CountryCode("AD")
+        val expectedResult = List(
+          CountryCode("AD"),
+          CountryCode("GB")
         )
 
-        connector.getCountriesWithoutZip().futureValue mustEqual expectedResult
+        connector.getCountriesWithoutZip().futureValue.toNonEmptyList.toList mustEqual expectedResult
       }
 
       "must return an exception when an error response is returned" in {
@@ -345,12 +339,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(specificCircumstanceIndicatorsResponseJson))
         )
 
-        val expectedResult = NonEmptySet.of(
+        val expectedResult = List(
           SpecificCircumstanceIndicator("SCI1", "testName1"),
           SpecificCircumstanceIndicator("SCI2", "testName2")
         )
 
-        connector.getSpecificCircumstanceIndicators().futureValue mustEqual expectedResult
+        connector.getSpecificCircumstanceIndicators().futureValue.toNonEmptyList.toList mustEqual expectedResult
       }
 
       "must return an exception when an error response is returned" in {
