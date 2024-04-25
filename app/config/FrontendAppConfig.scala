@@ -68,6 +68,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   def signOutUrl(lrn: LocalReferenceNumber): String = s"$departureHubUrl/$lrn/delete-lock"
 
+  def sessionExpiredUrl(lrn: LocalReferenceNumber): String = s"$departureHubUrl/this-service-has-been-reset/$lrn"
+
   lazy val maxOfficesOfExit: Int      = configuration.get[Int]("limits.maxOfficesOfExit")
   lazy val maxCountriesOfRouting: Int = configuration.get[Int]("limits.maxCountriesOfRouting")
   lazy val maxOfficesOfTransit: Int   = configuration.get[Int]("limits.maxOfficesOfTransit")
