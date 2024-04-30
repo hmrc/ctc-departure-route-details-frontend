@@ -18,7 +18,7 @@ Run accessibility linter tests:
 
 To toggle between the Phase 5 transition and post-transition modes we have defined two separate modules, each with their own set of class bindings to handle the rules associated with these two periods.
 
-#### For Transition
+#### Transition
 <pre>
 sm2 --start CTC_TRADERS_P5_ACCEPTANCE_TRANSITION
 sm2 --stop CTC_DEPARTURE_ROUTE_DETAILS_FRONTEND_TRANSITION
