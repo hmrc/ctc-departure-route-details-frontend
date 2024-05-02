@@ -141,7 +141,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -155,7 +155,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl()
     }
   }
 }

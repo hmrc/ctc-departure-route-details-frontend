@@ -17,23 +17,34 @@
 package controllers.actions
 
 import config.FrontendAppConfig
+import models.LocalReferenceNumber
 import models.requests._
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
+import repositories.SessionRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DataRequiredActionImpl @Inject() (config: FrontendAppConfig)(implicit val executionContext: ExecutionContext) extends DataRequiredAction {
+class DataRequiredActionImpl @Inject() (config: FrontendAppConfig, sessionRepository: SessionRepository)(implicit val executionContext: ExecutionContext) extends DataRequiredAction {
 
   override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-    request.userAnswers match {
-      case None =>
-        Future.successful(Left(Redirect(config.sessionExpiredUrl)))
-      case Some(data) =>
-        Future.successful(Right(DataRequest(request.request, request.eoriNumber, data)))
-    }
+
 }
 
-trait DataRequiredAction extends ActionRefiner[OptionalDataRequest, DataRequest]
+trait DataRequiredAction extends ActionRefiner[OptionalDataRequest, DataRequest]{
+
+  def apply(lrn: LocalReferenceNumber): ActionRefiner[OptionalDataRequest, DataRequest]
+}
+
+class DataRequiredAction @Inject() (config: FrontendAppConfig, sessionRepository: SessionRepository) extends DataRequiredAction {
+  override def apply(lrn: LocalReferenceNumber): ActionRefiner[OptionalDataRequest, DataRequest] =
+    new DataRequiredAction(lrn, sessionRepository)
+  override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = request.userAnswers match {
+    case None =>
+      Future.successful(Left(Redirect(config.sessionExpiredUrl())))
+    case Some(data) =>
+      Future.successful(Right(DataRequest(request.request, request.eoriNumber, data)))
+  }
+}

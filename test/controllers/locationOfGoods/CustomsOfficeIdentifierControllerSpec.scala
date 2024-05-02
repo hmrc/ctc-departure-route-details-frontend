@@ -142,7 +142,7 @@ class CustomsOfficeIdentifierControllerSpec extends SpecBase with AppWithDefault
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -156,7 +156,7 @@ class CustomsOfficeIdentifierControllerSpec extends SpecBase with AppWithDefault
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl()
     }
   }
 }
