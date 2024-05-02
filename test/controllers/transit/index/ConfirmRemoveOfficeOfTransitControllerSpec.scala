@@ -158,7 +158,7 @@ class ConfirmRemoveOfficeOfTransitControllerSpec extends SpecBase with AppWithDe
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl()
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
 
     "must redirect to add another for a GET if no existing data is found at given index" in {
@@ -187,7 +187,7 @@ class ConfirmRemoveOfficeOfTransitControllerSpec extends SpecBase with AppWithDe
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl()
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
 
     "must redirect to add another for a POST if no existing data is found at given index" in {
