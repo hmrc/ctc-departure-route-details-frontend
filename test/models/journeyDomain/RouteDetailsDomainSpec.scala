@@ -150,6 +150,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                   ).run(answers)
 
                   result.value.value mustBe defined
+                  result.value.pages.head mustBe AddCustomsOfficeOfExitYesNoPage
               }
             }
           }
