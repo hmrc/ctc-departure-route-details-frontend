@@ -75,9 +75,9 @@ object RouteDetailsDomain {
   implicit val exitReader: Read[Option[ExitDomain]] =
     (
       SecurityDetailsTypePage.reader,
-      OfficesOfTransitSection.atLeastOneOfficeOfTransitIsInCL147
+      OfficesOfTransitSection.atLeastOneOfficeOfTransitIsNotInCL147
     ).to {
-      case (ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails, false) =>
+      case (ExitSummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails, true) =>
         AddCustomsOfficeOfExitYesNoPage.filterOptionalDependent(identity)(ExitDomain.userAnswersReader(_))
       case _ =>
         UserAnswersReader.none

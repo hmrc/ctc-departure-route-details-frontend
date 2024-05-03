@@ -114,28 +114,13 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
         "when security is in set {2,3}" - {
           val security = Gen.oneOf(ExitSummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
 
-          "and at least one office of transit in CL147" in {
-
-            val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, security)
-              .setValue(OfficeOfTransitInCL147Page(Index(0)), false)
-              .setValue(OfficeOfTransitInCL147Page(Index(1)), true)
-
-            val result = UserAnswersReader[Option[ExitDomain]](
-              RouteDetailsDomain.exitReader.apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value must not be defined
-            result.value.pages mustBe Nil
-          }
-
-          "and no offices of transit in CL147" - {
+          "and at least one office of transit not in CL147" - {
             "and not adding offices of exit" in {
 
               val userAnswers = emptyUserAnswers
                 .setValue(SecurityDetailsTypePage, security)
                 .setValue(OfficeOfTransitInCL147Page(Index(0)), false)
-                .setValue(OfficeOfTransitInCL147Page(Index(1)), false)
+                .setValue(OfficeOfTransitInCL147Page(Index(1)), true)
                 .setValue(AddCustomsOfficeOfExitYesNoPage, false)
 
               val result = UserAnswersReader[Option[ExitDomain]](
@@ -168,6 +153,21 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               }
             }
           }
+
+          "and all offices of transit in CL147" in {
+
+            val userAnswers = emptyUserAnswers
+              .setValue(SecurityDetailsTypePage, security)
+              .setValue(OfficeOfTransitInCL147Page(Index(0)), true)
+              .setValue(OfficeOfTransitInCL147Page(Index(1)), true)
+
+            val result = UserAnswersReader[Option[ExitDomain]](
+              RouteDetailsDomain.exitReader.apply(Nil)
+            ).run(userAnswers)
+
+            result.value.value must not be defined
+            result.value.pages mustBe Nil
+          }
         }
 
         "when security is not in set {2,3}" in {
@@ -190,6 +190,23 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
     "cannot be parsed from user answers" - {
       "when security is in set {2,3}" - {
         val security = Gen.oneOf(ExitSummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
+
+        "and at least one office of transit not in CL147" in {
+
+          val userAnswers = emptyUserAnswers
+            .setValue(SecurityDetailsTypePage, security)
+            .setValue(OfficeOfTransitInCL147Page(Index(0)), false)
+            .setValue(OfficeOfTransitInCL147Page(Index(1)), true)
+
+          val result = UserAnswersReader[Option[ExitDomain]](
+            RouteDetailsDomain.exitReader.apply(Nil)
+          ).run(userAnswers)
+
+          result.left.value.page mustBe AddCustomsOfficeOfExitYesNoPage
+          result.left.value.pages mustBe Seq(
+            AddCustomsOfficeOfExitYesNoPage
+          )
+        }
 
         "and no offices of transit in CL147" in {
 
