@@ -54,7 +54,7 @@ class CustomsOfficeIdentifierController @Inject() (
     .async {
       implicit request =>
         val office = request.arg
-        customsOfficesService.getCustomsOfficesOfDepartureForCountry(office.countryCode).map {
+        customsOfficesService.getCustomsOfficesOfDepartureForCountry(office.countryId).map {
           customsOfficeList =>
             val form = formProvider("locationOfGoods.customsOfficeIdentifier", customsOfficeList)
             val preparedForm = request.userAnswers.get(CustomsOfficeIdentifierPage) match {
@@ -72,7 +72,7 @@ class CustomsOfficeIdentifierController @Inject() (
     .async {
       implicit request =>
         val office = request.arg
-        customsOfficesService.getCustomsOfficesOfDepartureForCountry(office.countryCode).flatMap {
+        customsOfficesService.getCustomsOfficesOfDepartureForCountry(office.countryId).flatMap {
           customsOfficeList =>
             val form = formProvider("locationOfGoods.customsOfficeIdentifier", customsOfficeList)
             form

@@ -193,7 +193,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
 
     "must redirect to the next page when valid data is submitted" in {
       val country       = Country(CountryCode("FR"), "France")
-      val customsOffice = CustomsOffice("FR123", "name", None)
+      val customsOffice = CustomsOffice("FR123", "name", None, "FR")
 
       when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
         .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))
@@ -230,6 +230,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
           |          "officeOfTransit" : {
           |            "id" : "${customsOffice.id}",
           |            "name" : "${customsOffice.name}",
+          |            "countryId" : "FR",
           |            "isInCL147" : true,
           |            "isInCL010" : true
           |          }

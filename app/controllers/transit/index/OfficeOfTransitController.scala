@@ -88,9 +88,9 @@ class OfficeOfTransitController @Inject() (
                 value =>
                   for {
                     customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
-                    isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.countryCode)
+                    isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.countryId)
                     communityCountries <- countriesService.getCommunityCountries().map(_.values)
-                    isInCL010 = communityCountries.map(_.code.code).contains(value.countryCode)
+                    isInCL010 = communityCountries.map(_.code.code).contains(value.countryId)
                     result <- {
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                       OfficeOfTransitPage(index)

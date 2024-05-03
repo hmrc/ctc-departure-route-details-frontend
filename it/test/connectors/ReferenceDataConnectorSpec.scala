@@ -18,7 +18,6 @@ package connectors
 
 import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import itbase.{ItSpecBase, WireMockServerHandler}
 import models.reference._
@@ -194,11 +193,6 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       |}
       |""".stripMargin
 
-  def queryParams(role: String): Seq[(String, StringValuePattern)] = Seq(
-    "data.countryId"  -> equalTo("GB"),
-    "data.roles.role" -> equalTo(role)
-  )
-
   "Reference Data" - {
 
     "getTypeOfLocation" - {
@@ -246,8 +240,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         )
 
         val expectedResult = NonEmptySet.of(
-          CustomsOffice("GB1", "testName1", None),
-          CustomsOffice("GB2", "testName2", None)
+          CustomsOffice("GB1", "testName1", None, "GB"),
+          CustomsOffice("GB2", "testName2", None, "GB")
         )
 
         connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue mustBe expectedResult
@@ -282,8 +276,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         )
 
         val expectedResult = NonEmptySet.of(
-          Country(CountryCode("GB"), "United Kingdom"),
-          Country(CountryCode("AD"), "Andorra")
+          Country(CountryCode("AD"), "Andorra"),
+          Country(CountryCode("GB"), "United Kingdom")
         )
 
         connector.getCountries("CountryCodesFullList").futureValue mustEqual expectedResult
@@ -304,8 +298,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         )
 
         val expectedResult = NonEmptySet.of(
-          CountryCode("GB"),
-          CountryCode("AD")
+          CountryCode("AD"),
+          CountryCode("GB")
         )
 
         connector.getCountriesWithoutZip().futureValue mustEqual expectedResult
