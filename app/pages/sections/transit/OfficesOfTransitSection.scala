@@ -17,8 +17,10 @@
 package pages.sections.transit
 
 import controllers.transit.routes
-import models.{Mode, UserAnswers}
+import models.journeyDomain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, Read, ReaderSuccess, UserAnswersReader}
+import models.{Index, Mode, UserAnswers}
 import pages.sections.Section
+import pages.transit.index.OfficeOfTransitInCL147Page
 import play.api.libs.json.{JsArray, JsPath}
 import play.api.mvc.Call
 
@@ -30,4 +32,23 @@ case object OfficesOfTransitSection extends Section[JsArray] {
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.AddAnotherOfficeOfTransitController.onPageLoad(userAnswers.lrn, mode))
+
+  def atLeastOneOfficeOfTransitIsNotInCL147: Read[Boolean] =
+    this.arrayReader.apply(_).map(_.to(_.value.length)).flatMap {
+      case ReaderSuccess(numberOfOfficesOfTransit, pages) =>
+        (0 until numberOfOfficesOfTransit)
+          .foldLeft(UserAnswersReader.success(false)) {
+            (acc, index) =>
+              (
+                acc,
+                OfficeOfTransitInCL147Page(Index(index)).reader
+              ).to {
+                case (areAnyOfficesOfTransitNotInCL147, isThisOfficeOfTransitInCL147) =>
+                  pages =>
+                    val result = areAnyOfficesOfTransitNotInCL147 || !isThisOfficeOfTransitInCL147
+                    ReaderSuccess(result, pages).toUserAnswersReader
+              }
+          }
+          .apply(pages)
+    }
 }

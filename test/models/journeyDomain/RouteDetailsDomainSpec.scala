@@ -21,12 +21,11 @@ import config.Constants.DeclarationType._
 import config.Constants.SecurityType._
 import config.PhaseConfig
 import generators.Generators
-import models.Phase
-import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.transit.TransitDomain
-import models.reference.{Country, CustomsOffice, SpecificCircumstanceIndicator}
+import models.reference.{CustomsOffice, SpecificCircumstanceIndicator}
+import models.{Index, Phase}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -34,8 +33,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.external._
 import pages.locationOfGoods.AddLocationOfGoodsPage
-import pages.routing.BindingItineraryPage
-import pages.routing.index.{CountryOfRoutingInCL147Page, CountryOfRoutingPage}
+import pages.transit.index.OfficeOfTransitInCL147Page
 import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 
 class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -113,125 +111,119 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
 
     "exitReader" - {
       "can be parsed from UserAnswers" - {
-        "when TIR declaration type" in {
+        "when security is in set {2,3}" - {
+          val security = Gen.oneOf(ExitSummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
 
-          forAll(arbitrary[String](arbitrarySomeSecurityDetailsType)) {
-            security =>
+          "and at least one office of transit not in CL147" - {
+            "and not adding offices of exit" in {
+
               val userAnswers = emptyUserAnswers
-                .setValue(DeclarationTypePage, TIR)
                 .setValue(SecurityDetailsTypePage, security)
+                .setValue(OfficeOfTransitInCL147Page(Index(0)), false)
+                .setValue(OfficeOfTransitInCL147Page(Index(1)), true)
+                .setValue(AddCustomsOfficeOfExitYesNoPage, false)
 
               val result = UserAnswersReader[Option[ExitDomain]](
-                RouteDetailsDomain.exitReader(None).apply(Nil)
+                RouteDetailsDomain.exitReader.apply(Nil)
               ).run(userAnswers)
 
               result.value.value must not be defined
+              result.value.pages mustBe Seq(
+                AddCustomsOfficeOfExitYesNoPage
+              )
+            }
+
+            "and adding offices of exit" in {
+
+              val initialAnswers = emptyUserAnswers
+                .setValue(SecurityDetailsTypePage, security)
+                .setValue(OfficeOfTransitInCL147Page(Index(0)), false)
+                .setValue(OfficeOfTransitInCL147Page(Index(1)), false)
+                .setValue(AddCustomsOfficeOfExitYesNoPage, true)
+
+              forAll(
+                arbitraryOfficeOfExitAnswers(initialAnswers, index)
+              ) {
+                answers =>
+                  val result = UserAnswersReader[Option[ExitDomain]](
+                    RouteDetailsDomain.exitReader.apply(Nil)
+                  ).run(answers)
+
+                  result.value.value mustBe defined
+                  result.value.pages.head mustBe AddCustomsOfficeOfExitYesNoPage
+              }
+            }
           }
-        }
 
-        "when not a TIR declaration type" - {
-          val declarationType = arbitrary[String](arbitraryNonTIRDeclarationType).sample.value
-
-          "and security is in set {0,1}" in {
-            val security = Gen.oneOf(NoSecurityDetails, EntrySummaryDeclarationSecurityDetails).sample.value
+          "and all offices of transit in CL147" in {
 
             val userAnswers = emptyUserAnswers
-              .setValue(DeclarationTypePage, declarationType)
               .setValue(SecurityDetailsTypePage, security)
+              .setValue(OfficeOfTransitInCL147Page(Index(0)), true)
+              .setValue(OfficeOfTransitInCL147Page(Index(1)), true)
 
             val result = UserAnswersReader[Option[ExitDomain]](
-              RouteDetailsDomain.exitReader(None).apply(Nil)
+              RouteDetailsDomain.exitReader.apply(Nil)
             ).run(userAnswers)
 
             result.value.value must not be defined
             result.value.pages mustBe Nil
           }
+        }
 
-          "and security is not in set {0,1}" - {
-            val security = Gen.oneOf(ExitSummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
+        "when security is not in set {2,3}" in {
 
-            "at least one of the countries of routing is in set CL147 and office of transit is populated" - {
-              "and office of transit answers have been provided and add office of exit is false" in {
-                val answers = emptyUserAnswers
-                  .setValue(DeclarationTypePage, declarationType)
-                  .setValue(SecurityDetailsTypePage, security)
-                  .setValue(BindingItineraryPage, true)
-                  .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
-                  .setValue(CountryOfRoutingInCL147Page(index), true)
-                  .setValue(AddCustomsOfficeOfExitYesNoPage, false)
+          val security = Gen.oneOf(NoSecurityDetails, EntrySummaryDeclarationSecurityDetails).sample.value
 
-                forAll(arbitrary[Option[TransitDomain]](arbitraryPopulatedTransitDomain)) {
-                  transit =>
-                    val result = UserAnswersReader[Option[ExitDomain]](
-                      RouteDetailsDomain.exitReader(transit).apply(Nil)
-                    ).run(answers)
+          val userAnswers = emptyUserAnswers
+            .setValue(SecurityDetailsTypePage, security)
 
-                    result.value.value must not be defined
-                }
-              }
+          val result = UserAnswersReader[Option[ExitDomain]](
+            RouteDetailsDomain.exitReader.apply(Nil)
+          ).run(userAnswers)
 
-              "and office of transit answers have been provided and add office of exit is true" in {
-                val initialAnswers = emptyUserAnswers
-                  .setValue(DeclarationTypePage, declarationType)
-                  .setValue(SecurityDetailsTypePage, security)
-                  .setValue(BindingItineraryPage, true)
-                  .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
-                  .setValue(CountryOfRoutingInCL147Page(index), true)
-                  .setValue(AddCustomsOfficeOfExitYesNoPage, true)
+          result.value.value must not be defined
+          result.value.pages mustBe Nil
+        }
+      }
+    }
 
-                forAll(
-                  arbitraryOfficeOfExitAnswers(initialAnswers, index),
-                  arbitrary[Option[TransitDomain]](arbitraryEmptyTransitDomain)
-                ) {
-                  (answers, transit) =>
-                    val result = UserAnswersReader[Option[ExitDomain]](
-                      RouteDetailsDomain.exitReader(transit).apply(Nil)
-                    ).run(answers)
+    "cannot be parsed from user answers" - {
+      "when security is in set {2,3}" - {
+        val security = Gen.oneOf(ExitSummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
 
-                    result.value.value mustBe defined
-                }
-              }
+        "and at least one office of transit not in CL147" in {
 
-              "and office of transit answers have not been provided" in {
-                val initialAnswers = emptyUserAnswers
-                  .setValue(DeclarationTypePage, declarationType)
-                  .setValue(SecurityDetailsTypePage, security)
-                  .setValue(BindingItineraryPage, true)
-                  .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
-                  .setValue(CountryOfRoutingInCL147Page(index), true)
+          val userAnswers = emptyUserAnswers
+            .setValue(SecurityDetailsTypePage, security)
+            .setValue(OfficeOfTransitInCL147Page(Index(0)), false)
+            .setValue(OfficeOfTransitInCL147Page(Index(1)), true)
 
-                forAll(
-                  arbitraryOfficeOfExitAnswers(initialAnswers, index),
-                  arbitrary[Option[TransitDomain]](arbitraryEmptyTransitDomain)
-                ) {
-                  (answers, transit) =>
-                    val result = UserAnswersReader[Option[ExitDomain]](
-                      RouteDetailsDomain.exitReader(transit).apply(Nil)
-                    ).run(answers)
+          val result = UserAnswersReader[Option[ExitDomain]](
+            RouteDetailsDomain.exitReader.apply(Nil)
+          ).run(userAnswers)
 
-                    result.value.value mustBe defined
-                }
-              }
-            }
+          result.left.value.page mustBe AddCustomsOfficeOfExitYesNoPage
+          result.left.value.pages mustBe Seq(
+            AddCustomsOfficeOfExitYesNoPage
+          )
+        }
 
-            "and no countries are in set CL147" in {
-              val initialAnswers = emptyUserAnswers
-                .setValue(DeclarationTypePage, declarationType)
-                .setValue(SecurityDetailsTypePage, security)
-                .setValue(BindingItineraryPage, true)
-                .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
-                .setValue(CountryOfRoutingInCL147Page(index), false)
+        "and no offices of transit in CL147" in {
 
-              forAll(arbitraryOfficeOfExitAnswers(initialAnswers, index)) {
-                answers =>
-                  val result = UserAnswersReader[Option[ExitDomain]](
-                    RouteDetailsDomain.exitReader(None).apply(Nil)
-                  ).run(answers)
+          val userAnswers = emptyUserAnswers
+            .setValue(SecurityDetailsTypePage, security)
+            .setValue(OfficeOfTransitInCL147Page(Index(0)), false)
+            .setValue(OfficeOfTransitInCL147Page(Index(1)), false)
 
-                  result.value.value mustBe defined
-              }
-            }
-          }
+          val result = UserAnswersReader[Option[ExitDomain]](
+            RouteDetailsDomain.exitReader.apply(Nil)
+          ).run(userAnswers)
+
+          result.left.value.page mustBe AddCustomsOfficeOfExitYesNoPage
+          result.left.value.pages mustBe Seq(
+            AddCustomsOfficeOfExitYesNoPage
+          )
         }
       }
     }
