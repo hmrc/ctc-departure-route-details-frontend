@@ -144,7 +144,7 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
       }
 
       "when country not found at index" in {
@@ -172,7 +172,7 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+        redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
       }
 
       "when country not found at index" in {
