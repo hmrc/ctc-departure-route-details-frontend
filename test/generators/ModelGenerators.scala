@@ -20,6 +20,7 @@ import config.Constants.LocationOfGoodsIdentifier._
 import config.Constants.SpecificCircumstanceIndicator._
 import models.AddressLine.{Country => _}
 import models.LockCheck.{LockCheckFailure, Locked, Unlocked}
+import models.ProcedureType.{Normal, Simplified}
 import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
 import models.reference._
 import models.{PostalCodeAddress, _}
@@ -255,5 +256,10 @@ trait ModelGenerators {
   implicit lazy val arbitraryLockCheck: Arbitrary[LockCheck] =
     Arbitrary {
       Gen.oneOf(Locked, Unlocked, LockCheckFailure)
+    }
+
+  implicit lazy val arbitraryProcedureType: Arbitrary[ProcedureType] =
+    Arbitrary {
+      Gen.oneOf(Normal, Simplified)
     }
 }
