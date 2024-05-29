@@ -46,7 +46,7 @@ class UnLocodeViewSpec extends InputTextViewBehaviours[String] {
 
   behave like pageWithInputText(Some(InputSize.Width20))
 
-  behave like pageWithHint("This is a 5-character code used to identify a transit-related location, like DEBER.")
+  behave like pageWithHint("Enter the code, like GBBRS or GBMNC.")
 
   behave like pageWithSubmitButton("Save and continue")
 }
