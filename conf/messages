@@ -91,7 +91,7 @@ routing.officeOfDestination.error.required = Enter the office of destination
 
 routing.bindingItinerary.title = Are you using a binding itinerary?
 routing.bindingItinerary.heading = Are you using a binding itinerary?
-routing.bindingItinerary.paragraph = This diverts the route around countries that represent a higher risk to the goods in transit.
+routing.bindingItinerary.paragraph = This means diversions are not permitted on the route between the office of departure and the office of destination.
 routing.bindingItinerary.checkYourAnswersLabel = Are you using a binding itinerary?
 routing.bindingItinerary.error.required = Select yes if you are using a binding itinerary
 routing.bindingItinerary.change.hidden = if you are using a binding itinerary
