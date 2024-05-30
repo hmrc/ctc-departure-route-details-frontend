@@ -75,7 +75,7 @@ class ConfirmRemoveOfficeOfTransitControllerSpec extends SpecBase with AppWithDe
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(form, lrn, mode, index, viewModel)(request, messages).toString
+            view(form, lrn, mode, index, viewModel, viewModel.officeName)(request, messages).toString
       }
     }
 
@@ -145,7 +145,7 @@ class ConfirmRemoveOfficeOfTransitControllerSpec extends SpecBase with AppWithDe
           val content = contentAsString(result)
 
           content mustEqual
-            view(boundForm, lrn, mode, index, viewModel)(request, messages).toString
+            view(boundForm, lrn, mode, index, viewModel, viewModel.officeName)(request, messages).toString
       }
     }
 

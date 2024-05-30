@@ -57,7 +57,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
     .requireIndex(lrn, OfficeOfExitSection(index), addAnother(lrn, mode)) {
       implicit request =>
         val viewModel = viewModelProvider.apply(request.userAnswers, index)
-        Ok(view(form(viewModel), lrn, index, mode, viewModel))
+        Ok(view(form(viewModel), lrn, index, mode, viewModel, viewModel.officeName))
     }
 
   def onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions
@@ -68,7 +68,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
         form(viewModel)
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, index, mode, viewModel))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, index, mode, viewModel, viewModel.officeName))),
             {
               case true =>
                 OfficeOfExitSection(index)

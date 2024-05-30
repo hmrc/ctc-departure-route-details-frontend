@@ -76,7 +76,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
             status(result) mustEqual OK
 
             contentAsString(result) mustEqual
-              view(form, lrn, index, mode, viewModel)(request, messages).toString
+              view(form, lrn, index, mode, viewModel, viewModel.officeName)(request, messages).toString
         }
       }
     }
@@ -148,7 +148,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
             val content = contentAsString(result)
 
             content mustEqual
-              view(boundForm, lrn, index, mode, viewModel)(request, messages).toString
+              view(boundForm, lrn, index, mode, viewModel, viewModel.officeName)(request, messages).toString
         }
       }
     }

@@ -29,14 +29,11 @@ case class RemoveOfficeOfExitViewModel(officeOfExit: Option[CustomsOffice]) {
 
   def heading(implicit messages: Messages): String = messages(s"$prefix.heading", args: _*)
 
-  val prefix: String = {
-    val key = "exit.index.confirmRemoveOfficeOfExit"
-    officeOfExit.fold(s"$key.default")(
-      _ => key
-    )
-  }
+  val prefix: String = "exit.index.confirmRemoveOfficeOfExit"
 
   val args: Seq[String] = officeOfExit.map(_.name).toList
+
+  val officeName: String = args.headOption.getOrElse("")
 }
 
 object RemoveOfficeOfExitViewModel {

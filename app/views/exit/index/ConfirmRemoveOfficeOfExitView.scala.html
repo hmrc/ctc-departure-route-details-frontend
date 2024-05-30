@@ -18,17 +18,18 @@
 @import models.LocalReferenceNumber
 @import viewModels.components.InputYesNoViewModel._
 @import viewModels.exit.RemoveOfficeOfExitViewModel
-@import views.html.components.{Button, ErrorSummary, InputYesNo}
+@import views.html.components.{Button, ErrorSummary, InputYesNo, InsetText}
 
 @this(
     mainTemplate: MainTemplate,
     formHelper: FormWithCSRF,
     inputYesNo: InputYesNo,
     errorSummary: ErrorSummary,
+    inset: InsetText,
     button: Button
 )
 
-@(form: Form[Boolean], lrn: LocalReferenceNumber, index: Index, mode: Mode, viewModel: RemoveOfficeOfExitViewModel)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: LocalReferenceNumber, index: Index, mode: Mode, viewModel: RemoveOfficeOfExitViewModel, insetText: String)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,
@@ -42,9 +43,10 @@
 
         @inputYesNo(
             field = form("value"),
-            yesNoType = OrdinaryYesNo(
+            yesNoType = YesNoWithAdditionalHtml(
                 heading = viewModel.heading,
-                caption = Some(messages("exit.caption"))
+                caption = Some(messages("exit.caption")),
+                additionalHtml = inset(insetText)
             )
         )
 
