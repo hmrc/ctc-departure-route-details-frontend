@@ -393,7 +393,7 @@ locationOfGoods.addContactLocationOfGoods.error.required = Select yes if you wan
 
 locationOfGoods.checkYourAnswers.title = Check your answers - Location of goods
 locationOfGoods.checkYourAnswers.heading = Check your answers
-locationOfGoods.checkYourAnswers.subHeading = Location of goods
+locationOfGoods.checkYourAnswers.subHeading = Route details - Location of goods
 
 # Route details - Location of goods - Contact
 
