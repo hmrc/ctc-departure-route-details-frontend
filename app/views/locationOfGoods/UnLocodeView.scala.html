@@ -44,9 +44,10 @@
 
         @inputText(
           field = form("value"),
-          inputTextType = OrdinaryTextInput(
+          inputTextType = TextInputWithHiddenLabel(
             heading = messages("locationOfGoods.unLocode.heading"),
-            caption = Some(messages("locationOfGoods.caption"))
+            caption = Some(messages("locationOfGoods.caption")),
+            additionalHtml = messages("locationOfGoods.unLocode.paragraph").toParagraph
           ),
           hint = Some(messages("locationOfGoods.unLocode.hint")),
           inputType = "text",
