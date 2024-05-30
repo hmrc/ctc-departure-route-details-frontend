@@ -73,8 +73,7 @@ class UnLocodeFormProviderSpec extends StringFieldBehaviours with Generators {
     )
 
     "must convert string to uppercase" in {
-      val value = Gen.alphaNumStr.sample.value.toLowerCase.take(exactLoCodeLength)
-
+      val value                = stringsWithExactLength(exactLoCodeLength).sample.value
       val result: Form[String] = form.bind(Map(fieldName -> value))
       result.value.get mustBe value.toUpperCase
       result.errors mustEqual Nil
