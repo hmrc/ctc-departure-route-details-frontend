@@ -18,7 +18,7 @@ package generators
 
 import config.Constants.AdditionalDeclarationType._
 import models.reference._
-import models.{Coordinates, DateTime, DynamicAddress, PostalCodeAddress}
+import models.{Coordinates, DateTime, DynamicAddress, PostalCodeAddress, ProcedureType}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
@@ -43,6 +43,7 @@ trait UserAnswersEntryGenerators {
     import pages.external._
     {
       case AdditionalDeclarationTypePage => Gen.oneOf(Standard, PreLodge).map(JsString)
+      case ProcedureTypePage             => arbitrary[ProcedureType].map(Json.toJson(_))
       case OfficeOfDeparturePage         => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
       case OfficeOfDepartureInCL112Page  => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfDepartureInCL147Page  => arbitrary[Boolean].map(JsBoolean)

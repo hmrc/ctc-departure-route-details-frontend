@@ -25,7 +25,7 @@ import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.{CustomsOffice, SpecificCircumstanceIndicator}
-import models.{Index, Phase}
+import models.{Index, Phase, ProcedureType}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -290,6 +290,41 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             }
           }
         }
+
+        "when transition" - {
+          val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+          when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
+
+          "when simplified procedure" in {
+            val initialAnswers = emptyUserAnswers
+              .setValue(ProcedureTypePage, ProcedureType.Simplified)
+
+            forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
+              answers =>
+                val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                  RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                ).run(answers)
+
+                result.value.value mustBe defined
+                result.value.pages.head must not be AddLocationOfGoodsPage
+            }
+          }
+
+          "when normal procedure" in {
+            val userAnswers = emptyUserAnswers
+              .setValue(ProcedureTypePage, ProcedureType.Normal)
+              .setValue(AddLocationOfGoodsPage, false)
+
+            val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+              RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
+
+            result.value.value must not be defined
+            result.value.pages mustBe Seq(
+              AddLocationOfGoodsPage
+            )
+          }
+        }
       }
 
       "can not be parsed from user answers" - {
@@ -298,9 +333,12 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
           "and add location of goods type yes/no is unanswered" in {
+            val userAnswers = emptyUserAnswers
+              .setValue(ProcedureTypePage, ProcedureType.Normal)
+
             val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
               RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
-            ).run(emptyUserAnswers)
+            ).run(userAnswers)
 
             result.left.value.page mustBe AddLocationOfGoodsPage
             result.left.value.pages mustBe Seq(
