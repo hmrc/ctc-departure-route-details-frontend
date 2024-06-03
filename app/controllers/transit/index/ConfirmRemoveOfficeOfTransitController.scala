@@ -48,7 +48,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
     with I18nSupport {
 
   private def form(viewModel: RemoveOfficeOfTransitViewModel): Form[Boolean] =
-    formProvider(viewModel.prefix, viewModel.args: _*)
+    formProvider(viewModel.prefix)
 
   private def addAnother(lrn: LocalReferenceNumber, mode: Mode): Call =
     transitRoutes.AddAnotherOfficeOfTransitController.onPageLoad(lrn, mode)

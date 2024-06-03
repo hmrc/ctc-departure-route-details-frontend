@@ -41,7 +41,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
   private val viewModel = arbitrary[RemoveOfficeOfExitViewModel].sample.value
 
   private val formProvider = new YesNoFormProvider()
-  private val form         = formProvider(viewModel.prefix, viewModel.args: _*)
+  private val form         = formProvider(viewModel.prefix)
 
   private val mode = NormalMode
 

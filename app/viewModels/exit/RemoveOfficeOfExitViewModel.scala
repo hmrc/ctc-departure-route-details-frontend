@@ -25,15 +25,13 @@ import javax.inject.Inject
 
 case class RemoveOfficeOfExitViewModel(officeOfExit: Option[CustomsOffice]) {
 
-  def title(implicit messages: Messages): String = messages(s"$prefix.title", args: _*)
+  def title(implicit messages: Messages): String = messages(s"$prefix.title")
 
-  def heading(implicit messages: Messages): String = messages(s"$prefix.heading", args: _*)
+  def heading(implicit messages: Messages): String = messages(s"$prefix.heading")
 
   val prefix: String = "exit.index.confirmRemoveOfficeOfExit"
 
-  val args: Seq[String] = officeOfExit.map(_.name).toList
-
-  val officeName: Option[String] = args.headOption
+  val officeName: Option[String] = officeOfExit.map(_.name).toList.headOption
 }
 
 object RemoveOfficeOfExitViewModel {

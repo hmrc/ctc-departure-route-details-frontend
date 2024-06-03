@@ -41,7 +41,7 @@ class ConfirmRemoveOfficeOfTransitControllerSpec extends SpecBase with AppWithDe
   private val viewModel = arbitrary[RemoveOfficeOfTransitViewModel].sample.value
 
   private val formProvider = new YesNoFormProvider()
-  private val form         = formProvider(viewModel.prefix, viewModel.args: _*)
+  private val form         = formProvider(viewModel.prefix)
 
   private val mode = NormalMode
 

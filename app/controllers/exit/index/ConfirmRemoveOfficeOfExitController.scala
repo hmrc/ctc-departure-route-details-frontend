@@ -48,7 +48,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
     with I18nSupport {
 
   private def form(viewModel: RemoveOfficeOfExitViewModel): Form[Boolean] =
-    formProvider(viewModel.prefix, viewModel.args: _*)
+    formProvider(viewModel.prefix)
 
   private def addAnother(lrn: LocalReferenceNumber, mode: Mode): Call =
     exitRoutes.AddAnotherOfficeOfExitController.onPageLoad(lrn, mode)
