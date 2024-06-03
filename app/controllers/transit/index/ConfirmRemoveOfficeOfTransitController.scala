@@ -48,7 +48,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
     with I18nSupport {
 
   private def form(viewModel: RemoveOfficeOfTransitViewModel): Form[Boolean] =
-    formProvider(viewModel.prefix, viewModel.args: _*)
+    formProvider(viewModel.prefix)
 
   private def addAnother(lrn: LocalReferenceNumber, mode: Mode): Call =
     transitRoutes.AddAnotherOfficeOfTransitController.onPageLoad(lrn, mode)
@@ -57,7 +57,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
     .requireIndex(lrn, OfficeOfTransitSection(index), addAnother(lrn, mode)) {
       implicit request =>
         val viewModel = viewModelProvider.apply(request.userAnswers, index)
-        Ok(view(form(viewModel), lrn, mode, index, viewModel))
+        Ok(view(form(viewModel), lrn, mode, index, viewModel, viewModel.officeName))
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions
@@ -68,7 +68,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
         form(viewModel)
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, index, viewModel))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, index, viewModel, viewModel.officeName))),
             {
               case true =>
                 OfficeOfTransitSection(index)

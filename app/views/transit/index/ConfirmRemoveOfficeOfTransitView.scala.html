@@ -16,19 +16,20 @@
 
 @import controllers.transit.index.routes
 @import models.LocalReferenceNumber
-@import viewModels.components.InputYesNoViewModel._
+@import viewModels.components.InputYesNoViewModel
 @import viewModels.transit.RemoveOfficeOfTransitViewModel
-@import views.html.components.{Button, ErrorSummary, InputYesNo}
+@import views.html.components.{Button, ErrorSummary, InputYesNo, InsetText}
 
 @this(
     mainTemplate: MainTemplate,
     formHelper: FormWithCSRF,
     inputYesNo: InputYesNo,
     errorSummary: ErrorSummary,
+    inset: InsetText,
     button: Button
 )
 
-@(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode, index: Index, viewModel: RemoveOfficeOfTransitViewModel)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode, index: Index, viewModel: RemoveOfficeOfTransitViewModel, insetText: Option[String])(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,
@@ -42,9 +43,10 @@
 
         @inputYesNo(
             field = form("value"),
-            yesNoType = OrdinaryYesNo(
+            yesNoType = InputYesNoViewModel(
                 heading = viewModel.heading,
-                caption = Some(messages("transit.caption"))
+                caption = Some(messages("transit.caption")),
+                additionalHtml = insetText.map(inset(_))
             )
         )
 
