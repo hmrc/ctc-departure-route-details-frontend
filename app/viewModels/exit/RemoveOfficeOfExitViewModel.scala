@@ -33,7 +33,7 @@ case class RemoveOfficeOfExitViewModel(officeOfExit: Option[CustomsOffice]) {
 
   val args: Seq[String] = officeOfExit.map(_.name).toList
 
-  val officeName: String = args.headOption.getOrElse("")
+  val officeName: Option[String] = args.headOption
 }
 
 object RemoveOfficeOfExitViewModel {
