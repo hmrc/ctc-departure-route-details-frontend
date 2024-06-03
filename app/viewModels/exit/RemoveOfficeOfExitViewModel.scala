@@ -31,7 +31,7 @@ case class RemoveOfficeOfExitViewModel(officeOfExit: Option[CustomsOffice]) {
 
   val prefix: String = "exit.index.confirmRemoveOfficeOfExit"
 
-  val officeName: Option[String] = officeOfExit.map(_.name).toList.headOption
+  val officeName: Option[String] = officeOfExit.map(_.name)
 }
 
 object RemoveOfficeOfExitViewModel {
