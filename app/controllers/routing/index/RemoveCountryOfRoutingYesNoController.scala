@@ -25,13 +25,16 @@ import models.reference.{Country, CustomsOffice}
 import models.requests.SpecificDataRequestProvider1
 import models.{Index, LocalReferenceNumber, Mode, UserAnswers}
 import pages.QuestionPage
+import pages.exit.index.OfficeOfExitPage
 import pages.routing.index.CountryOfRoutingPage
+import pages.sections.Section
+import pages.sections.exit.{OfficeOfExitSection, OfficesOfExitSection}
 import pages.sections.routing.CountryOfRoutingSection
 import pages.sections.transit.{OfficeOfTransitSection, OfficesOfTransitSection}
 import pages.transit.index.OfficeOfTransitPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsArray, JsObject}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -79,15 +82,15 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, index, request.arg))),
             {
               case true =>
-                val result = for {
+                for {
                   updatedAnswers <- Future.fromTry(
                     request.userAnswers
                       .remove(CountryOfRoutingSection(index))
-                      .flatMap(findAndRemoveOffices(request, _))
+                      .flatMap(findAndRemoveOffices(request, _, OfficesOfTransitSection, OfficeOfTransitPage, OfficeOfTransitSection))
+                      .flatMap(findAndRemoveOffices(request, _, OfficesOfExitSection, OfficeOfExitPage, OfficeOfExitSection))
                   )
                   _ <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(addAnother(lrn, mode))
-                result
 
               case false =>
                 Future.successful(Redirect(addAnother(lrn, mode)))
@@ -96,26 +99,29 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
     }
 
   private def findAndRemoveOffices(request: SpecificDataRequestProvider1[Country]#SpecificDataRequest[AnyContent],
-                                   userAnswers: UserAnswers
+                                   userAnswers: UserAnswers,
+                                   sections: Section[JsArray],
+                                   page: Index => QuestionPage[CustomsOffice],
+                                   section: Index => Section[JsObject]
   ): Try[UserAnswers] = {
 
     case class OfficeWithIndex(office: CustomsOffice, index: Index)
 
-    val officesOfTransitWithIndex: collection.Seq[OfficeWithIndex] = request.userAnswers
-      .get(OfficesOfTransitSection)
+    val officesWithIndex: collection.Seq[OfficeWithIndex] = request.userAnswers
+      .get(sections)
       .map(_.value.zipWithIndex.flatMap {
-        case (_, index) => request.userAnswers.get(OfficeOfTransitPage(Index(index))).map(OfficeWithIndex(_, Index(index)))
+        case (_, index) => request.userAnswers.get(page(Index(index))).map(OfficeWithIndex(_, Index(index)))
       })
       .getOrElse(Seq.empty[OfficeWithIndex])
 
-    val officesOfTransitToDelete: collection.Seq[Index] = officesOfTransitWithIndex.collect {
+    val officesToDelete: collection.Seq[Index] = officesWithIndex.collect {
       case officeWithIndex if officeWithIndex.office.countryId == request.arg.code.code => officeWithIndex.index
     }.reverse
 
-    officesOfTransitToDelete.foldLeft(Try(userAnswers)) {
+    officesToDelete.foldLeft(Try(userAnswers)) {
       case (acc, index) =>
         acc.flatMap {
-          _.remove(OfficeOfTransitSection(index))
+          _.remove(section(index))
         }
     }
   }
