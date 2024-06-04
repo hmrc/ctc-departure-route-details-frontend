@@ -55,10 +55,8 @@ package object controllers {
       ReaderT[EitherType, UserAnswers, Write[A]] {
         userAnswers =>
           userAnswers.remove(page) match {
-            case Success(value) =>
-              Right((page, value))
-            case Failure(exception) =>
-              Left(WriterError(page, Some(s"Failed to remove ${page.path} with exception: ${exception.toString}")))
+            case Success(value)     => Right((page, value))
+            case Failure(exception) => Left(WriterError(page, Some(s"Failed to remove ${page.path} with exception: ${exception.toString}")))
           }
       }
   }
@@ -93,8 +91,7 @@ package object controllers {
       userAnswers: UserAnswers
     )(implicit sessionRepository: SessionRepository, executionContext: ExecutionContext, hc: HeaderCarrier): Future[Write[A]] =
       userAnswersWriter.run(userAnswers) match {
-        case Left(opsError) =>
-          Future.failed(new Exception(s"${opsError.toString}"))
+        case Left(opsError) => Future.failed(new Exception(s"${opsError.toString}"))
         case Right(value) =>
           sessionRepository
             .set(value._2)
