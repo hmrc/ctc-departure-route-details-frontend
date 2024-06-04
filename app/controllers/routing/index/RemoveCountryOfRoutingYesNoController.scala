@@ -79,33 +79,15 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, index, request.arg))),
             {
               case true =>
-                val officesWithIndex = request.userAnswers
-                  .get(OfficesOfTransitSection)
-                  .map(_.value.zipWithIndex.flatMap {
-                    case (_, index) => request.userAnswers.get(OfficeOfTransitPage(Index(index))).map((_, index))
-                  })
-                  .getOrElse(Seq.empty)
-
-                val officesToDelete = officesWithIndex
-                  .filter(_._1.countryId == request.arg.code.code)
-                  .map(
-                    c => Index(c._2)
-                  )
-                  .reverse
-                  .toSeq
-
-                Future
-                  .fromTry(
+                val result = for {
+                  updatedAnswers <- Future.fromTry(
                     request.userAnswers
                       .remove(CountryOfRoutingSection(index))
-                      .flatMap(removeOffices(officesToDelete, _))
+                      .flatMap(findAndRemoveOffices(request, _))
                   )
-                  .flatMap(
-                    userAnswers => sessionRepository.set(userAnswers)
-                  )
-                  .map {
-                    _ => Redirect(addAnother(lrn, mode))
-                  }
+                  _ <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(addAnother(lrn, mode))
+                result
 
               case false =>
                 Future.successful(Redirect(addAnother(lrn, mode)))
@@ -113,11 +95,28 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
           )
     }
 
-  private def removeOffices(officesToDelete: Seq[Index], userAnswers: UserAnswers): Try[UserAnswers] =
-    officesToDelete.foldLeft(Try(userAnswers)) {
+  private def findAndRemoveOffices(request: SpecificDataRequestProvider1[Country]#SpecificDataRequest[AnyContent],
+                                   userAnswers: UserAnswers
+  ): Try[UserAnswers] = {
+
+    case class OfficeWithIndex(office: CustomsOffice, index: Index)
+
+    val officesOfTransitWithIndex: collection.Seq[OfficeWithIndex] = request.userAnswers
+      .get(OfficesOfTransitSection)
+      .map(_.value.zipWithIndex.flatMap {
+        case (_, index) => request.userAnswers.get(OfficeOfTransitPage(Index(index))).map(OfficeWithIndex(_, Index(index)))
+      })
+      .getOrElse(Seq.empty[OfficeWithIndex])
+
+    val officesOfTransitToDelete: collection.Seq[Index] = officesOfTransitWithIndex.collect {
+      case officeWithIndex if officeWithIndex.office.countryId == request.arg.code.code => officeWithIndex.index
+    }.reverse
+
+    officesOfTransitToDelete.foldLeft(Try(userAnswers)) {
       case (acc, index) =>
         acc.flatMap {
           _.remove(OfficeOfTransitSection(index))
         }
     }
+  }
 }
