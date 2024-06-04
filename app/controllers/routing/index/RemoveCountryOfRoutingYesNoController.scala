@@ -107,14 +107,15 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
 
     case class OfficeWithIndex(office: CustomsOffice, index: Index)
 
-    val officesWithIndex: collection.Seq[OfficeWithIndex] = request.userAnswers
+    val officesWithIndex: Seq[OfficeWithIndex] = request.userAnswers
       .get(sections)
       .map(_.value.zipWithIndex.flatMap {
         case (_, index) => request.userAnswers.get(page(Index(index))).map(OfficeWithIndex(_, Index(index)))
       })
       .getOrElse(Seq.empty[OfficeWithIndex])
+      .toSeq
 
-    val officesToDelete: collection.Seq[Index] = officesWithIndex.collect {
+    val officesToDelete: Seq[Index] = officesWithIndex.collect {
       case officeWithIndex if officeWithIndex.office.countryId == request.arg.code.code => officeWithIndex.index
     }.reverse
 
