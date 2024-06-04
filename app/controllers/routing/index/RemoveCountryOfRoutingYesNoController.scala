@@ -86,23 +86,20 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
                   })
                   .getOrElse(Seq.empty)
 
-                val officesToDelete = officesWithIndex.filter(_._1.countryId == request.arg.code.code)
-
-                println("offices to delete", officesToDelete)
-
-                def removeOffices(userAnswers: UserAnswers): Try[UserAnswers] =
-                  officesToDelete.foldLeft(Try(userAnswers)) {
-                    case (acc, (_, index)) =>
-                      println("removingOffices", index)
-                      acc.flatMap {
-                        v =>
-                          println(v.data)
-                          v.remove(OfficeOfTransitSection(Index(index)))
-                      }
-                  }
+                val officesToDelete = officesWithIndex
+                  .filter(_._1.countryId == request.arg.code.code)
+                  .map(
+                    c => Index(c._2)
+                  )
+                  .reverse
+                  .toSeq
 
                 Future
-                  .fromTry(request.userAnswers.remove(CountryOfRoutingSection(index)).flatMap(removeOffices))
+                  .fromTry(
+                    request.userAnswers
+                      .remove(CountryOfRoutingSection(index))
+                      .flatMap(removeOffices(officesToDelete, _))
+                  )
                   .flatMap(
                     userAnswers => sessionRepository.set(userAnswers)
                   )
@@ -114,5 +111,13 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
                 Future.successful(Redirect(addAnother(lrn, mode)))
             }
           )
+    }
+
+  private def removeOffices(officesToDelete: Seq[Index], userAnswers: UserAnswers): Try[UserAnswers] =
+    officesToDelete.foldLeft(Try(userAnswers)) {
+      case (acc, index) =>
+        acc.flatMap {
+          _.remove(OfficeOfTransitSection(index))
+        }
     }
 }

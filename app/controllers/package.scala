@@ -51,21 +51,16 @@ package object controllers {
           }
       )
 
-    def removeFromUserAnswers(): UserAnswersWriter[Write[A]] = {
-
-      println("remove", page)
+    def removeFromUserAnswers(): UserAnswersWriter[Write[A]] =
       ReaderT[EitherType, UserAnswers, Write[A]] {
         userAnswers =>
           userAnswers.remove(page) match {
             case Success(value) =>
-              println("right")
               Right((page, value))
             case Failure(exception) =>
-              println("left", s"Failed to remove ${page.path} with exception: ${exception.toString}")
               Left(WriterError(page, Some(s"Failed to remove ${page.path} with exception: ${exception.toString}")))
           }
       }
-    }
   }
 
   implicit class SettableOpsRunner[A](userAnswersWriter: UserAnswersWriter[Write[A]]) {
@@ -99,10 +94,8 @@ package object controllers {
     )(implicit sessionRepository: SessionRepository, executionContext: ExecutionContext, hc: HeaderCarrier): Future[Write[A]] =
       userAnswersWriter.run(userAnswers) match {
         case Left(opsError) =>
-          println("writeLeft", opsError)
           Future.failed(new Exception(s"${opsError.toString}"))
         case Right(value) =>
-          println("writeRight")
           sessionRepository
             .set(value._2)
             .flatMap {
