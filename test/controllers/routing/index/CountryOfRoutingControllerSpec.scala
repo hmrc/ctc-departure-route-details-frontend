@@ -36,10 +36,9 @@ import scala.concurrent.Future
 
 class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
-  private val country1     = arbitraryCountry.arbitrary.sample.get
-  private val country2     = arbitraryCountry.arbitrary.sample.get
-  private val countryList  = SelectableList(Seq(country1, country2))
-  private val countryList2 = SelectableList(Seq(country2))
+  private val country1    = arbitraryCountry.arbitrary.sample.get
+  private val country2    = arbitraryCountry.arbitrary.sample.get
+  private val countryList = SelectableList(Seq(country1, country2))
 
   private val formProvider = new SelectableFormProvider()
   private val form         = formProvider("routing.index.countryOfRouting", countryList)
@@ -71,9 +70,9 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
         view(form, lrn, countryList.values, mode, index)(request, messages).toString
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered to exclude any given answer from drop down list" in {
+    "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockCountriesService.getFilteredCountries(any())(any())).thenReturn(Future.successful(countryList))
+      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
       val userAnswers = emptyUserAnswers.setValue(CountryOfRoutingPage(index), country1)
       setExistingUserAnswers(userAnswers)
 
@@ -88,9 +87,8 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, countryList2.values, mode, index)(request, messages).toString
+        view(filledForm, lrn, countryList.values, mode, index)(request, messages).toString
     }
-
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
