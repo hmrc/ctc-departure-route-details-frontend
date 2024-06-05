@@ -44,6 +44,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
   private val country2: Country = Country(CountryCode("FR"), "France")
   private val country3: Country = Country(CountryCode("ES"), "Spain")
   private val countries         = NonEmptySet.of(country1, country2, country3)
+  private val filteredCountries = NonEmptySet.of(country2, country3)
 
   override def beforeEach(): Unit = {
     reset(mockRefDataConnector)
@@ -90,6 +91,21 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
         service.getCountries().futureValue mustBe
           SelectableList(Seq(country2, country3, country1))
+
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
+      }
+    }
+
+    "getFilteredCountries" - {
+      "must return a list of sorted countries filtered by already answered country" in {
+
+        when(mockRefDataConnector.getCountries(any())(any(), any()))
+          .thenReturn(Future.successful(countries))
+
+        val userAnswers = emptyUserAnswers.setValue(CountryOfRoutingPage(index), country1)
+
+        service.getFilteredCountries(userAnswers).futureValue mustBe
+          SelectableList(Seq(country2, country3))
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
       }

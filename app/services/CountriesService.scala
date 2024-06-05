@@ -19,9 +19,11 @@ package services
 import config.Constants.DeclarationType.TIR
 import connectors.ReferenceDataConnector
 import models.SelectableList.countriesOfRoutingReads
+import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CountryCode}
-import models.{RichOptionalJsArray, SelectableList, UserAnswers}
+import models.{Index, RichOptionalJsArray, SelectableList, UserAnswers}
 import pages.external.DeclarationTypePage
+import pages.routing.index.CountryOfRoutingPage
 import pages.sections.routing.CountriesOfRoutingSection
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -38,6 +40,17 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
 
   def getCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryCodesFullList")
+
+  def getFilteredCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
+    val countries: Seq[Country] = userAnswers
+      .get(CountriesOfRoutingSection)
+      .map(_.value.zipWithIndex.flatMap {
+        case (_, index) => userAnswers.get(CountryOfRoutingPage(Index(index)))
+      })
+      .getOrElse(Seq.empty[Country])
+      .toSeq
+    getCountries().map(_.filterNot(countries.contains))
+  }
 
   def getTransitCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryCodesCommonTransit")
