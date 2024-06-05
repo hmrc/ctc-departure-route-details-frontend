@@ -26,12 +26,9 @@ import models.requests.DataRequest
 import models.{Index, LocalReferenceNumber, Mode, SelectableList}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
 import pages.QuestionPage
-import pages.sections.routing.CountriesOfRoutingSection
-import pages.sections.transit.{OfficeOfTransitSection, OfficesOfTransitSection}
 import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage}
 import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsArray
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.{CountriesService, CustomsOfficesService}
