@@ -21,7 +21,7 @@ import controllers.routing.{routes => routingRoutes}
 import forms.YesNoFormProvider
 import models.reference.{Country, CustomsOffice}
 import models.requests.SpecificDataRequestProvider1
-import models.{Index, LocalReferenceNumber, Mode, UserAnswers}
+import models.{Index, LocalReferenceNumber, Mode, RichOptionalJsArray, UserAnswers}
 import pages.QuestionPage
 import pages.exit.index.OfficeOfExitPage
 import pages.routing.index.CountryOfRoutingPage
@@ -84,8 +84,8 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
                   updatedAnswers <- Future.fromTry(
                     request.userAnswers
                       .remove(CountryOfRoutingSection(index))
-                      .flatMap(findAndRemoveOffices(_, OfficesOfTransitSection, OfficeOfTransitPage, OfficeOfTransitSection))
-                      .flatMap(findAndRemoveOffices(_, OfficesOfExitSection, OfficeOfExitPage, OfficeOfExitSection))
+                      .flatMap(findAndRemoveOffices(_, OfficesOfTransitSection, OfficeOfTransitSection, OfficeOfTransitPage))
+                      .flatMap(findAndRemoveOffices(_, OfficesOfExitSection, OfficeOfExitSection, OfficeOfExitPage))
                   )
                   _ <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(addAnother(lrn, mode))
@@ -98,30 +98,15 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
 
   private def findAndRemoveOffices(
     userAnswers: UserAnswers,
-    sections: Section[JsArray],
-    page: Index => QuestionPage[CustomsOffice],
-    section: Index => Section[JsObject]
-  )(implicit request: SpecificDataRequestProvider1[Country]#SpecificDataRequest[AnyContent]): Try[UserAnswers] = {
-
-    case class OfficeWithIndex(office: CustomsOffice, index: Index)
-
-    val officesWithIndex: Seq[OfficeWithIndex] = request.userAnswers
-      .get(sections)
-      .map(_.value.zipWithIndex.flatMap {
-        case (_, index) => request.userAnswers.get(page(Index(index))).map(OfficeWithIndex(_, Index(index)))
-      })
-      .getOrElse(Seq.empty[OfficeWithIndex])
-      .toSeq
-
-    val officesToDelete: Seq[Index] = officesWithIndex.collect {
-      case officeWithIndex if officeWithIndex.office.countryId == request.arg.code.code => officeWithIndex.index
-    }
-
-    officesToDelete.foldRight(Try(userAnswers)) {
+    array: Section[JsArray],
+    obj: Index => Section[JsObject],
+    page: Index => QuestionPage[CustomsOffice]
+  )(implicit request: Request): Try[UserAnswers] =
+    (0 until userAnswers.get(array).length).foldRight(Try(userAnswers)) {
       case (index, acc) =>
-        acc.flatMap {
-          _.remove(section(index))
+        userAnswers.get(page(Index(index))) match {
+          case Some(value) if value.countryId == request.arg.code.code => acc.flatMap(_.remove(obj(Index(index))))
+          case _                                                       => acc
         }
     }
-  }
 }
