@@ -24,6 +24,9 @@ import models.reference.Country
 import models.{Index, LocalReferenceNumber, Mode, SelectableList}
 import navigation.{CountryOfRoutingNavigatorProvider, UserAnswersNavigator}
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page, CountryOfRoutingPage}
+import pages.sections.routing.CountriesOfRoutingSection
+import pages.sections.transit.OfficesOfTransitSection
+import pages.transit.index.OfficeOfTransitCountryPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -53,7 +56,15 @@ class CountryOfRoutingController @Inject() (
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      countriesService.getCountries().map {
+      val countries: Seq[Country] = request.userAnswers
+        .get(CountriesOfRoutingSection)
+        .map(_.value.zipWithIndex.flatMap {
+          case (_, index) => request.userAnswers.get(CountryOfRoutingPage(Index(index)))
+        })
+        .getOrElse(Seq.empty[Country])
+        .toSeq
+      val filteredCountries = countriesService.getCountries().map(_.filterNot(countries.contains))
+      filteredCountries.map {
         countryList =>
           val preparedForm = request.userAnswers.get(CountryOfRoutingPage(index)) match {
             case None        => form(countryList)
