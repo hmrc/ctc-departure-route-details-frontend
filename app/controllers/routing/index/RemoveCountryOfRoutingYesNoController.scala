@@ -16,10 +16,8 @@
 
 package controllers.routing.index
 
-import config.PhaseConfig
 import controllers.actions._
 import controllers.routing.{routes => routingRoutes}
-import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
 import models.reference.{Country, CustomsOffice}
 import models.requests.SpecificDataRequestProvider1
@@ -35,7 +33,7 @@ import pages.transit.index.OfficeOfTransitPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsArray, JsObject}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.routing.index.RemoveCountryOfRoutingYesNoView
@@ -52,7 +50,7 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: RemoveCountryOfRoutingYesNoView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -86,8 +84,8 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
                   updatedAnswers <- Future.fromTry(
                     request.userAnswers
                       .remove(CountryOfRoutingSection(index))
-                      .flatMap(findAndRemoveOffices(request, _, OfficesOfTransitSection, OfficeOfTransitPage, OfficeOfTransitSection))
-                      .flatMap(findAndRemoveOffices(request, _, OfficesOfExitSection, OfficeOfExitPage, OfficeOfExitSection))
+                      .flatMap(findAndRemoveOffices(_, OfficesOfTransitSection, OfficeOfTransitPage, OfficeOfTransitSection))
+                      .flatMap(findAndRemoveOffices(_, OfficesOfExitSection, OfficeOfExitPage, OfficeOfExitSection))
                   )
                   _ <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(addAnother(lrn, mode))
@@ -98,12 +96,12 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
           )
     }
 
-  private def findAndRemoveOffices(request: SpecificDataRequestProvider1[Country]#SpecificDataRequest[AnyContent],
-                                   userAnswers: UserAnswers,
-                                   sections: Section[JsArray],
-                                   page: Index => QuestionPage[CustomsOffice],
-                                   section: Index => Section[JsObject]
-  ): Try[UserAnswers] = {
+  private def findAndRemoveOffices(
+    userAnswers: UserAnswers,
+    sections: Section[JsArray],
+    page: Index => QuestionPage[CustomsOffice],
+    section: Index => Section[JsObject]
+  )(implicit request: SpecificDataRequestProvider1[Country]#SpecificDataRequest[AnyContent]): Try[UserAnswers] = {
 
     case class OfficeWithIndex(office: CustomsOffice, index: Index)
 
@@ -117,10 +115,10 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
 
     val officesToDelete: Seq[Index] = officesWithIndex.collect {
       case officeWithIndex if officeWithIndex.office.countryId == request.arg.code.code => officeWithIndex.index
-    }.reverse
+    }
 
-    officesToDelete.foldLeft(Try(userAnswers)) {
-      case (acc, index) =>
+    officesToDelete.foldRight(Try(userAnswers)) {
+      case (index, acc) =>
         acc.flatMap {
           _.remove(section(index))
         }
