@@ -56,7 +56,8 @@ class CountryOfRoutingController @Inject() (
       countriesService.getFilteredCountries(request.userAnswers).map {
         countryList =>
           val preparedForm = request.userAnswers.get(CountryOfRoutingPage(index)) match {
-            case None => form(countryList)
+            case None        => form(countryList)
+            case Some(value) => form(countryList).fill(value)
           }
           Ok(view(preparedForm, lrn, countryList.values, mode, index))
       }

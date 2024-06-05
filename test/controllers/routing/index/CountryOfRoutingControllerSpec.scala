@@ -71,6 +71,26 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
         view(form, lrn, countryList.values, mode, index)(request, messages).toString
     }
 
+    "must populate the view correctly on a GET when the question has previously been answered to exclude any given answer from drop down list" in {
+
+      when(mockCountriesService.getFilteredCountries(any())(any())).thenReturn(Future.successful(countryList))
+      val userAnswers = emptyUserAnswers.setValue(CountryOfRoutingPage(index), country1)
+      setExistingUserAnswers(userAnswers)
+
+      val request = FakeRequest(GET, countryOfRoutingRoute)
+
+      val result = route(app, request).value
+
+      val filledForm = form.bind(Map("value" -> country1.code.code))
+
+      val view = injector.instanceOf[CountryOfRoutingView]
+
+      status(result) mustEqual OK
+
+      contentAsString(result) mustEqual
+        view(filledForm, lrn, countryList2.values, mode, index)(request, messages).toString
+    }
+
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
