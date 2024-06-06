@@ -24,7 +24,7 @@ import services.RichNonEmptySet
 case class SelectableList[T <: Selectable](values: Seq[T]) {
 
   def filterNot(predicate: T => Boolean): SelectableList[T] =
-    SelectableList(values.filterNot(predicate))
+    this.copy(values = values.filterNot(predicate))
 }
 
 object SelectableList {

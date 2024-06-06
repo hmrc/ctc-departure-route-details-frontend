@@ -66,7 +66,7 @@ class CountryOfRoutingController @Inject() (
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      countriesService.getCountries().flatMap {
+      countriesService.getFilteredCountriesOfRouting(request.userAnswers, index).flatMap {
         countryList =>
           form(countryList)
             .bindFromRequest()
