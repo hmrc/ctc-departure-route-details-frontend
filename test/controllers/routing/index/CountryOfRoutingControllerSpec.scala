@@ -55,7 +55,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockCountriesService.getFilteredCountries(any())(any())).thenReturn(Future.successful(countryList))
+      when(mockCountriesService.getFilteredCountriesOfRouting(any(), any())(any())).thenReturn(Future.successful(countryList))
       setExistingUserAnswers(emptyUserAnswers)
 
       val request = FakeRequest(GET, countryOfRoutingRoute)
