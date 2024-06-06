@@ -41,12 +41,11 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
   def getCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryCodesFullList")
 
-  def getFilteredCountriesOfRouting(userAnswers: UserAnswers, indexToKeep: Option[Index])(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
+  def getFilteredCountriesOfRouting(userAnswers: UserAnswers, indexToKeep: Index)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
     val countriesOfRouting = userAnswers.get(CountriesOfRoutingSection).map(_.value).getOrElse(Seq.empty)
-
     val countries: Seq[Country] = countriesOfRouting.zipWithIndex.flatMap {
-      case (_, index) if indexToKeep.exists(_.position == index) => None
-      case (_, index)                                            => userAnswers.get(CountryOfRoutingPage(Index(index)))
+      case (_, index) if indexToKeep.position == index => None
+      case (_, index)                                  => userAnswers.get(CountryOfRoutingPage(Index(index)))
     }.toSeq
 
     getCountries().map(_.filterNot(countries.contains))

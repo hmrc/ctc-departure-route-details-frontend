@@ -103,11 +103,12 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
         val userAnswers = emptyUserAnswers.setValue(CountryOfRoutingPage(index), country1)
 
-        service.getFilteredCountriesOfRouting(userAnswers, Some(index)).futureValue mustBe
+        service.getFilteredCountriesOfRouting(userAnswers, index).futureValue mustBe
           SelectableList(Seq(country2, country3, country1))
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
       }
+
     }
 
     "getTransitCountries" - {
