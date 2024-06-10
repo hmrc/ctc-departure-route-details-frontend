@@ -61,7 +61,7 @@ package object models {
 
   implicit class RichOptionalJsArray(arr: Option[JsArray]) {
 
-    def mapWithIndex[T](f: (JsValue, Index) => Option[T]): Seq[T] =
+    def flatMapWithIndex[T](f: (JsValue, Index) => Option[T]): Seq[T] =
       arr
         .map {
           _.zipWithIndex.flatMap {
