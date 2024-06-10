@@ -18,10 +18,11 @@ package services
 
 import config.Constants.DeclarationType.TIR
 import connectors.ReferenceDataConnector
-import models.SelectableList.countriesOfRoutingReads
-import models.reference.{Country, CountryCode}
-import models.{RichOptionalJsArray, SelectableList, UserAnswers}
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
+import models.reference.Country
+import models.{Index, RichOptionalJsArray, SelectableList, UserAnswers}
 import pages.external.DeclarationTypePage
+import pages.routing.index.{CountryOfRoutingInCL147Page, CountryOfRoutingPage}
 import pages.sections.routing.CountriesOfRoutingSection
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,55 +33,81 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
 
   def getDestinationCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     userAnswers.get(DeclarationTypePage) match {
-      case Some(TIR) => getCommunityCountries()
-      case _         => getTransitCountries()
+      case Some(TIR) => getCountries("CountryCodesCommunity")
+      case _         => getCountries("CountryCodesCommonTransit")
     }
 
   def getCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryCodesFullList")
 
-  def getTransitCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    getCountries("CountryCodesCommonTransit")
-
   def getAddressPostcodeBasedCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryAddressPostcodeBased")
 
-  def getCommunityCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    getCountries("CountryCodesCommunity")
+  def isInCL112(countryId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    isCountryInCodeList("CountryCodesCTC", countryId)
 
-  def getCustomsSecurityAgreementAreaCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    getCountries("CountryCustomsSecurityAgreementArea")
+  def isInCL147(countryId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    isCountryInCodeList("CountryCustomsSecurityAgreementArea", countryId)
 
-  def getCountryCodesCTC()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    getCountries("CountryCodesCTC")
+  def isInCL010(countryId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    isCountryInCodeList("CountryCodesCommunity", countryId)
 
-  def getCountriesWithoutZip()(implicit hc: HeaderCarrier): Future[Seq[CountryCode]] =
-    referenceDataConnector
-      .getCountriesWithoutZip()
-      .map(_.toSeq)
-
-  def getOfficeOfTransitCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads) match {
-      case Some(x) if x.values.nonEmpty => Future.successful(x)
-      case _                            => getCountries()
+  def getOfficeOfTransitCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
+    val numberOfCountriesOfRouting = userAnswers.get(CountriesOfRoutingSection).length
+    (0 until numberOfCountriesOfRouting)
+      .map(Index(_))
+      .flatMap {
+        index => userAnswers.get(CountryOfRoutingPage(index))
+      }
+      .toList match {
+      case Nil => getCountries()
+      case x   => Future.successful(SelectableList(x))
     }
+  }
 
-  def getOfficeOfExitCountries(userAnswers: UserAnswers, countryOfDestination: Country)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads).map(_.values) match {
-      case Some(countries) if countries.nonEmpty =>
-        getCustomsSecurityAgreementAreaCountries()
-          .map(_.values)
-          .map(countries.filterNot(_ == countryOfDestination).intersect(_))
-          .map(SelectableList(_))
-      case _ =>
-        getCountries()
+  def getOfficeOfExitCountries(userAnswers: UserAnswers, countryOfDestination: Country)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
+    val numberOfCountriesOfRouting = userAnswers.get(CountriesOfRoutingSection).length
+    (0 until numberOfCountriesOfRouting)
+      .map(Index(_))
+      .foldLeft(Seq.empty[Country]) {
+        case (acc, index) =>
+          userAnswers.get(CountryOfRoutingInCL147Page(index)) match {
+            case Some(true) =>
+              userAnswers.get(CountryOfRoutingPage(index)) match {
+                case Some(value) if value != countryOfDestination => acc :+ value
+                case _                                            => acc
+              }
+            case _ => acc
+          }
+      }
+      .toList match {
+      case Nil => getCountries()
+      case x   => Future.successful(SelectableList(x))
     }
+  }
 
   private def getCountries(listName: String)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     referenceDataConnector
       .getCountries(listName)
       .map(SelectableList(_))
 
+  private def isCountryInCodeList(listName: String, countryId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    referenceDataConnector
+      .getCountry(listName, countryId)
+      .map {
+        _ => true
+      }
+      .recover {
+        case _: NoReferenceDataFoundException => false
+      }
+
   def doesCountryRequireZip(country: Country)(implicit hc: HeaderCarrier): Future[Boolean] =
-    getCountriesWithoutZip().map(!_.contains(country.code))
+    referenceDataConnector
+      .getCountriesWithoutZipCountry(country.code.code)
+      .map {
+        _ => true
+      }
+      .recover {
+        case _: NoReferenceDataFoundException => false
+      }
 }

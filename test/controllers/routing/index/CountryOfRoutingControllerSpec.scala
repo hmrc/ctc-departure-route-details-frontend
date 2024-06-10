@@ -24,6 +24,8 @@ import navigation.CountryOfRoutingNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.routing.index.CountryOfRoutingPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -34,7 +36,7 @@ import views.html.routing.index.CountryOfRoutingView
 
 import scala.concurrent.Future
 
-class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
+class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators with ScalaCheckPropertyChecks {
 
   private val country1    = arbitraryCountry.arbitrary.sample.get
   private val country2    = arbitraryCountry.arbitrary.sample.get
@@ -91,43 +93,47 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
     }
 
     "must redirect to the next page when valid data is submitted" in {
+      forAll(arbitrary[Boolean], arbitrary[Boolean]) {
+        (isInCL112, isInCL147) =>
+          beforeEach()
 
-      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
-      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(countryList))
-      when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(countryList))
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+          when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
+          when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))
+          when(mockCountriesService.isInCL147(any())(any())).thenReturn(Future.successful(isInCL147))
+          when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
-      setExistingUserAnswers(emptyUserAnswers)
+          setExistingUserAnswers(emptyUserAnswers)
 
-      val request = FakeRequest(POST, countryOfRoutingRoute)
-        .withFormUrlEncodedBody(("value", country1.code.code))
+          val request = FakeRequest(POST, countryOfRoutingRoute)
+            .withFormUrlEncodedBody(("value", country1.code.code))
 
-      val result = route(app, request).value
+          val result = route(app, request).value
 
-      status(result) mustEqual SEE_OTHER
+          status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+          redirectLocation(result).value mustEqual onwardRoute.url
 
-      val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-      verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
-      userAnswersCaptor.getValue.data mustBe Json.parse(s"""
-          |{
-          |  "routeDetails" : {
-          |    "routing" : {
-          |      "countriesOfRouting" : [
-          |        {
-          |          "countryOfRouting" : {
-          |            "code" : "${country1.code.code}",
-          |            "description" : "${country1.description}",
-          |            "isInCL112" : true,
-          |            "isInCL147" : true
-          |          }
-          |        }
-          |      ]
-          |    }
-          |  }
-          |}
-          |""".stripMargin)
+          val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+          userAnswersCaptor.getValue.data mustBe Json.parse(s"""
+               |{
+               |  "routeDetails" : {
+               |    "routing" : {
+               |      "countriesOfRouting" : [
+               |        {
+               |          "countryOfRouting" : {
+               |            "code" : "${country1.code.code}",
+               |            "description" : "${country1.description}",
+               |            "isInCL112" : $isInCL112,
+               |            "isInCL147" : $isInCL147
+               |          }
+               |        }
+               |      ]
+               |    }
+               |  }
+               |}
+               |""".stripMargin)
+      }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {

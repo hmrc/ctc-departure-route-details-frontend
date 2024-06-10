@@ -17,8 +17,6 @@
 package models
 
 import cats.data.NonEmptySet
-import models.reference.Country
-import play.api.libs.json.{JsArray, JsError, JsSuccess, Reads}
 import services.RichNonEmptySet
 
 case class SelectableList[T <: Selectable](values: Seq[T])
@@ -30,16 +28,4 @@ object SelectableList {
 
   def apply[T <: Selectable](nonEmptySet: NonEmptySet[T]): SelectableList[T] =
     apply(nonEmptySet.toSeq)
-
-  val countriesOfRoutingReads: Reads[SelectableList[Country]] = Reads[SelectableList[Country]] {
-    case JsArray(values) =>
-      JsSuccess(
-        SelectableList(
-          values.flatMap {
-            value => (value \ "countryOfRouting").validate[Country].asOpt
-          }.toSeq
-        )
-      )
-    case _ => JsError("SelectableList::countriesOfRoutingReads: Failed to read countries of routing from cache")
-  }
 }

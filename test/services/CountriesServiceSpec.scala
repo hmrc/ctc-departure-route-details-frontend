@@ -20,17 +20,18 @@ import base.SpecBase
 import cats.data.NonEmptySet
 import config.Constants.DeclarationType.TIR
 import connectors.ReferenceDataConnector
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generators.Generators
 import models.reference.{Country, CountryCode}
 import models.{Index, SelectableList}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.Gen
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.external.DeclarationTypePage
-import pages.routing.index.CountryOfRoutingPage
+import pages.routing.index.{CountryOfRoutingInCL147Page, CountryOfRoutingPage}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -95,68 +96,147 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
       }
     }
 
-    "getTransitCountries" - {
-      "must return a list of sorted transit countries" in {
+    "isInCL112" - {
+      "must return true" - {
+        "when connector call returns the country" in {
+          forAll(nonEmptyString, arbitrary[Country]) {
+            (countryId, country) =>
+              beforeEach()
 
-        when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+              when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
+                .thenReturn(Future.successful(country))
 
-        service.getTransitCountries().futureValue mustBe
-          SelectableList(Seq(country2, country3, country1))
+              val result = service.isInCL112(countryId).futureValue
 
-        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommonTransit"))(any(), any())
+              result mustBe true
+
+              verify(mockRefDataConnector).getCountry(eqTo("CountryCodesCTC"), eqTo(countryId))(any(), any())
+          }
+        }
+      }
+
+      "must return false" - {
+        "when connector call returns NoReferenceDataFoundException" in {
+          forAll(nonEmptyString) {
+            countryId =>
+              when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
+                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+
+              val result = service.isInCL112(countryId).futureValue
+
+              result mustBe false
+          }
+        }
+      }
+
+      "must fail" - {
+        "when connector call otherwise fails" in {
+          forAll(nonEmptyString) {
+            countryId =>
+              when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
+                .thenReturn(Future.failed(new Throwable("")))
+
+              val result = service.isInCL112(countryId)
+
+              result.failed.futureValue mustBe a[Throwable]
+          }
+        }
       }
     }
 
-    "getCommunityCountries" - {
-      "must return a list of sorted EU transit countries" in {
+    "isInCL147" - {
+      "must return true" - {
+        "when connector call returns the country" in {
+          forAll(nonEmptyString, arbitrary[Country]) {
+            (countryId, country) =>
+              beforeEach()
 
-        when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+              when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
+                .thenReturn(Future.successful(country))
 
-        service.getCommunityCountries().futureValue mustBe
-          SelectableList(Seq(country2, country3, country1))
+              val result = service.isInCL147(countryId).futureValue
 
-        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommunity"))(any(), any())
+              result mustBe true
+
+              verify(mockRefDataConnector).getCountry(eqTo("CountryCustomsSecurityAgreementArea"), eqTo(countryId))(any(), any())
+          }
+        }
+      }
+
+      "must return false" - {
+        "when connector call returns NoReferenceDataFoundException" in {
+          forAll(nonEmptyString) {
+            countryId =>
+              when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
+                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+
+              val result = service.isInCL147(countryId).futureValue
+
+              result mustBe false
+          }
+        }
+      }
+
+      "must fail" - {
+        "when connector call otherwise fails" in {
+          forAll(nonEmptyString) {
+            countryId =>
+              when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
+                .thenReturn(Future.failed(new Throwable("")))
+
+              val result = service.isInCL147(countryId)
+
+              result.failed.futureValue mustBe a[Throwable]
+          }
+        }
       }
     }
 
-    "getCustomsSecurityAgreementAreaCountries" - {
-      "must return a list of sorted customs security agreement area countries" in {
+    "isInCL010" - {
+      "must return true" - {
+        "when connector call returns the country" in {
+          forAll(nonEmptyString, arbitrary[Country]) {
+            (countryId, country) =>
+              beforeEach()
 
-        when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+              when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
+                .thenReturn(Future.successful(country))
 
-        service.getCustomsSecurityAgreementAreaCountries().futureValue mustBe
-          SelectableList(Seq(country2, country3, country1))
+              val result = service.isInCL010(countryId).futureValue
 
-        verify(mockRefDataConnector).getCountries(eqTo("CountryCustomsSecurityAgreementArea"))(any(), any())
+              result mustBe true
+
+              verify(mockRefDataConnector).getCountry(eqTo("CountryCodesCommunity"), eqTo(countryId))(any(), any())
+          }
+        }
       }
-    }
 
-    "getCountryCodesCTC" - {
-      "must return a list of sorted customs security agreement area countries" in {
+      "must return false" - {
+        "when connector call returns NoReferenceDataFoundException" in {
+          forAll(nonEmptyString) {
+            countryId =>
+              when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
+                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
-        when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+              val result = service.isInCL010(countryId).futureValue
 
-        service.getCountryCodesCTC().futureValue mustBe
-          SelectableList(Seq(country2, country3, country1))
-
-        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCTC"))(any(), any())
+              result mustBe false
+          }
+        }
       }
-    }
 
-    "getCountriesWithoutZip" - {
-      "must return a list of countries without ZIP codes" in {
+      "must fail" - {
+        "when connector call otherwise fails" in {
+          forAll(nonEmptyString) {
+            countryId =>
+              when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
+                .thenReturn(Future.failed(new Throwable("")))
 
-        when(mockRefDataConnector.getCountriesWithoutZip()(any(), any()))
-          .thenReturn(Future.successful(countries.map(_.code)))
+              val result = service.isInCL010(countryId)
 
-        service.getCountriesWithoutZip().futureValue mustBe
-          Seq(country3.code, country2.code, country1.code)
-
-        verify(mockRefDataConnector).getCountriesWithoutZip()(any(), any())
+              result.failed.futureValue mustBe a[Throwable]
+          }
+        }
       }
     }
 
@@ -212,18 +292,18 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
           val userAnswers = emptyUserAnswers
             .setValue(CountryOfRoutingPage(Index(0)), country1)
+            .setValue(CountryOfRoutingInCL147Page(Index(0)), true)
             .setValue(CountryOfRoutingPage(Index(1)), country2)
+            .setValue(CountryOfRoutingInCL147Page(Index(1)), true)
             .setValue(CountryOfRoutingPage(Index(2)), country3)
+            .setValue(CountryOfRoutingInCL147Page(Index(2)), true)
             .setValue(CountryOfRoutingPage(Index(3)), country4)
-
-          when(mockRefDataConnector.getCountries(any())(any(), any()))
-            .thenReturn(Future.successful(countries))
+            .setValue(CountryOfRoutingInCL147Page(Index(3)), false)
 
           val result = service.getOfficeOfExitCountries(userAnswers, country3).futureValue
 
           result.values mustBe Seq(country1, country2)
 
-          verify(mockRefDataConnector).getCountries(eqTo("CountryCustomsSecurityAgreementArea"))(any(), any())
           verify(mockRefDataConnector, never()).getCountries(eqTo("CountryCodesFullList"))(any(), any())
         }
       }
@@ -241,7 +321,6 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               result.values mustBe Seq(country2, country3, country1)
 
-              verify(mockRefDataConnector, never()).getCountries(eqTo("CountryCustomsSecurityAgreementArea"))(any(), any())
               verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
           }
         }
@@ -251,29 +330,29 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
     "doesCountryRequireZip" - {
       "must return true" - {
         "when countries without zip doesn't contain this country" in {
-          when(mockRefDataConnector.getCountriesWithoutZip()(any(), any()))
-            .thenReturn(Future.successful(countries.map(_.code)))
+          forAll(arbitrary[Country]) {
+            country =>
+              when(mockRefDataConnector.getCountriesWithoutZipCountry(any())(any(), any()))
+                .thenReturn(Future.successful(country.code))
 
-          val country = Arbitrary.arbitrary[Country].retryUntil(!countries.contains(_)).sample.value
+              val result = service.doesCountryRequireZip(country).futureValue
 
-          val result = service.doesCountryRequireZip(country).futureValue
-
-          result mustBe true
-
+              result mustBe true
+          }
         }
       }
 
       "must return false" - {
         "when countries without zip does contain this country" in {
-          when(mockRefDataConnector.getCountriesWithoutZip()(any(), any()))
-            .thenReturn(Future.successful(countries.map(_.code)))
+          forAll(arbitrary[Country]) {
+            country =>
+              when(mockRefDataConnector.getCountriesWithoutZipCountry(any())(any(), any()))
+                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
-          val country = countries.head
+              val result = service.doesCountryRequireZip(country).futureValue
 
-          val result = service.doesCountryRequireZip(country).futureValue
-
-          result mustBe false
-
+              result mustBe false
+          }
         }
       }
     }

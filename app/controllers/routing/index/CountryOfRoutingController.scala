@@ -74,10 +74,8 @@ class CountryOfRoutingController @Inject() (
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))),
               value =>
                 for {
-                  ctcCountries <- countriesService.getCountryCodesCTC().map(_.values)
-                  isInCL112 = ctcCountries.map(_.code.code).contains(value.code.code)
-                  customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
-                  isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.code.code)
+                  isInCL112 <- countriesService.isInCL112(value.code.code)
+                  isInCL147 <- countriesService.isInCL147(value.code.code)
                   result <- {
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                     CountryOfRoutingPage(index)
