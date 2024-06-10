@@ -24,7 +24,7 @@ import generators.Generators
 import models.reference.{Country, CountryCode}
 import models.{Index, SelectableList}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.Mockito.{never, reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.BeforeAndAfterEach
@@ -95,187 +95,247 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
       }
     }
 
-    "getTransitCountries" - {
-      "must return a list of sorted transit countries" in {
+    "getFilteredCountries" - {
+      "must return a list of sorted countries filtered  when 0 countries have been added" in {
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
           .thenReturn(Future.successful(countries))
 
-        service.getTransitCountries().futureValue mustBe
+        val userAnswers = emptyUserAnswers
+
+        service.getFilteredCountriesOfRouting(userAnswers, index).futureValue mustBe
           SelectableList(Seq(country2, country3, country1))
 
-        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommonTransit"))(any(), any())
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
+      }
+      "must return a list of sorted countries filtered  when 1 country has been added" in {
+
+        when(mockRefDataConnector.getCountries(any())(any(), any()))
+          .thenReturn(Future.successful(countries))
+
+        val userAnswers = emptyUserAnswers.setValue(CountryOfRoutingPage(index), country1)
+
+        service.getFilteredCountriesOfRouting(userAnswers, index).futureValue mustBe
+          SelectableList(Seq(country2, country3, country1))
+
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
+      }
+
+      "must return a list of sorted countries filtered when 2 countries have been added" in {
+
+        when(mockRefDataConnector.getCountries(any())(any(), any()))
+          .thenReturn(Future.successful(countries))
+
+        val userAnswers = emptyUserAnswers
+          .setValue(CountryOfRoutingPage(index), country1)
+          .setValue(CountryOfRoutingPage(Index(1)), country2)
+
+        service.getFilteredCountriesOfRouting(userAnswers, Index(1)).futureValue mustBe
+          SelectableList(Seq(country2, country3))
+
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
+      }
+
+      "must return a list of sorted countries filtered when multiple have been added " in {
+
+        when(mockRefDataConnector.getCountries(any())(any(), any()))
+          .thenReturn(Future.successful(countries))
+
+        val userAnswers = emptyUserAnswers
+          .setValue(CountryOfRoutingPage(index), country2)
+          .setValue(CountryOfRoutingPage(Index(1)), country3)
+          .setValue(CountryOfRoutingPage(Index(2)), country1)
+        countries.toSeq.zipWithIndex.map {
+          case (country, i) =>
+            service.getFilteredCountriesOfRouting(userAnswers, Index(i)).futureValue mustBe
+              SelectableList(Seq(country))
+        }
+        verify(mockRefDataConnector, times(countries.toSeq.size)).getCountries(eqTo("CountryCodesFullList"))(any(), any())
+      }
+    }
+  }
+
+  "getTransitCountries" - {
+    "must return a list of sorted transit countries" in {
+
+      when(mockRefDataConnector.getCountries(any())(any(), any()))
+        .thenReturn(Future.successful(countries))
+
+      service.getTransitCountries().futureValue mustBe
+        SelectableList(Seq(country2, country3, country1))
+
+      verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommonTransit"))(any(), any())
+    }
+  }
+
+  "getCommunityCountries" - {
+    "must return a list of sorted EU transit countries" in {
+
+      when(mockRefDataConnector.getCountries(any())(any(), any()))
+        .thenReturn(Future.successful(countries))
+
+      service.getCommunityCountries().futureValue mustBe
+        SelectableList(Seq(country2, country3, country1))
+
+      verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommunity"))(any(), any())
+    }
+  }
+
+  "getCustomsSecurityAgreementAreaCountries" - {
+    "must return a list of sorted customs security agreement area countries" in {
+
+      when(mockRefDataConnector.getCountries(any())(any(), any()))
+        .thenReturn(Future.successful(countries))
+
+      service.getCustomsSecurityAgreementAreaCountries().futureValue mustBe
+        SelectableList(Seq(country2, country3, country1))
+
+      verify(mockRefDataConnector).getCountries(eqTo("CountryCustomsSecurityAgreementArea"))(any(), any())
+    }
+  }
+
+  "getCountryCodesCTC" - {
+    "must return a list of sorted customs security agreement area countries" in {
+
+      when(mockRefDataConnector.getCountries(any())(any(), any()))
+        .thenReturn(Future.successful(countries))
+
+      service.getCountryCodesCTC().futureValue mustBe
+        SelectableList(Seq(country2, country3, country1))
+
+      verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCTC"))(any(), any())
+    }
+  }
+
+  "getCountriesWithoutZip" - {
+    "must return a list of countries without ZIP codes" in {
+
+      when(mockRefDataConnector.getCountriesWithoutZip()(any(), any()))
+        .thenReturn(Future.successful(countries.map(_.code)))
+
+      service.getCountriesWithoutZip().futureValue mustBe
+        Seq(country3.code, country2.code, country1.code)
+
+      verify(mockRefDataConnector).getCountriesWithoutZip()(any(), any())
+    }
+  }
+
+  "getAddressPostcodeBasedCountries" - {
+    "must return a list of sorted address postcode based countries" in {
+
+      when(mockRefDataConnector.getCountries(any())(any(), any()))
+        .thenReturn(Future.successful(countries))
+
+      service.getAddressPostcodeBasedCountries().futureValue mustBe
+        SelectableList(Seq(country2, country3, country1))
+
+      verify(mockRefDataConnector).getCountries(eqTo("CountryAddressPostcodeBased"))(any(), any())
+    }
+  }
+
+  "getOfficeOfTransitCountries" - {
+    "when there are one or more countries of routing in user answers" - {
+      "must return countries of routing" in {
+        forAll(Gen.choose(1, frontendAppConfig.maxCountriesOfRouting)) {
+          numberOfCountries =>
+            val userAnswers = (0 until numberOfCountries).foldLeft(emptyUserAnswers) {
+              (acc, i) =>
+                acc.setValue(CountryOfRoutingPage(Index(i)), country1)
+            }
+            val result = service.getOfficeOfTransitCountries(userAnswers).futureValue
+
+            result.values mustBe Seq.fill(numberOfCountries)(country1)
+
+            verify(mockRefDataConnector, never()).getCountries(any())(any(), any())
+        }
       }
     }
 
-    "getCommunityCountries" - {
-      "must return a list of sorted EU transit countries" in {
-
+    "when there are no countries of routing in user answers" - {
+      "must call getCountries" in {
         when(mockRefDataConnector.getCountries(any())(any(), any()))
           .thenReturn(Future.successful(countries))
 
-        service.getCommunityCountries().futureValue mustBe
-          SelectableList(Seq(country2, country3, country1))
+        val result = service.getOfficeOfTransitCountries(emptyUserAnswers).futureValue
 
-        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommunity"))(any(), any())
+        result.values mustBe Seq(country2, country3, country1)
+
+        verify(mockRefDataConnector).getCountries(any())(any(), any())
       }
     }
+  }
 
-    "getCustomsSecurityAgreementAreaCountries" - {
-      "must return a list of sorted customs security agreement area countries" in {
+  "getOfficeOfExitCountries" - {
+    "when there are one or more countries of routing in user answers" - {
+      "must return countries that are in the countries of routing, in the CL147 and aren't the country of destination" in {
+        val country4: Country = Country(CountryCode("DE"), "Germany")
+
+        val userAnswers = emptyUserAnswers
+          .setValue(CountryOfRoutingPage(Index(0)), country1)
+          .setValue(CountryOfRoutingPage(Index(1)), country2)
+          .setValue(CountryOfRoutingPage(Index(2)), country3)
+          .setValue(CountryOfRoutingPage(Index(3)), country4)
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
           .thenReturn(Future.successful(countries))
 
-        service.getCustomsSecurityAgreementAreaCountries().futureValue mustBe
-          SelectableList(Seq(country2, country3, country1))
+        val result = service.getOfficeOfExitCountries(userAnswers, country3).futureValue
+
+        result.values mustBe Seq(country1, country2)
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryCustomsSecurityAgreementArea"))(any(), any())
+        verify(mockRefDataConnector, never()).getCountries(eqTo("CountryCodesFullList"))(any(), any())
       }
     }
 
-    "getCountryCodesCTC" - {
-      "must return a list of sorted customs security agreement area countries" in {
+    "when there are no countries of routing in user answers" - {
+      "must call getCountries" in {
+        forAll(arbitrary[Country]) {
+          countryOfDestination =>
+            beforeEach()
 
-        when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+            when(mockRefDataConnector.getCountries(any())(any(), any()))
+              .thenReturn(Future.successful(countries))
 
-        service.getCountryCodesCTC().futureValue mustBe
-          SelectableList(Seq(country2, country3, country1))
+            val result = service.getOfficeOfExitCountries(emptyUserAnswers, countryOfDestination).futureValue
 
-        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCTC"))(any(), any())
-      }
-    }
+            result.values mustBe Seq(country2, country3, country1)
 
-    "getCountriesWithoutZip" - {
-      "must return a list of countries without ZIP codes" in {
-
-        when(mockRefDataConnector.getCountriesWithoutZip()(any(), any()))
-          .thenReturn(Future.successful(countries.map(_.code)))
-
-        service.getCountriesWithoutZip().futureValue mustBe
-          Seq(country3.code, country2.code, country1.code)
-
-        verify(mockRefDataConnector).getCountriesWithoutZip()(any(), any())
-      }
-    }
-
-    "getAddressPostcodeBasedCountries" - {
-      "must return a list of sorted address postcode based countries" in {
-
-        when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
-
-        service.getAddressPostcodeBasedCountries().futureValue mustBe
-          SelectableList(Seq(country2, country3, country1))
-
-        verify(mockRefDataConnector).getCountries(eqTo("CountryAddressPostcodeBased"))(any(), any())
-      }
-    }
-
-    "getOfficeOfTransitCountries" - {
-      "when there are one or more countries of routing in user answers" - {
-        "must return countries of routing" in {
-          forAll(Gen.choose(1, frontendAppConfig.maxCountriesOfRouting)) {
-            numberOfCountries =>
-              val userAnswers = (0 until numberOfCountries).foldLeft(emptyUserAnswers) {
-                (acc, i) =>
-                  acc.setValue(CountryOfRoutingPage(Index(i)), country1)
-              }
-              val result = service.getOfficeOfTransitCountries(userAnswers).futureValue
-
-              result.values mustBe Seq.fill(numberOfCountries)(country1)
-
-              verify(mockRefDataConnector, never()).getCountries(any())(any(), any())
-          }
-        }
-      }
-
-      "when there are no countries of routing in user answers" - {
-        "must call getCountries" in {
-          when(mockRefDataConnector.getCountries(any())(any(), any()))
-            .thenReturn(Future.successful(countries))
-
-          val result = service.getOfficeOfTransitCountries(emptyUserAnswers).futureValue
-
-          result.values mustBe Seq(country2, country3, country1)
-
-          verify(mockRefDataConnector).getCountries(any())(any(), any())
-        }
-      }
-    }
-
-    "getOfficeOfExitCountries" - {
-      "when there are one or more countries of routing in user answers" - {
-        "must return countries that are in the countries of routing, in the CL147 and aren't the country of destination" in {
-          val country4: Country = Country(CountryCode("DE"), "Germany")
-
-          val userAnswers = emptyUserAnswers
-            .setValue(CountryOfRoutingPage(Index(0)), country1)
-            .setValue(CountryOfRoutingPage(Index(1)), country2)
-            .setValue(CountryOfRoutingPage(Index(2)), country3)
-            .setValue(CountryOfRoutingPage(Index(3)), country4)
-
-          when(mockRefDataConnector.getCountries(any())(any(), any()))
-            .thenReturn(Future.successful(countries))
-
-          val result = service.getOfficeOfExitCountries(userAnswers, country3).futureValue
-
-          result.values mustBe Seq(country1, country2)
-
-          verify(mockRefDataConnector).getCountries(eqTo("CountryCustomsSecurityAgreementArea"))(any(), any())
-          verify(mockRefDataConnector, never()).getCountries(eqTo("CountryCodesFullList"))(any(), any())
-        }
-      }
-
-      "when there are no countries of routing in user answers" - {
-        "must call getCountries" in {
-          forAll(arbitrary[Country]) {
-            countryOfDestination =>
-              beforeEach()
-
-              when(mockRefDataConnector.getCountries(any())(any(), any()))
-                .thenReturn(Future.successful(countries))
-
-              val result = service.getOfficeOfExitCountries(emptyUserAnswers, countryOfDestination).futureValue
-
-              result.values mustBe Seq(country2, country3, country1)
-
-              verify(mockRefDataConnector, never()).getCountries(eqTo("CountryCustomsSecurityAgreementArea"))(any(), any())
-              verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
-          }
-        }
-      }
-    }
-
-    "doesCountryRequireZip" - {
-      "must return true" - {
-        "when countries without zip doesn't contain this country" in {
-          when(mockRefDataConnector.getCountriesWithoutZip()(any(), any()))
-            .thenReturn(Future.successful(countries.map(_.code)))
-
-          val country = Arbitrary.arbitrary[Country].retryUntil(!countries.contains(_)).sample.value
-
-          val result = service.doesCountryRequireZip(country).futureValue
-
-          result mustBe true
-
-        }
-      }
-
-      "must return false" - {
-        "when countries without zip does contain this country" in {
-          when(mockRefDataConnector.getCountriesWithoutZip()(any(), any()))
-            .thenReturn(Future.successful(countries.map(_.code)))
-
-          val country = countries.head
-
-          val result = service.doesCountryRequireZip(country).futureValue
-
-          result mustBe false
-
+            verify(mockRefDataConnector, never()).getCountries(eqTo("CountryCustomsSecurityAgreementArea"))(any(), any())
+            verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
         }
       }
     }
   }
+
+  "doesCountryRequireZip" - {
+    "must return true" - {
+      "when countries without zip doesn't contain this country" in {
+        when(mockRefDataConnector.getCountriesWithoutZip()(any(), any()))
+          .thenReturn(Future.successful(countries.map(_.code)))
+
+        val country = Arbitrary.arbitrary[Country].retryUntil(!countries.contains(_)).sample.value
+
+        val result = service.doesCountryRequireZip(country).futureValue
+
+        result mustBe true
+
+      }
+    }
+
+    "must return false" - {
+      "when countries without zip does contain this country" in {
+        when(mockRefDataConnector.getCountriesWithoutZip()(any(), any()))
+          .thenReturn(Future.successful(countries.map(_.code)))
+
+        val country = countries.head
+
+        val result = service.doesCountryRequireZip(country).futureValue
+
+        result mustBe false
+
+      }
+    }
+  }
+
 }

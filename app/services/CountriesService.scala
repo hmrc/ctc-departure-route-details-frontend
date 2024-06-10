@@ -20,9 +20,11 @@ import config.Constants.DeclarationType.TIR
 import connectors.ReferenceDataConnector
 import models.SelectableList.countriesOfRoutingReads
 import models.reference.{Country, CountryCode}
-import models.{RichOptionalJsArray, SelectableList, UserAnswers}
+import models.{Index, RichJsArray, RichOptionalJsArray, SelectableList, UserAnswers}
 import pages.external.DeclarationTypePage
+import pages.routing.index.CountryOfRoutingPage
 import pages.sections.routing.CountriesOfRoutingSection
+import play.api.libs.json.JsArray
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -38,6 +40,17 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
 
   def getCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryCodesFullList")
+
+  def getFilteredCountriesOfRouting(userAnswers: UserAnswers, indexToKeep: Index)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
+    val countriesOfRouting = userAnswers.get(CountriesOfRoutingSection).getOrElse(JsArray())
+
+    val countries: Seq[Country] = countriesOfRouting.zipWithIndex.flatMap {
+      case (_, index) if indexToKeep == index => None
+      case (_, index)                         => userAnswers.get(CountryOfRoutingPage(index))
+    }
+
+    getCountries().map(_.filterNot(countries.contains))
+  }
 
   def getTransitCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryCodesCommonTransit")
