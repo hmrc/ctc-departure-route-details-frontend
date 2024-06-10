@@ -21,7 +21,11 @@ import models.reference.Country
 import play.api.libs.json.{JsArray, JsError, JsSuccess, Reads}
 import services.RichNonEmptySet
 
-case class SelectableList[T <: Selectable](values: Seq[T])
+case class SelectableList[T <: Selectable](values: Seq[T]) {
+
+  def filterNot(predicate: T => Boolean): SelectableList[T] =
+    this.copy(values = values.filterNot(predicate))
+}
 
 object SelectableList {
 

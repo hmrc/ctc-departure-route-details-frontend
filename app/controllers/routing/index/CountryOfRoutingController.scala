@@ -53,20 +53,20 @@ class CountryOfRoutingController @Inject() (
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      countriesService.getCountries().map {
+      val countryOfRoutingPage: Option[Country] = request.userAnswers.get(CountryOfRoutingPage(index))
+      countriesService.getFilteredCountriesOfRouting(request.userAnswers, index).map {
         countryList =>
-          val preparedForm = request.userAnswers.get(CountryOfRoutingPage(index)) match {
+          val preparedForm = countryOfRoutingPage match {
             case None        => form(countryList)
             case Some(value) => form(countryList).fill(value)
           }
-
           Ok(view(preparedForm, lrn, countryList.values, mode, index))
       }
   }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      countriesService.getCountries().flatMap {
+      countriesService.getFilteredCountriesOfRouting(request.userAnswers, index).flatMap {
         countryList =>
           form(countryList)
             .bindFromRequest()
