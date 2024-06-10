@@ -82,7 +82,7 @@ class AnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Mes
   def getAnswersAndBuildSectionRows(section: Section[JsArray])(f: Index => Option[SummaryListRow]): Seq[SummaryListRow] =
     userAnswers
       .get(section)
-      .mapWithIndex {
+      .flatMapWithIndex {
         (_, index) => f(index)
       }
 
@@ -112,7 +112,7 @@ class AnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Mes
   )(block: Index => Option[Either[ListItem, ListItem]]): Seq[Either[ListItem, ListItem]] =
     userAnswers
       .get(section)
-      .mapWithIndex {
+      .flatMapWithIndex {
         (_, index) => block(index)
       }
 

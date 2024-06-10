@@ -25,7 +25,7 @@ import generators.Generators
 import models.reference.{Country, CountryCode}
 import models.{Index, SelectableList}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.BeforeAndAfterEach
@@ -93,6 +93,65 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           SelectableList(Seq(country2, country3, country1))
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
+      }
+    }
+
+    "getCountriesOfRouting" - {
+      "must return a list of sorted countries filtered  when 0 countries have been added" in {
+
+        when(mockRefDataConnector.getCountries(any())(any(), any()))
+          .thenReturn(Future.successful(countries))
+
+        val userAnswers = emptyUserAnswers
+
+        service.getCountriesOfRouting(userAnswers, index).futureValue mustBe
+          SelectableList(Seq(country2, country3, country1))
+
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
+      }
+      "must return a list of sorted countries filtered  when 1 country has been added" in {
+
+        when(mockRefDataConnector.getCountries(any())(any(), any()))
+          .thenReturn(Future.successful(countries))
+
+        val userAnswers = emptyUserAnswers.setValue(CountryOfRoutingPage(index), country1)
+
+        service.getCountriesOfRouting(userAnswers, index).futureValue mustBe
+          SelectableList(Seq(country2, country3, country1))
+
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
+      }
+
+      "must return a list of sorted countries filtered when 2 countries have been added" in {
+
+        when(mockRefDataConnector.getCountries(any())(any(), any()))
+          .thenReturn(Future.successful(countries))
+
+        val userAnswers = emptyUserAnswers
+          .setValue(CountryOfRoutingPage(index), country1)
+          .setValue(CountryOfRoutingPage(Index(1)), country2)
+
+        service.getCountriesOfRouting(userAnswers, Index(1)).futureValue mustBe
+          SelectableList(Seq(country2, country3))
+
+        verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
+      }
+
+      "must return a list of sorted countries filtered when multiple have been added " in {
+
+        when(mockRefDataConnector.getCountries(any())(any(), any()))
+          .thenReturn(Future.successful(countries))
+
+        val userAnswers = emptyUserAnswers
+          .setValue(CountryOfRoutingPage(index), country2)
+          .setValue(CountryOfRoutingPage(Index(1)), country3)
+          .setValue(CountryOfRoutingPage(Index(2)), country1)
+        countries.toSeq.zipWithIndex.map {
+          case (country, i) =>
+            service.getCountriesOfRouting(userAnswers, Index(i)).futureValue mustBe
+              SelectableList(Seq(country))
+        }
+        verify(mockRefDataConnector, times(countries.toSeq.size)).getCountries(eqTo("CountryCodesFullList"))(any(), any())
       }
     }
 

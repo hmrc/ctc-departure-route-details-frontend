@@ -40,6 +40,16 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
   def getCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryCodesFullList")
 
+  def getCountriesOfRouting(userAnswers: UserAnswers, indexToKeep: Index)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
+    userAnswers
+      .get(CountriesOfRoutingSection)
+      .flatMapWithIndex {
+        case (_, `indexToKeep`) => None
+        case (_, index)         => userAnswers.get(CountryOfRoutingPage(index))
+      } match {
+      case countries => getCountries().map(_.filterNot(countries.contains))
+    }
+
   def getAddressPostcodeBasedCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryAddressPostcodeBased")
 
@@ -52,39 +62,33 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
   def isInCL010(countryId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     isCountryInCodeList("CountryCodesCommunity", countryId)
 
-  def getOfficeOfTransitCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
-    val numberOfCountriesOfRouting = userAnswers.get(CountriesOfRoutingSection).length
-    (0 until numberOfCountriesOfRouting)
-      .map(Index(_))
-      .flatMap {
-        index => userAnswers.get(CountryOfRoutingPage(index))
-      }
-      .toList match {
-      case Nil => getCountries()
-      case x   => Future.successful(SelectableList(x))
+  def getOfficeOfTransitCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
+    userAnswers
+      .get(CountriesOfRoutingSection)
+      .flatMapWithIndex {
+        case (_, index) => userAnswers.get(CountryOfRoutingPage(index))
+      } match {
+      case Nil       => getCountries()
+      case countries => Future.successful(SelectableList(countries))
     }
-  }
 
-  def getOfficeOfExitCountries(userAnswers: UserAnswers, countryOfDestination: Country)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] = {
-    val numberOfCountriesOfRouting = userAnswers.get(CountriesOfRoutingSection).length
-    (0 until numberOfCountriesOfRouting)
-      .map(Index(_))
-      .foldLeft(Seq.empty[Country]) {
-        case (acc, index) =>
-          userAnswers.get(CountryOfRoutingInCL147Page(index)) match {
-            case Some(true) =>
-              userAnswers.get(CountryOfRoutingPage(index)) match {
-                case Some(value) if value != countryOfDestination => acc :+ value
-                case _                                            => acc
+  def getOfficeOfExitCountries(userAnswers: UserAnswers, countryOfDestination: Country)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
+    userAnswers
+      .get(CountriesOfRoutingSection)
+      .flatMapWithIndex {
+        case (_, index) =>
+          userAnswers.get(CountryOfRoutingInCL147Page(index)).flatMap {
+            case true =>
+              userAnswers.get(CountryOfRoutingPage(index)).flatMap {
+                case `countryOfDestination` => None
+                case value                  => Some(value)
               }
-            case _ => acc
+            case false => None
           }
-      }
-      .toList match {
-      case Nil => getCountries()
-      case x   => Future.successful(SelectableList(x))
+      } match {
+      case Nil       => getCountries()
+      case countries => Future.successful(SelectableList(countries))
     }
-  }
 
   private def getCountries(listName: String)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     referenceDataConnector

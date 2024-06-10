@@ -19,7 +19,11 @@ package models
 import cats.data.NonEmptySet
 import services.RichNonEmptySet
 
-case class SelectableList[T <: Selectable](values: Seq[T])
+case class SelectableList[T <: Selectable](values: Seq[T]) {
+
+  def filterNot(predicate: T => Boolean): SelectableList[T] =
+    this.copy(values = values.filterNot(predicate))
+}
 
 object SelectableList {
 

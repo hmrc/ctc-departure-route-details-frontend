@@ -57,7 +57,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
+      when(mockCountriesService.getCountriesOfRouting(any(), any())(any())).thenReturn(Future.successful(countryList))
       setExistingUserAnswers(emptyUserAnswers)
 
       val request = FakeRequest(GET, countryOfRoutingRoute)
@@ -91,7 +91,6 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
       contentAsString(result) mustEqual
         view(filledForm, lrn, countryList.values, mode, index)(request, messages).toString
     }
-
     "must redirect to the next page when valid data is submitted" in {
       forAll(arbitrary[Boolean], arbitrary[Boolean]) {
         (isInCL112, isInCL147) =>
