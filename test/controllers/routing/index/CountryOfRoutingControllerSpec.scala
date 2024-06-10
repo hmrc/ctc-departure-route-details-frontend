@@ -19,12 +19,14 @@ package controllers.routing.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.SelectableFormProvider
 import generators.Generators
-import models.{NormalMode, SelectableList, UserAnswers}
+import models.reference.{Country, CountryCode, CustomsOffice}
+import models.{Index, NormalMode, SelectableList, UserAnswers}
 import navigation.CountryOfRoutingNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import pages.routing.index.CountryOfRoutingPage
+import pages.transit.index.OfficeOfTransitPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -173,5 +175,76 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
 
       redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
+
+    "must redirect to add another country of routing  and remove officeOfTransits with the changed country code" in {
+
+      val customCountryList =
+        SelectableList(Seq(Country(CountryCode("FR"), "France"), Country(CountryCode("GB"), "Britain"), Country(CountryCode("IT"), "Italy")))
+
+      val userAnswers = emptyUserAnswers
+        .setValue(CountryOfRoutingPage(index), Country(CountryCode("FR"), "France"))
+        .setValue(OfficeOfTransitPage(index), CustomsOffice("GB", "Britain", None, "GB"))
+        .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("FR", "FR", None, "FR"))
+        .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("FR", "FR", None, "FR"))
+
+      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(customCountryList))
+      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(customCountryList))
+      when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(customCountryList))
+      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+
+      setExistingUserAnswers(userAnswers)
+
+      val request = FakeRequest(POST, countryOfRoutingRoute)
+        .withFormUrlEncodedBody(("value", "IT"))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+      userAnswersCaptor.getValue.get(OfficeOfTransitPage(index)) must be(defined)
+      userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(1))) mustNot be(defined)
+      userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(2))) mustNot be(defined)
+
+    }
+
+    "must redirect to add another country of routing  and not remove officeOfTransits if the country is changed to the same country" in {
+
+      val customCountryList =
+        SelectableList(Seq(Country(CountryCode("FR"), "France"), Country(CountryCode("GB"), "Britain"), Country(CountryCode("IT"), "Italy")))
+
+      val userAnswers = emptyUserAnswers
+        .setValue(CountryOfRoutingPage(index), Country(CountryCode("FR"), "France"))
+        .setValue(OfficeOfTransitPage(index), CustomsOffice("GB", "Britain", None, "GB"))
+        .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("FR", "FR", None, "FR"))
+        .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("FR", "FR", None, "FR"))
+
+      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(customCountryList))
+      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(customCountryList))
+      when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(customCountryList))
+      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+
+      setExistingUserAnswers(userAnswers)
+
+      val request = FakeRequest(POST, countryOfRoutingRoute)
+        .withFormUrlEncodedBody(("value", "FR"))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+      userAnswersCaptor.getValue.get(OfficeOfTransitPage(index)) must be(defined)
+      userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(1))) must be(defined)
+      userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(2))) must be(defined)
+
+    }
+
   }
 }

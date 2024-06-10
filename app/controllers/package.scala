@@ -107,6 +107,12 @@ package object controllers {
       ex: ExecutionContext,
       hc: HeaderCarrier
     ): Future[Write[A]] = writeToSession(dataRequest.userAnswers)
+
+    def writeToSessionWithUserAnswers(userAnswers: UserAnswers)(implicit
+      sessionRepository: SessionRepository,
+      ex: ExecutionContext,
+      hc: HeaderCarrier
+    ): Future[Write[A]] = writeToSession(userAnswers)
   }
 
   implicit class NavigatorOps[A](write: Future[Write[A]]) {

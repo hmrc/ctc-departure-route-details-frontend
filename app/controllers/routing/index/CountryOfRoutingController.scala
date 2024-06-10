@@ -20,13 +20,19 @@ import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
-import models.reference.Country
-import models.{Index, LocalReferenceNumber, Mode, SelectableList}
+import models.reference.{Country, CustomsOffice}
+import models.requests.DataRequest
+import models.{Index, LocalReferenceNumber, Mode, RichOptionalJsArray, SelectableList, UserAnswers}
 import navigation.{CountryOfRoutingNavigatorProvider, UserAnswersNavigator}
+import pages.QuestionPage
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page, CountryOfRoutingPage}
+import pages.sections.Section
+import pages.sections.transit.{OfficeOfTransitSection, OfficesOfTransitSection}
+import pages.transit.index.OfficeOfTransitPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.libs.json.{JsArray, JsObject}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import repositories.SessionRepository
 import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -34,6 +40,7 @@ import views.html.routing.index.CountryOfRoutingView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class CountryOfRoutingController @Inject() (
   override val messagesApi: MessagesApi,
@@ -72,24 +79,49 @@ class CountryOfRoutingController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))),
-              value =>
+              selectedCountry =>
                 for {
                   ctcCountries <- countriesService.getCountryCodesCTC().map(_.values)
-                  isInCL112 = ctcCountries.map(_.code.code).contains(value.code.code)
+                  isInCL112 = ctcCountries.map(_.code.code).contains(selectedCountry.code.code)
                   customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
-                  isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.code.code)
+                  isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(selectedCountry.code.code)
+                  removeOfficesFromUserAnswers <- request.userAnswers.get(CountryOfRoutingPage(index)) match {
+                    case Some(previousSelectedCountry) if previousSelectedCountry != selectedCountry =>
+                      Future
+                        .fromTry(
+                          findAndRemoveOffices(request.userAnswers, OfficesOfTransitSection, OfficeOfTransitSection, OfficeOfTransitPage, previousSelectedCountry.code.code)
+                        )
+                    case _ => Future.successful(request.userAnswers)
+                  }
+
                   result <- {
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                     CountryOfRoutingPage(index)
-                      .writeToUserAnswers(value)
+                      .writeToUserAnswers(selectedCountry)
                       .appendValue(CountryOfRoutingInCL112Page(index), isInCL112)
                       .appendValue(CountryOfRoutingInCL147Page(index), isInCL147)
                       .updateTask()
-                      .writeToSession()
+                      .writeToSessionWithUserAnswers(removeOfficesFromUserAnswers)
                       .navigate()
+
                   }
                 } yield result
             )
       }
   }
+
+  private def findAndRemoveOffices(
+    userAnswers: UserAnswers,
+    array: Section[JsArray],
+    obj: Index => Section[JsObject],
+    page: Index => QuestionPage[CustomsOffice],
+    countryCode: String
+  ): Try[UserAnswers] =
+    (0 until userAnswers.get(array).length).foldRight(Try(userAnswers)) {
+      case (index, acc) =>
+        userAnswers.get(page(Index(index))) match {
+          case Some(value) if value.countryId == countryCode => acc.flatMap(_.remove(obj(Index(index))))
+          case _                                             => acc
+        }
+    }
 }

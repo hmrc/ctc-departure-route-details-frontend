@@ -22,7 +22,6 @@ import models.{Index, Mode, UserAnswers}
 import pages.{InferredPage, QuestionPage}
 import pages.sections.exit.ExitSection
 import pages.sections.routing.CountryOfRoutingSection
-import pages.sections.transit.TransitSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
@@ -39,7 +38,7 @@ case class CountryOfRoutingPage(index: Index) extends QuestionPage[Country] {
 
   override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(_) => userAnswers.remove(TransitSection).flatMap(_.remove(ExitSection))
+      case Some(_) => userAnswers.remove(ExitSection)
       case None    => super.cleanup(value, userAnswers)
     }
 }
