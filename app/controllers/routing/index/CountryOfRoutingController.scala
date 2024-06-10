@@ -85,19 +85,7 @@ class CountryOfRoutingController @Inject() (
                   isInCL112 = ctcCountries.map(_.code.code).contains(selectedCountry.code.code)
                   customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
                   isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(selectedCountry.code.code)
-                  removeOfficesFromUserAnswers <- request.userAnswers.get(CountryOfRoutingPage(index)) match {
-                    case Some(previousSelectedCountry) if previousSelectedCountry != selectedCountry =>
-                      Future
-                        .fromTry(
-                          findAndRemoveOffices(request.userAnswers,
-                                               OfficesOfTransitSection,
-                                               OfficeOfTransitSection,
-                                               OfficeOfTransitPage,
-                                               previousSelectedCountry.code.code
-                          )
-                        )
-                    case _ => Future.successful(request.userAnswers)
-                  }
+                  removeOfficesFromUserAnswers <- removeOfficesOfTransitCountries(index, request, selectedCountry)
 
                   result <- {
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
@@ -114,6 +102,16 @@ class CountryOfRoutingController @Inject() (
             )
       }
   }
+
+  private def removeOfficesOfTransitCountries(index: Index, request: DataRequest[AnyContent], selectedCountry: Country): Future[UserAnswers] =
+    request.userAnswers.get(CountryOfRoutingPage(index)) match {
+      case Some(previousSelectedCountry) if previousSelectedCountry != selectedCountry =>
+        Future
+          .fromTry(
+            findAndRemoveOffices(request.userAnswers, OfficesOfTransitSection, OfficeOfTransitSection, OfficeOfTransitPage, previousSelectedCountry.code.code)
+          )
+      case _ => Future.successful(request.userAnswers)
+    }
 
   private def findAndRemoveOffices(
     userAnswers: UserAnswers,
