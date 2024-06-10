@@ -89,7 +89,12 @@ class CountryOfRoutingController @Inject() (
                     case Some(previousSelectedCountry) if previousSelectedCountry != selectedCountry =>
                       Future
                         .fromTry(
-                          findAndRemoveOffices(request.userAnswers, OfficesOfTransitSection, OfficeOfTransitSection, OfficeOfTransitPage, previousSelectedCountry.code.code)
+                          findAndRemoveOffices(request.userAnswers,
+                                               OfficesOfTransitSection,
+                                               OfficeOfTransitSection,
+                                               OfficeOfTransitPage,
+                                               previousSelectedCountry.code.code
+                          )
                         )
                     case _ => Future.successful(request.userAnswers)
                   }
