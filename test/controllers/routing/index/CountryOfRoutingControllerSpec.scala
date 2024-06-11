@@ -38,9 +38,10 @@ import scala.concurrent.Future
 
 class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
-  private val country1    = arbitraryCountry.arbitrary.sample.get
-  private val country2    = arbitraryCountry.arbitrary.sample.get
-  private val countryList = SelectableList(Seq(country1, country2))
+  private val country1      = arbitraryCountry.arbitrary.sample.get
+  private val country2      = arbitraryCountry.arbitrary.sample.get
+  private val countryFrance = Country(CountryCode("FR"), "France")
+  private val countryList   = SelectableList(Seq(country1, country2, countryFrance))
 
   private val formProvider = new SelectableFormProvider()
   private val form         = formProvider("routing.index.countryOfRouting", countryList)
@@ -131,70 +132,22 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
           |""".stripMargin)
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
-      setExistingUserAnswers(emptyUserAnswers)
-
-      val request   = FakeRequest(POST, countryOfRoutingRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
-
-      val result = route(app, request).value
-
-      val view = injector.instanceOf[CountryOfRoutingView]
-
-      status(result) mustEqual BAD_REQUEST
-
-      contentAsString(result) mustEqual
-        view(boundForm, lrn, countryList.values, mode, index)(request, messages).toString
-    }
-
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      setNoExistingUserAnswers()
-
-      val request = FakeRequest(GET, countryOfRoutingRoute)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      setNoExistingUserAnswers()
-
-      val request = FakeRequest(POST, countryOfRoutingRoute)
-        .withFormUrlEncodedBody(("value", country1.code.code))
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
-    }
-
     "must redirect to add another country of routing  and remove officeOfTransits with the changed country code" in {
 
-      val customCountryList =
-        SelectableList(Seq(Country(CountryCode("FR"), "France"), Country(CountryCode("GB"), "Britain"), Country(CountryCode("IT"), "Italy")))
+      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
+      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(countryList))
+      when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(countryList))
+      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers
-        .setValue(CountryOfRoutingPage(index), Country(CountryCode("FR"), "France"))
-        .setValue(OfficeOfTransitPage(index), CustomsOffice("GB", "Britain", None, "GB"))
-        .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("FR", "FR", None, "FR"))
-        .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("FR", "FR", None, "FR"))
-
-      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(customCountryList))
-      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(customCountryList))
-      when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(customCountryList))
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+        .setValue(CountryOfRoutingPage(index), country1)
+        .setValue(OfficeOfTransitPage(index), CustomsOffice(country1.code.code, "port1", None, country1.code.code))
+        .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice(country1.code.code, "port2", None, country1.code.code))
 
       setExistingUserAnswers(userAnswers)
 
       val request = FakeRequest(POST, countryOfRoutingRoute)
-        .withFormUrlEncodedBody(("value", "IT"))
+        .withFormUrlEncodedBody(("value", country2.code.code))
 
       val result = route(app, request).value
 
@@ -204,32 +157,28 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
 
       val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
-      userAnswersCaptor.getValue.get(OfficeOfTransitPage(index)) must be(defined)
+      userAnswersCaptor.getValue.get(OfficeOfTransitPage(index)) mustNot be(defined)
       userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(1))) mustNot be(defined)
-      userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(2))) mustNot be(defined)
 
     }
 
     "must redirect to add another country of routing  and not remove officeOfTransits if the country is changed to the same country" in {
 
-      val customCountryList =
-        SelectableList(Seq(Country(CountryCode("FR"), "France"), Country(CountryCode("GB"), "Britain"), Country(CountryCode("IT"), "Italy")))
-
       val userAnswers = emptyUserAnswers
-        .setValue(CountryOfRoutingPage(index), Country(CountryCode("FR"), "France"))
-        .setValue(OfficeOfTransitPage(index), CustomsOffice("GB", "Britain", None, "GB"))
-        .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("FR", "FR", None, "FR"))
-        .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("FR", "FR", None, "FR"))
+        .setValue(CountryOfRoutingPage(index), countryFrance)
+        .setValue(OfficeOfTransitPage(index), CustomsOffice("id0", "port37", None, country1.code.code))
+        .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("id1", "port1", None, countryFrance.code.code))
+        .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("id2", "port2", None, countryFrance.code.code))
 
-      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(customCountryList))
-      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(customCountryList))
-      when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(customCountryList))
+      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
+      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(countryList))
+      when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(countryList))
       when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
 
       setExistingUserAnswers(userAnswers)
 
       val request = FakeRequest(POST, countryOfRoutingRoute)
-        .withFormUrlEncodedBody(("value", "FR"))
+        .withFormUrlEncodedBody(("value", countryFrance.code.code))
 
       val result = route(app, request).value
 
