@@ -132,6 +132,50 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
           |""".stripMargin)
     }
 
+    "must return a Bad Request and errors when invalid data is submitted" in {
+
+      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
+      setExistingUserAnswers(emptyUserAnswers)
+
+      val request   = FakeRequest(POST, countryOfRoutingRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = route(app, request).value
+
+      val view = injector.instanceOf[CountryOfRoutingView]
+
+      status(result) mustEqual BAD_REQUEST
+
+      contentAsString(result) mustEqual
+        view(boundForm, lrn, countryList.values, mode, index)(request, messages).toString
+    }
+
+    "must redirect to Session Expired for a GET if no existing data is found" in {
+
+      setNoExistingUserAnswers()
+
+      val request = FakeRequest(GET, countryOfRoutingRoute)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
+    }
+
+    "must redirect to Session Expired for a POST if no existing data is found" in {
+
+      setNoExistingUserAnswers()
+
+      val request = FakeRequest(POST, countryOfRoutingRoute)
+        .withFormUrlEncodedBody(("value", country1.code.code))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
+    }
+
     "must redirect to add another country of routing  and remove officeOfTransits with the changed country code" in {
 
       when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
