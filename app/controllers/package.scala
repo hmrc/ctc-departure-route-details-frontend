@@ -69,7 +69,6 @@ package object controllers {
     def removeOfficesOfTransit(previousSelectedCountry: Option[Country], selectedCountry: Country): UserAnswersWriter[Write[A]] =
       userAnswersWriter.flatMapF {
         case (page, userAnswers) =>
-          println("remPAge", page)
           previousSelectedCountry match {
             case Some(previousCountry) =>
               Right(
