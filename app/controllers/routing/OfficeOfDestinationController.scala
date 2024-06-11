@@ -84,8 +84,7 @@ class OfficeOfDestinationController @Inject() (
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, country.description, customsOfficeList.values, mode))),
                 value =>
                   for {
-                    ctcCountries <- countriesService.getCountryCodesCTC().map(_.values)
-                    isInCL112 = ctcCountries.map(_.code.code).contains(value.countryId)
+                    isInCL112 <- countriesService.isInCL112(value.countryId)
                     result <- {
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
                       OfficeOfDestinationPage

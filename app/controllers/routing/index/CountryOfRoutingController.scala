@@ -61,7 +61,7 @@ class CountryOfRoutingController @Inject() (
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
       val countryOfRoutingPage: Option[Country] = request.userAnswers.get(CountryOfRoutingPage(index))
-      countriesService.getFilteredCountriesOfRouting(request.userAnswers, index).map {
+      countriesService.getCountriesOfRouting(request.userAnswers, index).map {
         countryList =>
           val preparedForm = countryOfRoutingPage match {
             case None        => form(countryList)
@@ -73,7 +73,7 @@ class CountryOfRoutingController @Inject() (
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      countriesService.getFilteredCountriesOfRouting(request.userAnswers, index).flatMap {
+      countriesService.getCountriesOfRouting(request.userAnswers, index).flatMap {
         countryList =>
           form(countryList)
             .bindFromRequest()
@@ -81,11 +81,8 @@ class CountryOfRoutingController @Inject() (
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))),
               selectedCountry =>
                 for {
-                  ctcCountries <- countriesService.getCountryCodesCTC().map(_.values)
-                  isInCL112 = ctcCountries.map(_.code.code).contains(selectedCountry.code.code)
-                  customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
-                  isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(selectedCountry.code.code)
-
+                  isInCL112 <- countriesService.isInCL112(selectedCountry.code.code)
+                  isInCL147 <- countriesService.isInCL147(selectedCountry.code.code)
                   result <- {
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                     CountryOfRoutingPage(index)

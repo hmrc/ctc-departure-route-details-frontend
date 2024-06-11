@@ -23,13 +23,7 @@ import forms.SelectableFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
 import pages.routing.CountryOfDestinationPage
-import pages.transit.index.{
-  InferredOfficeOfTransitCountryPage,
-  OfficeOfTransitCountryPage,
-  OfficeOfTransitInCL010Page,
-  OfficeOfTransitInCL147Page,
-  OfficeOfTransitPage
-}
+import pages.transit.index._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -87,10 +81,8 @@ class OfficeOfTransitController @Inject() (
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.values, country.description, mode, index))),
                 value =>
                   for {
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
-                    isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.countryId)
-                    communityCountries <- countriesService.getCommunityCountries().map(_.values)
-                    isInCL010 = communityCountries.map(_.code.code).contains(value.countryId)
+                    isInCL147 <- countriesService.isInCL147(value.countryId)
+                    isInCL010 <- countriesService.isInCL010(value.countryId)
                     result <- {
                       implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                       OfficeOfTransitPage(index)
