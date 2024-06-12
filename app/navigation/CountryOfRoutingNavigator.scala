@@ -27,12 +27,8 @@ import javax.inject.{Inject, Singleton}
 class CountryOfRoutingNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig, phaseConfig: PhaseConfig) extends CountryOfRoutingNavigatorProvider {
 
   def apply(mode: Mode, index: Index): UserAnswersNavigator =
-    mode match {
-      case NormalMode =>
-        new CountryOfRoutingNavigator(mode, index)
-      case CheckMode =>
-        new RouteDetailsNavigator(mode)
-    }
+    new CountryOfRoutingNavigator(mode, index)
+
 }
 
 trait CountryOfRoutingNavigatorProvider {

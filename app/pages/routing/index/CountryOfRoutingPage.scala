@@ -18,7 +18,7 @@ package pages.routing.index
 
 import controllers.routing.index.routes
 import models.reference.Country
-import models.{Index, Mode, UserAnswers}
+import models.{CheckMode, Index, Mode, NormalMode, UserAnswers}
 import pages.{InferredPage, QuestionPage}
 import pages.sections.exit.ExitSection
 import pages.sections.routing.CountryOfRoutingSection
@@ -34,7 +34,10 @@ case class CountryOfRoutingPage(index: Index) extends QuestionPage[Country] {
   override def toString: String = "countryOfRouting"
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
-    Some(routes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index))
+    mode match {
+      case NormalMode => Some(routes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index))
+      case CheckMode  => Some(controllers.routes.RouteDetailsAnswersController.onPageLoad(userAnswers.lrn))
+    }
 
   override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {

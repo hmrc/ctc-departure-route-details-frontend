@@ -19,8 +19,9 @@ package models.journeyDomain.routing
 import models.journeyDomain.Stage._
 import models.journeyDomain._
 import models.reference.Country
-import models.{Index, Mode, UserAnswers}
+import models.{CheckMode, Index, Mode, NormalMode, UserAnswers}
 import pages.routing.index.CountryOfRoutingPage
+import pages.sections.RouteDetailsSection
 import pages.sections.routing.CountriesOfRoutingSection
 import play.api.mvc.Call
 
@@ -34,7 +35,11 @@ case class CountryOfRoutingDomain(
       case AccessingJourney =>
         Some(controllers.routing.index.routes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index))
       case CompletingJourney =>
-        CountriesOfRoutingSection.route(userAnswers, mode)
+        mode match {
+          case NormalMode => CountriesOfRoutingSection.route(userAnswers, mode)
+          case CheckMode  => RouteDetailsSection.route(userAnswers, mode)
+        }
+
     }
 }
 
