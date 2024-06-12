@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.exit.index.OfficeOfExitPage
 import pages.routing.index.CountryOfRoutingPage
 import pages.transit.index.OfficeOfTransitPage
 import play.api.inject.bind
@@ -182,7 +183,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
       redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
 
-    "must redirect to add another country of routing  and remove officeOfTransits with the changed country code" in {
+    "must redirect to add another country of routing  and remove officeOfTransits/exit with the changed country code" in {
       forAll(arbitrary[Boolean], arbitrary[Boolean]) {
         (isInCL112, isInCL147) =>
           beforeEach()
@@ -195,6 +196,10 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
             .setValue(CountryOfRoutingPage(index), country1)
             .setValue(OfficeOfTransitPage(index), CustomsOffice(country1.code.code, "port1", None, country1.code.code))
             .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice(country1.code.code, "port2", None, country1.code.code))
+            .setValue(OfficeOfExitPage(index), CustomsOffice(country1.code.code, "port1", None, country1.code.code))
+            .setValue(OfficeOfExitPage(Index(1)), CustomsOffice(country1.code.code, "port1", None, country1.code.code))
+            .setValue(OfficeOfExitPage(Index(2)), CustomsOffice(country2.code.code, "port1", None, country2.code.code))
+            .setValue(OfficeOfExitPage(Index(3)), CustomsOffice(country2.code.code, "port1", None, country2.code.code))
 
           setExistingUserAnswers(userAnswers)
 
@@ -211,6 +216,10 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
           verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
           userAnswersCaptor.getValue.get(OfficeOfTransitPage(index)) mustNot be(defined)
           userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(1))) mustNot be(defined)
+          userAnswersCaptor.getValue.get(OfficeOfExitPage(index)) must be(defined)
+          userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(1))) must be(defined)
+          userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(2))) mustNot be(defined)
+          userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(3))) mustNot be(defined)
       }
     }
 
@@ -223,6 +232,9 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
             .setValue(OfficeOfTransitPage(index), CustomsOffice("id0", "port37", None, country1.code.code))
             .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("id1", "port1", None, countryFrance.code.code))
             .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("id2", "port2", None, countryFrance.code.code))
+            .setValue(OfficeOfExitPage(index), CustomsOffice(country1.code.code, "port1", None, country1.code.code))
+            .setValue(OfficeOfExitPage(Index(1)), CustomsOffice(country1.code.code, "port2", None, country1.code.code))
+            .setValue(OfficeOfExitPage(Index(2)), CustomsOffice(country2.code.code, "port2", None, country2.code.code))
 
           when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
           when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))
@@ -245,6 +257,10 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
           userAnswersCaptor.getValue.get(OfficeOfTransitPage(index)) must be(defined)
           userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(1))) must be(defined)
           userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(2))) must be(defined)
+          userAnswersCaptor.getValue.get(OfficeOfExitPage(index)) must be(defined)
+          userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(1))) must be(defined)
+          userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(2))) must be(defined)
+
       }
     }
 

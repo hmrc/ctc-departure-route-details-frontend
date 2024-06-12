@@ -38,12 +38,6 @@ case class CountryOfRoutingPage(index: Index) extends QuestionPage[Country] {
       case NormalMode => Some(routes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index))
       case CheckMode  => Some(controllers.routes.RouteDetailsAnswersController.onPageLoad(userAnswers.lrn))
     }
-
-  override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(_) => userAnswers.remove(ExitSection)
-      case None    => super.cleanup(value, userAnswers)
-    }
 }
 
 case class CountryOfRoutingInCL112Page(index: Index) extends InferredPage[Boolean] {
