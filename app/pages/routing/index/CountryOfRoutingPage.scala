@@ -18,14 +18,11 @@ package pages.routing.index
 
 import controllers.routing.index.routes
 import models.reference.Country
-import models.{CheckMode, Index, Mode, NormalMode, UserAnswers}
-import pages.{InferredPage, QuestionPage}
-import pages.sections.exit.ExitSection
+import models.{Index, Mode, UserAnswers}
 import pages.sections.routing.CountryOfRoutingSection
+import pages.{InferredPage, QuestionPage}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
-
-import scala.util.Try
 
 case class CountryOfRoutingPage(index: Index) extends QuestionPage[Country] {
 
@@ -34,10 +31,7 @@ case class CountryOfRoutingPage(index: Index) extends QuestionPage[Country] {
   override def toString: String = "countryOfRouting"
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
-    mode match {
-      case NormalMode => Some(routes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index))
-      case CheckMode  => Some(controllers.routes.RouteDetailsAnswersController.onPageLoad(userAnswers.lrn))
-    }
+    Some(routes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index))
 }
 
 case class CountryOfRoutingInCL112Page(index: Index) extends InferredPage[Boolean] {
