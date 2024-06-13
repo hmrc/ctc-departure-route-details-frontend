@@ -76,13 +76,20 @@ package object controllers {
               Right(
                 (page,
                  userAnswers
-                   .findAndRemoveOffices(OfficesOfTransitSection,
-                                         OfficeOfTransitSection,
-                                         OfficeOfTransitPage,
-                                         previousCountry.code.code,
-                                         selectedCountry.code.code
+                   .findAndRemoveOffices(
+                     OfficesOfTransitSection,
+                     OfficeOfTransitSection,
+                     OfficeOfTransitPage,
+                     previousCountry.code.code,
+                     selectedCountry.code.code
                    )
-                   .findAndRemoveOffices(OfficesOfExitSection, OfficeOfExitSection, OfficeOfExitPage, previousCountry.code.code, selectedCountry.code.code)
+                   .findAndRemoveOffices(
+                     OfficesOfExitSection,
+                     OfficeOfExitSection,
+                     OfficeOfExitPage,
+                     previousCountry.code.code,
+                     selectedCountry.code.code
+                   )
                 )
               )
             case None =>
