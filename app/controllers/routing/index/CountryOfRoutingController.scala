@@ -72,15 +72,15 @@ class CountryOfRoutingController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))),
-              selectedCountry =>
+              value =>
                 for {
-                  isInCL112 <- countriesService.isInCL112(selectedCountry.code.code)
-                  isInCL147 <- countriesService.isInCL147(selectedCountry.code.code)
+                  isInCL112 <- countriesService.isInCL112(value.code.code)
+                  isInCL147 <- countriesService.isInCL147(value.code.code)
                   result <- {
                     implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                     CountryOfRoutingPage(index)
-                      .writeToUserAnswers(selectedCountry)
-                      .removeOffices(request.userAnswers.get(CountryOfRoutingPage(index)), selectedCountry)
+                      .writeToUserAnswers(value)
+                      .removeOffices(request.userAnswers.get(CountryOfRoutingPage(index)), value)
                       .appendValue(CountryOfRoutingInCL112Page(index), isInCL112)
                       .appendValue(CountryOfRoutingInCL147Page(index), isInCL147)
                       .updateTask()
