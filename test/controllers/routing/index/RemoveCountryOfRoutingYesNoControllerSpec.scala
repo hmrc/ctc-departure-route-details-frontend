@@ -20,14 +20,16 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.routing.{routes => routingRoutes}
 import forms.YesNoFormProvider
 import generators.Generators
-import models.reference.Country
-import models.{NormalMode, UserAnswers}
+import models.reference.{Country, CountryCode, CustomsOffice}
+import models.{Index, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.exit.index.OfficeOfExitPage
 import pages.routing.index.CountryOfRoutingPage
 import pages.sections.routing.CountryOfRoutingSection
+import pages.transit.index.OfficeOfTransitPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.routing.index.RemoveCountryOfRoutingYesNoView
@@ -86,6 +88,44 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
             verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
             userAnswersCaptor.getValue.get(CountryOfRoutingSection(index)) mustNot be(defined)
         }
+      }
+
+      "must redirect to add another country of routing and remove country at specified index and remove officeOfTransit and officeOfExit" in {
+
+        reset(mockSessionRepository)
+        when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+
+        val userAnswers = emptyUserAnswers
+          .setValue(CountryOfRoutingPage(index), Country(CountryCode("FR"), "France"))
+          .setValue(OfficeOfTransitPage(index), CustomsOffice("GB", "Britain", None, "GB"))
+          .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("FR", "FR", None, "FR"))
+          .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("FR", "FR", None, "FR"))
+          .setValue(OfficeOfExitPage(index), CustomsOffice("GB", "Britain", None, "GB"))
+          .setValue(OfficeOfExitPage(Index(1)), CustomsOffice("FR", "FR", None, "FR"))
+          .setValue(OfficeOfExitPage(Index(2)), CustomsOffice("FR", "FR", None, "FR"))
+
+        setExistingUserAnswers(userAnswers)
+
+        val request = FakeRequest(POST, removeCountryOfROutingYesNoRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual
+          routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode).url
+
+        val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+        userAnswersCaptor.getValue.get(CountryOfRoutingSection(index)) mustNot be(defined)
+        userAnswersCaptor.getValue.get(OfficeOfTransitPage(index)) must be(defined)
+        userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(1))) mustNot be(defined)
+        userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(2))) mustNot be(defined)
+        userAnswersCaptor.getValue.get(OfficeOfExitPage(index)) must be(defined)
+        userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(1))) mustNot be(defined)
+        userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(2))) mustNot be(defined)
+
       }
     }
 
