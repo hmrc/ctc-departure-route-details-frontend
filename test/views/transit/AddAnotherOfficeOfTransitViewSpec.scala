@@ -57,5 +57,5 @@ class AddAnotherOfficeOfTransitViewSpec extends ListWithActionsViewBehaviours {
 
   behave like pageWithItemsMaxedOut(maxedOutViewModel.count)
 
-  behave like pageWithSubmitButton("Continue")
+  behave like pageWithSubmitButton("Save and continue")
 }
