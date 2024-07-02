@@ -16,7 +16,9 @@
 
 package models
 
+import models.reference.{Country, CustomsOffice}
 import pages.QuestionPage
+import pages.sections.Section
 import play.api.libs.json._
 import queries.Gettable
 
@@ -62,6 +64,22 @@ final case class UserAnswers(
     val tasks = this.tasks.updated(section, status)
     this.copy(tasks = tasks)
   }
+
+  def findAndRemoveOffices(
+    array: Section[JsArray],
+    obj: Index => Section[JsObject],
+    page: Index => QuestionPage[CustomsOffice],
+    previousCountryCode: String,
+    selectedCountryCode: String
+  ): UserAnswers =
+    (0 until this.get(array).length).foldRight(this) {
+      case (index, acc) =>
+        this.get(page(Index(index))) match {
+          case Some(value) if (value.countryId == previousCountryCode) && (previousCountryCode != selectedCountryCode) =>
+            acc.remove(obj(Index(index))).getOrElse(acc)
+          case _ => acc
+        }
+    }
 }
 
 object UserAnswers {

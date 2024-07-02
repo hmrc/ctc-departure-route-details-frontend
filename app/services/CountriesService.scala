@@ -18,10 +18,11 @@ package services
 
 import config.Constants.DeclarationType.TIR
 import connectors.ReferenceDataConnector
-import models.SelectableList.countriesOfRoutingReads
-import models.reference.{Country, CountryCode}
-import models.{RichOptionalJsArray, SelectableList, UserAnswers}
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
+import models.reference.Country
+import models.{Index, RichOptionalJsArray, SelectableList, UserAnswers}
 import pages.external.DeclarationTypePage
+import pages.routing.index.{CountryOfRoutingInCL147Page, CountryOfRoutingPage}
 import pages.sections.routing.CountriesOfRoutingSection
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,48 +33,61 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
 
   def getDestinationCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     userAnswers.get(DeclarationTypePage) match {
-      case Some(TIR) => getCommunityCountries()
-      case _         => getTransitCountries()
+      case Some(TIR) => getCountries("CountryCodesCommunity")
+      case _         => getCountries("CountryCodesCommonTransit")
     }
 
   def getCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryCodesFullList")
 
-  def getTransitCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    getCountries("CountryCodesCommonTransit")
+  def getCountriesOfRouting(userAnswers: UserAnswers, indexToKeep: Index)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
+    userAnswers
+      .get(CountriesOfRoutingSection)
+      .flatMapWithIndex {
+        case (_, `indexToKeep`) => None
+        case (_, index)         => userAnswers.get(CountryOfRoutingPage(index))
+      } match {
+      case countries => getCountries().map(_.filterNot(countries.contains))
+    }
 
   def getAddressPostcodeBasedCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     getCountries("CountryAddressPostcodeBased")
 
-  def getCommunityCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    getCountries("CountryCodesCommunity")
+  def isInCL112(countryId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    isCountryInCodeList("CountryCodesCTC", countryId)
 
-  def getCustomsSecurityAgreementAreaCountries()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    getCountries("CountryCustomsSecurityAgreementArea")
+  def isInCL147(countryId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    isCountryInCodeList("CountryCustomsSecurityAgreementArea", countryId)
 
-  def getCountryCodesCTC()(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    getCountries("CountryCodesCTC")
-
-  def getCountriesWithoutZip()(implicit hc: HeaderCarrier): Future[Seq[CountryCode]] =
-    referenceDataConnector
-      .getCountriesWithoutZip()
-      .map(_.toSeq)
+  def isInCL010(countryId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    isCountryInCodeList("CountryCodesCommunity", countryId)
 
   def getOfficeOfTransitCountries(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads) match {
-      case Some(x) if x.values.nonEmpty => Future.successful(x)
-      case _                            => getCountries()
+    userAnswers
+      .get(CountriesOfRoutingSection)
+      .flatMapWithIndex {
+        case (_, index) => userAnswers.get(CountryOfRoutingPage(index))
+      } match {
+      case Nil       => getCountries()
+      case countries => Future.successful(SelectableList(countries))
     }
 
   def getOfficeOfExitCountries(userAnswers: UserAnswers, countryOfDestination: Country)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
-    userAnswers.get(CountriesOfRoutingSection).validate(countriesOfRoutingReads).map(_.values) match {
-      case Some(countries) if countries.nonEmpty =>
-        getCustomsSecurityAgreementAreaCountries()
-          .map(_.values)
-          .map(countries.filterNot(_ == countryOfDestination).intersect(_))
-          .map(SelectableList(_))
-      case _ =>
-        getCountries()
+    userAnswers
+      .get(CountriesOfRoutingSection)
+      .flatMapWithIndex {
+        case (_, index) =>
+          userAnswers.get(CountryOfRoutingInCL147Page(index)).flatMap {
+            case true =>
+              userAnswers.get(CountryOfRoutingPage(index)).flatMap {
+                case `countryOfDestination` => None
+                case value                  => Some(value)
+              }
+            case false => None
+          }
+      } match {
+      case Nil       => getCountries()
+      case countries => Future.successful(SelectableList(countries))
     }
 
   private def getCountries(listName: String)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
@@ -81,6 +95,23 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
       .getCountries(listName)
       .map(SelectableList(_))
 
+  private def isCountryInCodeList(listName: String, countryId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    referenceDataConnector
+      .getCountry(listName, countryId)
+      .map {
+        _ => true
+      }
+      .recover {
+        case _: NoReferenceDataFoundException => false
+      }
+
   def doesCountryRequireZip(country: Country)(implicit hc: HeaderCarrier): Future[Boolean] =
-    getCountriesWithoutZip().map(!_.contains(country.code))
+    referenceDataConnector
+      .getCountriesWithoutZipCountry(country.code.code)
+      .map {
+        _ => true
+      }
+      .recover {
+        case _: NoReferenceDataFoundException => false
+      }
 }

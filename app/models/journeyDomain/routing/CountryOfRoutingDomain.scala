@@ -21,7 +21,8 @@ import models.journeyDomain._
 import models.reference.Country
 import models.{Index, Mode, UserAnswers}
 import pages.routing.index.CountryOfRoutingPage
-import pages.sections.routing.CountriesOfRoutingSection
+import pages.sections.Section
+import pages.sections.routing.CountryOfRoutingSection
 import play.api.mvc.Call
 
 case class CountryOfRoutingDomain(
@@ -29,12 +30,15 @@ case class CountryOfRoutingDomain(
 )(index: Index)
     extends JourneyDomainModel {
 
+  override def page: Option[Section[_]] =
+    Some(CountryOfRoutingSection(index))
+
   override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =
     stage match {
       case AccessingJourney =>
         Some(controllers.routing.index.routes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index))
       case CompletingJourney =>
-        CountriesOfRoutingSection.route(userAnswers, mode)
+        super.routeIfCompleted(userAnswers, mode, stage)
     }
 }
 

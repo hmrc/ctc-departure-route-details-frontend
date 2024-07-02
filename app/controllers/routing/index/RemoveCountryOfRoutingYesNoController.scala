@@ -16,18 +16,23 @@
 
 package controllers.routing.index
 
-import config.PhaseConfig
 import controllers.actions._
 import controllers.routing.{routes => routingRoutes}
-import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
-import models.reference.Country
+import models.reference.{Country, CustomsOffice}
 import models.requests.SpecificDataRequestProvider1
-import models.{Index, LocalReferenceNumber, Mode}
+import models.{Index, LocalReferenceNumber, Mode, RichOptionalJsArray, UserAnswers}
+import pages.QuestionPage
+import pages.exit.index.OfficeOfExitPage
 import pages.routing.index.CountryOfRoutingPage
+import pages.sections.Section
+import pages.sections.exit.{OfficeOfExitSection, OfficesOfExitSection}
 import pages.sections.routing.CountryOfRoutingSection
+import pages.sections.transit.{OfficeOfTransitSection, OfficesOfTransitSection}
+import pages.transit.index.OfficeOfTransitPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsArray, JsObject}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,6 +40,7 @@ import views.html.routing.index.RemoveCountryOfRoutingYesNoView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class RemoveCountryOfRoutingYesNoController @Inject() (
   override val messagesApi: MessagesApi,
@@ -44,7 +50,7 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: RemoveCountryOfRoutingYesNoView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -74,14 +80,33 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, index, request.arg))),
             {
               case true =>
-                CountryOfRoutingSection(index)
-                  .removeFromUserAnswers()
-                  .updateTask()
-                  .writeToSession()
-                  .navigateTo(addAnother(lrn, mode))
+                for {
+                  updatedAnswers <- Future.fromTry(
+                    request.userAnswers
+                      .remove(CountryOfRoutingSection(index))
+                      .flatMap(findAndRemoveOffices(_, OfficesOfTransitSection, OfficeOfTransitSection, OfficeOfTransitPage))
+                      .flatMap(findAndRemoveOffices(_, OfficesOfExitSection, OfficeOfExitSection, OfficeOfExitPage))
+                  )
+                  _ <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(addAnother(lrn, mode))
+
               case false =>
                 Future.successful(Redirect(addAnother(lrn, mode)))
             }
           )
+    }
+
+  private def findAndRemoveOffices(
+    userAnswers: UserAnswers,
+    array: Section[JsArray],
+    obj: Index => Section[JsObject],
+    page: Index => QuestionPage[CustomsOffice]
+  )(implicit request: Request): Try[UserAnswers] =
+    (0 until userAnswers.get(array).length).foldRight(Try(userAnswers)) {
+      case (index, acc) =>
+        userAnswers.get(page(Index(index))) match {
+          case Some(value) if value.countryId == request.arg.code.code => acc.flatMap(_.remove(obj(Index(index))))
+          case _                                                       => acc
+        }
     }
 }
