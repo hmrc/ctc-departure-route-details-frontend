@@ -18,7 +18,7 @@ package base
 
 import config.{PostTransitionModule, TransitionModule}
 import controllers.actions._
-import models.{Index, LockCheck, Mode, SelectableList, UserAnswers}
+import models.{Index, LockCheck, Mode, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}

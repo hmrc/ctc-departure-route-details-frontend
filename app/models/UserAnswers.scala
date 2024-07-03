@@ -16,7 +16,7 @@
 
 package models
 
-import models.reference.{Country, CustomsOffice}
+import models.reference.CustomsOffice
 import pages.QuestionPage
 import pages.sections.Section
 import play.api.libs.json._
