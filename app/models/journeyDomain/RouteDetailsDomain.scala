@@ -97,13 +97,18 @@ object RouteDetailsDomain {
           case ProcedureType.Simplified => mandatoryReader
         }
       case Phase.PostTransition =>
-        AdditionalDeclarationTypePage.reader.to {
-          case PreLodge =>
-            optionalReader
-          case _ =>
-            OfficeOfDepartureInCL147Page.reader.to {
-              case true  => optionalReader
-              case false => mandatoryReader
+        ProcedureTypePage.reader.to {
+          case ProcedureType.Simplified =>
+            mandatoryReader
+          case ProcedureType.Normal =>
+            AdditionalDeclarationTypePage.reader.to {
+              case PreLodge =>
+                optionalReader
+              case _ =>
+                OfficeOfDepartureInCL147Page.reader.to {
+                  case true  => optionalReader
+                  case false => mandatoryReader
+                }
             }
         }
     }
