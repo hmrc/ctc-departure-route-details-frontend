@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddOfficeOfTransitETAYesNoController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfTransitNavigatorProvider,
   actions: Actions,
   formProvider: YesNoFormProvider,
@@ -72,12 +72,12 @@ class AddOfficeOfTransitETAYesNoController @Inject() (
             .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode, officeOfTransit, index))),
               value => {
-                implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                 AddOfficeOfTransitETAYesNoPage(index)
                   .writeToUserAnswers(value)
                   .updateTask()
-                  .writeToSession()
-                  .navigate()
+                  .writeToSession(sessionRepository)
+                  .navigateWith(navigator)
               }
             )
       }

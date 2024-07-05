@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BindingItineraryController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: RoutingNavigatorProvider,
   actions: Actions,
   formProvider: YesNoFormProvider,
@@ -63,12 +63,12 @@ class BindingItineraryController @Inject() (
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
           value => {
-            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            val navigator: UserAnswersNavigator = navigatorProvider(mode)
             BindingItineraryPage
               .writeToUserAnswers(value)
               .updateTask()
-              .writeToSession()
-              .navigate()
+              .writeToSession(sessionRepository)
+              .navigateWith(navigator)
           }
         )
   }

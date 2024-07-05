@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CountryOfDestinationController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: RoutingNavigatorProvider,
   actions: Actions,
   formProvider: SelectableFormProvider,
@@ -79,12 +79,12 @@ class CountryOfDestinationController @Inject() (
                   .getCustomsOfficesOfDestinationForCountry(value.code)
                   .flatMap {
                     _ =>
-                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                      val navigator: UserAnswersNavigator = navigatorProvider(mode)
                       CountryOfDestinationPage
                         .writeToUserAnswers(value)
                         .updateTask()
-                        .writeToSession()
-                        .navigate()
+                        .writeToSession(sessionRepository)
+                        .navigateWith(navigator)
                   }
                   .recover {
                     case _: NoReferenceDataFoundException =>

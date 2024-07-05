@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddSpecificCircumstanceIndicatorYesNoController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: RouteDetailsNavigatorProvider,
   actions: Actions,
   formProvider: YesNoFormProvider,
@@ -62,12 +62,12 @@ class AddSpecificCircumstanceIndicatorYesNoController @Inject() (
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
           value => {
-            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            val navigator: UserAnswersNavigator = navigatorProvider(mode)
             AddSpecificCircumstanceIndicatorYesNoPage
               .writeToUserAnswers(value)
               .updateTask()
-              .writeToSession()
-              .navigate()
+              .writeToSession(sessionRepository)
+              .navigateWith(navigator)
           }
         )
   }
