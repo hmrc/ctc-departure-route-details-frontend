@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmRemoveOfficeOfTransitController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   actions: Actions,
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
@@ -74,7 +74,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
                 OfficeOfTransitSection(index)
                   .removeFromUserAnswers()
                   .updateTask()
-                  .writeToSession()
+                  .writeToSession(sessionRepository)
                   .navigateTo(addAnother(lrn, mode))
               case false =>
                 Future.successful(Redirect(addAnother(lrn, mode)))

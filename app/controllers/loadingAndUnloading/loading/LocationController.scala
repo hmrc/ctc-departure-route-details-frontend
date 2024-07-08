@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class LocationController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: LoadingAndUnloadingNavigatorProvider,
   formProvider: LoadingLocationFormProvider,
   actions: Actions,
@@ -70,12 +70,12 @@ class LocationController @Inject() (
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryName, phaseConfig.loadingLocationMaxLength, mode))),
             value => {
-              implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+              val navigator: UserAnswersNavigator = navigatorProvider(mode)
               LocationPage
                 .writeToUserAnswers(value)
                 .updateTask()
-                .writeToSession()
-                .navigate()
+                .writeToSession(sessionRepository)
+                .navigateWith(navigator)
             }
           )
     }

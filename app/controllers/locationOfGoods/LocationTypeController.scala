@@ -41,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class LocationTypeController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
   formProvider: EnumerableFormProvider,
@@ -95,12 +95,12 @@ class LocationTypeController @Inject() (
     page: QuestionPage[LocationType],
     value: LocationType
   )(implicit request: MandatoryDataRequest[_], hc: HeaderCarrier): Future[Result] = {
-    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+    val navigator: UserAnswersNavigator = navigatorProvider(mode)
     page
       .writeToUserAnswers(value)
       .updateTask()
-      .writeToSession()
-      .navigate()
+      .writeToSession(sessionRepository)
+      .navigateWith(navigator)
   }
 
 }

@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class T2DeclarationTypeYesNoController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: TransitNavigatorProvider,
   actions: Actions,
   formProvider: YesNoFormProvider,
@@ -63,12 +63,12 @@ class T2DeclarationTypeYesNoController @Inject() (
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
           value => {
-            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            val navigator: UserAnswersNavigator = navigatorProvider(mode)
             T2DeclarationTypeYesNoPage
               .writeToUserAnswers(value)
               .updateTask()
-              .writeToSession()
-              .navigate()
+              .writeToSession(sessionRepository)
+              .navigateWith(navigator)
           }
         )
   }

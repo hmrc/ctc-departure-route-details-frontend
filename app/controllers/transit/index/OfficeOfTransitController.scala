@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OfficeOfTransitController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfTransitNavigatorProvider,
   actions: Actions,
   formProvider: SelectableFormProvider,
@@ -84,14 +84,14 @@ class OfficeOfTransitController @Inject() (
                     isInCL147 <- countriesService.isInCL147(value.countryId)
                     isInCL010 <- countriesService.isInCL010(value.countryId)
                     result <- {
-                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                      val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                       OfficeOfTransitPage(index)
                         .writeToUserAnswers(value)
                         .appendValue(OfficeOfTransitInCL147Page(index), isInCL147)
                         .appendValue(OfficeOfTransitInCL010Page(index), isInCL010)
                         .updateTask()
-                        .writeToSession()
-                        .navigate()
+                        .writeToSession(sessionRepository)
+                        .navigateWith(navigator)
                     }
                   } yield result
               )

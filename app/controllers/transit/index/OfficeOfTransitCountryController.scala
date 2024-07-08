@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OfficeOfTransitCountryController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfTransitNavigatorProvider,
   actions: Actions,
   formProvider: SelectableFormProvider,
@@ -100,11 +100,11 @@ class OfficeOfTransitCountryController @Inject() (
     page: Index => QuestionPage[Country],
     country: Country
   )(implicit request: DataRequest[_]): Future[Result] = {
-    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+    val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
     page(index)
       .writeToUserAnswers(country)
       .updateTask()
-      .writeToSession()
-      .navigate()
+      .writeToSession(sessionRepository)
+      .navigateWith(navigator)
   }
 }

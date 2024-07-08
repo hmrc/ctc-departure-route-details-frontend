@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CountryOfRoutingController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: CountryOfRoutingNavigatorProvider,
   actions: Actions,
   formProvider: SelectableFormProvider,
@@ -77,15 +77,15 @@ class CountryOfRoutingController @Inject() (
                   isInCL112 <- countriesService.isInCL112(value.code.code)
                   isInCL147 <- countriesService.isInCL147(value.code.code)
                   result <- {
-                    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                    val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                     CountryOfRoutingPage(index)
                       .writeToUserAnswers(value)
                       .removeOffices(request.userAnswers.get(CountryOfRoutingPage(index)), value)
                       .appendValue(CountryOfRoutingInCL112Page(index), isInCL112)
                       .appendValue(CountryOfRoutingInCL147Page(index), isInCL147)
                       .updateTask()
-                      .writeToSession()
-                      .navigate()
+                      .writeToSession(sessionRepository)
+                      .navigateWith(navigator)
 
                   }
                 } yield result
