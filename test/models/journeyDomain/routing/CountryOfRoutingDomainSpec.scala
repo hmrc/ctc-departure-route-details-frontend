@@ -22,6 +22,7 @@ import models.journeyDomain.UserAnswersReader
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import pages.routing.index.CountryOfRoutingPage
+import pages.sections.routing.CountryOfRoutingSection
 
 class CountryOfRoutingDomainSpec extends SpecBase with Generators {
 
@@ -44,7 +45,8 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
 
         result.value.value mustBe expectedResult
         result.value.pages mustBe Seq(
-          CountryOfRoutingPage(index)
+          CountryOfRoutingPage(index),
+          CountryOfRoutingSection(index)
         )
       }
     }

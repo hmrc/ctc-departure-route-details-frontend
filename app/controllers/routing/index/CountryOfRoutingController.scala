@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CountryOfRoutingController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: CountryOfRoutingNavigatorProvider,
   actions: Actions,
   formProvider: SelectableFormProvider,
@@ -53,20 +53,20 @@ class CountryOfRoutingController @Inject() (
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      countriesService.getCountries().map {
+      val countryOfRoutingPage: Option[Country] = request.userAnswers.get(CountryOfRoutingPage(index))
+      countriesService.getCountriesOfRouting(request.userAnswers, index).map {
         countryList =>
-          val preparedForm = request.userAnswers.get(CountryOfRoutingPage(index)) match {
+          val preparedForm = countryOfRoutingPage match {
             case None        => form(countryList)
             case Some(value) => form(countryList).fill(value)
           }
-
           Ok(view(preparedForm, lrn, countryList.values, mode, index))
       }
   }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
-      countriesService.getCountries().flatMap {
+      countriesService.getCountriesOfRouting(request.userAnswers, index).flatMap {
         countryList =>
           form(countryList)
             .bindFromRequest()
@@ -74,22 +74,23 @@ class CountryOfRoutingController @Inject() (
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))),
               value =>
                 for {
-                  ctcCountries <- countriesService.getCountryCodesCTC().map(_.values)
-                  isInCL112 = ctcCountries.map(_.code.code).contains(value.code.code)
-                  customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
-                  isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.code.code)
+                  isInCL112 <- countriesService.isInCL112(value.code.code)
+                  isInCL147 <- countriesService.isInCL147(value.code.code)
                   result <- {
-                    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                    val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                     CountryOfRoutingPage(index)
                       .writeToUserAnswers(value)
+                      .removeOffices(request.userAnswers.get(CountryOfRoutingPage(index)), value)
                       .appendValue(CountryOfRoutingInCL112Page(index), isInCL112)
                       .appendValue(CountryOfRoutingInCL147Page(index), isInCL147)
                       .updateTask()
-                      .writeToSession()
-                      .navigate()
+                      .writeToSession(sessionRepository)
+                      .navigateWith(navigator)
+
                   }
                 } yield result
             )
       }
   }
+
 }

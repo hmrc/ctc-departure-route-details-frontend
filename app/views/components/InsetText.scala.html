@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import viewModels.components.InputTextViewModel
+@import viewModels.components.InputTextViewModel._
+@import views.html.components.Heading
 
-import cats.data.NonEmptySet
-import services.RichNonEmptySet
+@this(govukInsetText: GovukInsetText)
 
-case class SelectableList[T <: Selectable](values: Seq[T]) {
+@(text: String)
 
-  def filterNot(predicate: T => Boolean): SelectableList[T] =
-    this.copy(values = values.filterNot(predicate))
-}
-
-object SelectableList {
-
-  def apply[T <: Selectable](seq: Seq[T]): SelectableList[T] =
-    new SelectableList[T](seq)
-
-  def apply[T <: Selectable](nonEmptySet: NonEmptySet[T]): SelectableList[T] =
-    apply(nonEmptySet.toSeq)
-}
+@govukInsetText(
+    InsetText(
+        content = Text(text)
+    )
+)

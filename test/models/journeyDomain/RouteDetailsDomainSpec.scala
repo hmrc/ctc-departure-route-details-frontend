@@ -25,14 +25,14 @@ import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.{CustomsOffice, SpecificCircumstanceIndicator}
-import models.{Index, Phase}
+import models.{Index, Phase, ProcedureType}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.external._
-import pages.locationOfGoods.AddLocationOfGoodsPage
+import pages.locationOfGoods.{AddLocationOfGoodsPage, LocationTypePage}
 import pages.transit.index.OfficeOfTransitInCL147Page
 import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 
@@ -234,51 +234,178 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
           when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
-          "when office of departure is in set CL147" - {
-            val customsOffice = arbitrary[CustomsOffice].sample.value
+          "when additional declaration type is PreLodge (D)" - {
+            "when procedure type is Normal" - {
+              "and not adding a location of goods type" in {
+                val userAnswers = emptyUserAnswers
+                  .setValue(AdditionalDeclarationTypePage, "D")
+                  .setValue(ProcedureTypePage, ProcedureType.Normal)
+                  .setValue(AddLocationOfGoodsPage, false)
 
-            "and not adding a location of goods type" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(AdditionalDeclarationTypePage, "A")
-                .setValue(OfficeOfDeparturePage, arbitrary[CustomsOffice].sample.value)
-                .setValue(OfficeOfDepartureInCL147Page, true)
-                .setValue(AddLocationOfGoodsPage, false)
+                val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                  RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                ).run(userAnswers)
 
-              val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
-              ).run(userAnswers)
+                result.value.value must not be defined
+                result.value.pages mustBe Seq(
+                  AddLocationOfGoodsPage
+                )
+              }
 
-              result.value.value must not be defined
-              result.value.pages mustBe Seq(
-                AddLocationOfGoodsPage
-              )
+              "and adding a location of goods type" in {
+                val initialAnswers = emptyUserAnswers
+                  .setValue(AdditionalDeclarationTypePage, "D")
+                  .setValue(ProcedureTypePage, ProcedureType.Normal)
+                  .setValue(AddLocationOfGoodsPage, true)
+
+                forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
+                  answers =>
+                    val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                      RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                    ).run(answers)
+
+                    result.value.value mustBe defined
+                }
+              }
             }
 
-            "and adding a location of goods type" in {
-              val initialAnswers = emptyUserAnswers
-                .setValue(AdditionalDeclarationTypePage, "A")
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL147Page, true)
-                .setValue(AddLocationOfGoodsPage, true)
+            "when procedure type is Simplified" - {
+              "and adding a location of goods" in {
+                val initialAnswers = emptyUserAnswers
+                  .setValue(AdditionalDeclarationTypePage, "D")
+                  .setValue(ProcedureTypePage, ProcedureType.Simplified)
 
-              forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
-                answers =>
-                  val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
-                    RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
-                  ).run(answers)
+                forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
+                  answers =>
+                    val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                      RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                    ).run(answers)
 
-                  result.value.value mustBe defined
+                    result.value.value mustBe defined
+                }
               }
             }
           }
 
-          "when office of departure is not in set CL147" in {
-            val customsOffice = arbitrary[CustomsOffice].sample.value
+          "when additional declaration type is not PreLodge (D)" - {
+            "when office of departure is in set CL147" - {
+              "when procedure type is Normal" - {
+                "and not adding a location of goods" in {
+                  val customsOffice = arbitrary[CustomsOffice].sample.value
 
+                  val userAnswers = emptyUserAnswers
+                    .setValue(AdditionalDeclarationTypePage, "A")
+                    .setValue(OfficeOfDeparturePage, customsOffice)
+                    .setValue(OfficeOfDepartureInCL147Page, true)
+                    .setValue(ProcedureTypePage, ProcedureType.Normal)
+                    .setValue(AddLocationOfGoodsPage, false)
+
+                  val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                    RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                  ).run(userAnswers)
+
+                  result.value.value must not be defined
+                  result.value.pages mustBe Seq(
+                    AddLocationOfGoodsPage
+                  )
+                }
+
+                "and adding a location of goods" in {
+                  val customsOffice = arbitrary[CustomsOffice].sample.value
+
+                  val initialAnswers = emptyUserAnswers
+                    .setValue(AdditionalDeclarationTypePage, "A")
+                    .setValue(OfficeOfDeparturePage, customsOffice)
+                    .setValue(OfficeOfDepartureInCL147Page, true)
+                    .setValue(ProcedureTypePage, ProcedureType.Normal)
+                    .setValue(AddLocationOfGoodsPage, true)
+
+                  forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
+                    answers =>
+                      val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                        RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                      ).run(answers)
+
+                      result.value.value mustBe defined
+                  }
+                }
+              }
+
+              "when procedure type is Simplified" - {
+                "and adding a location of goods" in {
+                  val customsOffice = arbitrary[CustomsOffice].sample.value
+
+                  val initialAnswers = emptyUserAnswers
+                    .setValue(AdditionalDeclarationTypePage, "A")
+                    .setValue(OfficeOfDeparturePage, customsOffice)
+                    .setValue(OfficeOfDepartureInCL147Page, true)
+                    .setValue(ProcedureTypePage, ProcedureType.Simplified)
+
+                  forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
+                    answers =>
+                      val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                        RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                      ).run(answers)
+
+                      result.value.value mustBe defined
+                  }
+                }
+              }
+            }
+
+            "when office of departure is not in set CL147" - {
+              "when procedure type is Normal" - {
+                "and adding a location of goods" in {
+                  val customsOffice = arbitrary[CustomsOffice].sample.value
+
+                  val initialAnswers = emptyUserAnswers
+                    .setValue(AdditionalDeclarationTypePage, "A")
+                    .setValue(OfficeOfDeparturePage, customsOffice)
+                    .setValue(OfficeOfDepartureInCL147Page, false)
+                    .setValue(ProcedureTypePage, ProcedureType.Normal)
+
+                  forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
+                    answers =>
+                      val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                        RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                      ).run(answers)
+
+                      result.value.value mustBe defined
+                  }
+                }
+              }
+
+              "when procedure type is Simplified" - {
+                "and adding a location of goods" in {
+                  val customsOffice = arbitrary[CustomsOffice].sample.value
+
+                  val initialAnswers = emptyUserAnswers
+                    .setValue(AdditionalDeclarationTypePage, "A")
+                    .setValue(OfficeOfDeparturePage, customsOffice)
+                    .setValue(OfficeOfDepartureInCL147Page, false)
+                    .setValue(ProcedureTypePage, ProcedureType.Simplified)
+
+                  forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
+                    answers =>
+                      val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                        RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                      ).run(answers)
+
+                      result.value.value mustBe defined
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        "when transition" - {
+          val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+          when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
+
+          "when simplified procedure" in {
             val initialAnswers = emptyUserAnswers
-              .setValue(AdditionalDeclarationTypePage, "A")
-              .setValue(OfficeOfDeparturePage, customsOffice)
-              .setValue(OfficeOfDepartureInCL147Page, false)
+              .setValue(ProcedureTypePage, ProcedureType.Simplified)
 
             forAll(arbitraryLocationOfGoodsAnswers(initialAnswers)) {
               answers =>
@@ -287,7 +414,23 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                 ).run(answers)
 
                 result.value.value mustBe defined
+                result.value.pages.head must not be AddLocationOfGoodsPage
             }
+          }
+
+          "when normal procedure" in {
+            val userAnswers = emptyUserAnswers
+              .setValue(ProcedureTypePage, ProcedureType.Normal)
+              .setValue(AddLocationOfGoodsPage, false)
+
+            val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+              RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
+
+            result.value.value must not be defined
+            result.value.pages mustBe Seq(
+              AddLocationOfGoodsPage
+            )
           }
         }
       }
@@ -298,9 +441,12 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
           "and add location of goods type yes/no is unanswered" in {
+            val userAnswers = emptyUserAnswers
+              .setValue(ProcedureTypePage, ProcedureType.Normal)
+
             val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
               RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
-            ).run(emptyUserAnswers)
+            ).run(userAnswers)
 
             result.left.value.page mustBe AddLocationOfGoodsPage
             result.left.value.pages mustBe Seq(
@@ -313,18 +459,81 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
           when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
-          "and pre-lodging" - {
-            "and add location of goods type yes/no is unanswered" in {
-              val userAnswers = emptyUserAnswers.setValue(AdditionalDeclarationTypePage, "D")
+          "when simplified procedure type" - {
+            "and location type is unanswered" in {
+              val userAnswers = emptyUserAnswers.setValue(ProcedureTypePage, ProcedureType.Simplified)
 
               val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
                 RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
               ).run(userAnswers)
 
-              result.left.value.page mustBe AddLocationOfGoodsPage
+              result.left.value.page mustBe LocationTypePage
               result.left.value.pages mustBe Seq(
-                AddLocationOfGoodsPage
+                LocationTypePage
               )
+            }
+          }
+
+          "when normal procedure type" - {
+            "when pre-lodging" - {
+              "and add location of goods type yes/no is unanswered" in {
+                val userAnswers = emptyUserAnswers
+                  .setValue(ProcedureTypePage, ProcedureType.Normal)
+                  .setValue(AdditionalDeclarationTypePage, "D")
+
+                val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                  RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                ).run(userAnswers)
+
+                result.left.value.page mustBe AddLocationOfGoodsPage
+                result.left.value.pages mustBe Seq(
+                  AddLocationOfGoodsPage
+                )
+              }
+            }
+
+            "when standard additional declaration type" - {
+              "when office of departure is in set CL147" - {
+                "and add location of goods type yes/no is unanswered" in {
+                  val customsOffice = arbitrary[CustomsOffice].sample.value
+
+                  val userAnswers = emptyUserAnswers
+                    .setValue(ProcedureTypePage, ProcedureType.Normal)
+                    .setValue(AdditionalDeclarationTypePage, "A")
+                    .setValue(OfficeOfDeparturePage, customsOffice)
+                    .setValue(OfficeOfDepartureInCL147Page, true)
+
+                  val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                    RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                  ).run(userAnswers)
+
+                  result.left.value.page mustBe AddLocationOfGoodsPage
+                  result.left.value.pages mustBe Seq(
+                    AddLocationOfGoodsPage
+                  )
+                }
+              }
+
+              "when office of departure is not in set CL147" - {
+                "and location type is unanswered" in {
+                  val customsOffice = arbitrary[CustomsOffice].sample.value
+
+                  val userAnswers = emptyUserAnswers
+                    .setValue(ProcedureTypePage, ProcedureType.Normal)
+                    .setValue(AdditionalDeclarationTypePage, "A")
+                    .setValue(OfficeOfDeparturePage, customsOffice)
+                    .setValue(OfficeOfDepartureInCL147Page, false)
+
+                  val result = UserAnswersReader[Option[LocationOfGoodsDomain]](
+                    RouteDetailsDomain.locationOfGoodsReader(mockPhaseConfig).apply(Nil)
+                  ).run(userAnswers)
+
+                  result.left.value.page mustBe LocationTypePage
+                  result.left.value.pages mustBe Seq(
+                    LocationTypePage
+                  )
+                }
+              }
             }
           }
         }

@@ -19,14 +19,10 @@ package pages.routing.index
 import controllers.routing.index.routes
 import models.reference.Country
 import models.{Index, Mode, UserAnswers}
-import pages.{InferredPage, QuestionPage}
-import pages.sections.exit.ExitSection
 import pages.sections.routing.CountryOfRoutingSection
-import pages.sections.transit.TransitSection
+import pages.{InferredPage, QuestionPage}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
-
-import scala.util.Try
 
 case class CountryOfRoutingPage(index: Index) extends QuestionPage[Country] {
 
@@ -36,12 +32,6 @@ case class CountryOfRoutingPage(index: Index) extends QuestionPage[Country] {
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index))
-
-  override def cleanup(value: Option[Country], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(_) => userAnswers.remove(TransitSection).flatMap(_.remove(ExitSection))
-      case None    => super.cleanup(value, userAnswers)
-    }
 }
 
 case class CountryOfRoutingInCL112Page(index: Index) extends InferredPage[Boolean] {

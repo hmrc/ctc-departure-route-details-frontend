@@ -123,9 +123,9 @@ routing.index.countryOfRouting.error.required = Enter which country you want to 
 routing.index.countryOfRouting.hint = Enter the country, like France or Portugal.
 routing.index.countryOfRouting.placeholder = Select a country
 
-routing.index.removeCountryOfRoutingYesNo.title = Are you sure you want to remove {0} from the transit route?
-routing.index.removeCountryOfRoutingYesNo.heading = Are you sure you want to remove {0} from the transit route?
-routing.index.removeCountryOfRoutingYesNo.error.required = Select yes if you want to remove {0} from the transit route
+routing.index.removeCountryOfRoutingYesNo.title = Are you sure you want to remove this country from the transit route?
+routing.index.removeCountryOfRoutingYesNo.heading = Are you sure you want to remove this country from the transit route?
+routing.index.removeCountryOfRoutingYesNo.error.required = Select yes if you want to remove this country from the transit route
 
 # Route details - Transit
 
@@ -201,12 +201,9 @@ transit.index.officeOfTransitETA.time.error.required.all = Enter the estimated t
 transit.index.officeOfTransitETA.time.error.required.hour = The estimated time of arrival at the office of transit must include an hour
 transit.index.officeOfTransitETA.time.error.required.minute = The estimated time of arrival at the office of transit must include a minute
 
-transit.index.confirmRemoveOfficeOfTransit.title = Are you sure you want to remove {0} as an office of transit?
-transit.index.confirmRemoveOfficeOfTransit.heading = Are you sure you want to remove {0} as an office of transit?
-transit.index.confirmRemoveOfficeOfTransit.error.required = Select yes if you want to remove {0} as an office of transit
-transit.index.confirmRemoveOfficeOfTransit.default.title = Are you sure you want to remove this office of transit?
-transit.index.confirmRemoveOfficeOfTransit.default.heading = Are you sure you want to remove this office of transit?
-transit.index.confirmRemoveOfficeOfTransit.default.error.required = Select yes if you want to remove this office of transit
+transit.index.confirmRemoveOfficeOfTransit.title = Are you sure you want to remove this office of transit?
+transit.index.confirmRemoveOfficeOfTransit.heading = Are you sure you want to remove this office of transit?
+transit.index.confirmRemoveOfficeOfTransit.error.required = Select yes if you want to remove this office of transit
 
 transit.index.checkOfficeOfTransitAnswers.title = Check your answers - Office of transit
 transit.index.checkOfficeOfTransitAnswers.heading = Check your answers
@@ -250,12 +247,9 @@ exit.index.officeOfExit.change.hidden = office of exit for transit’s location
 exit.index.officeOfExit.checkYourAnswersLabel = Office location
 exit.index.officeOfExit.error.required = Enter where the office of exit is in {0}
 
-exit.index.confirmRemoveOfficeOfExit.title = Are you sure you want to remove {0} as an office of exit for transit?
-exit.index.confirmRemoveOfficeOfExit.heading = Are you sure you want to remove {0} as an office of exit for transit?
-exit.index.confirmRemoveOfficeOfExit.error.required = Select yes if you want to remove {0} as an office of exit for transit
-exit.index.confirmRemoveOfficeOfExit.default.title = Are you sure you want to remove this office of exit for transit?
-exit.index.confirmRemoveOfficeOfExit.default.heading = Are you sure you want to remove this office of exit for transit?
-exit.index.confirmRemoveOfficeOfExit.default.error.required = Select yes if you want to remove this office of exit for transit
+exit.index.confirmRemoveOfficeOfExit.title = Are you sure you want to remove this office of exit for transit?
+exit.index.confirmRemoveOfficeOfExit.heading = Are you sure you want to remove this office of exit for transit?
+exit.index.confirmRemoveOfficeOfExit.error.required = Select yes if you want to remove this office of exit for transit
 
 exit.index.checkOfficeOfExitAnswers.title = Check your answers - Office of exit for transit
 exit.index.checkOfficeOfExitAnswers.heading = Check your answers
@@ -501,7 +495,7 @@ loadingAndUnloading.unloading.unLocode.change.hidden = UN/LOCODE for the place o
 loadingAndUnloading.unloading.unLocode.checkYourAnswersLabel = UN/LOCODE
 loadingAndUnloading.unloading.unLocode.error.required = Enter the UN/LOCODE for the place of unloading
 loadingAndUnloading.unloading.unLocode.error.length = The UN/LOCODE must be 5 characters long
-loadingAndUnloading.unloading.unLocode.error.invalid = The UN/LOCODE number must only include letters a to z and numbers 0 to 9.
+loadingAndUnloading.unloading.unLocode.error.invalid = The UN/LOCODE number must only include letters a to z and numbers 0 to 9
 loadingAndUnloading.unloading.unLocode.error.not.exists = Please enter a valid UN/LOCODE. This is a 5-character code used to identify a transit-related location, like DEBER.
 
 loadingAndUnloading.unloading.addExtraInformationYesNo.title = Do you want to add extra information for the place of unloading?

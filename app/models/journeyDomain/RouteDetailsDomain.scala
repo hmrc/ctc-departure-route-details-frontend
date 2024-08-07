@@ -20,7 +20,7 @@ import config.Constants.AdditionalDeclarationType._
 import config.Constants.DeclarationType._
 import config.Constants.SecurityType._
 import config.PhaseConfig
-import models.Phase
+import models.{Phase, ProcedureType}
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
@@ -28,7 +28,7 @@ import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.SpecificCircumstanceIndicator
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
-import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, OfficeOfDepartureInCL147Page, SecurityDetailsTypePage}
+import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, OfficeOfDepartureInCL147Page, ProcedureTypePage, SecurityDetailsTypePage}
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.sections.transit.OfficesOfTransitSection
 import pages.sections.{RouteDetailsSection, Section}
@@ -87,17 +87,28 @@ object RouteDetailsDomain {
     lazy val optionalReader: Read[Option[LocationOfGoodsDomain]] =
       AddLocationOfGoodsPage.filterOptionalDependent(identity)(LocationOfGoodsDomain.userAnswersReader)
 
+    lazy val mandatoryReader: Read[Option[LocationOfGoodsDomain]] =
+      LocationOfGoodsDomain.userAnswersReader.toOption
+
     phaseConfig.phase match {
       case Phase.Transition =>
-        optionalReader
+        ProcedureTypePage.reader.to {
+          case ProcedureType.Normal     => optionalReader
+          case ProcedureType.Simplified => mandatoryReader
+        }
       case Phase.PostTransition =>
-        AdditionalDeclarationTypePage.reader.to {
-          case PreLodge =>
-            optionalReader
-          case _ =>
-            OfficeOfDepartureInCL147Page.reader.to {
-              case true  => optionalReader
-              case false => LocationOfGoodsDomain.userAnswersReader.toOption
+        ProcedureTypePage.reader.to {
+          case ProcedureType.Simplified =>
+            mandatoryReader
+          case ProcedureType.Normal =>
+            AdditionalDeclarationTypePage.reader.to {
+              case PreLodge =>
+                optionalReader
+              case _ =>
+                OfficeOfDepartureInCL147Page.reader.to {
+                  case true  => optionalReader
+                  case false => mandatoryReader
+                }
             }
         }
     }

@@ -35,7 +35,7 @@ class ConfirmRemoveOfficeOfExitViewSpec extends YesNoViewBehaviours with Generat
   private val viewModel = new RemoveOfficeOfExitViewModel(Some(officeOfExit))
 
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
-    injector.instanceOf[ConfirmRemoveOfficeOfExitView].apply(form, lrn, index, mode, viewModel)(fakeRequest, messages)
+    injector.instanceOf[ConfirmRemoveOfficeOfExitView].apply(form, lrn, index, mode, viewModel, viewModel.officeName)(fakeRequest, messages)
 
   override val prefix: String = "exit.index.confirmRemoveOfficeOfExit"
 
@@ -52,14 +52,15 @@ class ConfirmRemoveOfficeOfExitViewSpec extends YesNoViewBehaviours with Generat
   behave like pageWithSubmitButton("Save and continue")
 
   "when no office name is present in user answers" - {
-    val defaultPrefix = s"$prefix.default"
-    val viewModel     = new RemoveOfficeOfExitViewModel(None)
-    val form          = new YesNoFormProvider()(defaultPrefix)
-    val view          = injector.instanceOf[ConfirmRemoveOfficeOfExitView].apply(form, lrn, index, mode, viewModel)(fakeRequest, messages)
-    val doc           = parseView(view)
+    val viewModel = new RemoveOfficeOfExitViewModel(None)
+    val form      = new YesNoFormProvider()(prefix)
+    val view = injector
+      .instanceOf[ConfirmRemoveOfficeOfExitView]
+      .apply(form, lrn, index, mode, viewModel, viewModel.officeName)(fakeRequest, messages)
+    val doc = parseView(view)
 
-    behave like pageWithTitle(doc, defaultPrefix)
+    behave like pageWithTitle(doc, prefix)
 
-    behave like pageWithHeading(doc, defaultPrefix)
+    behave like pageWithHeading(doc, prefix)
   }
 }

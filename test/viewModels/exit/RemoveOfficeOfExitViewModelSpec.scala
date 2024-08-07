@@ -47,8 +47,8 @@ class RemoveOfficeOfExitViewModelSpec extends SpecBase with AppWithDefaultMockFi
           val viewModel   = viewModelProvider(userAnswers, Index(0))
 
           viewModel.officeOfExit.value mustBe officeOfExit
-          viewModel.title mustBe s"Are you sure you want to remove ${officeOfExit.name} as an office of exit for transit?"
-          viewModel.heading mustBe s"Are you sure you want to remove ${officeOfExit.name} as an office of exit for transit?"
+          viewModel.title mustBe s"Are you sure you want to remove this office of exit for transit?"
+          viewModel.heading mustBe s"Are you sure you want to remove this office of exit for transit?"
       }
     }
   }

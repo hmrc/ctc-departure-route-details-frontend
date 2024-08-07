@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OfficeOfExitController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfExitNavigatorProvider,
   actions: Actions,
   formProvider: SelectableFormProvider,
@@ -79,12 +79,12 @@ class OfficeOfExitController @Inject() (
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.values, country.description, index, mode))),
                 value => {
-                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                  val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                   OfficeOfExitPage(index)
                     .writeToUserAnswers(value)
                     .updateTask()
-                    .writeToSession()
-                    .navigate()
+                    .writeToSession(sessionRepository)
+                    .navigateWith(navigator)
                 }
               )
         }
