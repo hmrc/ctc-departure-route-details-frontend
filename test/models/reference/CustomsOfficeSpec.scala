@@ -92,6 +92,99 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
         customsOffice1
       )
     }
-  }
 
+    "listReads" - {
+      "must read list of customs offices" - {
+        "when offices have distinct IDs" in {
+          val json = Json.parse("""
+              |[
+              |  {
+              |    "id" : "AD000001",
+              |    "name" : "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "EN"
+              |  },
+              |  {
+              |    "id" : "AD000002",
+              |    "name" : "DCNJ PORTA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "EN"
+              |  },
+              |  {
+              |    "id": "IT261101",
+              |    "name": "PASSO NUOVO",
+              |    "countryId": "IT",
+              |    "languageCode": "IT"
+              |  }
+              |]
+              |""".stripMargin)
+
+          val result = json.as[List[CustomsOffice]]
+
+          result mustBe List(
+            CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD"),
+            CustomsOffice("AD000002", "DCNJ PORTA", "AD"),
+            CustomsOffice("IT261101", "PASSO NUOVO", "IT")
+          )
+        }
+
+        "when offices have duplicate IDs must prioritise the office with an EN language code" in {
+          val json = Json.parse("""
+              |[
+              |  {
+              |    "id" : "AD000001",
+              |    "name" : "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "EN"
+              |  },
+              |  {
+              |    "id" : "AD000001",
+              |    "name" : "ADUANA DE ST. JULIÀ DE LÒRIA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "ES"
+              |  },
+              |  {
+              |    "id" : "AD000001",
+              |    "name" : "BUREAU DE SANT JULIÀ DE LÒRIA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "FR"
+              |  },
+              |  {
+              |    "id" : "AD000002",
+              |    "name" : "DCNJ PORTA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "FR"
+              |  },
+              |  {
+              |    "id" : "AD000002",
+              |    "name" : "DCNJ PORTA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "ES"
+              |  },
+              |  {
+              |    "id" : "AD000002",
+              |    "name" : "DCNJ PORTA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "EN"
+              |  },
+              |  {
+              |    "id": "IT261101",
+              |    "name": "PASSO NUOVO",
+              |    "countryId": "IT",
+              |    "languageCode": "IT"
+              |  }
+              |]
+              |""".stripMargin)
+
+          val result = json.as[List[CustomsOffice]]
+
+          result mustBe List(
+            CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD"),
+            CustomsOffice("AD000002", "DCNJ PORTA", "AD"),
+            CustomsOffice("IT261101", "PASSO NUOVO", "IT")
+          )
+        }
+      }
+    }
+  }
 }

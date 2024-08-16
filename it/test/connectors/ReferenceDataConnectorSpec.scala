@@ -56,29 +56,65 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       |  "id": "CustomsOffices",
       |  "data": [
       |    {
-      |      "state": "valid",
-      |      "activeFrom": "2019-01-01",
-      |      "id": "GB1",
-      |      "name": "testName1",
-      |      "LanguageCode": "EN",
-      |      "countryId": "GB",
-      |      "eMailAddress": "foo@andorra.ad",
+      |      "languageCode": "EN",
+      |      "name": "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA",
+      |      "phoneNumber": "+ (376) 84 1090",
+      |      "id": "AD000001",
+      |      "countryId": "AD",
       |      "roles": [
       |        {
+      |          "role": "AUT"
+      |        },
+      |        {
       |          "role": "DEP"
+      |        },
+      |        {
+      |          "role": "DES"
+      |        },
+      |        {
+      |          "role": "TRA"
       |        }
       |      ]
       |    },
       |    {
-      |      "state": "valid",
-      |      "activeFrom": "2019-01-01",
-      |      "id": "GB2",
-      |      "name": "testName2",
-      |      "LanguageCode": "ES",
-      |      "countryId": "GB",
+      |      "languageCode": "ES",
+      |      "name": "ADUANA DE ST. JULIÀ DE LÒRIA",
+      |      "phoneNumber": "+ (376) 84 1090",
+      |      "id": "AD000001",
+      |      "countryId": "AD",
       |      "roles": [
       |        {
+      |          "role": "AUT"
+      |        },
+      |        {
       |          "role": "DEP"
+      |        },
+      |        {
+      |          "role": "DES"
+      |        },
+      |        {
+      |          "role": "TRA"
+      |        }
+      |      ]
+      |    },
+      |    {
+      |      "languageCode": "FR",
+      |      "name": "BUREAU DE SANT JULIÀ DE LÒRIA",
+      |      "phoneNumber": "+ (376) 84 1090",
+      |      "id": "AD000001",
+      |      "countryId": "AD",
+      |      "roles": [
+      |        {
+      |          "role": "AUT"
+      |        },
+      |        {
+      |          "role": "DEP"
+      |        },
+      |        {
+      |          "role": "DES"
+      |        },
+      |        {
+      |          "role": "TRA"
       |        }
       |      ]
       |    }
@@ -256,7 +292,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       def url(countryId: String) = s"/$baseUrl/lists/CustomsOffices?data.countryId=$countryId&data.roles.role=TRA"
 
       "must return a successful future response with a sequence of CustomsOffices" in {
-        val countryId = "GB"
+        val countryId = "AD"
 
         server.stubFor(
           get(urlEqualTo(url(countryId)))
@@ -264,8 +300,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         )
 
         val expectedResult = NonEmptySet.of(
-          CustomsOffice("GB1", "testName1", "GB"),
-          CustomsOffice("GB2", "testName2", "GB")
+          CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD")
         )
 
         connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue mustBe expectedResult
