@@ -194,12 +194,12 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
 
           val userAnswers = emptyUserAnswers
             .setValue(CountryOfRoutingPage(index), country1)
-            .setValue(OfficeOfTransitPage(index), CustomsOffice(country1.code.code, "port1", None, country1.code.code))
-            .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice(country1.code.code, "port2", None, country1.code.code))
-            .setValue(OfficeOfExitPage(index), CustomsOffice(country1.code.code, "port1", None, country1.code.code))
-            .setValue(OfficeOfExitPage(Index(1)), CustomsOffice(country1.code.code, "port1", None, country1.code.code))
-            .setValue(OfficeOfExitPage(Index(2)), CustomsOffice(country2.code.code, "port1", None, country2.code.code))
-            .setValue(OfficeOfExitPage(Index(3)), CustomsOffice(country2.code.code, "port1", None, country2.code.code))
+            .setValue(OfficeOfTransitPage(index), CustomsOffice(country1.code.code, "port1", country1.code.code))
+            .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice(country1.code.code, "port2", country1.code.code))
+            .setValue(OfficeOfExitPage(index), CustomsOffice(country1.code.code, "port1", country1.code.code))
+            .setValue(OfficeOfExitPage(Index(1)), CustomsOffice(country1.code.code, "port1", country1.code.code))
+            .setValue(OfficeOfExitPage(Index(2)), CustomsOffice(country2.code.code, "port1", country2.code.code))
+            .setValue(OfficeOfExitPage(Index(3)), CustomsOffice(country2.code.code, "port1", country2.code.code))
 
           setExistingUserAnswers(userAnswers)
 
@@ -229,12 +229,12 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
           beforeEach()
           val userAnswers = emptyUserAnswers
             .setValue(CountryOfRoutingPage(index), countryFrance)
-            .setValue(OfficeOfTransitPage(index), CustomsOffice("id0", "port37", None, country1.code.code))
-            .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("id1", "port1", None, countryFrance.code.code))
-            .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("id2", "port2", None, countryFrance.code.code))
-            .setValue(OfficeOfExitPage(index), CustomsOffice(country1.code.code, "port1", None, country1.code.code))
-            .setValue(OfficeOfExitPage(Index(1)), CustomsOffice(country1.code.code, "port2", None, country1.code.code))
-            .setValue(OfficeOfExitPage(Index(2)), CustomsOffice(country2.code.code, "port2", None, country2.code.code))
+            .setValue(OfficeOfTransitPage(index), CustomsOffice("id0", "port37", country1.code.code))
+            .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("id1", "port1", countryFrance.code.code))
+            .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("id2", "port2", countryFrance.code.code))
+            .setValue(OfficeOfExitPage(index), CustomsOffice(country1.code.code, "port1", country1.code.code))
+            .setValue(OfficeOfExitPage(Index(1)), CustomsOffice(country1.code.code, "port2", country1.code.code))
+            .setValue(OfficeOfExitPage(Index(2)), CustomsOffice(country2.code.code, "port2", country2.code.code))
 
           when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
           when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))

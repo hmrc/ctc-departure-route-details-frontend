@@ -198,7 +198,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
           beforeEach()
 
           val country       = Country(CountryCode("FR"), "France")
-          val customsOffice = CustomsOffice("FR123", "name", None, "FR")
+          val customsOffice = CustomsOffice("FR123", "name", "FR")
 
           when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
             .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))

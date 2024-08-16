@@ -97,12 +97,12 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
 
         val userAnswers = emptyUserAnswers
           .setValue(CountryOfRoutingPage(index), Country(CountryCode("FR"), "France"))
-          .setValue(OfficeOfTransitPage(index), CustomsOffice("GB", "Britain", None, "GB"))
-          .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("FR", "FR", None, "FR"))
-          .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("FR", "FR", None, "FR"))
-          .setValue(OfficeOfExitPage(index), CustomsOffice("GB", "Britain", None, "GB"))
-          .setValue(OfficeOfExitPage(Index(1)), CustomsOffice("FR", "FR", None, "FR"))
-          .setValue(OfficeOfExitPage(Index(2)), CustomsOffice("FR", "FR", None, "FR"))
+          .setValue(OfficeOfTransitPage(index), CustomsOffice("GB", "Britain", "GB"))
+          .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("FR", "FR", "FR"))
+          .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("FR", "FR", "FR"))
+          .setValue(OfficeOfExitPage(index), CustomsOffice("GB", "Britain", "GB"))
+          .setValue(OfficeOfExitPage(Index(1)), CustomsOffice("FR", "FR", "FR"))
+          .setValue(OfficeOfExitPage(Index(2)), CustomsOffice("FR", "FR", "FR"))
 
         setExistingUserAnswers(userAnswers)
 

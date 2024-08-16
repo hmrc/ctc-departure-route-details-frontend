@@ -20,7 +20,11 @@ import cats.Order
 import models.Selectable
 import play.api.libs.json.{Json, OFormat}
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String], countryId: String) extends Selectable {
+case class CustomsOffice(
+  id: String,
+  name: String,
+  countryId: String
+) extends Selectable {
   override def toString: String = s"$name ($id)"
 
   override val value: String = id
