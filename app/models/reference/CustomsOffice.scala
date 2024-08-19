@@ -60,7 +60,7 @@ object CustomsOffice {
             .map(_.customsOffice)
             .toList
         }
-      case _ => JsError("Expected JsArray")
+      case _ => JsError("Expected customs offices to be in a JsArray")
     }
   }
 }

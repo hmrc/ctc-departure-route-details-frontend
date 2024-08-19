@@ -22,7 +22,7 @@ import models.SelectableList
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, Json}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
@@ -183,6 +183,20 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
             CustomsOffice("AD000002", "DCNJ PORTA", "AD"),
             CustomsOffice("IT261101", "PASSO NUOVO", "IT")
           )
+        }
+      }
+
+      "must fail to read list of customs offices" - {
+        "when not an array" in {
+          val json = Json.parse("""
+              |{
+              |  "foo" : "bar"
+              |}
+              |""".stripMargin)
+
+          val result = json.validate[List[CustomsOffice]]
+
+          result mustBe JsError("Expected customs offices to be in a JsArray")
         }
       }
     }
