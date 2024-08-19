@@ -106,7 +106,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
         isInCL112 =>
           beforeEach()
 
-          val customsOffice = CustomsOffice("FR123", "name", None, "FR")
+          val customsOffice = CustomsOffice("FR123", "name", "FR")
           when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
             .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))
           when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))

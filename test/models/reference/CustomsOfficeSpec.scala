@@ -22,83 +22,47 @@ import models.SelectableList
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, Json}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
 
   "CustomsOffice" - {
 
-    "must serialise" - {
-      "when phone number defined" in {
-        forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr) {
-          (id, name, phoneNumber, countryId) =>
-            val customsOffice = CustomsOffice(id, name, Some(phoneNumber), countryId)
-            Json.toJson(customsOffice) mustBe Json.parse(s"""
-                |{
-                |  "id": "$id",
-                |  "name": "$name",
-                |  "phoneNumber": "$phoneNumber",
-                |  "countryId": "$countryId"
-                |}
-                |""".stripMargin)
-        }
-      }
-
-      "when phone number undefined" in {
-        forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr) {
-          (id, name, countryId) =>
-            val customsOffice = CustomsOffice(id, name, None, countryId)
-            Json.toJson(customsOffice) mustBe Json.parse(s"""
-                |{
-                |  "id": "$id",
-                |  "name": "$name",
-                |  "countryId": "$countryId"
-                |}
-                |""".stripMargin)
-        }
+    "must serialise" in {
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr) {
+        (id, name, countryId) =>
+          val customsOffice = CustomsOffice(id, name, countryId)
+          Json.toJson(customsOffice) mustBe Json.parse(s"""
+               |{
+               |  "id": "$id",
+               |  "name": "$name",
+               |  "countryId": "$countryId"
+               |}
+               |""".stripMargin)
       }
     }
 
-    "must deserialise" - {
-      "when phone number defined" in {
-        forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr) {
-          (id, name, phoneNumber, countryId) =>
-            val customsOffice = CustomsOffice(id, name, Some(phoneNumber), countryId)
-            Json
-              .parse(s"""
-                |{
-                |  "id": "$id",
-                |  "name": "$name",
-                |  "phoneNumber": "$phoneNumber",
-                |  "countryId": "$countryId"
-                |}
-                |""".stripMargin)
-              .as[CustomsOffice] mustBe customsOffice
-        }
-      }
-
-      "when phone number undefined" in {
-        forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr) {
-          (id, name, countryId) =>
-            val customsOffice = CustomsOffice(id, name, None, countryId)
-            Json
-              .parse(s"""
-                |{
-                |  "id": "$id",
-                |  "name": "$name",
-                |  "countryId": "$countryId"
-                |}
-                |""".stripMargin)
-              .as[CustomsOffice] mustBe customsOffice
-        }
+    "must deserialise" in {
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr) {
+        (id, name, countryId) =>
+          val customsOffice = CustomsOffice(id, name, countryId)
+          Json
+            .parse(s"""
+                 |{
+                 |  "id": "$id",
+                 |  "name": "$name",
+                 |  "countryId": "$countryId"
+                 |}
+                 |""".stripMargin)
+            .as[CustomsOffice] mustBe customsOffice
       }
     }
 
     "must convert to select item" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr, arbitrary[Boolean]) {
         (id, name, countryId, selected) =>
-          val customsOffice = CustomsOffice(id, name, None, countryId)
+          val customsOffice = CustomsOffice(id, name, countryId)
           customsOffice.toSelectItem(selected) mustBe SelectItem(Some(id), s"$name ($id)", selected)
       }
     }
@@ -106,16 +70,16 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
     "must format as string" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr) {
         (id, name, countryId) =>
-          val customsOffice = CustomsOffice(id, name, None, countryId)
+          val customsOffice = CustomsOffice(id, name, countryId)
           customsOffice.toString mustBe s"$name ($id)"
       }
     }
 
     "must order" in {
-      val customsOffice1 = CustomsOffice("FRCONF03", "TEST CONF 02", None, "FR")
-      val customsOffice2 = CustomsOffice("FRCONF01", "TEST CONF 02", None, "FR")
-      val customsOffice3 = CustomsOffice("FR620001", "Calais port tunnel bureau", None, "FR")
-      val customsOffice4 = CustomsOffice("FR590002", "Calais port tunnel bureau", None, "FR")
+      val customsOffice1 = CustomsOffice("FRCONF03", "TEST CONF 02", "FR")
+      val customsOffice2 = CustomsOffice("FRCONF01", "TEST CONF 02", "FR")
+      val customsOffice3 = CustomsOffice("FR620001", "Calais port tunnel bureau", "FR")
+      val customsOffice4 = CustomsOffice("FR590002", "Calais port tunnel bureau", "FR")
 
       val customsOffices = NonEmptySet.of(customsOffice1, customsOffice2, customsOffice3, customsOffice4)
 
@@ -128,6 +92,113 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
         customsOffice1
       )
     }
-  }
 
+    "listReads" - {
+      "must read list of customs offices" - {
+        "when offices have distinct IDs" in {
+          val json = Json.parse("""
+              |[
+              |  {
+              |    "id" : "AD000001",
+              |    "name" : "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "EN"
+              |  },
+              |  {
+              |    "id" : "AD000002",
+              |    "name" : "DCNJ PORTA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "EN"
+              |  },
+              |  {
+              |    "id": "IT261101",
+              |    "name": "PASSO NUOVO",
+              |    "countryId": "IT",
+              |    "languageCode": "IT"
+              |  }
+              |]
+              |""".stripMargin)
+
+          val result = json.as[List[CustomsOffice]]
+
+          result mustBe List(
+            CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD"),
+            CustomsOffice("AD000002", "DCNJ PORTA", "AD"),
+            CustomsOffice("IT261101", "PASSO NUOVO", "IT")
+          )
+        }
+
+        "when offices have duplicate IDs must prioritise the office with an EN language code" in {
+          val json = Json.parse("""
+              |[
+              |  {
+              |    "id" : "AD000001",
+              |    "name" : "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "EN"
+              |  },
+              |  {
+              |    "id" : "AD000001",
+              |    "name" : "ADUANA DE ST. JULIÀ DE LÒRIA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "ES"
+              |  },
+              |  {
+              |    "id" : "AD000001",
+              |    "name" : "BUREAU DE SANT JULIÀ DE LÒRIA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "FR"
+              |  },
+              |  {
+              |    "id" : "AD000002",
+              |    "name" : "DCNJ PORTA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "FR"
+              |  },
+              |  {
+              |    "id" : "AD000002",
+              |    "name" : "DCNJ PORTA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "ES"
+              |  },
+              |  {
+              |    "id" : "AD000002",
+              |    "name" : "DCNJ PORTA",
+              |    "countryId" : "AD",
+              |    "languageCode" : "EN"
+              |  },
+              |  {
+              |    "id": "IT261101",
+              |    "name": "PASSO NUOVO",
+              |    "countryId": "IT",
+              |    "languageCode": "IT"
+              |  }
+              |]
+              |""".stripMargin)
+
+          val result = json.as[List[CustomsOffice]]
+
+          result mustBe List(
+            CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD"),
+            CustomsOffice("AD000002", "DCNJ PORTA", "AD"),
+            CustomsOffice("IT261101", "PASSO NUOVO", "IT")
+          )
+        }
+      }
+
+      "must fail to read list of customs offices" - {
+        "when not an array" in {
+          val json = Json.parse("""
+              |{
+              |  "foo" : "bar"
+              |}
+              |""".stripMargin)
+
+          val result = json.validate[List[CustomsOffice]]
+
+          result mustBe JsError("Expected customs offices to be in a JsArray")
+        }
+      }
+    }
+  }
 }
