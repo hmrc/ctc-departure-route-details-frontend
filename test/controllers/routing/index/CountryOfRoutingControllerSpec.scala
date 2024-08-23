@@ -103,7 +103,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
           when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
           when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))
           when(mockCountriesService.isInCL147(any())(any())).thenReturn(Future.successful(isInCL147))
-          when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+          when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
           setExistingUserAnswers(emptyUserAnswers)
 
@@ -190,7 +190,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
           when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
           when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))
           when(mockCountriesService.isInCL147(any())(any())).thenReturn(Future.successful(isInCL147))
-          when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+          when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
           val userAnswers = emptyUserAnswers
             .setValue(CountryOfRoutingPage(index), country1)
@@ -239,7 +239,7 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
           when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
           when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))
           when(mockCountriesService.isInCL147(any())(any())).thenReturn(Future.successful(isInCL147))
-          when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+          when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
           setExistingUserAnswers(userAnswers)
 

@@ -84,7 +84,7 @@ class ConfirmRemoveOfficeOfTransitControllerSpec extends SpecBase with AppWithDe
         forAll(arbitraryOfficeOfTransitAnswers(emptyUserAnswers, index)) {
           answers =>
             reset(mockSessionRepository)
-            when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+            when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
             setExistingUserAnswers(answers)
 

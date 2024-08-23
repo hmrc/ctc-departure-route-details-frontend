@@ -26,7 +26,7 @@ import pages.sections.locationOfGoods.LocationOfGoodsSection
 
 sealed trait LocationOfGoodsDomain extends JourneyDomainModel {
 
-  override def page: Option[Section[_]] = Some(LocationOfGoodsSection)
+  override def page: Option[Section[?]] = Some(LocationOfGoodsSection)
 
   val typeOfLocation: LocationType
 
@@ -62,9 +62,8 @@ case class LocationOfGoodsV(
 object LocationOfGoodsV {
 
   def userAnswersReader(typeOfLocation: LocationType): Read[LocationOfGoodsDomain] =
-    (
-      UserAnswersReader.success(typeOfLocation),
-      CustomsOfficeIdentifierPage.reader
+    RichTuple2(
+      (UserAnswersReader.success(typeOfLocation), CustomsOfficeIdentifierPage.reader)
     ).map(LocationOfGoodsV.apply)
 }
 
@@ -78,11 +77,12 @@ case class LocationOfGoodsX(
 object LocationOfGoodsX {
 
   def userAnswersReader(typeOfLocation: LocationType): Read[LocationOfGoodsDomain] =
-    (
-      UserAnswersReader.success(typeOfLocation),
-      EoriPage.reader,
-      AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
-      AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+    RichTuple4(
+      (UserAnswersReader.success(typeOfLocation),
+       EoriPage.reader,
+       AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
+       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+      )
     ).map(LocationOfGoodsX.apply)
 }
 
@@ -96,11 +96,12 @@ case class LocationOfGoodsY(
 object LocationOfGoodsY {
 
   def userAnswersReader(typeOfLocation: LocationType): Read[LocationOfGoodsDomain] =
-    (
-      UserAnswersReader.success(typeOfLocation),
-      AuthorisationNumberPage.reader,
-      AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
-      AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+    RichTuple4(
+      (UserAnswersReader.success(typeOfLocation),
+       AuthorisationNumberPage.reader,
+       AddIdentifierYesNoPage.filterOptionalDependent(identity)(AdditionalIdentifierPage.reader),
+       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+      )
     ).map(LocationOfGoodsY.apply)
 }
 
@@ -113,10 +114,11 @@ case class LocationOfGoodsW(
 object LocationOfGoodsW {
 
   def userAnswersReader(typeOfLocation: LocationType): Read[LocationOfGoodsDomain] =
-    (
-      UserAnswersReader.success(typeOfLocation),
-      CoordinatesPage.reader,
-      AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+    RichTuple3(
+      (UserAnswersReader.success(typeOfLocation),
+       CoordinatesPage.reader,
+       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+      )
     ).map(LocationOfGoodsW.apply)
 }
 
@@ -130,11 +132,12 @@ case class LocationOfGoodsZ(
 object LocationOfGoodsZ {
 
   def userAnswersReader(typeOfLocation: LocationType): Read[LocationOfGoodsDomain] =
-    (
-      UserAnswersReader.success(typeOfLocation),
-      CountryPage.reader,
-      AddressPage.reader,
-      AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+    RichTuple4(
+      (UserAnswersReader.success(typeOfLocation),
+       CountryPage.reader,
+       AddressPage.reader,
+       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+      )
     ).map(LocationOfGoodsZ.apply)
 }
 
@@ -147,10 +150,11 @@ case class LocationOfGoodsU(
 object LocationOfGoodsU {
 
   def userAnswersReader(typeOfLocation: LocationType): Read[LocationOfGoodsDomain] =
-    (
-      UserAnswersReader.success(typeOfLocation),
-      UnLocodePage.reader,
-      AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+    RichTuple3(
+      (UserAnswersReader.success(typeOfLocation),
+       UnLocodePage.reader,
+       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+      )
     ).map(LocationOfGoodsU.apply)
 }
 
@@ -163,10 +167,11 @@ case class LocationOfGoodsT(
 object LocationOfGoodsT {
 
   def userAnswersReader(typeOfLocation: LocationType): Read[LocationOfGoodsDomain] =
-    (
-      UserAnswersReader.success(typeOfLocation),
-      PostalCodePage.reader,
-      AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+    RichTuple3(
+      (UserAnswersReader.success(typeOfLocation),
+       PostalCodePage.reader,
+       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
+      )
     ).map(LocationOfGoodsT.apply)
 
 }

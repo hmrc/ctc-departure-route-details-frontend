@@ -40,7 +40,7 @@ trait LocationOfGoodsNavigatorProvider {
   def apply(mode: Mode): UserAnswersNavigator
 }
 
-class LocationOfGoodsNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig, implicit override val phaseConfig: PhaseConfig)
+class LocationOfGoodsNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig, override val phaseConfig: PhaseConfig)
     extends UserAnswersNavigator {
 
   override type T = LocationOfGoodsDomain

@@ -30,7 +30,7 @@
     form: Form[Coordinates],
     lrn: LocalReferenceNumber,
     mode: Mode
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("locationOfGoods.coordinates.title"),

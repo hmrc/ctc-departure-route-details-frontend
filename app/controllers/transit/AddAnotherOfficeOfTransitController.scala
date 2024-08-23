@@ -26,7 +26,6 @@ import pages.sections.transit.OfficesOfTransitSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.transit.AddAnotherOfficeOfTransitViewModel
 import viewModels.transit.AddAnotherOfficeOfTransitViewModel.AddAnotherOfficeOfTransitViewModelProvider
@@ -36,7 +35,6 @@ import javax.inject.Inject
 
 class AddAnotherOfficeOfTransitController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
   navigatorProvider: RouteDetailsNavigatorProvider,
   actions: Actions,
   formProvider: AddAnotherFormProvider,

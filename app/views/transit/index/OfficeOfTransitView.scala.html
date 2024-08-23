@@ -31,7 +31,7 @@
     button: Button
 )
 
-@(form: Form[CustomsOffice], lrn: LocalReferenceNumber, customsOffices: Seq[CustomsOffice], countryName: String, mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
+@(form: Form[CustomsOffice], lrn: LocalReferenceNumber, customsOffices: Seq[CustomsOffice], countryName: String, mode: Mode, index: Index)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("transit.index.officeOfTransit.title", countryName),

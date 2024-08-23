@@ -92,7 +92,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       val userAnswers = emptyUserAnswers.setValue(CountryPage, country)
       setExistingUserAnswers(userAnswers)
 
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
       val request = FakeRequest(POST, locationRoute)
         .withFormUrlEncodedBody(("value", "test string"))

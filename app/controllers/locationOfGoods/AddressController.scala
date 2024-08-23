@@ -52,7 +52,7 @@ class AddressController @Inject() (
 
   private val prefix: String = "locationOfGoods.address"
 
-  private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[_]
+  private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[?]
   private def country(implicit request: Request): Country = request.arg
 
   private def form(isPostalCodeRequired: Boolean)(implicit request: Request): Form[DynamicAddress] =

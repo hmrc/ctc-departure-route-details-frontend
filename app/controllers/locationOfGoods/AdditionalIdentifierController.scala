@@ -26,7 +26,6 @@ import pages.locationOfGoods.AdditionalIdentifierPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.AdditionalIdentifierView
 
@@ -40,8 +39,7 @@ class AdditionalIdentifierController @Inject() (
   formProvider: AdditionalIdentifierFormProvider,
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
-  view: AdditionalIdentifierView,
-  countriesService: CountriesService
+  view: AdditionalIdentifierView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {

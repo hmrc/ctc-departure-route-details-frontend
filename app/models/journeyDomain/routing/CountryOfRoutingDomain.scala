@@ -30,7 +30,7 @@ case class CountryOfRoutingDomain(
 )(index: Index)
     extends JourneyDomainModel {
 
-  override def page: Option[Section[_]] =
+  override def page: Option[Section[?]] =
     Some(CountryOfRoutingSection(index))
 
   override def routeIfCompleted(userAnswers: UserAnswers, mode: Mode, stage: Stage): Option[Call] =

@@ -57,7 +57,7 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
   private def addAnother(lrn: LocalReferenceNumber, mode: Mode): Call =
     routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(lrn, mode)
 
-  private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[_]
+  private type Request = SpecificDataRequestProvider1[Country]#SpecificDataRequest[?]
 
   private def form(implicit request: Request): Form[Boolean] =
     formProvider("routing.index.removeCountryOfRoutingYesNo", request.arg.toString)
@@ -84,8 +84,8 @@ class RemoveCountryOfRoutingYesNoController @Inject() (
                   updatedAnswers <- Future.fromTry(
                     request.userAnswers
                       .remove(CountryOfRoutingSection(index))
-                      .flatMap(findAndRemoveOffices(_, OfficesOfTransitSection, OfficeOfTransitSection, OfficeOfTransitPage))
-                      .flatMap(findAndRemoveOffices(_, OfficesOfExitSection, OfficeOfExitSection, OfficeOfExitPage))
+                      .flatMap(findAndRemoveOffices(_, OfficesOfTransitSection, OfficeOfTransitSection.apply, OfficeOfTransitPage.apply))
+                      .flatMap(findAndRemoveOffices(_, OfficesOfExitSection, OfficeOfExitSection.apply, OfficeOfExitPage.apply))
                   )
                   _ <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(addAnother(lrn, mode))

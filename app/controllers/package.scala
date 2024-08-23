@@ -78,15 +78,15 @@ package object controllers {
                  userAnswers
                    .findAndRemoveOffices(
                      OfficesOfTransitSection,
-                     OfficeOfTransitSection,
-                     OfficeOfTransitPage,
+                     OfficeOfTransitSection.apply,
+                     OfficeOfTransitPage.apply,
                      previousCountry.code.code,
                      selectedCountry.code.code
                    )
                    .findAndRemoveOffices(
                      OfficesOfExitSection,
-                     OfficeOfExitSection,
-                     OfficeOfExitPage,
+                     OfficeOfExitSection.apply,
+                     OfficeOfExitPage.apply,
                      previousCountry.code.code,
                      selectedCountry.code.code
                    )
@@ -140,7 +140,7 @@ package object controllers {
       }
 
     def writeToSession(sessionRepository: SessionRepository)(implicit
-      dataRequest: MandatoryDataRequest[_],
+      dataRequest: MandatoryDataRequest[?],
       ex: ExecutionContext,
       hc: HeaderCarrier
     ): Future[Write[A]] = writeToSession(dataRequest.userAnswers, sessionRepository)

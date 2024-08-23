@@ -29,7 +29,7 @@ case class OfficeOfExitDomain(
 )(index: Index)
     extends JourneyDomainModel {
 
-  override def page: Option[Section[_]] = Some(OfficeOfExitSection(index))
+  override def page: Option[Section[?]] = Some(OfficeOfExitSection(index))
 
   val label: String = s"$country - $customsOffice"
 }

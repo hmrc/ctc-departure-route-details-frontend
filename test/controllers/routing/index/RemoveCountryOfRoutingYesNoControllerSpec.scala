@@ -70,7 +70,7 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
         forAll(arbitraryCountryOfRoutingAnswers(emptyUserAnswers, index)) {
           answers =>
             reset(mockSessionRepository)
-            when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+            when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
             setExistingUserAnswers(answers)
 
@@ -93,7 +93,7 @@ class RemoveCountryOfRoutingYesNoControllerSpec extends SpecBase with AppWithDef
       "must redirect to add another country of routing and remove country at specified index and remove officeOfTransit and officeOfExit" in {
 
         reset(mockSessionRepository)
-        when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
         val userAnswers = emptyUserAnswers
           .setValue(CountryOfRoutingPage(index), Country(CountryCode("FR"), "France"))

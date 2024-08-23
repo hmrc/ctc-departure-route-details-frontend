@@ -65,6 +65,8 @@ class DynamicAddressFormProvider @Inject() (implicit phaseConfig: PhaseConfig) e
             )
           }
         }
-      )(DynamicAddress.apply)(DynamicAddress.unapply)
+      )(DynamicAddress.apply)(
+        da => Some(Tuple.fromProductTyped(da))
+      )
     )
 }

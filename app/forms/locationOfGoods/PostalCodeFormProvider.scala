@@ -54,6 +54,8 @@ class PostalCodeFormProvider @Inject() (implicit phaseConfig: PhaseConfig) exten
         AddressLine.Country.field -> {
           selectable(countryList, s"$prefix.error.required", Seq(AddressLine.Country.arg))
         }
-      )(PostalCodeAddress.apply)(PostalCodeAddress.unapply)
+      )(PostalCodeAddress.apply)(
+        pc => Some(Tuple.fromProductTyped(pc))
+      )
     )
 }

@@ -17,7 +17,7 @@
 package pages.sections.transit
 
 import controllers.transit.routes
-import models.journeyDomain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, Read, ReaderSuccess, UserAnswersReader}
+import models.journeyDomain._
 import models.{Index, Mode, UserAnswers}
 import pages.sections.Section
 import pages.transit.index.OfficeOfTransitInCL147Page
@@ -39,9 +39,8 @@ case object OfficesOfTransitSection extends Section[JsArray] {
         (0 until numberOfOfficesOfTransit)
           .foldLeft(UserAnswersReader.success(false)) {
             (acc, index) =>
-              (
-                acc,
-                OfficeOfTransitInCL147Page(Index(index)).reader
+              RichTuple2(
+                (acc, OfficeOfTransitInCL147Page(Index(index)).reader)
               ).to {
                 case (areAnyOfficesOfTransitNotInCL147, isThisOfficeOfTransitInCL147) =>
                   pages =>

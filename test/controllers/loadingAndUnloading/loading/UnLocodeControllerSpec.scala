@@ -88,9 +88,9 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
     "must redirect to the next page when valid data is submitted" in {
 
-      when(mockUnLocodesService.doesUnLocodeExist(any())(any())) thenReturn Future.successful(true)
+      when(mockUnLocodesService.doesUnLocodeExist(any())(any())).thenReturn(Future.successful(true))
 
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -106,9 +106,9 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
     "must return a Bad Request and errors when value does not exist in the reference data collection" in {
 
-      when(mockUnLocodesService.doesUnLocodeExist(any())(any())) thenReturn Future.successful(false)
+      when(mockUnLocodesService.doesUnLocodeExist(any())(any())).thenReturn(Future.successful(false))
 
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
       setExistingUserAnswers(emptyUserAnswers)
 

@@ -207,7 +207,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
           when(mockCountriesService.isInCL010(any())(any()))
             .thenReturn(Future.successful(isInCL010))
 
-          when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+          when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
           setExistingUserAnswers(emptyUserAnswers.setValue(OfficeOfTransitCountryPage(index), country))
 

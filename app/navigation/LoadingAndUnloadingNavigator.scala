@@ -41,7 +41,7 @@ trait LoadingAndUnloadingNavigatorProvider {
   def apply(mode: Mode): UserAnswersNavigator
 }
 
-class LoadingAndUnloadingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig, implicit override val phaseConfig: PhaseConfig)
+class LoadingAndUnloadingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig, override val phaseConfig: PhaseConfig)
     extends UserAnswersNavigator {
 
   override type T = LoadingAndUnloadingDomain

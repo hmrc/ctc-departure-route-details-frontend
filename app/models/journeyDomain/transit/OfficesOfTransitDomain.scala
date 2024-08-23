@@ -26,7 +26,7 @@ case class OfficesOfTransitDomain(
   officesOfTransit: Seq[OfficeOfTransitDomain]
 ) extends JourneyDomainModel {
 
-  override def page: Option[Section[_]] = officesOfTransit match {
+  override def page: Option[Section[?]] = officesOfTransit match {
     case Nil => None
     case _   => Some(OfficesOfTransitSection)
   }
