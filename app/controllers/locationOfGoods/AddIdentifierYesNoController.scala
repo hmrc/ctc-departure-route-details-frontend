@@ -26,7 +26,6 @@ import pages.locationOfGoods.AddIdentifierYesNoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.AddIdentifierYesNoView
 
@@ -40,8 +39,7 @@ class AddIdentifierYesNoController @Inject() (
   actions: Actions,
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AddIdentifierYesNoView,
-  countriesService: CountriesService
+  view: AddIdentifierYesNoView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {

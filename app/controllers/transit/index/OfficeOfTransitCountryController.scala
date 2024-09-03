@@ -58,7 +58,7 @@ class OfficeOfTransitCountryController @Inject() (
     implicit request =>
       countriesService.getOfficeOfTransitCountries(request.userAnswers).flatMap {
         case SelectableList(country :: Nil) =>
-          redirect(mode, index, InferredOfficeOfTransitCountryPage, country)
+          redirect(mode, index, InferredOfficeOfTransitCountryPage.apply, country)
         case countryList =>
           val form = formProvider(prefix, countryList)
           val preparedForm = request.userAnswers.get(OfficeOfTransitCountryPage(index)) match {
@@ -83,7 +83,7 @@ class OfficeOfTransitCountryController @Inject() (
                 customsOfficesService
                   .getCustomsOfficesOfTransitForCountry(value.code)
                   .flatMap {
-                    _ => redirect(mode, index, OfficeOfTransitCountryPage, value)
+                    _ => redirect(mode, index, OfficeOfTransitCountryPage.apply, value)
                   }
                   .recover {
                     case _: NoReferenceDataFoundException =>
@@ -99,7 +99,7 @@ class OfficeOfTransitCountryController @Inject() (
     index: Index,
     page: Index => QuestionPage[Country],
     country: Country
-  )(implicit request: DataRequest[_]): Future[Result] = {
+  )(implicit request: DataRequest[?]): Future[Result] = {
     val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
     page(index)
       .writeToUserAnswers(country)

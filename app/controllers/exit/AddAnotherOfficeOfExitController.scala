@@ -27,7 +27,6 @@ import pages.sections.exit.OfficesOfExitSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.exit.AddAnotherOfficeOfExitViewModel
 import viewModels.exit.AddAnotherOfficeOfExitViewModel.AddAnotherOfficeOfExitViewModelProvider
@@ -37,7 +36,6 @@ import javax.inject.Inject
 
 class AddAnotherOfficeOfExitController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
   navigatorProvider: RouteDetailsNavigatorProvider,
   actions: Actions,
   formProvider: AddAnotherFormProvider,
@@ -74,7 +72,7 @@ class AddAnotherOfficeOfExitController @Inject() (
         )
   }
 
-  private def redirectToNextPage(mode: Mode)(implicit request: DataRequest[_]): Result = {
+  private def redirectToNextPage(mode: Mode)(implicit request: DataRequest[?]): Result = {
     val navigator: UserAnswersNavigator = navigatorProvider(mode)
     Redirect(navigator.nextPage(request.userAnswers, Some(OfficesOfExitSection)))
   }

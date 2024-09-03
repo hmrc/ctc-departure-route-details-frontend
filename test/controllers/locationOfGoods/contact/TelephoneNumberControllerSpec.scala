@@ -90,7 +90,7 @@ class TelephoneNumberControllerSpec extends SpecBase with AppWithDefaultMockFixt
         .setValue(NamePage, contactName)
       setExistingUserAnswers(userAnswers)
 
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
       val request = FakeRequest(POST, telephoneNumberRoute)
         .withFormUrlEncodedBody(("value", validAnswer))

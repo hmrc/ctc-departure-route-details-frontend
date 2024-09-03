@@ -29,7 +29,7 @@
     button: Button
 )
 
-@(form: Form[Boolean], lrn: LocalReferenceNumber, index: Index, mode: Mode, viewModel: RemoveOfficeOfExitViewModel, insetText: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: LocalReferenceNumber, index: Index, mode: Mode, viewModel: RemoveOfficeOfExitViewModel, insetText: Option[String])(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,

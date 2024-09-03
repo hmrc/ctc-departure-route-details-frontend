@@ -35,7 +35,7 @@ case class OfficeOfTransitDomain(
 )(index: Index)
     extends JourneyDomainModel {
 
-  override def page: Option[Section[_]] = Some(OfficeOfTransitSection(index))
+  override def page: Option[Section[?]] = Some(OfficeOfTransitSection(index))
 
   val label: String = country match {
     case Some(value) => s"$value - $customsOffice"

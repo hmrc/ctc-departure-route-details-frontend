@@ -40,7 +40,7 @@ trait RoutingNavigatorProvider {
   def apply(mode: Mode): UserAnswersNavigator
 }
 
-class RoutingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig, implicit override val phaseConfig: PhaseConfig)
+class RoutingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig, override val phaseConfig: PhaseConfig)
     extends UserAnswersNavigator {
 
   override type T = RoutingDomain

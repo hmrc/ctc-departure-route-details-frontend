@@ -45,6 +45,8 @@ class DateTimeFormProvider @Inject() extends Mappings {
             requiredKey = s"$prefix.time.error.required"
           )
         }
-      )(DateTime.apply)(DateTime.unapply)
+      )(DateTime.apply)(
+        dt => Some(Tuple.fromProductTyped(dt))
+      )
     )
 }

@@ -30,7 +30,7 @@ case class CountriesOfRoutingDomain(
   countriesOfRouting: Seq[CountryOfRoutingDomain]
 ) extends JourneyDomainModel {
 
-  override def page: Option[Section[_]] = countriesOfRouting match {
+  override def page: Option[Section[?]] = countriesOfRouting match {
     case Nil => None
     case _   => Some(CountriesOfRoutingSection)
   }

@@ -110,7 +110,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
           when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
             .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))
           when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))
-          when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+          when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
           val userAnswers = emptyUserAnswers.setValue(CountryOfDestinationPage, country)
 

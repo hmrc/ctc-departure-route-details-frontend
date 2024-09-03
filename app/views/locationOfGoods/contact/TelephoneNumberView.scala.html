@@ -27,7 +27,7 @@
     button: Button
 )
 
-@(form: Form[String], lrn: LocalReferenceNumber, name: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[String], lrn: LocalReferenceNumber, name: String, mode: Mode)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("locationOfGoods.contact.telephoneNumber.title"),

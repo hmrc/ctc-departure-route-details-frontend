@@ -94,7 +94,7 @@ class LocationTypeController @Inject() (
     mode: Mode,
     page: QuestionPage[LocationType],
     value: LocationType
-  )(implicit request: MandatoryDataRequest[_], hc: HeaderCarrier): Future[Result] = {
+  )(implicit request: MandatoryDataRequest[?], hc: HeaderCarrier): Future[Result] = {
     val navigator: UserAnswersNavigator = navigatorProvider(mode)
     page
       .writeToUserAnswers(value)

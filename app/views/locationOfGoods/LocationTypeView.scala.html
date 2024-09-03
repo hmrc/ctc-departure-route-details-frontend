@@ -29,7 +29,7 @@
     button: Button
 )
 
-@(form: Form[LocationType], lrn: LocalReferenceNumber, values: Seq[LocationType], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[LocationType], lrn: LocalReferenceNumber, values: Seq[LocationType], mode: Mode)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("locationOfGoods.locationType.title"),

@@ -27,7 +27,7 @@
     formHelper: FormWithCSRF
 )
 
-@(lrn: LocalReferenceNumber, mode: Mode, sections: Seq[Section])(implicit request: Request[_], messages: Messages)
+@(lrn: LocalReferenceNumber, mode: Mode, sections: Seq[Section])(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("routing.checkYourAnswers.title"),

@@ -29,7 +29,6 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 
@@ -44,7 +43,7 @@ trait A11ySpecBase extends AnyWordSpec with Matchers with GuiceOneAppPerSuite wi
       .configure()
       .build()
 
-  implicit def phaseConfig: PhaseConfig = injector().instanceOf[PhaseConfig]
+  implicit def phaseConfig: PhaseConfig = app.injector.instanceOf[PhaseConfig]
 
   implicit lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/foo")
 

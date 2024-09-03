@@ -51,7 +51,7 @@ class IdentificationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private type Request = SpecificDataRequestProvider1[LocationType]#SpecificDataRequest[_]
+  private type Request = SpecificDataRequestProvider1[LocationType]#SpecificDataRequest[?]
 
   private def form(locationOfGoodsIdentification: Seq[LocationOfGoodsIdentification]): Form[LocationOfGoodsIdentification] =
     formProvider("locationOfGoods.locationOfGoodsIdentificationType", locationOfGoodsIdentification)

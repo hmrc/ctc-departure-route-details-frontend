@@ -99,7 +99,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockCustomsOfficesService.getCustomsOfficesOfExitForCountry(any())(any())).thenReturn(Future.successful(customsOfficeList))
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
       setExistingUserAnswers(baseAnswers)
 
