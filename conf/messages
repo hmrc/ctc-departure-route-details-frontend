@@ -231,7 +231,7 @@ exit.AddCustomsOfficeOfExitYesNo.error.required = Select yes if you want to add 
 
 exit.index.officeOfExitCountry.title = In which country is the office of exit for transit?
 exit.index.officeOfExitCountry.heading = In which country is the office of exit for transit?
-exit.index.officeOfExitCountry.paragraph = This is the exit point for goods leaving a customs territory.
+exit.index.officeOfExitCountry.paragraph = This is where the goods leave the EU security agreement area. You must only select a country from your transit route.
 exit.index.officeOfExitCountry.hint = Enter the country, like France or Portugal.
 exit.index.officeOfExitCountry.placeholder = Select a country
 exit.index.officeOfExitCountry.change.hidden = office of exit for transit’s country
