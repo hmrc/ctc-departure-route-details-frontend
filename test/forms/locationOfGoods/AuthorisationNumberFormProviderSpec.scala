@@ -18,7 +18,7 @@ package forms.locationOfGoods
 
 import forms.Constants.maxAuthorisationNumberLength
 import forms.behaviours.StringFieldBehaviours
-import models.domain.StringFieldRegex.alphaNumericRegex
+import models.domain.StringFieldRegex.alphaNumericWithSpacesRegex
 import org.scalacheck.Gen
 import play.api.data.{Field, FormError}
 
@@ -45,7 +45,7 @@ class AuthorisationNumberFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithInvalidCharacters(
       form,
       fieldName,
-      error = FormError(fieldName, invalidCharactersKey, Seq(alphaNumericRegex.regex)),
+      error = FormError(fieldName, invalidCharactersKey, Seq(alphaNumericWithSpacesRegex.regex)),
       maxAuthorisationNumberLength
     )
 

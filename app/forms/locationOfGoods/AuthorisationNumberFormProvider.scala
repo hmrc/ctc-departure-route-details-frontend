@@ -18,7 +18,7 @@ package forms.locationOfGoods
 
 import forms.Constants.maxAuthorisationNumberLength
 import forms.mappings.Mappings
-import models.domain.StringFieldRegex.alphaNumericRegex
+import models.domain.StringFieldRegex.alphaNumericWithSpacesRegex
 import play.api.data.Form
 
 import javax.inject.Inject
@@ -30,7 +30,7 @@ class AuthorisationNumberFormProvider @Inject() extends Mappings {
       "value" -> text(s"$prefix.error.required")
         .verifying(
           forms.StopOnFirstFail[String](
-            regexp(alphaNumericRegex, s"$prefix.error.invalid"),
+            regexp(alphaNumericWithSpacesRegex, s"$prefix.error.invalid"),
             maxLength(maxAuthorisationNumberLength, s"$prefix.error.length")
           )
         )
