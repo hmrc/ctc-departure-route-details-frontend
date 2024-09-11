@@ -46,7 +46,7 @@ class OfficeOfExitCountryViewSpec extends InputSelectViewBehaviours[Country] {
 
   behave like pageWithSelect()
 
-  behave like pageWithContent("p", "This is the exit point for goods leaving a customs territory.")
+  behave like pageWithContent("p", "This is where the goods leave the EU security agreement area. You must only select a country from your transit route.")
 
   behave like pageWithHint("Enter the country, like France or Portugal.")
 
