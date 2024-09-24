@@ -41,7 +41,7 @@ object MappingsSpec {
       Seq(Bar, Baz)
         .map(
           v => v.toString -> v
-        ) *
+        )*
     )
 
 }
