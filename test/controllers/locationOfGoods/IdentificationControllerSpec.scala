@@ -43,10 +43,10 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
   private val ids = arbitrary[Seq[LocationOfGoodsIdentification]].sample.value
   private val id1 = ids.head
 
-  private val formProvider                                                            = new EnumerableFormProvider()
-  private val form                                                                    = formProvider[LocationOfGoodsIdentification]("locationOfGoods.identification", ids)
-  private val mode                                                                    = NormalMode
-  private lazy val identificationRoute                                                = routes.IdentificationController.onPageLoad(lrn, mode).url
+  private val formProvider             = new EnumerableFormProvider()
+  private val form                     = formProvider[LocationOfGoodsIdentification]("locationOfGoods.identification", ids)
+  private val mode                     = NormalMode
+  private lazy val identificationRoute = routes.IdentificationController.onPageLoad(lrn, mode).url
   private val mockLocationIdentifierService: LocationOfGoodsIdentificationTypeService = mock[LocationOfGoodsIdentificationTypeService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =

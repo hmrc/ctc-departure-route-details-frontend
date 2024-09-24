@@ -26,19 +26,17 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val appName: String = configuration.get[String]("appName")
 
-  val etaDateDaysBefore: Int = {
+  val etaDateDaysBefore: Int =
     phaseConfig.phase match {
       case Transition     => configuration.get[Int]("dates.officeOfTransitETA.transition.daysBefore")
       case PostTransition => configuration.get[Int]("dates.officeOfTransitETA.postTransition.daysBefore")
     }
-  }
 
-  val etaDateDaysAfter: Int = {
+  val etaDateDaysAfter: Int =
     phaseConfig.phase match {
       case Transition     => configuration.get[Int]("dates.officeOfTransitETA.transition.daysAfter")
       case PostTransition => configuration.get[Int]("dates.officeOfTransitETA.postTransition.daysAfter")
     }
-  }
 
   val enrolmentProxyUrl: String      = servicesConfig.fullServiceUrl("enrolment-store-proxy")
   val eccEnrolmentSplashPage: String = configuration.get[String]("urls.eccEnrolmentSplashPage")

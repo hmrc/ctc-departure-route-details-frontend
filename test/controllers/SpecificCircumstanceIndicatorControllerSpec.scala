@@ -45,7 +45,7 @@ class SpecificCircumstanceIndicatorControllerSpec extends SpecBase with AppWithD
   private val mode         = NormalMode
 
   private val mockSpecificCircumstanceIndicatorsService: SpecificCircumstanceIndicatorsService = mock[SpecificCircumstanceIndicatorsService]
-  private lazy val specificCircumstanceIndicatorRoute                                          = routes.SpecificCircumstanceIndicatorController.onPageLoad(lrn, mode).url
+  private lazy val specificCircumstanceIndicatorRoute = routes.SpecificCircumstanceIndicatorController.onPageLoad(lrn, mode).url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super

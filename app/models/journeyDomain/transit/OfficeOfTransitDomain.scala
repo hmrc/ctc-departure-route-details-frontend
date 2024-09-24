@@ -50,7 +50,7 @@ object OfficeOfTransitDomain {
   // scalastyle:off method.length
   implicit def userAnswersReader(index: Index)(implicit phaseConfig: PhaseConfig): Read[OfficeOfTransitDomain] = {
 
-    lazy val etaReads: Read[Option[DateTime]] = {
+    lazy val etaReads: Read[Option[DateTime]] =
       phaseConfig.phase match {
         case Phase.PostTransition =>
           SecurityDetailsTypePage.reader.to {
@@ -79,7 +79,6 @@ object OfficeOfTransitDomain {
               }
           }
       }
-    }
 
     lazy val readsWithoutCountry: Read[OfficeOfTransitDomain] =
       (
