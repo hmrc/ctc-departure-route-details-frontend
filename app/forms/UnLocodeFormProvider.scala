@@ -27,7 +27,7 @@ class UnLocodeFormProvider @Inject() extends Mappings {
 
   def apply(prefix: String): Form[String] =
     Form(
-      "value" -> text(s"$prefix.error.required")
+      "value" -> adaptedText(s"$prefix.error.required")(_.toUpperCase)
         .verifying(
           StopOnFirstFail[String](
             maxLength(exactLoCodeLength, s"$prefix.error.length"),

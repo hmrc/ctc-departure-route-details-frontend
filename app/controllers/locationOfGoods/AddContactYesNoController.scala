@@ -26,7 +26,6 @@ import pages.locationOfGoods.AddContactYesNoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.AddContactYesNoView
 
@@ -35,13 +34,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddContactYesNoController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AddContactYesNoView,
-  countriesService: CountriesService
+  view: AddContactYesNoView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -65,12 +63,12 @@ class AddContactYesNoController @Inject() (
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
           value => {
-            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            val navigator: UserAnswersNavigator = navigatorProvider(mode)
             AddContactYesNoPage
               .writeToUserAnswers(value)
               .updateTask()
-              .writeToSession()
-              .navigate()
+              .writeToSession(sessionRepository)
+              .navigateWith(navigator)
           }
         )
   }

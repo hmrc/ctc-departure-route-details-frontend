@@ -37,16 +37,28 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     val url = url"${config.referenceDataUrl}/lists/$listName"
     http
       .get(url)
-      .setHeader(version2Header: _*)
+      .setHeader(version2Header*)
       .execute[NonEmptySet[Country]]
   }
 
-  def getCountriesWithoutZip()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[CountryCode]] = {
+  def getCountry(listName: String, countryId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Country] = {
+    val url = url"${config.referenceDataUrl}/lists/$listName"
+    http
+      .get(url)
+      .transform(_.withQueryStringParameters("data.code" -> countryId))
+      .setHeader(version2Header*)
+      .execute[NonEmptySet[Country]]
+      .map(_.head)
+  }
+
+  def getCountriesWithoutZipCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CountryCode] = {
     val url = url"${config.referenceDataUrl}/lists/CountryWithoutZip"
     http
       .get(url)
-      .setHeader(version2Header: _*)
+      .transform(_.withQueryStringParameters("data.code" -> code))
+      .setHeader(version2Header*)
       .execute[NonEmptySet[CountryCode]]
+      .map(_.head)
   }
 
   def getUnLocode(unLocode: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[UnLocode] = {
@@ -54,7 +66,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http
       .get(url)
       .transform(_.withQueryStringParameters("data.unLocodeExtendedCode" -> unLocode))
-      .setHeader(version2Header: _*)
+      .setHeader(version2Header*)
       .execute[NonEmptySet[UnLocode]]
       .map(_.head)
   }
@@ -63,7 +75,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     val url = url"${config.referenceDataUrl}/lists/SpecificCircumstanceIndicatorCode"
     http
       .get(url)
-      .setHeader(version2Header: _*)
+      .setHeader(version2Header*)
       .execute[NonEmptySet[SpecificCircumstanceIndicator]]
   }
 
@@ -71,7 +83,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     val url = url"${config.referenceDataUrl}/lists/TypeOfLocation"
     http
       .get(url)
-      .setHeader(version2Header: _*)
+      .setHeader(version2Header*)
       .execute[NonEmptySet[LocationType]]
   }
 
@@ -79,7 +91,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     val url = url"${config.referenceDataUrl}/lists/QualifierOfTheIdentification"
     http
       .get(url)
-      .setHeader(version2Header: _*)
+      .setHeader(version2Header*)
       .execute[NonEmptySet[LocationOfGoodsIdentification]]
   }
 
@@ -95,19 +107,19 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http
       .get(url)
       .transform(_.withQueryStringParameters("data.countryId" -> countryCode, "data.roles.role" -> role))
-      .setHeader(version2Header: _*)
+      .setHeader(version2Header*)
       .execute[NonEmptySet[CustomsOffice]]
   }
 
-  implicit def responseHandlerGeneric[A](implicit reads: Reads[A], order: Order[A]): HttpReads[NonEmptySet[A]] =
-    (_: String, url: String, response: HttpResponse) => {
+  implicit def responseHandlerGeneric[A](implicit reads: Reads[List[A]], order: Order[A]): HttpReads[NonEmptySet[A]] =
+    (_: String, url: String, response: HttpResponse) =>
       response.status match {
         case OK =>
           (response.json \ "data").validate[List[A]] match {
             case JsSuccess(Nil, _) =>
               throw new NoReferenceDataFoundException(url)
             case JsSuccess(head :: tail, _) =>
-              NonEmptySet.of(head, tail: _*)
+              NonEmptySet.of(head, tail*)
             case JsError(errors) =>
               throw JsResultException(errors)
           }
@@ -115,7 +127,6 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
           logger.warn(s"[ReferenceDataConnector][responseHandlerGeneric] Reference data call returned $e")
           throw new Exception(s"[ReferenceDataConnector][responseHandlerGeneric] $e - ${response.body}")
       }
-    }
 }
 
 object ReferenceDataConnector {

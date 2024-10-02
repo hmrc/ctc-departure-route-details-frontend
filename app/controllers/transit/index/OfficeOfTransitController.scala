@@ -23,13 +23,7 @@ import forms.SelectableFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
 import pages.routing.CountryOfDestinationPage
-import pages.transit.index.{
-  InferredOfficeOfTransitCountryPage,
-  OfficeOfTransitCountryPage,
-  OfficeOfTransitInCL010Page,
-  OfficeOfTransitInCL147Page,
-  OfficeOfTransitPage
-}
+import pages.transit.index._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -42,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OfficeOfTransitController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfTransitNavigatorProvider,
   actions: Actions,
   formProvider: SelectableFormProvider,
@@ -87,19 +81,17 @@ class OfficeOfTransitController @Inject() (
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.values, country.description, mode, index))),
                 value =>
                   for {
-                    customsSecurityAgreementAreaCountries <- countriesService.getCustomsSecurityAgreementAreaCountries().map(_.values)
-                    isInCL147 = customsSecurityAgreementAreaCountries.map(_.code.code).contains(value.countryCode)
-                    communityCountries <- countriesService.getCommunityCountries().map(_.values)
-                    isInCL010 = communityCountries.map(_.code.code).contains(value.countryCode)
+                    isInCL147 <- countriesService.isInCL147(value.countryId)
+                    isInCL010 <- countriesService.isInCL010(value.countryId)
                     result <- {
-                      implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+                      val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                       OfficeOfTransitPage(index)
                         .writeToUserAnswers(value)
                         .appendValue(OfficeOfTransitInCL147Page(index), isInCL147)
                         .appendValue(OfficeOfTransitInCL010Page(index), isInCL010)
                         .updateTask()
-                        .writeToSession()
-                        .navigate()
+                        .writeToSession(sessionRepository)
+                        .navigateWith(navigator)
                     }
                   } yield result
               )

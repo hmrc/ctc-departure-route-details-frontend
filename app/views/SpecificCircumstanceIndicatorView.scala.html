@@ -29,7 +29,7 @@
     button: Button
 )
 
-@(form: Form[SpecificCircumstanceIndicator], lrn: LocalReferenceNumber, specificCircumstanceIndicators: Seq[SpecificCircumstanceIndicator], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[SpecificCircumstanceIndicator], lrn: LocalReferenceNumber, specificCircumstanceIndicators: Seq[SpecificCircumstanceIndicator], mode: Mode)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("specificCircumstanceIndicator.title"),

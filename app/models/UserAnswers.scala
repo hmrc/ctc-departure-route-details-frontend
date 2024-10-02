@@ -16,7 +16,9 @@
 
 package models
 
+import models.reference.CustomsOffice
 import pages.QuestionPage
+import pages.sections.Section
 import play.api.libs.json._
 import queries.Gettable
 
@@ -62,6 +64,22 @@ final case class UserAnswers(
     val tasks = this.tasks.updated(section, status)
     this.copy(tasks = tasks)
   }
+
+  def findAndRemoveOffices(
+    array: Section[JsArray],
+    obj: Index => Section[JsObject],
+    page: Index => QuestionPage[CustomsOffice],
+    previousCountryCode: String,
+    selectedCountryCode: String
+  ): UserAnswers =
+    (0 until this.get(array).length).foldRight(this) {
+      case (index, acc) =>
+        this.get(page(Index(index))) match {
+          case Some(value) if (value.countryId == previousCountryCode) && (previousCountryCode != selectedCountryCode) =>
+            acc.remove(obj(Index(index))).getOrElse(acc)
+          case _ => acc
+        }
+    }
 }
 
 object UserAnswers {
@@ -75,7 +93,7 @@ object UserAnswers {
         (__ \ "isSubmitted").read[SubmissionState] and
         (__ \ "data").read[JsObject] and
         (__ \ "tasks").read[Map[String, TaskStatus]]
-    )(UserAnswers.apply _)
+    )(UserAnswers.apply)
 
   implicit lazy val writes: Writes[UserAnswers] =
     (
@@ -84,5 +102,7 @@ object UserAnswers {
         (__ \ "isSubmitted").write[SubmissionState] and
         (__ \ "data").write[JsObject] and
         (__ \ "tasks").write[Map[String, TaskStatus]]
-    )(unlift(UserAnswers.unapply))
+    )(
+      ua => Tuple.fromProductTyped(ua)
+    )
 }

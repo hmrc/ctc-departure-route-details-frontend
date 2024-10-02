@@ -26,19 +26,17 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val appName: String = configuration.get[String]("appName")
 
-  val etaDateDaysBefore: Int = {
+  val etaDateDaysBefore: Int =
     phaseConfig.phase match {
       case Transition     => configuration.get[Int]("dates.officeOfTransitETA.transition.daysBefore")
       case PostTransition => configuration.get[Int]("dates.officeOfTransitETA.postTransition.daysBefore")
     }
-  }
 
-  val etaDateDaysAfter: Int = {
+  val etaDateDaysAfter: Int =
     phaseConfig.phase match {
       case Transition     => configuration.get[Int]("dates.officeOfTransitETA.transition.daysAfter")
       case PostTransition => configuration.get[Int]("dates.officeOfTransitETA.postTransition.daysAfter")
     }
-  }
 
   val enrolmentProxyUrl: String      = servicesConfig.fullServiceUrl("enrolment-store-proxy")
   val eccEnrolmentSplashPage: String = configuration.get[String]("urls.eccEnrolmentSplashPage")
@@ -57,7 +55,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val notFoundUrl: String              = s"$departureHubUrl/not-found"
   val technicalDifficultiesUrl: String = s"$departureHubUrl/technical-difficulties"
-  val sessionExpiredUrl: String        = s"$departureHubUrl/this-service-has-been-reset"
 
   val unauthorisedUrl: String                = s"$departureHubUrl/error/cannot-use-service-no-eori"
   val unauthorisedWithGroupAccessUrl: String = s"$departureHubUrl/unauthorised-group-access"
@@ -67,6 +64,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   def keepAliveUrl(lrn: LocalReferenceNumber): String = s"$departureHubUrl/$lrn/keep-alive"
 
   def signOutUrl(lrn: LocalReferenceNumber): String = s"$departureHubUrl/$lrn/delete-lock"
+
+  def sessionExpiredUrl(lrn: LocalReferenceNumber): String = s"$departureHubUrl/this-service-has-been-reset/$lrn"
 
   lazy val maxOfficesOfExit: Int      = configuration.get[Int]("limits.maxOfficesOfExit")
   lazy val maxCountriesOfRouting: Int = configuration.get[Int]("limits.maxCountriesOfRouting")

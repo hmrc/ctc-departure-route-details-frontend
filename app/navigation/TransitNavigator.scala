@@ -42,7 +42,7 @@ trait TransitNavigatorProvider {
 
 class TransitNavigator(
   override val mode: Mode
-)(implicit override val config: FrontendAppConfig, implicit override val phaseConfig: PhaseConfig)
+)(implicit override val config: FrontendAppConfig, override val phaseConfig: PhaseConfig)
     extends UserAnswersNavigator {
 
   override type T = TransitDomain

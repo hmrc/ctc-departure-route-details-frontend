@@ -26,7 +26,6 @@ import pages.sections.routing.CountriesOfRoutingSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.routing.AddAnotherCountryOfRoutingViewModel
 import viewModels.routing.AddAnotherCountryOfRoutingViewModel.AddAnotherCountryOfRoutingViewModelProvider
@@ -36,7 +35,6 @@ import javax.inject.Inject
 
 class AddAnotherCountryOfRoutingController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
   navigatorProvider: RoutingNavigatorProvider,
   actions: Actions,
   formProvider: AddAnotherFormProvider,

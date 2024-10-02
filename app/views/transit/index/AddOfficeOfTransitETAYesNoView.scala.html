@@ -28,7 +28,7 @@
     button: Button
 )
 
-@(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode, officeOfTransit: CustomsOffice, index: Index)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode, officeOfTransit: CustomsOffice, index: Index)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("transit.index.addOfficeOfTransitETAYesNo.title", officeOfTransit.toString),

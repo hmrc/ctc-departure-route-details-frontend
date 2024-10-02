@@ -37,7 +37,7 @@ case class LoadingAndUnloadingDomain(
   unloading: Option[UnloadingDomain]
 ) extends JourneyDomainModel {
 
-  override def page: Option[Section[_]] =
+  override def page: Option[Section[?]] =
     (loading, unloading) match {
       case (None, None) => None
       case _            => Some(LoadingAndUnloadingSection)

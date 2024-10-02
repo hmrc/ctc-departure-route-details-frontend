@@ -26,7 +26,6 @@ import pages.locationOfGoods.AdditionalIdentifierPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.locationOfGoods.AdditionalIdentifierView
 
@@ -35,13 +34,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AdditionalIdentifierController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   formProvider: AdditionalIdentifierFormProvider,
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
-  view: AdditionalIdentifierView,
-  countriesService: CountriesService
+  view: AdditionalIdentifierView
 )(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -64,12 +62,12 @@ class AdditionalIdentifierController @Inject() (
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, mode))),
           value => {
-            implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+            val navigator: UserAnswersNavigator = navigatorProvider(mode)
             AdditionalIdentifierPage
               .writeToUserAnswers(value)
               .updateTask()
-              .writeToSession()
-              .navigate()
+              .writeToSession(sessionRepository)
+              .navigateWith(navigator)
           }
         )
   }

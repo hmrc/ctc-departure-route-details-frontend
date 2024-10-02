@@ -33,7 +33,6 @@ case class SpecificCircumstanceIndicator(
 object SpecificCircumstanceIndicator extends DynamicEnumerableType[SpecificCircumstanceIndicator] {
   implicit val format: Format[SpecificCircumstanceIndicator] = Json.format[SpecificCircumstanceIndicator]
 
-  implicit val order: Order[SpecificCircumstanceIndicator] = (x: SpecificCircumstanceIndicator, y: SpecificCircumstanceIndicator) => {
-    x.description.compareToIgnoreCase(y.description)
-  }
+  implicit val order: Order[SpecificCircumstanceIndicator] = (x: SpecificCircumstanceIndicator, y: SpecificCircumstanceIndicator) =>
+    (x, y).compareBy(_.description)
 }

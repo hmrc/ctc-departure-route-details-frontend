@@ -47,8 +47,8 @@ class RemoveOfficeOfTransitViewModelSpec extends SpecBase with AppWithDefaultMoc
           val viewModel   = viewModelProvider(userAnswers, Index(0))
 
           viewModel.officeOfTransit.value mustBe officeOfTransit
-          viewModel.title mustBe s"Are you sure you want to remove ${officeOfTransit.name} as an office of transit?"
-          viewModel.heading mustBe s"Are you sure you want to remove ${officeOfTransit.name} as an office of transit?"
+          viewModel.title mustBe s"Are you sure you want to remove this office of transit?"
+          viewModel.heading mustBe s"Are you sure you want to remove this office of transit?"
       }
     }
   }

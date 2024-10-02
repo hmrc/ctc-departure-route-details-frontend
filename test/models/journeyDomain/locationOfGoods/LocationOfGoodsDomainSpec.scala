@@ -370,7 +370,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
     "cannot be parsed from UserAnswers" - {
 
       "when is X(Eori Number) and a mandatory page is missing" in {
-        val mandatoryPages: Gen[QuestionPage[_]] = Gen.oneOf(
+        val mandatoryPages: Gen[QuestionPage[?]] = Gen.oneOf(
           IdentificationPage,
           EoriPage,
           AddIdentifierYesNoPage,

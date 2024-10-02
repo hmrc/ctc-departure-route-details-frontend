@@ -16,11 +16,16 @@
 
 package pages.sections.routing
 
-import models.Index
+import controllers.routing.routes
+import models.{Index, Mode, UserAnswers}
 import pages.sections.Section
 import play.api.libs.json.{JsObject, JsPath}
+import play.api.mvc.Call
 
 case class CountryOfRoutingSection(index: Index) extends Section[JsObject] {
 
   override def path: JsPath = CountriesOfRoutingSection.path \ index.position
+
+  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
+    Some(routes.AddAnotherCountryOfRoutingController.onPageLoad(userAnswers.lrn, mode))
 }

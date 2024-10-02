@@ -18,7 +18,6 @@ package connectors
 
 import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import itbase.{ItSpecBase, WireMockServerHandler}
 import models.reference._
@@ -57,29 +56,65 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       |  "id": "CustomsOffices",
       |  "data": [
       |    {
-      |      "state": "valid",
-      |      "activeFrom": "2019-01-01",
-      |      "id": "GB1",
-      |      "name": "testName1",
-      |      "LanguageCode": "EN",
-      |      "countryId": "GB",
-      |      "eMailAddress": "foo@andorra.ad",
+      |      "languageCode": "EN",
+      |      "name": "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA",
+      |      "phoneNumber": "+ (376) 84 1090",
+      |      "id": "AD000001",
+      |      "countryId": "AD",
       |      "roles": [
       |        {
+      |          "role": "AUT"
+      |        },
+      |        {
       |          "role": "DEP"
+      |        },
+      |        {
+      |          "role": "DES"
+      |        },
+      |        {
+      |          "role": "TRA"
       |        }
       |      ]
       |    },
       |    {
-      |      "state": "valid",
-      |      "activeFrom": "2019-01-01",
-      |      "id": "GB2",
-      |      "name": "testName2",
-      |      "LanguageCode": "ES",
-      |      "countryId": "GB",
+      |      "languageCode": "ES",
+      |      "name": "ADUANA DE ST. JULIÀ DE LÒRIA",
+      |      "phoneNumber": "+ (376) 84 1090",
+      |      "id": "AD000001",
+      |      "countryId": "AD",
       |      "roles": [
       |        {
+      |          "role": "AUT"
+      |        },
+      |        {
       |          "role": "DEP"
+      |        },
+      |        {
+      |          "role": "DES"
+      |        },
+      |        {
+      |          "role": "TRA"
+      |        }
+      |      ]
+      |    },
+      |    {
+      |      "languageCode": "FR",
+      |      "name": "BUREAU DE SANT JULIÀ DE LÒRIA",
+      |      "phoneNumber": "+ (376) 84 1090",
+      |      "id": "AD000001",
+      |      "countryId": "AD",
+      |      "roles": [
+      |        {
+      |          "role": "AUT"
+      |        },
+      |        {
+      |          "role": "DEP"
+      |        },
+      |        {
+      |          "role": "DES"
+      |        },
+      |        {
+      |          "role": "TRA"
       |        }
       |      ]
       |    }
@@ -116,6 +151,30 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       |  ]
       |}
       |""".stripMargin
+
+  private def countryWithoutZipResponseJson: String =
+    s"""
+       |{
+       |  "_links": {
+       |    "self": {
+       |      "href": "/customs-reference-data/lists/CountryWithoutZip"
+       |    }
+       |  },
+       |  "meta": {
+       |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
+       |    "snapshotDate": "2023-01-01"
+       |  },
+       |  "id": "CountryWithoutZip",
+       |  "data": [
+       |    {
+       |      "activeFrom": "2023-01-23",
+       |      "code": "GB",
+       |      "state": "valid",
+       |      "description": "United Kingdom"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
 
   private val unLocodeResponseJson: String =
     """
@@ -194,11 +253,6 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       |}
       |""".stripMargin
 
-  def queryParams(role: String): Seq[(String, StringValuePattern)] = Seq(
-    "data.countryId"  -> equalTo("GB"),
-    "data.roles.role" -> equalTo(role)
-  )
-
   "Reference Data" - {
 
     "getTypeOfLocation" - {
@@ -238,7 +292,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       def url(countryId: String) = s"/$baseUrl/lists/CustomsOffices?data.countryId=$countryId&data.roles.role=TRA"
 
       "must return a successful future response with a sequence of CustomsOffices" in {
-        val countryId = "GB"
+        val countryId = "AD"
 
         server.stubFor(
           get(urlEqualTo(url(countryId)))
@@ -246,8 +300,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         )
 
         val expectedResult = NonEmptySet.of(
-          CustomsOffice("GB1", "testName1", None),
-          CustomsOffice("GB2", "testName2", None)
+          CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD")
         )
 
         connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue mustBe expectedResult
@@ -282,8 +335,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         )
 
         val expectedResult = NonEmptySet.of(
-          Country(CountryCode("GB"), "United Kingdom"),
-          Country(CountryCode("AD"), "Andorra")
+          Country(CountryCode("AD"), "Andorra"),
+          Country(CountryCode("GB"), "United Kingdom")
         )
 
         connector.getCountries("CountryCodesFullList").futureValue mustEqual expectedResult
@@ -294,25 +347,29 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       }
     }
 
-    "getCountriesWithoutZip" - {
-      val url = s"/$baseUrl/lists/CountryWithoutZip"
+    "getCountriesWithoutZipCountry" - {
+      def url(countryId: String) = s"/$baseUrl/lists/CountryWithoutZip?data.code=$countryId"
 
       "must return Seq of Country when successful" in {
+        val countryId = "GB"
         server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(okJson(countriesResponseJson("CountryWithoutZip")))
+          get(urlEqualTo(url(countryId)))
+            .willReturn(okJson(countryWithoutZipResponseJson))
         )
 
-        val expectedResult = NonEmptySet.of(
-          CountryCode("GB"),
-          CountryCode("AD")
-        )
+        val expectedResult = CountryCode(countryId)
 
-        connector.getCountriesWithoutZip().futureValue mustEqual expectedResult
+        connector.getCountriesWithoutZipCountry(countryId).futureValue mustEqual expectedResult
+      }
+
+      "must throw a NoReferenceDataFoundException for an empty response" in {
+        val countryId = "FR"
+        checkNoReferenceDataFoundResponse(url(countryId), connector.getCountriesWithoutZipCountry(countryId))
       }
 
       "must return an exception when an error response is returned" in {
-        checkErrorResponse(url, connector.getCountriesWithoutZip())
+        val countryId = "FR"
+        checkErrorResponse(url(countryId), connector.getCountriesWithoutZipCountry(countryId))
       }
     }
 
@@ -359,7 +416,18 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
     }
   }
 
-  private def checkErrorResponse(url: String, result: => Future[_]): Assertion = {
+  private def checkNoReferenceDataFoundResponse(url: String, result: => Future[?]): Assertion = {
+    server.stubFor(
+      get(urlEqualTo(url))
+        .willReturn(okJson(emptyResponseJson))
+    )
+
+    whenReady[Throwable, Assertion](result.failed) {
+      _ mustBe a[NoReferenceDataFoundException]
+    }
+  }
+
+  private def checkErrorResponse(url: String, result: => Future[?]): Assertion = {
     val errorResponses: Gen[Int] = Gen
       .chooseNum(400: Int, 599: Int)
 

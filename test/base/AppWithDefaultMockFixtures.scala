@@ -18,7 +18,7 @@ package base
 
 import config.{PostTransitionModule, TransitionModule}
 import controllers.actions._
-import models.{Index, LockCheck, Mode, SelectableList, UserAnswers}
+import models.{Index, LockCheck, Mode, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -35,14 +35,12 @@ import services.{CountriesService, LockService}
 import scala.concurrent.Future
 
 trait AppWithDefaultMockFixtures extends BeforeAndAfterEach with GuiceOneAppPerSuite with GuiceFakeApplicationFactory with MockitoSugar {
-  self: TestSuite with SpecBase =>
+  self: TestSuite & SpecBase =>
 
   override def beforeEach(): Unit = {
     reset(mockSessionRepository); reset(mockDataRetrievalActionProvider); reset(mockLockService)
 
-    when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
-    when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(SelectableList(Nil)))
-    when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any())).thenReturn(Future.successful(SelectableList(Nil)))
+    when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
     when(mockLockService.checkLock(any())(any())).thenReturn(Future.successful(LockCheck.Unlocked))
   }
 
@@ -61,8 +59,8 @@ trait AppWithDefaultMockFixtures extends BeforeAndAfterEach with GuiceOneAppPerS
   protected def setNoExistingUserAnswers(): Unit = setUserAnswers(None)
 
   private def setUserAnswers(userAnswers: Option[UserAnswers]): Unit = {
-    when(mockLockActionProvider.apply()) thenReturn new FakeLockAction(mockLockService)
-    when(mockDataRetrievalActionProvider.apply(any())) thenReturn new FakeDataRetrievalAction(userAnswers)
+    when(mockLockActionProvider.apply()).thenReturn(new FakeLockAction(mockLockService))
+    when(mockDataRetrievalActionProvider.apply(any())).thenReturn(new FakeDataRetrievalAction(userAnswers))
   }
 
   protected val onwardRoute: Call = Call("GET", "/foo")
@@ -99,7 +97,6 @@ trait AppWithDefaultMockFixtures extends BeforeAndAfterEach with GuiceOneAppPerS
   private def defaultApplicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[LockActionProvider].toInstance(mockLockActionProvider),
         bind[SessionRepository].toInstance(mockSessionRepository),

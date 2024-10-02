@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OfficeOfTransitCountryController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfTransitNavigatorProvider,
   actions: Actions,
   formProvider: SelectableFormProvider,
@@ -58,7 +58,7 @@ class OfficeOfTransitCountryController @Inject() (
     implicit request =>
       countriesService.getOfficeOfTransitCountries(request.userAnswers).flatMap {
         case SelectableList(country :: Nil) =>
-          redirect(mode, index, InferredOfficeOfTransitCountryPage, country)
+          redirect(mode, index, InferredOfficeOfTransitCountryPage.apply, country)
         case countryList =>
           val form = formProvider(prefix, countryList)
           val preparedForm = request.userAnswers.get(OfficeOfTransitCountryPage(index)) match {
@@ -83,7 +83,7 @@ class OfficeOfTransitCountryController @Inject() (
                 customsOfficesService
                   .getCustomsOfficesOfTransitForCountry(value.code)
                   .flatMap {
-                    _ => redirect(mode, index, OfficeOfTransitCountryPage, value)
+                    _ => redirect(mode, index, OfficeOfTransitCountryPage.apply, value)
                   }
                   .recover {
                     case _: NoReferenceDataFoundException =>
@@ -99,12 +99,12 @@ class OfficeOfTransitCountryController @Inject() (
     index: Index,
     page: Index => QuestionPage[Country],
     country: Country
-  )(implicit request: DataRequest[_]): Future[Result] = {
-    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
+  )(implicit request: DataRequest[?]): Future[Result] = {
+    val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
     page(index)
       .writeToUserAnswers(country)
       .updateTask()
-      .writeToSession()
-      .navigate()
+      .writeToSession(sessionRepository)
+      .navigateWith(navigator)
   }
 }

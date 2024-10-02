@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IdentificationController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
   getMandatoryPage: SpecificDataRequiredActionProvider,
@@ -51,7 +51,7 @@ class IdentificationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private type Request = SpecificDataRequestProvider1[LocationType]#SpecificDataRequest[_]
+  private type Request = SpecificDataRequestProvider1[LocationType]#SpecificDataRequest[?]
 
   private def form(locationOfGoodsIdentification: Seq[LocationOfGoodsIdentification]): Form[LocationOfGoodsIdentification] =
     formProvider("locationOfGoods.locationOfGoodsIdentificationType", locationOfGoodsIdentification)
@@ -95,11 +95,11 @@ class IdentificationController @Inject() (
     page: QuestionPage[LocationOfGoodsIdentification],
     value: LocationOfGoodsIdentification
   )(implicit request: Request): Future[Result] = {
-    implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+    val navigator: UserAnswersNavigator = navigatorProvider(mode)
     page
       .writeToUserAnswers(value)
       .updateTask()
-      .writeToSession()
-      .navigate()
+      .writeToSession(sessionRepository)
+      .navigateWith(navigator)
   }
 }

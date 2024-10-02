@@ -17,13 +17,13 @@
 package models.reference
 
 import cats.Order
+import forms.mappings.RichSeq
 import models.Selectable
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) extends Selectable {
+case class CustomsOffice(id: String, name: String, countryId: String) extends Selectable {
   override def toString: String = s"$name ($id)"
-
-  val countryCode: String = id.take(2)
 
   override val value: String = id
 }
@@ -31,7 +31,34 @@ case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) 
 object CustomsOffice {
   implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
 
-  implicit val order: Order[CustomsOffice] = (x: CustomsOffice, y: CustomsOffice) => {
-    x.name.compareToIgnoreCase(y.name)
+  implicit val order: Order[CustomsOffice] = (x: CustomsOffice, y: CustomsOffice) => (x, y).compareBy(_.name, _.id)
+
+  implicit val listReads: Reads[List[CustomsOffice]] = {
+
+    case class TempCustomsOffice(customsOffice: CustomsOffice, languageCode: String)
+
+    implicit val reads: Reads[TempCustomsOffice] = (
+      __.read[CustomsOffice] and
+        (__ \ "languageCode").read[String]
+    )(TempCustomsOffice.apply)
+
+    Reads {
+      case JsArray(customsOffices) =>
+        JsSuccess {
+          customsOffices
+            .flatMap(_.asOpt[TempCustomsOffice])
+            .toSeq
+            .groupByPreserveOrder(_.customsOffice.id)
+            .flatMap {
+              case (_, customsOffices) =>
+                customsOffices
+                  .find(_.languageCode == "EN")
+                  .orElse(customsOffices.headOption)
+            }
+            .map(_.customsOffice)
+            .toList
+        }
+      case _ => JsError("Expected customs offices to be in a JsArray")
+    }
   }
 }

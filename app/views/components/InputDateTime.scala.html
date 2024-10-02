@@ -70,7 +70,7 @@
             )
         ),
         hint = dateHint.map(hint => Hint(content = Text(messages(hint)))),
-        errorMessage = form("date").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
+        errorMessage = form("date").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args*))))
     )
 )
 
@@ -103,7 +103,7 @@
             )
         ),
         hint = timeHint.map(hint => Hint(content = Text(messages(hint)))),
-        errorMessage = form("time").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args: _*))))
+        errorMessage = form("time").error.map(err => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(err.message, err.args*))))
     )
 )
 

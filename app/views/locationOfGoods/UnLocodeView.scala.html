@@ -30,7 +30,7 @@
     button: Button
 )
 
-@(form: Form[String], lrn: LocalReferenceNumber, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[String], lrn: LocalReferenceNumber, mode: Mode)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("locationOfGoods.unLocode.title"),
@@ -44,9 +44,10 @@
 
         @inputText(
           field = form("value"),
-          inputTextType = OrdinaryTextInput(
+          inputTextType = TextInputWithHiddenLabel(
             heading = messages("locationOfGoods.unLocode.heading"),
-            caption = Some(messages("locationOfGoods.caption"))
+            caption = Some(messages("locationOfGoods.caption")),
+            additionalHtml = messages("locationOfGoods.unLocode.paragraph").toParagraph
           ),
           hint = Some(messages("locationOfGoods.unLocode.hint")),
           inputType = "text",

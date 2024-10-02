@@ -92,7 +92,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       val userAnswers = emptyUserAnswers.setValue(CountryPage, country)
       setExistingUserAnswers(userAnswers)
 
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
       val request = FakeRequest(POST, locationRoute)
         .withFormUrlEncodedBody(("value", "test string"))
@@ -134,7 +134,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -148,7 +148,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
   }
 }

@@ -20,6 +20,7 @@ import config.Constants.LocationOfGoodsIdentifier._
 import config.Constants.SpecificCircumstanceIndicator._
 import models.AddressLine.{Country => _}
 import models.LockCheck.{LockCheckFailure, Locked, Unlocked}
+import models.ProcedureType.{Normal, Simplified}
 import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
 import models.reference._
 import models.{PostalCodeAddress, _}
@@ -96,10 +97,10 @@ trait ModelGenerators {
   implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] =
     Arbitrary {
       for {
-        id          <- nonEmptyString
-        name        <- nonEmptyString
-        phoneNumber <- Gen.option(Gen.alphaNumStr)
-      } yield CustomsOffice(id, name, phoneNumber)
+        id        <- nonEmptyString
+        name      <- nonEmptyString
+        countryId <- nonEmptyString
+      } yield CustomsOffice(id, name, countryId)
     }
 
   implicit lazy val arbitraryUnLocode: Arbitrary[String] =
@@ -216,20 +217,12 @@ trait ModelGenerators {
 
   lazy val arbitraryXiCustomsOffice: Arbitrary[CustomsOffice] =
     Arbitrary {
-      for {
-        id          <- stringsWithMaxLength(stringMaxLength)
-        name        <- stringsWithMaxLength(stringMaxLength)
-        phoneNumber <- Gen.option(stringsWithMaxLength(stringMaxLength))
-      } yield CustomsOffice(id, name, phoneNumber)
+      arbitrary[CustomsOffice].map(_.copy(countryId = "XI"))
     }
 
   lazy val arbitraryGbCustomsOffice: Arbitrary[CustomsOffice] =
     Arbitrary {
-      for {
-        id          <- stringsWithMaxLength(stringMaxLength)
-        name        <- stringsWithMaxLength(stringMaxLength)
-        phoneNumber <- Gen.option(stringsWithMaxLength(stringMaxLength))
-      } yield CustomsOffice(id, name, phoneNumber)
+      arbitrary[CustomsOffice].map(_.copy(countryId = "GB"))
     }
 
   lazy val arbitraryOfficeOfDeparture: Arbitrary[CustomsOffice] =
@@ -254,5 +247,10 @@ trait ModelGenerators {
   implicit lazy val arbitraryLockCheck: Arbitrary[LockCheck] =
     Arbitrary {
       Gen.oneOf(Locked, Unlocked, LockCheckFailure)
+    }
+
+  implicit lazy val arbitraryProcedureType: Arbitrary[ProcedureType] =
+    Arbitrary {
+      Gen.oneOf(Normal, Simplified)
     }
 }

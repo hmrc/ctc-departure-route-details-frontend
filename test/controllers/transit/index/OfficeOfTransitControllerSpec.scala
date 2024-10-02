@@ -26,6 +26,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.routing.CountryOfDestinationPage
 import pages.transit.index.{OfficeOfTransitCountryPage, OfficeOfTransitPage}
 import play.api.inject.bind
@@ -38,7 +39,7 @@ import views.html.transit.index.OfficeOfTransitView
 
 import scala.concurrent.Future
 
-class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
+class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators with ScalaCheckPropertyChecks {
 
   private val customsOffice1     = arbitrary[reference.CustomsOffice].sample.value
   private val customsOffice2     = arbitrary[CustomsOffice].sample.value
@@ -192,53 +193,59 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val country       = Country(CountryCode("FR"), "France")
-      val customsOffice = CustomsOffice("FR123", "name", None)
+      forAll(arbitrary[Boolean], arbitrary[Boolean]) {
+        (isInCL147, isInCL010) =>
+          beforeEach()
 
-      when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
-        .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))
-      when(mockCountriesService.getCustomsSecurityAgreementAreaCountries()(any()))
-        .thenReturn(Future.successful(SelectableList(Seq(country))))
-      when(mockCountriesService.getCommunityCountries()(any()))
-        .thenReturn(Future.successful(SelectableList(Seq(country))))
+          val country       = Country(CountryCode("FR"), "France")
+          val customsOffice = CustomsOffice("FR123", "name", "FR")
 
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+          when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
+            .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))
+          when(mockCountriesService.isInCL147(any())(any()))
+            .thenReturn(Future.successful(isInCL147))
+          when(mockCountriesService.isInCL010(any())(any()))
+            .thenReturn(Future.successful(isInCL010))
 
-      setExistingUserAnswers(emptyUserAnswers.setValue(OfficeOfTransitCountryPage(index), country))
+          when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
-      val request = FakeRequest(POST, officeOfTransitRoute)
-        .withFormUrlEncodedBody(("value", customsOffice.id))
+          setExistingUserAnswers(emptyUserAnswers.setValue(OfficeOfTransitCountryPage(index), country))
 
-      val result = route(app, request).value
+          val request = FakeRequest(POST, officeOfTransitRoute)
+            .withFormUrlEncodedBody(("value", customsOffice.id))
 
-      status(result) mustEqual SEE_OTHER
+          val result = route(app, request).value
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+          status(result) mustEqual SEE_OTHER
 
-      val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-      verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
-      userAnswersCaptor.getValue.data mustBe Json.parse(s"""
-          |{
-          |  "routeDetails" : {
-          |    "transit" : {
-          |      "officesOfTransit" : [
-          |        {
-          |          "officeOfTransitCountry" : {
-          |            "code" : "FR",
-          |            "description" : "France"
-          |          },
-          |          "officeOfTransit" : {
-          |            "id" : "${customsOffice.id}",
-          |            "name" : "${customsOffice.name}",
-          |            "isInCL147" : true,
-          |            "isInCL010" : true
-          |          }
-          |        }
-          |      ]
-          |    }
-          |  }
-          |}
-          |""".stripMargin)
+          redirectLocation(result).value mustEqual onwardRoute.url
+
+          val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+          userAnswersCaptor.getValue.data mustBe Json.parse(s"""
+               |{
+               |  "routeDetails" : {
+               |    "transit" : {
+               |      "officesOfTransit" : [
+               |        {
+               |          "officeOfTransitCountry" : {
+               |            "code" : "FR",
+               |            "description" : "France"
+               |          },
+               |          "officeOfTransit" : {
+               |            "id" : "${customsOffice.id}",
+               |            "name" : "${customsOffice.name}",
+               |            "countryId" : "FR",
+               |            "isInCL147" : $isInCL147,
+               |            "isInCL010" : $isInCL010
+               |          }
+               |        }
+               |      ]
+               |    }
+               |  }
+               |}
+               |""".stripMargin)
+      }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" - {
@@ -311,7 +318,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -325,7 +332,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
   }
 }

@@ -49,7 +49,7 @@ class AnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Mes
       answer = formatAnswer(answer),
       id = id,
       call = call,
-      args = args: _*
+      args = args*
     )
 
   protected def getAnswerAndBuildRowWithDynamicLink[T](
@@ -67,7 +67,7 @@ class AnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Mes
         buildRowWithNoChangeLink(
           prefix = prefix,
           answer = formatAnswer(answer),
-          args = args: _*
+          args = args*
         )
       } else {
         buildRow(
@@ -75,14 +75,14 @@ class AnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Mes
           answer = formatAnswer(answer),
           id = id,
           call = call,
-          args = args: _*
+          args = args*
         )
       }
 
   def getAnswersAndBuildSectionRows(section: Section[JsArray])(f: Index => Option[SummaryListRow]): Seq[SummaryListRow] =
     userAnswers
       .get(section)
-      .mapWithIndex {
+      .flatMapWithIndex {
         (_, index) => f(index)
       }
 
@@ -98,11 +98,11 @@ class AnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Mes
         x =>
           buildSimpleRow(
             prefix = prefix,
-            label = messages(s"$prefix.label", args: _*),
+            label = messages(s"$prefix.label", args*),
             answer = formatAnswer(x.value),
             id = id,
             call = Some(UserAnswersNavigator.nextPage[A](userAnswers, None, mode, AccessingJourney)),
-            args = args: _*
+            args = args*
           )
       )
       .toOption
@@ -112,7 +112,7 @@ class AnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Mes
   )(block: Index => Option[Either[ListItem, ListItem]]): Seq[Either[ListItem, ListItem]] =
     userAnswers
       .get(section)
-      .mapWithIndex {
+      .flatMapWithIndex {
         (_, index) => block(index)
       }
 

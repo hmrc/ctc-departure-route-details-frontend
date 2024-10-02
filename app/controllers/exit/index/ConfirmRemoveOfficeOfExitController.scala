@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmRemoveOfficeOfExitController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   actions: Actions,
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
@@ -48,7 +48,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
     with I18nSupport {
 
   private def form(viewModel: RemoveOfficeOfExitViewModel): Form[Boolean] =
-    formProvider(viewModel.prefix, viewModel.args: _*)
+    formProvider(viewModel.prefix)
 
   private def addAnother(lrn: LocalReferenceNumber, mode: Mode): Call =
     exitRoutes.AddAnotherOfficeOfExitController.onPageLoad(lrn, mode)
@@ -57,7 +57,7 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
     .requireIndex(lrn, OfficeOfExitSection(index), addAnother(lrn, mode)) {
       implicit request =>
         val viewModel = viewModelProvider.apply(request.userAnswers, index)
-        Ok(view(form(viewModel), lrn, index, mode, viewModel))
+        Ok(view(form(viewModel), lrn, index, mode, viewModel, viewModel.officeName))
     }
 
   def onSubmit(lrn: LocalReferenceNumber, index: Index, mode: Mode): Action[AnyContent] = actions
@@ -68,13 +68,13 @@ class ConfirmRemoveOfficeOfExitController @Inject() (
         form(viewModel)
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, index, mode, viewModel))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, index, mode, viewModel, viewModel.officeName))),
             {
               case true =>
                 OfficeOfExitSection(index)
                   .removeFromUserAnswers()
                   .updateTask()
-                  .writeToSession()
+                  .writeToSession(sessionRepository)
                   .navigateTo(addAnother(lrn, mode))
               case false =>
                 Future.successful(Redirect(addAnother(lrn, mode)))

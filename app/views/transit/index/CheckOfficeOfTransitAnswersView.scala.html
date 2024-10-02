@@ -27,7 +27,7 @@
     formHelper: FormWithCSRF
 )
 
-@(lrn: LocalReferenceNumber, mode: Mode, index: Index, sections: Seq[Section])(implicit request: Request[_], messages: Messages)
+@(lrn: LocalReferenceNumber, mode: Mode, index: Index, sections: Seq[Section])(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("transit.index.checkOfficeOfTransitAnswers.title"),

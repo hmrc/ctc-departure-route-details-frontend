@@ -25,6 +25,8 @@ import navigation.RoutingNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.routing.{CountryOfDestinationPage, OfficeOfDestinationPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -36,7 +38,7 @@ import views.html.routing.OfficeOfDestinationView
 
 import scala.concurrent.Future
 
-class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
+class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators with ScalaCheckPropertyChecks {
 
   private val customsOffice1    = arbitraryCustomsOffice.arbitrary.sample.get
   private val customsOffice2    = arbitraryCustomsOffice.arbitrary.sample.get
@@ -100,45 +102,50 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
     }
 
     "must redirect to the next page when valid data is submitted" in {
+      forAll(arbitrary[Boolean]) {
+        isInCL112 =>
+          beforeEach()
 
-      val customsOffice = CustomsOffice("FR123", "name", None)
-      when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
-        .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))
-      when(mockCountriesService.getCountryCodesCTC()(any())).thenReturn(Future.successful(SelectableList(Seq(country))))
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+          val customsOffice = CustomsOffice("FR123", "name", "FR")
+          when(mockCustomsOfficesService.getCustomsOfficesOfDestinationForCountry(any())(any()))
+            .thenReturn(Future.successful(SelectableList(Seq(customsOffice))))
+          when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))
+          when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
-      val userAnswers = emptyUserAnswers.setValue(CountryOfDestinationPage, country)
+          val userAnswers = emptyUserAnswers.setValue(CountryOfDestinationPage, country)
 
-      setExistingUserAnswers(userAnswers)
+          setExistingUserAnswers(userAnswers)
 
-      val request = FakeRequest(POST, officeOfDestinationRoute)
-        .withFormUrlEncodedBody(("value", customsOffice.id))
+          val request = FakeRequest(POST, officeOfDestinationRoute)
+            .withFormUrlEncodedBody(("value", customsOffice.id))
 
-      val result = route(app, request).value
+          val result = route(app, request).value
 
-      status(result) mustEqual SEE_OTHER
+          status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+          redirectLocation(result).value mustEqual onwardRoute.url
 
-      val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-      verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
-      userAnswersCaptor.getValue.data mustBe Json.parse(s"""
-          |{
-          |  "routeDetails" : {
-          |    "routing" : {
-          |      "countryOfDestination" : {
-          |        "code" : "${country.code.code}",
-          |        "description" : "${country.description}"
-          |      },
-          |      "officeOfDestination" : {
-          |        "id" : "${customsOffice.id}",
-          |        "name" : "${customsOffice.name}",
-          |        "isInCL112" : true
-          |      }
-          |    }
-          |  }
-          |}
-          |""".stripMargin)
+          val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
+          userAnswersCaptor.getValue.data mustBe Json.parse(s"""
+               |{
+               |  "routeDetails" : {
+               |    "routing" : {
+               |      "countryOfDestination" : {
+               |        "code" : "${country.code.code}",
+               |        "description" : "${country.description}"
+               |      },
+               |      "officeOfDestination" : {
+               |        "id" : "${customsOffice.id}",
+               |        "name" : "${customsOffice.name}",
+               |        "countryId" : "${customsOffice.countryId}",
+               |        "isInCL112" : $isInCL112
+               |      }
+               |    }
+               |  }
+               |}
+               |""".stripMargin)
+      }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -171,7 +178,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -185,7 +192,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
   }
 }

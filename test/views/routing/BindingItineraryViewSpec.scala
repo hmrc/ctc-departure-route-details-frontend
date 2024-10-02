@@ -37,7 +37,7 @@ class BindingItineraryViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithHeading()
 
-  behave like pageWithContent("p", "This diverts the route around countries that represent a higher risk to the goods in transit.")
+  behave like pageWithContent("p", "This means diversions are not permitted on the route between the office of departure and the office of destination.")
 
   behave like pageWithRadioItems()
 

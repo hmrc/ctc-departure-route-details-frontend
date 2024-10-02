@@ -43,10 +43,10 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
   private val ids = arbitrary[Seq[LocationOfGoodsIdentification]].sample.value
   private val id1 = ids.head
 
-  private val formProvider                                                            = new EnumerableFormProvider()
-  private val form                                                                    = formProvider[LocationOfGoodsIdentification]("locationOfGoods.identification", ids)
-  private val mode                                                                    = NormalMode
-  private lazy val identificationRoute                                                = routes.IdentificationController.onPageLoad(lrn, mode).url
+  private val formProvider             = new EnumerableFormProvider()
+  private val form                     = formProvider[LocationOfGoodsIdentification]("locationOfGoods.identification", ids)
+  private val mode                     = NormalMode
+  private lazy val identificationRoute = routes.IdentificationController.onPageLoad(lrn, mode).url
   private val mockLocationIdentifierService: LocationOfGoodsIdentificationTypeService = mock[LocationOfGoodsIdentificationTypeService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -89,7 +89,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
 
       "must return OK and the correct view for a GET" in {
 
-        when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
         setExistingUserAnswers(baseUserAnswers)
 
@@ -126,7 +126,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
     }
     "must redirect to the next page when valid data is submitted" in {
 
-      when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
       setExistingUserAnswers(baseUserAnswers)
 
@@ -166,7 +166,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
@@ -180,7 +180,7 @@ class IdentificationControllerSpec extends SpecBase with AppWithDefaultMockFixtu
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
   }
 

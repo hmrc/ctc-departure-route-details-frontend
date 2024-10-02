@@ -30,7 +30,5 @@ case class LocationType(`type`: String, description: String) extends Radioable[L
 object LocationType extends DynamicEnumerableType[LocationType] {
   implicit val format: Format[LocationType] = Json.format[LocationType]
 
-  implicit val order: Order[LocationType] = (x: LocationType, y: LocationType) => {
-    x.`type`.compareToIgnoreCase(y.`type`)
-  }
+  implicit val order: Order[LocationType] = (x: LocationType, y: LocationType) => (x, y).compareBy(_.`type`)
 }

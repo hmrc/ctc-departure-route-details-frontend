@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CustomsOfficeIdentifierController @Inject() (
   override val messagesApi: MessagesApi,
-  implicit val sessionRepository: SessionRepository,
+  sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
   formProvider: SelectableFormProvider,
@@ -54,7 +54,7 @@ class CustomsOfficeIdentifierController @Inject() (
     .async {
       implicit request =>
         val office = request.arg
-        customsOfficesService.getCustomsOfficesOfDepartureForCountry(office.countryCode).map {
+        customsOfficesService.getCustomsOfficesOfDepartureForCountry(office.countryId).map {
           customsOfficeList =>
             val form = formProvider("locationOfGoods.customsOfficeIdentifier", customsOfficeList)
             val preparedForm = request.userAnswers.get(CustomsOfficeIdentifierPage) match {
@@ -72,7 +72,7 @@ class CustomsOfficeIdentifierController @Inject() (
     .async {
       implicit request =>
         val office = request.arg
-        customsOfficesService.getCustomsOfficesOfDepartureForCountry(office.countryCode).flatMap {
+        customsOfficesService.getCustomsOfficesOfDepartureForCountry(office.countryId).flatMap {
           customsOfficeList =>
             val form = formProvider("locationOfGoods.customsOfficeIdentifier", customsOfficeList)
             form
@@ -80,12 +80,12 @@ class CustomsOfficeIdentifierController @Inject() (
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, customsOfficeList.values, mode))),
                 value => {
-                  implicit val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                  val navigator: UserAnswersNavigator = navigatorProvider(mode)
                   CustomsOfficeIdentifierPage
                     .writeToUserAnswers(value)
                     .updateTask()
-                    .writeToSession()
-                    .navigate()
+                    .writeToSession(sessionRepository)
+                    .navigateWith(navigator)
                 }
               )
         }

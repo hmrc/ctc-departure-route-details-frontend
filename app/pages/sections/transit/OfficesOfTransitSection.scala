@@ -17,9 +17,8 @@
 package pages.sections.transit
 
 import controllers.transit.routes
-import models.journeyDomain.{GettableAsReaderOps, JsArrayGettableAsReaderOps, Read, ReaderSuccess, UserAnswersReader}
+import models.journeyDomain._
 import models.{Index, Mode, UserAnswers}
-import pages.routing.index.CountryOfRoutingInCL147Page
 import pages.sections.Section
 import pages.transit.index.OfficeOfTransitInCL147Page
 import play.api.libs.json.{JsArray, JsPath}
@@ -34,19 +33,18 @@ case object OfficesOfTransitSection extends Section[JsArray] {
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.AddAnotherOfficeOfTransitController.onPageLoad(userAnswers.lrn, mode))
 
-  def atLeastOneOfficeOfTransitIsInCL147: Read[Boolean] =
+  def atLeastOneOfficeOfTransitIsNotInCL147: Read[Boolean] =
     this.arrayReader.apply(_).map(_.to(_.value.length)).flatMap {
       case ReaderSuccess(numberOfOfficesOfTransit, pages) =>
         (0 until numberOfOfficesOfTransit)
           .foldLeft(UserAnswersReader.success(false)) {
             (acc, index) =>
-              (
-                acc,
-                OfficeOfTransitInCL147Page(Index(index)).reader
+              RichTuple2(
+                (acc, OfficeOfTransitInCL147Page(Index(index)).reader)
               ).to {
-                case (areAnyOfficesOfTransitInCL147SoFar, isThisOfficeOfTransitInCL147) =>
+                case (areAnyOfficesOfTransitNotInCL147, isThisOfficeOfTransitInCL147) =>
                   pages =>
-                    val result = areAnyOfficesOfTransitInCL147SoFar || isThisOfficeOfTransitInCL147
+                    val result = areAnyOfficesOfTransitNotInCL147 || !isThisOfficeOfTransitInCL147
                     ReaderSuccess(result, pages).toUserAnswersReader
               }
           }

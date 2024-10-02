@@ -18,17 +18,18 @@
 @import models.{LocalReferenceNumber, Index}
 @import models.reference.Country
 @import viewModels.components.InputYesNoViewModel._
-@import views.html.components.{Button, ErrorSummary, InputYesNo}
+@import views.html.components.{Button, ErrorSummary, InputYesNo, InsetText}
 
 @this(
     mainTemplate: MainTemplate,
     formHelper: FormWithCSRF,
     inputYesNo: InputYesNo,
     errorSummary: ErrorSummary,
+    inset: InsetText,
     button: Button
 )
 
-@(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode, index: Index, country: Country)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: LocalReferenceNumber, mode: Mode, index: Index, country: Country)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("routing.index.removeCountryOfRoutingYesNo.title", country.description),
@@ -42,9 +43,10 @@
 
         @inputYesNo(
             field = form("value"),
-            yesNoType = OrdinaryYesNo(
-                heading = messages("routing.index.removeCountryOfRoutingYesNo.heading", country.description),
-                caption = Some(messages("routing.caption"))
+            yesNoType = YesNoWithAdditionalHtml(
+                heading = messages("routing.index.removeCountryOfRoutingYesNo.heading"),
+                caption = Some(messages("routing.caption")),
+                additionalHtml = inset(country.description)
             )
         )
 

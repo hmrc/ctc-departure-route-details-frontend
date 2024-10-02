@@ -7,7 +7,8 @@ site.no = No
 site.yes = Yes
 site.continue = Continue
 site.saveAndContinue = Save and continue
-site.service_name = Manage your transit movements
+site.service_name =  Manage your transit movements
+site.title.prefix = Departure declarations
 site.section = This section is
 
 site.email.link = If you have any questions or issues, email us at {0}
@@ -91,7 +92,7 @@ routing.officeOfDestination.error.required = Enter the office of destination
 
 routing.bindingItinerary.title = Are you using a binding itinerary?
 routing.bindingItinerary.heading = Are you using a binding itinerary?
-routing.bindingItinerary.paragraph = This diverts the route around countries that represent a higher risk to the goods in transit.
+routing.bindingItinerary.paragraph = This means diversions are not permitted on the route between the office of departure and the office of destination.
 routing.bindingItinerary.checkYourAnswersLabel = Are you using a binding itinerary?
 routing.bindingItinerary.error.required = Select yes if you are using a binding itinerary
 routing.bindingItinerary.change.hidden = if you are using a binding itinerary
@@ -122,9 +123,9 @@ routing.index.countryOfRouting.error.required = Enter which country you want to 
 routing.index.countryOfRouting.hint = Enter the country, like France or Portugal.
 routing.index.countryOfRouting.placeholder = Select a country
 
-routing.index.removeCountryOfRoutingYesNo.title = Are you sure you want to remove {0} from the transit route?
-routing.index.removeCountryOfRoutingYesNo.heading = Are you sure you want to remove {0} from the transit route?
-routing.index.removeCountryOfRoutingYesNo.error.required = Select yes if you want to remove {0} from the transit route
+routing.index.removeCountryOfRoutingYesNo.title = Are you sure you want to remove this country from the transit route?
+routing.index.removeCountryOfRoutingYesNo.heading = Are you sure you want to remove this country from the transit route?
+routing.index.removeCountryOfRoutingYesNo.error.required = Select yes if you want to remove this country from the transit route
 
 # Route details - Transit
 
@@ -200,12 +201,9 @@ transit.index.officeOfTransitETA.time.error.required.all = Enter the estimated t
 transit.index.officeOfTransitETA.time.error.required.hour = The estimated time of arrival at the office of transit must include an hour
 transit.index.officeOfTransitETA.time.error.required.minute = The estimated time of arrival at the office of transit must include a minute
 
-transit.index.confirmRemoveOfficeOfTransit.title = Are you sure you want to remove {0} as an office of transit?
-transit.index.confirmRemoveOfficeOfTransit.heading = Are you sure you want to remove {0} as an office of transit?
-transit.index.confirmRemoveOfficeOfTransit.error.required = Select yes if you want to remove {0} as an office of transit
-transit.index.confirmRemoveOfficeOfTransit.default.title = Are you sure you want to remove this office of transit?
-transit.index.confirmRemoveOfficeOfTransit.default.heading = Are you sure you want to remove this office of transit?
-transit.index.confirmRemoveOfficeOfTransit.default.error.required = Select yes if you want to remove this office of transit
+transit.index.confirmRemoveOfficeOfTransit.title = Are you sure you want to remove this office of transit?
+transit.index.confirmRemoveOfficeOfTransit.heading = Are you sure you want to remove this office of transit?
+transit.index.confirmRemoveOfficeOfTransit.error.required = Select yes if you want to remove this office of transit
 
 transit.index.checkOfficeOfTransitAnswers.title = Check your answers - Office of transit
 transit.index.checkOfficeOfTransitAnswers.heading = Check your answers
@@ -233,7 +231,7 @@ exit.AddCustomsOfficeOfExitYesNo.error.required = Select yes if you want to add 
 
 exit.index.officeOfExitCountry.title = In which country is the office of exit for transit?
 exit.index.officeOfExitCountry.heading = In which country is the office of exit for transit?
-exit.index.officeOfExitCountry.paragraph = This is the exit point for goods leaving a customs territory.
+exit.index.officeOfExitCountry.paragraph = This is where the goods leave the EU security agreement area. You must only select a country from your transit route.
 exit.index.officeOfExitCountry.hint = Enter the country, like France or Portugal.
 exit.index.officeOfExitCountry.placeholder = Select a country
 exit.index.officeOfExitCountry.change.hidden = office of exit for transit’s country
@@ -249,12 +247,9 @@ exit.index.officeOfExit.change.hidden = office of exit for transit’s location
 exit.index.officeOfExit.checkYourAnswersLabel = Office location
 exit.index.officeOfExit.error.required = Enter where the office of exit is in {0}
 
-exit.index.confirmRemoveOfficeOfExit.title = Are you sure you want to remove {0} as an office of exit for transit?
-exit.index.confirmRemoveOfficeOfExit.heading = Are you sure you want to remove {0} as an office of exit for transit?
-exit.index.confirmRemoveOfficeOfExit.error.required = Select yes if you want to remove {0} as an office of exit for transit
-exit.index.confirmRemoveOfficeOfExit.default.title = Are you sure you want to remove this office of exit for transit?
-exit.index.confirmRemoveOfficeOfExit.default.heading = Are you sure you want to remove this office of exit for transit?
-exit.index.confirmRemoveOfficeOfExit.default.error.required = Select yes if you want to remove this office of exit for transit
+exit.index.confirmRemoveOfficeOfExit.title = Are you sure you want to remove this office of exit for transit?
+exit.index.confirmRemoveOfficeOfExit.heading = Are you sure you want to remove this office of exit for transit?
+exit.index.confirmRemoveOfficeOfExit.error.required = Select yes if you want to remove this office of exit for transit
 
 exit.index.checkOfficeOfExitAnswers.title = Check your answers - Office of exit for transit
 exit.index.checkOfficeOfExitAnswers.heading = Check your answers
@@ -296,9 +291,9 @@ locationOfGoods.authorisationNumber.title = What is the authorisation number for
 locationOfGoods.authorisationNumber.heading = What is the authorisation number for the location of goods?
 locationOfGoods.authorisationNumber.checkYourAnswersLabel = Authorisation number
 locationOfGoods.authorisationNumber.change.hidden = the authorisation number for the location of goods
-locationOfGoods.authorisationNumber.error.required = Enter the authorisation number for the location of goods.
-locationOfGoods.authorisationNumber.error.length = The authorisation number must be 35 characters or less.
-locationOfGoods.authorisationNumber.error.invalid = The authorisation number must only include letters a to z and numbers 0 to 9.
+locationOfGoods.authorisationNumber.error.required = Enter the authorisation number for the location of goods
+locationOfGoods.authorisationNumber.error.length = The authorisation number must be 35 characters or less
+locationOfGoods.authorisationNumber.error.invalid = The authorisation number must only include letters a to z, numbers 0 to 9 and spaces
 locationOfGoods.authorisationNumber.hint = This can be up to 35 characters long and include both letters and numbers.
 
 locationOfGoods.coordinates.title = What are the coordinates for the location of goods?
@@ -374,14 +369,14 @@ locationOfGoods.addIdentifierYesNo.error.required = Select yes if you want to ad
 
 locationOfGoods.unLocode.title = What is the UN/LOCODE for the location of goods?
 locationOfGoods.unLocode.heading = What is the UN/LOCODE for the location of goods?
-locationOfGoods.unLocode.hint = This is a 5-character code used to identify a transit-related location, like DEBER.
+locationOfGoods.unLocode.hint = Enter the code, like DEBER or ESMAD.
 locationOfGoods.unLocode.placeholder = Select a UN/LOCODE.
 locationOfGoods.unLocode.change.hidden = the UN/LOCODE for the location of goods
 locationOfGoods.unLocode.checkYourAnswersLabel = UN/LOCODE for the location of goods
 locationOfGoods.unLocode.error.required = Enter the UN/LOCODE for the location of goods
 locationOfGoods.unLocode.paragraph = This is a 5-character code used to identify a transit-related location, like a port or clearance depot.
-locationOfGoods.unLocode.error.length = The UN/LOCODE must be exactly 5 characters long
-locationOfGoods.unLocode.error.invalid = The UN/LOCODE number must only include letters A to Z and numbers 0 to 9.
+locationOfGoods.unLocode.error.length = The UN/LOCODE must be 5 characters long
+locationOfGoods.unLocode.error.invalid = The UN/LOCODE number must only include letters a to z and numbers 0 to 9
 locationOfGoods.unLocode.error.not.exists = Please enter a valid UN/LOCODE. This is a 5-character code used to identify a transit-related location, like DEBER.
 
 locationOfGoods.addContactLocationOfGoods.title = Do you want to add a contact for the location of goods?
@@ -393,7 +388,7 @@ locationOfGoods.addContactLocationOfGoods.error.required = Select yes if you wan
 
 locationOfGoods.checkYourAnswers.title = Check your answers - Location of goods
 locationOfGoods.checkYourAnswers.heading = Check your answers
-locationOfGoods.checkYourAnswers.subHeading = Location of goods
+locationOfGoods.checkYourAnswers.subHeading = Route details - Location of goods
 
 # Route details - Location of goods - Contact
 
@@ -449,13 +444,13 @@ loadingAndUnloading.loading.addUnLocodeYesNo.paragraph = This is a 5-character c
 
 loadingAndUnloading.loading.unLocode.title = What is the UN/LOCODE for the place of loading?
 loadingAndUnloading.loading.unLocode.heading = What is the UN/LOCODE for the place of loading?
-loadingAndUnloading.loading.unLocode.hint = This is a 5-character code used to identify a transit-related location, like DEBER.
+loadingAndUnloading.loading.unLocode.hint = Enter the code, like GBBRS or GBMNC.
 loadingAndUnloading.loading.unLocode.placeholder = Select a UN/LOCODE.
 loadingAndUnloading.loading.unLocode.change.hidden = UN/LOCODE for the place of loading
 loadingAndUnloading.loading.unLocode.checkYourAnswersLabel = UN/LOCODE
 loadingAndUnloading.loading.unLocode.error.required = Enter the UN/LOCODE for the place of loading
-loadingAndUnloading.loading.unLocode.error.length = The UN/LOCODE must be exactly 5 characters long
-loadingAndUnloading.loading.unLocode.error.invalid = The UN/LOCODE number must only include letters A to Z and numbers 0 to 9.
+loadingAndUnloading.loading.unLocode.error.length = The UN/LOCODE must be 5 characters long
+loadingAndUnloading.loading.unLocode.error.invalid = The UN/LOCODE number must only include letters a to z and numbers 0 to 9
 loadingAndUnloading.loading.unLocode.error.not.exists = Please enter a valid UN/LOCODE. This is a 5-character code used to identify a transit-related location, like DEBER.
 
 loadingAndUnloading.loading.addExtraInformationYesNo.title = Do you want to add extra information for the place of loading?
@@ -493,14 +488,14 @@ loadingAndUnloading.unloading.addUnLocodeYesNo.paragraph = This is a 5-character
 
 loadingAndUnloading.unloading.unLocode.title = What is the UN/LOCODE for the place of unloading?
 loadingAndUnloading.unloading.unLocode.heading = What is the UN/LOCODE for the place of unloading?
-loadingAndUnloading.unloading.unLocode.hint = This is a 5-character code used to identify a transit-related location, like DEBER.
+loadingAndUnloading.unloading.unLocode.hint = Enter the code, like DEBER or ESMAD.
 loadingAndUnloading.unloading.unLocode.label = What is the UN/LOCODE for the place of unloading?
 loadingAndUnloading.unloading.unLocode.placeholder = Select a UN/LOCODE.
 loadingAndUnloading.unloading.unLocode.change.hidden = UN/LOCODE for the place of unloading
 loadingAndUnloading.unloading.unLocode.checkYourAnswersLabel = UN/LOCODE
 loadingAndUnloading.unloading.unLocode.error.required = Enter the UN/LOCODE for the place of unloading
-loadingAndUnloading.unloading.unLocode.error.length = The UN/LOCODE must be exactly 5 characters long
-loadingAndUnloading.unloading.unLocode.error.invalid = The UN/LOCODE number must only include letters A to Z and numbers 0 to 9.
+loadingAndUnloading.unloading.unLocode.error.length = The UN/LOCODE must be 5 characters long
+loadingAndUnloading.unloading.unLocode.error.invalid = The UN/LOCODE number must only include letters a to z and numbers 0 to 9
 loadingAndUnloading.unloading.unLocode.error.not.exists = Please enter a valid UN/LOCODE. This is a 5-character code used to identify a transit-related location, like DEBER.
 
 loadingAndUnloading.unloading.addExtraInformationYesNo.title = Do you want to add extra information for the place of unloading?

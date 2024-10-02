@@ -32,9 +32,9 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
   val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   val service                                      = new CustomsOfficesService(mockRefDataConnector)
 
-  val gbCustomsOffice1: CustomsOffice              = CustomsOffice("GB1", "BOSTON", None)
-  val gbCustomsOffice2: CustomsOffice              = CustomsOffice("GB2", "Appledore", None)
-  val gbCustomsOffices: NonEmptySet[CustomsOffice] = NonEmptySet.of(gbCustomsOffice1, gbCustomsOffice2)
+  val customsOffice1: CustomsOffice              = CustomsOffice("GB1", "BOSTON", "GB")
+  val customsOffice2: CustomsOffice              = CustomsOffice("GB2", "Appledore", "GB")
+  val customsOffices: NonEmptySet[CustomsOffice] = NonEmptySet.of(customsOffice1, customsOffice2)
 
   override def beforeEach(): Unit = {
     reset(mockRefDataConnector)
@@ -47,10 +47,10 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
       "must return a list of sorted customs offices of transit for a given country" in {
 
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
-          .thenReturn(Future.successful(gbCustomsOffices))
+          .thenReturn(Future.successful(customsOffices))
 
         service.getCustomsOfficesOfTransitForCountry(CountryCode("GB")).futureValue.values mustBe
-          Seq(gbCustomsOffice2, gbCustomsOffice1)
+          Seq(customsOffice2, customsOffice1)
 
         verify(mockRefDataConnector).getCustomsOfficesForCountryAndRole(eqTo("GB"), eqTo("TRA"))(any(), any())
       }
@@ -60,10 +60,10 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
       "must return a list of sorted customs offices of destination for a given country" in {
 
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
-          .thenReturn(Future.successful(gbCustomsOffices))
+          .thenReturn(Future.successful(customsOffices))
 
         service.getCustomsOfficesOfDestinationForCountry(CountryCode("GB")).futureValue.values mustBe
-          Seq(gbCustomsOffice2, gbCustomsOffice1)
+          Seq(customsOffice2, customsOffice1)
 
         verify(mockRefDataConnector).getCustomsOfficesForCountryAndRole(eqTo("GB"), eqTo("DES"))(any(), any())
       }
@@ -73,10 +73,10 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
       "must return a list of sorted customs offices of exit for a given country" in {
 
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
-          .thenReturn(Future.successful(gbCustomsOffices))
+          .thenReturn(Future.successful(customsOffices))
 
         service.getCustomsOfficesOfExitForCountry(CountryCode("GB")).futureValue.values mustBe
-          Seq(gbCustomsOffice2, gbCustomsOffice1)
+          Seq(customsOffice2, customsOffice1)
 
         verify(mockRefDataConnector).getCustomsOfficesForCountryAndRole(eqTo("GB"), eqTo("EXT"))(any(), any())
       }
@@ -86,10 +86,10 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
       "must return a list of sorted customs offices of departure for a given country" in {
 
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
-          .thenReturn(Future.successful(gbCustomsOffices))
+          .thenReturn(Future.successful(customsOffices))
 
         service.getCustomsOfficesOfDepartureForCountry("GB").futureValue.values mustBe
-          Seq(gbCustomsOffice2, gbCustomsOffice1)
+          Seq(customsOffice2, customsOffice1)
 
         verify(mockRefDataConnector).getCustomsOfficesForCountryAndRole(eqTo("GB"), eqTo("DEP"))(any(), any())
       }

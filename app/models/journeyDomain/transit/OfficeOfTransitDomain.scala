@@ -35,7 +35,7 @@ case class OfficeOfTransitDomain(
 )(index: Index)
     extends JourneyDomainModel {
 
-  override def page: Option[Section[_]] = Some(OfficeOfTransitSection(index))
+  override def page: Option[Section[?]] = Some(OfficeOfTransitSection(index))
 
   val label: String = country match {
     case Some(value) => s"$value - $customsOffice"
@@ -50,7 +50,7 @@ object OfficeOfTransitDomain {
   // scalastyle:off method.length
   implicit def userAnswersReader(index: Index)(implicit phaseConfig: PhaseConfig): Read[OfficeOfTransitDomain] = {
 
-    lazy val etaReads: Read[Option[DateTime]] = {
+    lazy val etaReads: Read[Option[DateTime]] =
       phaseConfig.phase match {
         case Phase.PostTransition =>
           SecurityDetailsTypePage.reader.to {
@@ -79,7 +79,6 @@ object OfficeOfTransitDomain {
               }
           }
       }
-    }
 
     lazy val readsWithoutCountry: Read[OfficeOfTransitDomain] =
       (
@@ -96,7 +95,7 @@ object OfficeOfTransitDomain {
 
     lazy val reads: Read[OfficeOfTransitDomain] =
       OfficeOfDestinationPage.reader.to {
-        _.countryCode match {
+        _.countryId match {
           case AD => readsWithoutCountry
           case _  => readsWithCountry
         }

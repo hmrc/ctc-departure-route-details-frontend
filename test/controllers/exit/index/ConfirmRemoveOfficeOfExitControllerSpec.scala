@@ -41,7 +41,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
   private val viewModel = arbitrary[RemoveOfficeOfExitViewModel].sample.value
 
   private val formProvider = new YesNoFormProvider()
-  private val form         = formProvider(viewModel.prefix, viewModel.args: _*)
+  private val form         = formProvider(viewModel.prefix)
 
   private val mode = NormalMode
 
@@ -76,7 +76,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
             status(result) mustEqual OK
 
             contentAsString(result) mustEqual
-              view(form, lrn, index, mode, viewModel)(request, messages).toString
+              view(form, lrn, index, mode, viewModel, viewModel.officeName)(request, messages).toString
         }
       }
     }
@@ -86,7 +86,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
         forAll(arbitraryOfficeOfExitAnswers(emptyUserAnswers, index)) {
           answers =>
             reset(mockSessionRepository)
-            when(mockSessionRepository.set(any())(any())) thenReturn Future.successful(true)
+            when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
 
             setExistingUserAnswers(answers)
 
@@ -148,7 +148,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
             val content = contentAsString(result)
 
             content mustEqual
-              view(boundForm, lrn, index, mode, viewModel)(request, messages).toString
+              view(boundForm, lrn, index, mode, viewModel, viewModel.officeName)(request, messages).toString
         }
       }
     }
@@ -162,7 +162,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
 
     "must redirect to add another for a GET if no existing data is found at given index" in {
@@ -191,7 +191,7 @@ class ConfirmRemoveOfficeOfExitControllerSpec extends SpecBase with AppWithDefau
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
 
     "must redirect to add another for a POST if no existing data is found at given index" in {
