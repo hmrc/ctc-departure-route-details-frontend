@@ -45,7 +45,8 @@
                 heading = messages("loadingAndUnloading.loading.addUnLocodeYesNo.heading"),
                 caption = Some(messages("loadingAndUnloading.loading.caption")),
                 additionalHtml = messages("loadingAndUnloading.loading.addUnLocodeYesNo.paragraph").toParagraph
-            )
+            ),
+            hint = Some(HtmlContent(messages("loadingAndUnloading.loading.addUnLocodeYesNo.hint")))
         )
 
         @button(attributes = Map("id" -> "submit"))
