@@ -440,7 +440,8 @@ loadingAndUnloading.loading.addUnLocodeYesNo.heading = Do you want to add a UN/L
 loadingAndUnloading.loading.addUnLocodeYesNo.checkYourAnswersLabel = Do you want to add a UN/LOCODE for the place of loading?
 loadingAndUnloading.loading.addUnLocodeYesNo.change.hidden = if you want a UN/LOCODE for the place of loading
 loadingAndUnloading.loading.addUnLocodeYesNo.error.required = Select yes if you want to add a UN/LOCODE for the place of loading
-loadingAndUnloading.loading.addUnLocodeYesNo.paragraph = This is a 5-character code used to identify where the goods are loaded, such as a port or clearance depot.
+loadingAndUnloading.loading.addUnLocodeYesNo.paragraph = The United Nations Code for Trade and Transport Locations (UN/LOCODE) is a 5-character code. It is used to identify where the goods are loaded, such as a port or clearance depot.
+loadingAndUnloading.loading.addUnLocodeYesNo.hint = Adding a UN/LOCODE is optional.
 
 loadingAndUnloading.loading.unLocode.title = What is the UN/LOCODE for the place of loading?
 loadingAndUnloading.loading.unLocode.heading = What is the UN/LOCODE for the place of loading?
@@ -484,7 +485,8 @@ loadingAndUnloading.unloading.addUnLocodeYesNo.heading = Do you want to add a UN
 loadingAndUnloading.unloading.addUnLocodeYesNo.checkYourAnswersLabel = Do you want to add a UN/LOCODE for the place of unloading?
 loadingAndUnloading.unloading.addUnLocodeYesNo.change.hidden = if you want to add a UN/LOCODE for the place of unloading
 loadingAndUnloading.unloading.addUnLocodeYesNo.error.required = Select yes if you want to add a UN/LOCODE for the place of unloading
-loadingAndUnloading.unloading.addUnLocodeYesNo.paragraph = This is a 5-character code used to identify where the goods are unloaded, such as a port or clearance depot.
+loadingAndUnloading.unloading.addUnLocodeYesNo.paragraph = The United Nations Code for Trade and Transport Locations (UN/LOCODE) is a 5-character code. It is used to identify where the goods are loaded, such as a port or clearance depot.
+loadingAndUnloading.unloading.addUnLocodeYesNo.hint = Adding a UN/LOCODE is optional.
 
 loadingAndUnloading.unloading.unLocode.title = What is the UN/LOCODE for the place of unloading?
 loadingAndUnloading.unloading.unLocode.heading = What is the UN/LOCODE for the place of unloading?
