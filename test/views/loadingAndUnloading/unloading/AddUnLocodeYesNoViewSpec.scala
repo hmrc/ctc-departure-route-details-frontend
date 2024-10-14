@@ -37,7 +37,12 @@ class AddUnLocodeYesNoViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithHeading()
 
-  behave like pageWithContent("p", "This is a 5-character code used to identify where the goods are unloaded, such as a port or clearance depot.")
+  behave like pageWithContent(
+    "p",
+    "The United Nations Code for Trade and Transport Locations (UN/LOCODE) is a 5-character code. It is used to identify where the goods are loaded, such as a port or clearance depot."
+  )
+
+  behave like pageWithHint("Adding a UN/LOCODE is optional.")
 
   behave like pageWithRadioItems()
 
