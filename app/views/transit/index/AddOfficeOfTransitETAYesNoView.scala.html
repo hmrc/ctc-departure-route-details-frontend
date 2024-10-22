@@ -46,7 +46,8 @@
                 heading = messages("transit.index.addOfficeOfTransitETAYesNo.heading", officeOfTransit.toString),
                 caption = Some(messages("transit.caption")),
                 additionalHtml = messages("transit.index.addOfficeOfTransitETAYesNo.paragraph").toParagraph
-            )
+            ),
+            hint = Some(Text(messages("transit.index.addOfficeOfTransitETAYesNo.hint")))
         )
 
         @button(attributes = Map("id" -> "submit"))

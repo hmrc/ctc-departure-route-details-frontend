@@ -39,6 +39,8 @@ class AddSpecificCircumstanceIndicatorYesNoViewSpec extends YesNoViewBehaviours 
 
   behave like pageWithContent("p", "This means you are an Authorised Economic Operator or use express consignments for exit summary declarations (EXS).")
 
+  behave like pageWithHint("Adding a specific circumstance indicator is optional.")
+
   behave like pageWithRadioItems()
 
   behave like pageWithSubmitButton("Save and continue")

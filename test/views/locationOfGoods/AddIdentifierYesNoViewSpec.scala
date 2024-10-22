@@ -39,6 +39,8 @@ class AddIdentifierYesNoViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithContent("p", "This is an alternative reference number to identify the location.")
 
+  behave like pageWithHint("Adding an additional identifier is optional.")
+
   behave like pageWithRadioItems()
 
   behave like pageWithSubmitButton("Save and continue")

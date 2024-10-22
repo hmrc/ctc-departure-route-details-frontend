@@ -45,7 +45,8 @@
                 heading = messages("routing.addCountryOfRoutingYesNo.heading"),
                 caption = Some(messages("routing.caption")),
                 additionalHtml = messages("routing.addCountryOfRoutingYesNo.paragraph").toParagraph
-            )
+            ),
+            hint = Some(Text(messages("routing.addCountryOfRoutingYesNo.hint")))
         )
 
         @button(attributes = Map("id" -> "submit"))
