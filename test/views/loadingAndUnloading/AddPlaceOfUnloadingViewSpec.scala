@@ -39,6 +39,8 @@ class AddPlaceOfUnloadingViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithContent("p", "This is where the goods are unloaded.")
 
+  behave like pageWithHint("Adding a place of unloading is optional.")
+
   behave like pageWithRadioItems()
 
   behave like pageWithSubmitButton("Save and continue")

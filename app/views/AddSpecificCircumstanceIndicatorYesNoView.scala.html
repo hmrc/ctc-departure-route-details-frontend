@@ -45,7 +45,8 @@
                 heading = messages("addSpecificCircumstanceIndicatorYesNo.heading"),
                 caption = Some(messages("caption")),
                 additionalHtml = messages("addSpecificCircumstanceIndicatorYesNo.paragraph").toParagraph
-            )
+            ),
+            hint = Some(Text(messages("addSpecificCircumstanceIndicatorYesNo.hint")))
         )
 
         @button(attributes = Map("id" -> "submit"))

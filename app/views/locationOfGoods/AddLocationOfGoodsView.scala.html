@@ -50,7 +50,8 @@
                 heading = messages("locationOfGoods.addLocationOfGoods.heading"),
                 caption = Some(messages("locationOfGoods.caption")),
                 additionalHtml = html
-            )
+            ),
+            hint = Some(Text(messages("locationOfGoods.addLocationOfGoods.hint")))
         )
 
         @button(attributes = Map("id" -> "submit"))

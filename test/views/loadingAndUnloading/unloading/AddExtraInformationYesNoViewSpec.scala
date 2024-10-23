@@ -39,6 +39,8 @@ class AddExtraInformationYesNoViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithContent("p", "This includes the country and location of unloading.")
 
+  behave like pageWithHint("Adding extra information is optional.")
+
   behave like pageWithRadioItems()
 
   behave like pageWithSubmitButton("Save and continue")

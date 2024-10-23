@@ -58,6 +58,7 @@ checkYourAnswers.exit.officeOfExit.change.hidden = office of exit for transit {0
 
 addSpecificCircumstanceIndicatorYesNo.title = Do you want to add a specific circumstance indicator?
 addSpecificCircumstanceIndicatorYesNo.heading = Do you want to add a specific circumstance indicator?
+addSpecificCircumstanceIndicatorYesNo.hint = Adding a specific circumstance indicator is optional.
 addSpecificCircumstanceIndicatorYesNo.paragraph = This means you are an Authorised Economic Operator or use express consignments for exit summary declarations (EXS).
 addSpecificCircumstanceIndicatorYesNo.change.hidden = if you want to add a specific circumstance indicator
 addSpecificCircumstanceIndicatorYesNo.checkYourAnswersLabel = Do you want to add a specific circumstance indicator?
@@ -99,6 +100,7 @@ routing.bindingItinerary.change.hidden = if you are using a binding itinerary
 
 routing.addCountryOfRoutingYesNo.title = Do you want to add a country to the transit route?
 routing.addCountryOfRoutingYesNo.heading = Do you want to add a country to the transit route?
+routing.addCountryOfRoutingYesNo.hint = Adding a country to the transit route is optional.
 routing.addCountryOfRoutingYesNo.paragraph = This can be any country the transit passes through, not just the places it stops.
 routing.addCountryOfRoutingYesNo.checkYourAnswersLabel = Do you want to add a country to the transit route?
 routing.addCountryOfRoutingYesNo.error.required = Select yes if you want to add a country to the transit route
@@ -173,6 +175,7 @@ transit.index.officeOfTransit.error.required = Enter where the office of transit
 
 transit.index.addOfficeOfTransitETAYesNo.title = Do you want to add a time of arrival in {0}?
 transit.index.addOfficeOfTransitETAYesNo.heading = Do you want to add a time of arrival in {0}?
+transit.index.addOfficeOfTransitETAYesNo.hint = Adding a time of arrival is optional.
 transit.index.addOfficeOfTransitETAYesNo.paragraph = This information is only for reference. If the transit arrives earlier or later than expected, no further action will be required.
 transit.index.addOfficeOfTransitETAYesNo.checkYourAnswersLabel = Do you want to add a time of arrival?
 transit.index.addOfficeOfTransitETAYesNo.change.hidden = do you want to add a time of arrival
@@ -258,6 +261,7 @@ exit.index.checkOfficeOfExitAnswers.heading = Check your answers
 
 locationOfGoods.addLocationOfGoods.title = Do you want to add a location of goods?
 locationOfGoods.addLocationOfGoods.heading = Do you want to add a location of goods?
+locationOfGoods.addLocationOfGoods.hint = Adding a location of goods is optional.
 locationOfGoods.addLocationOfGoods.paragraph1 = This is where Customs will carry out any physical checks.
 locationOfGoods.addLocationOfGoods.paragraph2 = For goods not present at a customs office, this is their location at the time they are declared.
 locationOfGoods.addLocationOfGoods.checkYourAnswersLabel = Do you want to add a location of goods?
@@ -362,6 +366,7 @@ locationOfGoods.additionalIdentifier.error.invalid = The additional identifier m
 
 locationOfGoods.addIdentifierYesNo.title = Do you want to add an additional identifier for the location of goods?
 locationOfGoods.addIdentifierYesNo.heading = Do you want to add an additional identifier for the location of goods?
+locationOfGoods.addIdentifierYesNo.hint = Adding an additional identifier is optional.
 locationOfGoods.addIdentifierYesNo.paragraph = This is an alternative reference number to identify the location.
 locationOfGoods.addIdentifierYesNo.checkYourAnswersLabel = Do you want to add another identifier for the location of goods?
 locationOfGoods.addIdentifierYesNo.change.hidden = if you want to add another identifier for the location of goods
@@ -381,6 +386,7 @@ locationOfGoods.unLocode.error.not.exists = Please enter a valid UN/LOCODE. This
 
 locationOfGoods.addContactLocationOfGoods.title = Do you want to add a contact for the location of goods?
 locationOfGoods.addContactLocationOfGoods.heading = Do you want to add a contact for the location of goods?
+locationOfGoods.addContactLocationOfGoods.hint = Adding a contact is optional.
 locationOfGoods.addContactLocationOfGoods.paragraph = This is additional contact information for if Customs have any queries.
 locationOfGoods.addContactLocationOfGoods.checkYourAnswersLabel = Do you want to add a contact for the location of goods?
 locationOfGoods.addContactLocationOfGoods.change.hidden = if you want to add a contact for the location of goods
@@ -416,6 +422,7 @@ locationOfGoods.contact.telephoneNumber.error.minLength = {0}’s phone number m
 
 loadingAndUnloading.addPlaceOfUnloading.title = Do you want to add a place of unloading?
 loadingAndUnloading.addPlaceOfUnloading.heading = Do you want to add a place of unloading?
+loadingAndUnloading.addPlaceOfUnloading.hint = Adding a place of unloading is optional.
 loadingAndUnloading.addPlaceOfUnloading.paragraph = This is where the goods are unloaded.
 loadingAndUnloading.addPlaceOfUnloading.checkYourAnswersLabel = Do you want to add a place of unloading?
 loadingAndUnloading.addPlaceOfUnloading.change.hidden = if you want to add a place of unloading
@@ -456,6 +463,7 @@ loadingAndUnloading.loading.unLocode.error.not.exists = Please enter a valid UN/
 
 loadingAndUnloading.loading.addExtraInformationYesNo.title = Do you want to add extra information for the place of loading?
 loadingAndUnloading.loading.addExtraInformationYesNo.heading = Do you want to add extra information for the place of loading?
+loadingAndUnloading.loading.addExtraInformationYesNo.hint = Adding extra information is optional.
 loadingAndUnloading.loading.addExtraInformationYesNo.paragraph = This includes the country and location of loading.
 loadingAndUnloading.loading.addExtraInformationYesNo.checkYourAnswersLabel = Do you want to add extra information for the place of loading?
 loadingAndUnloading.loading.addExtraInformationYesNo.change.hidden = if you want to add extra information for the place of loading
@@ -502,6 +510,7 @@ loadingAndUnloading.unloading.unLocode.error.not.exists = Please enter a valid U
 
 loadingAndUnloading.unloading.addExtraInformationYesNo.title = Do you want to add extra information for the place of unloading?
 loadingAndUnloading.unloading.addExtraInformationYesNo.heading = Do you want to add extra information for the place of unloading?
+loadingAndUnloading.unloading.addExtraInformationYesNo.hint = Adding extra information is optional.
 loadingAndUnloading.unloading.addExtraInformationYesNo.checkYourAnswersLabel = Do you want to add extra information for the place of unloading?
 loadingAndUnloading.unloading.addExtraInformationYesNo.change.hidden = if you want to add extra information for the place of unloading
 loadingAndUnloading.unloading.addExtraInformationYesNo.error.required = Select yes if you want to add extra information for the place of unloading

@@ -39,6 +39,8 @@ class AddLocationOfGoodsViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithContent("p", "This is where Customs will carry out any physical checks.")
 
+  behave like pageWithHint("Adding a location of goods is optional.")
+
   behave like pageWithContent("p", "For goods not present at a customs office, this is their location at the time they are declared.")
 
   behave like pageWithRadioItems()

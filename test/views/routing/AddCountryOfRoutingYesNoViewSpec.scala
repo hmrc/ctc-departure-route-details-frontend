@@ -39,6 +39,8 @@ class AddCountryOfRoutingYesNoViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithContent("p", "This can be any country the transit passes through, not just the places it stops.")
 
+  behave like pageWithHint("Adding a country to the transit route is optional.")
+
   behave like pageWithRadioItems()
 
   behave like pageWithSubmitButton("Save and continue")

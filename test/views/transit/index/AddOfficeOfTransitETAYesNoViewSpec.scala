@@ -45,6 +45,8 @@ class AddOfficeOfTransitETAYesNoViewSpec extends YesNoViewBehaviours with Genera
     "This information is only for reference. If the transit arrives earlier or later than expected, no further action will be required."
   )
 
+  behave like pageWithHint("Adding a time of arrival is optional.")
+
   behave like pageWithRadioItems(args = Seq(officeOfTransit))
 
   behave like pageWithSubmitButton("Save and continue")

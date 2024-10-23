@@ -45,7 +45,8 @@
                 heading = messages("loadingAndUnloading.unloading.addExtraInformationYesNo.heading"),
                 caption = Some(messages("loadingAndUnloading.unloading.caption")),
                 additionalHtml = messages("loadingAndUnloading.unloading.addExtraInformationYesNo.paragraph").toParagraph
-            )
+            ),
+            hint = Some(Text(messages("loadingAndUnloading.unloading.addExtraInformationYesNo.hint")))
         )
 
         @button(attributes = Map("id" -> "submit"))
