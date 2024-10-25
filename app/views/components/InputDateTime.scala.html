@@ -52,21 +52,21 @@
                 name = "dateDay",
                 label = Some(messages("date.day.capitalized")),
                 value = form("dateDay").value,
-                id = "dateDay"
+                id = "value.day"
             ),
             InputItem(
                 classes = s"govuk-input--width-2 ${errorClass(form("date").errors, "month")}",
                 name = "dateMonth",
                 label = Some(messages("date.month.capitalized")),
                 value = form("dateMonth").value,
-                id = "dateMonth"
+                id = "value.month"
             ),
             InputItem(
                 classes = s"govuk-input--width-4 ${errorClass(form("date").errors, "year")}",
                 name = "dateYear",
                 label = Some(messages("date.year.capitalized")),
                 value = form("dateYear").value,
-                id = "dateYear"
+                id = "value.year"
             )
         ),
         hint = dateHint.map(hint => Hint(content = Text(messages(hint)))),
@@ -92,14 +92,14 @@
                 name = "timeHour",
                 label = Some(messages("date.hour.capitalized")),
                 value = form("timeHour").value,
-                id = "timeHour"
+                id = "value.hour"
             ),
             InputItem(
                 classes = s"govuk-input--width-2 ${errorClass(form("time").errors, "minute")}",
                 name = "timeMinute",
                 label = Some(messages("date.minute.capitalized")),
                 value = form("timeMinute").value,
-                id = "timeMinute"
+                id = "value.minute"
             )
         ),
         hint = timeHint.map(hint => Hint(content = Text(messages(hint)))),
