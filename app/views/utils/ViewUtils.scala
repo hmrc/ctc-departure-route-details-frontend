@@ -110,7 +110,7 @@ object ViewUtils {
             case _      => Seq("")
           }
           val arg = formError.args.find(args.contains).getOrElse(args.head).toString
-          val key = s"#${formError.key}${arg.capitalize}"
+          val key = s"#value.$arg"
           ErrorLink(href = Some(key), content = messages(formError.message, formError.args*).toText)
       }
   }

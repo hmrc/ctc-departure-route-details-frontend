@@ -29,23 +29,23 @@ trait DateTimeInputViewBehaviours extends QuestionViewBehaviours[DateTime] with 
       "when rendered" - {
 
         "must display day" in {
-          assertRenderedById(doc, "dateDay")
+          assertRenderedById(doc, "value.day")
         }
 
         "must display month" in {
-          assertRenderedById(doc, "dateMonth")
+          assertRenderedById(doc, "value.month")
         }
 
         "must display year" in {
-          assertRenderedById(doc, "dateYear")
+          assertRenderedById(doc, "value.year")
         }
 
         "must display hour" in {
-          assertRenderedById(doc, "timeHour")
+          assertRenderedById(doc, "value.hour")
         }
 
         "must display minute" in {
-          assertRenderedById(doc, "timeMinute")
+          assertRenderedById(doc, "value.minute")
         }
       }
 
@@ -57,23 +57,23 @@ trait DateTimeInputViewBehaviours extends QuestionViewBehaviours[DateTime] with 
         "must show an error class on the inputs for date" in {
           val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage, Seq("day", "month", "year")))))
 
-          val dayInput = docWithError.getElementById("dateDay")
+          val dayInput = docWithError.getElementById("value.day")
           assert(dayInput.hasClass("govuk-input--error"))
 
-          val monthInput = docWithError.getElementById("dateMonth")
+          val monthInput = docWithError.getElementById("value.month")
           assert(monthInput.hasClass("govuk-input--error"))
 
-          val yearInput = docWithError.getElementById("dateYear")
+          val yearInput = docWithError.getElementById("value.year")
           assert(yearInput.hasClass("govuk-input--error"))
         }
 
         "must show an error class on the inputs for time" in {
           val docWithError = parseView(applyView(form.withError(FormError("time", errorMessage, Seq("hour", "minute")))))
 
-          val hourInput = docWithError.getElementById("timeHour")
+          val hourInput = docWithError.getElementById("value.hour")
           assert(hourInput.hasClass("govuk-input--error"))
 
-          val minuteInput = docWithError.getElementById("timeMinute")
+          val minuteInput = docWithError.getElementById("value.minute")
           assert(minuteInput.hasClass("govuk-input--error"))
         }
 
@@ -81,73 +81,73 @@ trait DateTimeInputViewBehaviours extends QuestionViewBehaviours[DateTime] with 
           "when no args" in {
             val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#dateDay")
+            assertElementContainsHref(link, "#value.day")
           }
 
           "when error in day input" in {
             val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage, Seq("day")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#dateDay")
+            assertElementContainsHref(link, "#value.day")
           }
 
           "when error in month input" in {
             val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage, Seq("month")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#dateMonth")
+            assertElementContainsHref(link, "#value.month")
           }
 
           "when error in year input" in {
             val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage, Seq("year")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#dateYear")
+            assertElementContainsHref(link, "#value.year")
           }
 
           "when error in hour input" in {
             val docWithError = parseView(applyView(form.withError(FormError("time", errorMessage, Seq("hour")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#timeHour")
+            assertElementContainsHref(link, "#value.hour")
           }
 
           "when error in minute input" in {
             val docWithError = parseView(applyView(form.withError(FormError("time", errorMessage, Seq("minute")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#timeMinute")
+            assertElementContainsHref(link, "#value.minute")
           }
 
           "when error in day and month inputs" in {
             val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage, Seq("day", "month")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#dateDay")
+            assertElementContainsHref(link, "#value.day")
           }
 
           "when error in day and year inputs" in {
             val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage, Seq("day", "year")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#dateDay")
+            assertElementContainsHref(link, "#value.day")
           }
 
           "when error in month and year inputs" in {
             val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage, Seq("month", "year")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#dateMonth")
+            assertElementContainsHref(link, "#value.month")
           }
 
           "when error in day, month and year inputs" in {
             val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage, Seq("day", "month", "year")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#dateDay")
+            assertElementContainsHref(link, "#value.day")
           }
 
           "when error in hour and minute inputs" in {
             val docWithError = parseView(applyView(form.withError(FormError("time", errorMessage, Seq("hour", "minute")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#timeHour")
+            assertElementContainsHref(link, "#value.hour")
           }
 
           "when error in day, month, year, hour, minute inputs" in {
             val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage, Seq("day", "month", "year", "hour", "minute")))))
             val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-            assertElementContainsHref(link, "#dateDay")
+            assertElementContainsHref(link, "#value.day")
           }
 
           "when date error has other args" in {
@@ -155,7 +155,7 @@ trait DateTimeInputViewBehaviours extends QuestionViewBehaviours[DateTime] with 
               arg =>
                 val docWithError = parseView(applyView(form.withError(FormError("date", errorMessage, Seq(arg)))))
                 val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-                assertElementContainsHref(link, s"#dateDay")
+                assertElementContainsHref(link, s"#value.day")
             }
           }
 
@@ -164,7 +164,7 @@ trait DateTimeInputViewBehaviours extends QuestionViewBehaviours[DateTime] with 
               arg =>
                 val docWithError = parseView(applyView(form.withError(FormError("time", errorMessage, Seq(arg)))))
                 val link         = docWithError.select(".govuk-error-summary__list > li > a").first()
-                assertElementContainsHref(link, s"#timeHour")
+                assertElementContainsHref(link, s"#value.hour")
             }
           }
         }
