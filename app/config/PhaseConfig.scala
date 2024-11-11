@@ -30,45 +30,35 @@ trait PhaseConfig {
   def amendMessageKey(key: String): String
 
   def lengthError(prefix: String): String = amendMessageKey(s"$prefix.error.length")
-
-  val maxNumberAndStreetLength: Int
-  val maxPostcodeLength: Int
-  val loadingLocationMaxLength: Int
 }
 
 object PhaseConfig {
 
-  case class Values(apiVersion: Double)
+  case class Values(apiVersion: Double, maxNumberAndStreetLength: Int, maxPostcodeLength: Int, loadingLocationMaxLength: Int)
 
   object Values {
 
     implicit val configLoader: ConfigLoader[Values] = (config: Config, path: String) =>
       config.getConfig(path) match {
         case phase =>
-          val apiVersion = phase.getDouble("apiVersion")
-          Values(apiVersion)
+          Values(
+            phase.getDouble("apiVersion"),
+            phase.getInt("maxNumberAndStreetLength"),
+            phase.getInt("maxPostcodeLength"),
+            phase.getInt("loadingLocationMaxLength")
+          )
       }
   }
 }
 
 class TransitionConfig @Inject() (configuration: Configuration) extends PhaseConfig {
-  override val phase: Phase   = Transition
-  override val values: Values = configuration.get[Values]("phase.transitional")
-
+  override val phase: Phase                         = Transition
+  override val values: Values                       = configuration.get[Values]("phase.transitional")
   override def amendMessageKey(key: String): String = s"$key.transition"
-
-  override val maxNumberAndStreetLength: Int = 35
-  override val maxPostcodeLength: Int        = 9
-  override val loadingLocationMaxLength: Int = 17
 }
 
 class PostTransitionConfig @Inject() (configuration: Configuration) extends PhaseConfig {
-  override val phase: Phase   = PostTransition
-  override val values: Values = configuration.get[Values]("phase.final")
-
+  override val phase: Phase                         = PostTransition
+  override val values: Values                       = configuration.get[Values]("phase.final")
   override def amendMessageKey(key: String): String = s"$key.postTransition"
-
-  override val maxNumberAndStreetLength: Int = 70
-  override val maxPostcodeLength: Int        = 17
-  override val loadingLocationMaxLength: Int = 35
 }

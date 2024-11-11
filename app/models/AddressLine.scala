@@ -46,7 +46,7 @@ object AddressLine {
 
   case object NumberAndStreet extends AddressLineWithValidation {
     override val field: String                         = "numberAndStreet"
-    def length(implicit phaseConfig: PhaseConfig): Int = phaseConfig.maxNumberAndStreetLength
+    def length(implicit phaseConfig: PhaseConfig): Int = phaseConfig.values.maxNumberAndStreetLength
     override val regex: Regex                          = stringFieldRegex
   }
 
@@ -58,7 +58,7 @@ object AddressLine {
 
   case object PostalCode extends AddressLineWithValidation {
     override val field: String                         = "postalCode"
-    def length(implicit phaseConfig: PhaseConfig): Int = phaseConfig.maxPostcodeLength
+    def length(implicit phaseConfig: PhaseConfig): Int = phaseConfig.values.maxPostcodeLength
     override val regex: Regex                          = alphaNumericWithSpacesRegex
   }
 }

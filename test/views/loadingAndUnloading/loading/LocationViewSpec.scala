@@ -49,7 +49,7 @@ class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefau
   }
 
   private def applyView(app: Application, form: Form[String], phaseConfig: PhaseConfig): HtmlFormat.Appendable =
-    app.injector.instanceOf[LocationView].apply(form, lrn, countryName, phaseConfig.loadingLocationMaxLength, NormalMode)(fakeRequest, messages)
+    app.injector.instanceOf[LocationView].apply(form, lrn, countryName, phaseConfig.values.loadingLocationMaxLength, NormalMode)(fakeRequest, messages)
 
   implicit override val arbitraryT: Arbitrary[String] = Arbitrary(Gen.alphaStr)
 
