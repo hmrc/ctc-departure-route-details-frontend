@@ -18,7 +18,7 @@ package controllers.actions
 
 import config.FrontendAppConfig
 import models.UserAnswersResponse.Answers
-import models.UserAnswersResponse.NotAcceptable
+import models.UserAnswersResponse.BadRequest
 import models.{LocalReferenceNumber, SubmissionState}
 import models.requests.*
 import play.api.mvc.Results.Redirect
@@ -35,7 +35,7 @@ class DataRequiredAction(lrn: LocalReferenceNumber, config: FrontendAppConfig)(i
     request.userAnswers match {
       case Answers(userAnswers) if userAnswers.status != SubmissionState.Submitted =>
         Future.successful(Right(DataRequest(request.request, request.eoriNumber, userAnswers)))
-      case NotAcceptable => Future.successful(Left(Redirect(config.draftNotAvailableUrl)))
+      case BadRequest => Future.successful(Left(Redirect(config.draftNotAvailableUrl)))
       case _ =>
         Future.successful(Left(Redirect(config.sessionExpiredUrl(lrn))))
     }
