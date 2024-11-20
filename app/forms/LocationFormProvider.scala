@@ -40,7 +40,7 @@ sealed trait LocationFormProvider extends Mappings {
 }
 
 class LoadingLocationFormProvider @Inject() (implicit phaseConfig: PhaseConfig) extends LocationFormProvider {
-  override val locationMaxLength: Int = phaseConfig.loadingLocationMaxLength
+  override val locationMaxLength: Int = phaseConfig.values.loadingLocationMaxLength
 }
 
 class UnloadingLocationFormProvider extends LocationFormProvider {
