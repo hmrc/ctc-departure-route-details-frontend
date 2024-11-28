@@ -24,7 +24,7 @@ import models.journeyDomain.loadingAndUnloading.loading.LoadingDomain
 import models.journeyDomain.loadingAndUnloading.unloading.UnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.{CountryOfRoutingDomain, RoutingDomain}
-import models.journeyDomain.transit.{OfficeOfTransitDomain, TransitDomain}
+import models.journeyDomain.transit.{OfficeOfTransitDomain, OfficesOfTransitDomain, TransitDomain}
 import models.{Index, UserAnswers}
 import org.scalacheck.Gen
 
@@ -47,6 +47,11 @@ trait RouteDetailsUserAnswersGenerator {
   def arbitraryTransitAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
     buildUserAnswers[TransitDomain](userAnswers)(
       TransitDomain.userAnswersReader.apply(Nil)
+    )
+
+  def arbitraryOfficesOfTransitAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
+    buildUserAnswers[OfficesOfTransitDomain](userAnswers)(
+      OfficesOfTransitDomain.userAnswersReader.apply(Nil)
     )
 
   def arbitraryOfficeOfTransitAnswers(userAnswers: UserAnswers, index: Index)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =

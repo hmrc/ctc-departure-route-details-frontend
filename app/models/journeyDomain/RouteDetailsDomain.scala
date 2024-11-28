@@ -16,19 +16,19 @@
 
 package models.journeyDomain
 
-import config.Constants.AdditionalDeclarationType._
-import config.Constants.DeclarationType._
-import config.Constants.SecurityType._
+import config.Constants.AdditionalDeclarationType.*
+import config.Constants.DeclarationType.*
+import config.Constants.SecurityType.*
 import config.PhaseConfig
-import models.{Phase, ProcedureType}
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.RoutingDomain
-import models.journeyDomain.transit.TransitDomain
+import models.journeyDomain.transit.{OfficesOfTransitDomain, TransitDomain}
 import models.reference.SpecificCircumstanceIndicator
+import models.{Phase, ProcedureType}
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
-import pages.external.{AdditionalDeclarationTypePage, DeclarationTypePage, OfficeOfDepartureInCL147Page, ProcedureTypePage, SecurityDetailsTypePage}
+import pages.external.*
 import pages.locationOfGoods.AddLocationOfGoodsPage
 import pages.sections.transit.OfficesOfTransitSection
 import pages.sections.{RouteDetailsSection, Section}
@@ -66,11 +66,24 @@ object RouteDetailsDomain {
       LoadingAndUnloadingDomain.userAnswersReader
     ).map(RouteDetailsDomain.apply).apply(Nil)
 
-  implicit def transitReader(implicit phaseConfig: PhaseConfig): Read[Option[TransitDomain]] =
-    DeclarationTypePage.reader.to {
+  implicit def transitReader(implicit phaseConfig: PhaseConfig): Read[Option[TransitDomain]] = {
+    lazy val reader: Read[Option[TransitDomain]] = DeclarationTypePage.reader.to {
       case TIR => UserAnswersReader.none
       case _   => TransitDomain.userAnswersReader.toOption
     }
+
+    phaseConfig.phase match {
+      case Phase.Transition =>
+        OfficeOfDepartureInCL112Page.reader.to {
+          case true =>
+            OfficesOfTransitDomain.userAnswersReader.toOption.map(TransitDomain(None, _)).toOption
+          case false =>
+            reader
+        }
+      case Phase.PostTransition =>
+        reader
+    }
+  }
 
   implicit val exitReader: Read[Option[ExitDomain]] =
     (

@@ -17,8 +17,8 @@
 package models.journeyDomain
 
 import base.SpecBase
-import config.Constants.DeclarationType._
-import config.Constants.SecurityType._
+import config.Constants.DeclarationType.*
+import config.Constants.SecurityType.*
 import config.PhaseConfig
 import generators.Generators
 import models.journeyDomain.exit.ExitDomain
@@ -31,9 +31,9 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
-import pages.external._
+import pages.external.*
 import pages.locationOfGoods.{AddLocationOfGoodsPage, LocationTypePage}
-import pages.transit.index.OfficeOfTransitInCL147Page
+import pages.transit.index.*
 import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 
 class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -79,31 +79,80 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "transitReader" - {
+
       "can be parsed from UserAnswers" - {
-        "when TIR declaration type" in {
-          val userAnswers = emptyUserAnswers.setValue(DeclarationTypePage, TIR)
+        "when transition" - {
 
-          val result = UserAnswersReader[Option[TransitDomain]](
-            RouteDetailsDomain.transitReader.apply(Nil)
-          ).run(userAnswers)
+          "when GB office of departure (in CL112)" in {
+            val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+            when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
 
-          result.value.value must not be defined
-          result.value.pages mustBe Nil
+            val initialAnswers = emptyUserAnswers.setValue(OfficeOfDepartureInCL112Page, true)
+
+            forAll(arbitraryOfficesOfTransitAnswers(initialAnswers)(mockPhaseConfig)) {
+              answers =>
+                val result = UserAnswersReader[Option[TransitDomain]](
+                  RouteDetailsDomain.transitReader(mockPhaseConfig).apply(Nil)
+                ).run(answers)
+
+                result.value.value mustBe defined
+            }
+          }
+
+          "when XI office of departure (not in CL112)" in {
+            val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+            when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
+
+            forAll(arbitrary[String](arbitraryNonTIRDeclarationType)) {
+              declarationType =>
+                val initialAnswers = emptyUserAnswers
+                  .setValue(OfficeOfDepartureInCL112Page, false)
+                  .setValue(DeclarationTypePage, declarationType)
+
+                forAll(arbitraryTransitAnswers(initialAnswers)(mockPhaseConfig)) {
+                  answers =>
+                    val result = UserAnswersReader[Option[TransitDomain]](
+                      RouteDetailsDomain.transitReader(mockPhaseConfig).apply(Nil)
+                    ).run(answers)
+
+                    result.value.value mustBe defined
+                }
+            }
+          }
         }
 
-        "when not a TIR declaration type" in {
-          forAll(arbitrary[String](arbitraryNonTIRDeclarationType)) {
-            declarationType =>
-              val initialAnswers = emptyUserAnswers.setValue(DeclarationTypePage, declarationType)
+        "when post-transition" - {
+          "when TIR declaration type" in {
+            val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+            when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
-              forAll(arbitraryTransitAnswers(initialAnswers)) {
-                answers =>
-                  val result = UserAnswersReader[Option[TransitDomain]](
-                    RouteDetailsDomain.transitReader.apply(Nil)
-                  ).run(answers)
+            val userAnswers = emptyUserAnswers.setValue(DeclarationTypePage, TIR)
 
-                  result.value.value mustBe defined
-              }
+            val result = UserAnswersReader[Option[TransitDomain]](
+              RouteDetailsDomain.transitReader(mockPhaseConfig).apply(Nil)
+            ).run(userAnswers)
+
+            result.value.value must not be defined
+            result.value.pages mustBe Nil
+          }
+
+          "when not a TIR declaration type" in {
+            val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
+            when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
+
+            forAll(arbitrary[String](arbitraryNonTIRDeclarationType)) {
+              declarationType =>
+                val initialAnswers = emptyUserAnswers.setValue(DeclarationTypePage, declarationType)
+
+                forAll(arbitraryTransitAnswers(initialAnswers)(mockPhaseConfig)) {
+                  answers =>
+                    val result = UserAnswersReader[Option[TransitDomain]](
+                      RouteDetailsDomain.transitReader(mockPhaseConfig).apply(Nil)
+                    ).run(answers)
+
+                    result.value.value mustBe defined
+                }
+            }
           }
         }
       }
