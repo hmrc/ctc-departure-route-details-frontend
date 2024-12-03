@@ -24,7 +24,7 @@ import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.RoutingDomain
-import models.journeyDomain.transit.{OfficesOfTransitDomain, TransitDomain}
+import models.journeyDomain.transit.TransitDomain
 import models.reference.SpecificCircumstanceIndicator
 import models.{Phase, ProcedureType}
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
@@ -66,24 +66,11 @@ object RouteDetailsDomain {
       LoadingAndUnloadingDomain.userAnswersReader
     ).map(RouteDetailsDomain.apply).apply(Nil)
 
-  implicit def transitReader(implicit phaseConfig: PhaseConfig): Read[Option[TransitDomain]] = {
-    lazy val reader: Read[Option[TransitDomain]] = DeclarationTypePage.reader.to {
+  implicit def transitReader(implicit phaseConfig: PhaseConfig): Read[Option[TransitDomain]] =
+    DeclarationTypePage.reader.to {
       case TIR => UserAnswersReader.none
       case _   => TransitDomain.userAnswersReader.toOption
     }
-
-    phaseConfig.phase match {
-      case Phase.Transition =>
-        OfficeOfDepartureInCL112Page.reader.to {
-          case true =>
-            OfficesOfTransitDomain.userAnswersReader.toOption.map(TransitDomain(None, _)).toOption
-          case false =>
-            reader
-        }
-      case Phase.PostTransition =>
-        reader
-    }
-  }
 
   implicit val exitReader: Read[Option[ExitDomain]] =
     (

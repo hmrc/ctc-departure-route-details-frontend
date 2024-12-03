@@ -16,10 +16,10 @@
 
 package models.journeyDomain.transit
 
-import config.Constants.DeclarationType._
+import config.Constants.DeclarationType.*
 import config.PhaseConfig
-import models.journeyDomain._
-import models.{Mode, UserAnswers}
+import models.journeyDomain.*
+import models.{Mode, Phase, UserAnswers}
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage}
 import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import pages.sections.routing.CountriesOfRoutingSection
@@ -42,7 +42,7 @@ object TransitDomain {
   // scalastyle:off method.length
   implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[TransitDomain] = {
 
-    val officesOfTransitReader: Read[Option[OfficesOfTransitDomain]] =
+    lazy val officesOfTransitReader: Read[Option[OfficesOfTransitDomain]] =
       OfficesOfTransitDomain.userAnswersReader.toOption
 
     lazy val addOfficesOfTransitReader: Read[Option[OfficesOfTransitDomain]] =
@@ -69,21 +69,25 @@ object TransitDomain {
           officesOfTransit.map(TransitDomain(isT2DeclarationType, _))
         }
 
-        if (officeOfDepartureInCL112 && officeOfDestinationInCL112 && officeOfDeparture.countryId == officeOfDestination.countryId) {
-          addOfficesOfTransitReader.map(TransitDomain.apply(None, _))
+        if (phaseConfig.phase == Phase.Transition && officeOfDepartureInCL112) {
+          officesOfTransitReader.map(TransitDomain(None, _))
         } else {
-          DeclarationTypePage.reader.to {
-            case T2 =>
-              officesOfTransitReader.map(TransitDomain(None, _))
-            case T =>
-              T2DeclarationTypeYesNoPage.reader.to {
-                case true =>
-                  officesOfTransitReader.map(TransitDomain(Some(true), _))
-                case false =>
-                  countriesOfRoutingReader(Some(false))
-              }
-            case _ =>
-              countriesOfRoutingReader(None)
+          if (officeOfDepartureInCL112 && officeOfDestinationInCL112 && officeOfDeparture.countryId == officeOfDestination.countryId) {
+            addOfficesOfTransitReader.map(TransitDomain.apply(None, _))
+          } else {
+            DeclarationTypePage.reader.to {
+              case T2 =>
+                officesOfTransitReader.map(TransitDomain(None, _))
+              case T =>
+                T2DeclarationTypeYesNoPage.reader.to {
+                  case true =>
+                    officesOfTransitReader.map(TransitDomain(Some(true), _))
+                  case false =>
+                    countriesOfRoutingReader(Some(false))
+                }
+              case _ =>
+                countriesOfRoutingReader(None)
+            }
           }
         }
     }
