@@ -37,9 +37,9 @@ class LocationOfGoodsIdentificationTypeService @Inject() (
         case AuthorisedPlace =>
           locationOfGoods.filter(_.qualifierIsOneOf(AuthorisationNumberIdentifier))
         case ApprovedPlace =>
-          locationOfGoods.filter(_.qualifierIsOneOf(EoriNumberIdentifier, CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier, PostalCodeIdentifier))
+          locationOfGoods.filter(_.qualifierIsOneOf(EoriNumberIdentifier, CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier))
         case Other =>
-          locationOfGoods.filter(_.qualifierIsOneOf(CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier, PostalCodeIdentifier))
+          locationOfGoods.filter(_.qualifierIsOneOf(CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier))
         case _ =>
           locationOfGoods
       }

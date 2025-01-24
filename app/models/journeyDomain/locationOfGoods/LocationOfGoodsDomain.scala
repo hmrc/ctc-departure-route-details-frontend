@@ -46,7 +46,6 @@ object LocationOfGoodsDomain {
             case UnlocodeIdentifier            => LocationOfGoodsU.userAnswersReader(typeOfLocation)
             case CoordinatesIdentifier         => LocationOfGoodsW.userAnswersReader(typeOfLocation)
             case AddressIdentifier             => LocationOfGoodsZ.userAnswersReader(typeOfLocation)
-            case PostalCodeIdentifier          => LocationOfGoodsT.userAnswersReader(typeOfLocation)
             case x                             => throw new Exception(s"Unexpected Location of goods identifier value $x")
           }
         }
@@ -156,22 +155,4 @@ object LocationOfGoodsU {
        AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
       )
     ).map(LocationOfGoodsU.apply)
-}
-
-case class LocationOfGoodsT(
-  typeOfLocation: LocationType,
-  postalCodeAddress: PostalCodeAddress,
-  override val additionalContact: Option[AdditionalContactDomain]
-) extends LocationOfGoodsDomain
-
-object LocationOfGoodsT {
-
-  def userAnswersReader(typeOfLocation: LocationType): Read[LocationOfGoodsDomain] =
-    RichTuple3(
-      (UserAnswersReader.success(typeOfLocation),
-       PostalCodePage.reader,
-       AddContactYesNoPage.filterOptionalDependent(identity)(AdditionalContactDomain.userAnswersReader)
-      )
-    ).map(LocationOfGoodsT.apply)
-
 }

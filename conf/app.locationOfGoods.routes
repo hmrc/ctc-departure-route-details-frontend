@@ -49,11 +49,6 @@ POST       /location-of-goods/add-identifier/:lrn                           cont
 GET        /location-of-goods/change-add-identifier/:lrn                    controllers.locationOfGoods.AddIdentifierYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
 POST       /location-of-goods/change-add-identifier/:lrn                    controllers.locationOfGoods.AddIdentifierYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
 
-GET        /location-of-goods/postal-code/:lrn                              controllers.locationOfGoods.PostalCodeController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-POST       /location-of-goods/postal-code/:lrn                              controllers.locationOfGoods.PostalCodeController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-GET        /location-of-goods/change-postal-code/:lrn                       controllers.locationOfGoods.PostalCodeController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
-POST       /location-of-goods/change-postal-code/:lrn                       controllers.locationOfGoods.PostalCodeController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
-
 GET        /location-of-goods/additional-identifier/:lrn                    controllers.locationOfGoods.AdditionalIdentifierController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 POST       /location-of-goods/additional-identifier/:lrn                    controllers.locationOfGoods.AdditionalIdentifierController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
 GET        /location-of-goods/change-additional-identifier/:lrn             controllers.locationOfGoods.AdditionalIdentifierController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)

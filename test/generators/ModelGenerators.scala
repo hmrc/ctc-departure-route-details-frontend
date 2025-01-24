@@ -156,8 +156,7 @@ trait ModelGenerators {
     LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier"),
     LocationOfGoodsIdentification(UnlocodeIdentifier, "UnlocodeIdentifier"),
     LocationOfGoodsIdentification(CoordinatesIdentifier, "CoordinatesIdentifier"),
-    LocationOfGoodsIdentification(AddressIdentifier, "Address"),
-    LocationOfGoodsIdentification(PostalCodeIdentifier, "PostalCode")
+    LocationOfGoodsIdentification(AddressIdentifier, "Address")
   )
 
   implicit lazy val arbitraryLocationOfGoodsIdentification: Arbitrary[LocationOfGoodsIdentification] =
