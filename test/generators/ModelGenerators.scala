@@ -23,7 +23,7 @@ import models.LockCheck.{LockCheckFailure, Locked, Unlocked}
 import models.ProcedureType.{Normal, Simplified}
 import models.domain.StringFieldRegex.{coordinatesLatitudeMaxRegex, coordinatesLongitudeMaxRegex}
 import models.reference._
-import models.{PostalCodeAddress, _}
+import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
@@ -188,15 +188,6 @@ trait ModelGenerators {
         city            <- nonEmptyString
         postalCode      <- nonEmptyString
       } yield DynamicAddress(numberAndStreet, city, Some(postalCode))
-    }
-
-  implicit lazy val arbitraryPostalCodeAddress: Arbitrary[PostalCodeAddress] =
-    Arbitrary {
-      for {
-        streetNumber <- nonEmptyString
-        postalCode   <- nonEmptyString
-        country      <- arbitrary[Country]
-      } yield PostalCodeAddress(streetNumber, postalCode, country)
     }
 
   lazy val arbitraryDeclarationType: Arbitrary[String] =

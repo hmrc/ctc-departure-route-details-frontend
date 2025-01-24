@@ -16,7 +16,7 @@
 
 package utils.cyaHelpers
 
-import models.{DateTime, DynamicAddress, PostalCodeAddress}
+import models.{DateTime, DynamicAddress}
 import models.reference.Country
 import play.api.i18n.Messages
 import play.api.mvc.Call
@@ -41,21 +41,10 @@ private[utils] class SummaryListRowHelper(implicit messages: Messages) {
   protected def formatAsDynamicAddress(address: DynamicAddress): Content =
     HtmlContent(address.toString)
 
-  protected def formatAsPostalCodeAddress(address: PostalCodeAddress): Content =
-    HtmlContent(address.toString)
-
   def formatAsDateTime(answer: DateTime): Content =
     answer.formatAsString.toText
 
-  protected def formatAsPassword(answer: String): Content = ("•" * answer.length).toText
-
-  protected def formatEnumAsText[T](messageKeyPrefix: String)(answer: T): Content =
-    formatEnumAsString(messageKeyPrefix)(answer).toText
-
   protected def formatDynamicEnumAsText[T <: Radioable[T]](answer: T): Content = answer.asString.toText
-
-  protected def formatEnumAsString[T](messageKeyPrefix: String)(answer: T): String =
-    messages(s"$messageKeyPrefix.$answer")
 
   protected def buildRow(
     prefix: String,
