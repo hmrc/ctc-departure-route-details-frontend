@@ -18,7 +18,7 @@ package generators
 
 import config.Constants.AdditionalDeclarationType._
 import models.reference._
-import models.{Coordinates, DateTime, DynamicAddress, PostalCodeAddress, ProcedureType}
+import models.{Coordinates, DateTime, DynamicAddress, ProcedureType}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
@@ -128,7 +128,6 @@ trait UserAnswersEntryGenerators {
       case UnLocodePage                => arbitrary[String].map(Json.toJson(_))
       case CountryPage                 => arbitrary[Country].map(Json.toJson(_))
       case AddressPage                 => arbitrary[DynamicAddress].map(Json.toJson(_))
-      case PostalCodePage              => arbitrary[PostalCodeAddress].map(Json.toJson(_))
     }
   }
 

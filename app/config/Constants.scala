@@ -52,7 +52,6 @@ object Constants {
     val UnlocodeIdentifier            = "U"
     val CoordinatesIdentifier         = "W"
     val AddressIdentifier             = "Z"
-    val PostalCodeIdentifier          = "T"
   }
 
   object LocationType {

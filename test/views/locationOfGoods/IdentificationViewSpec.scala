@@ -34,8 +34,7 @@ class IdentificationViewSpec extends EnumerableViewBehaviours[LocationOfGoodsIde
     LocationOfGoodsIdentification(AuthorisationNumberIdentifier, "AuthorisationNumberIdentifier"),
     LocationOfGoodsIdentification(UnlocodeIdentifier, "UnlocodeIdentifier"),
     LocationOfGoodsIdentification(CoordinatesIdentifier, "CoordinatesIdentifier"),
-    LocationOfGoodsIdentification(AddressIdentifier, "AddressIdentifier"),
-    LocationOfGoodsIdentification(PostalCodeIdentifier, "PostalCode")
+    LocationOfGoodsIdentification(AddressIdentifier, "AddressIdentifier")
   )
 
   override def form: Form[LocationOfGoodsIdentification] = new EnumerableFormProvider()(prefix, values)

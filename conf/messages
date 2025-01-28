@@ -322,18 +322,6 @@ locationOfGoods.eori.error.length = The EORI number or Trader Identification Num
 locationOfGoods.eori.error.invalid = The EORI number or Trader Identification Number (TIN) must only include letters a to z and numbers 0 to 9
 locationOfGoods.eori.hint = This can be up to 17 characters long and include both letters and numbers. For example, GB123456789000.
 
-locationOfGoods.postalCode.title = What is the address for the location of goods?
-locationOfGoods.postalCode.heading = What is the address for the location of goods?
-locationOfGoods.postalCode.streetNumber = Street number
-locationOfGoods.postalCode.postalCode = Postal code
-locationOfGoods.postalCode.country = Country
-locationOfGoods.postalCode.checkYourAnswersLabel = What is the address for the location of goods?
-locationOfGoods.postalCode.change.hidden = the address for the location of goods
-locationOfGoods.postalCode.error.streetNumber.invalid = The street number must only include numbers 0 to 9 and letters a to z
-locationOfGoods.postalCode.error.postalCode.invalid = The postal code must only include letters a to z, numbers 0 to 9 and spaces
-locationOfGoods.postalCode.error.length = The {0} must be {1} characters or less
-locationOfGoods.postalCode.error.required = Enter the {0} for the location of goods
-
 locationOfGoods.country.title = In which country is the location of goods?
 locationOfGoods.country.heading = In which country is the location of goods?
 locationOfGoods.country.hint = Enter the country, like Italy or Spain.

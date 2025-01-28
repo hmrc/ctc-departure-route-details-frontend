@@ -21,7 +21,7 @@ import config.Constants.LocationOfGoodsIdentifier._
 import generators.Generators
 import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CustomsOffice, LocationOfGoodsIdentification, LocationType}
-import models.{Coordinates, DynamicAddress, PostalCodeAddress}
+import models.{Coordinates, DynamicAddress}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
@@ -294,37 +294,6 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationOfGoodsSection
           )
         }
-
-        "is T (PostalCode)" in {
-          val qualifierOfIdentification = LocationOfGoodsIdentification(PostalCodeIdentifier, "PostalCode")
-          val postalCodeAddress         = arbitrary[PostalCodeAddress].sample.value
-
-          val userAnswers = emptyUserAnswers
-            .setValue(LocationTypePage, typeOfLocation)
-            .setValue(IdentificationPage, qualifierOfIdentification)
-            .setValue(PostalCodePage, postalCodeAddress)
-            .setValue(AddContactYesNoPage, false)
-
-          val expectedResult = LocationOfGoodsT(
-            typeOfLocation = typeOfLocation,
-            postalCodeAddress = postalCodeAddress,
-            additionalContact = None
-          )
-
-          val result = UserAnswersReader[LocationOfGoodsDomain](
-            LocationOfGoodsDomain.userAnswersReader.apply(Nil)
-          ).run(userAnswers)
-
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
-            LocationTypePage,
-            IdentificationPage,
-            PostalCodePage,
-            AddContactYesNoPage,
-            LocationOfGoodsSection
-          )
-        }
-
       }
 
       "when is Y(Authorisation Number) and all optional pages are answered" in {

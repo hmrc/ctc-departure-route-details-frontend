@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.locationOfGoods.{contact, routes}
 import generators.Generators
 import models.reference.{Country, CustomsOffice, LocationOfGoodsIdentification, LocationType}
-import models.{Coordinates, DynamicAddress, Mode, PostalCodeAddress}
+import models.{Coordinates, DynamicAddress, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
@@ -455,49 +455,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
       }
     }
 
-    "postalCode" - {
-      "must return None" - {
-        "when postalCodePage is undefined" in {
-          forAll(arbitrary[Mode]) {
-            mode =>
-              val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
-              val result = helper.postalCode
-              result mustBe None
-          }
-        }
-      }
-
-      "must return Some(Row)" - {
-        "when postalCodePage is defined" in {
-          forAll(arbitrary[Mode], arbitrary[PostalCodeAddress]) {
-            (mode, postalCode) =>
-              val answers = emptyUserAnswers.setValue(PostalCodePage, postalCode)
-              val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
-              val result  = helper.postalCode
-
-              result mustBe Some(
-                SummaryListRow(
-                  key = Key("What is the address for the location of goods?".toText),
-                  value = Value(HtmlContent(postalCode.toString)),
-                  actions = Some(
-                    Actions(
-                      items = List(
-                        ActionItem(
-                          content = "Change".toText,
-                          href = routes.PostalCodeController.onPageLoad(answers.lrn, mode).url,
-                          visuallyHiddenText = Some("the address for the location of goods"),
-                          attributes = Map("id" -> "change-location-of-goods-postal-code")
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-          }
-        }
-      }
-    }
-
     "additionalIdentifierYesNo" - {
       "must return None" - {
         "when addIdentifierYesNoPage is undefined" in {
@@ -549,36 +506,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.additionalIdentifier
               result mustBe None
-          }
-        }
-      }
-
-      "must return Some(Row)" - {
-        "when postalCodePage is defined" in {
-          forAll(arbitrary[Mode], arbitrary[String]) {
-            (mode, additionalIdentifier) =>
-              val answers = emptyUserAnswers.setValue(AdditionalIdentifierPage, additionalIdentifier)
-              val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
-              val result  = helper.additionalIdentifier
-
-              result mustBe Some(
-                SummaryListRow(
-                  key = Key("Additional identifier".toText),
-                  value = Value(additionalIdentifier.toText),
-                  actions = Some(
-                    Actions(
-                      items = List(
-                        ActionItem(
-                          content = "Change".toText,
-                          href = routes.AdditionalIdentifierController.onPageLoad(answers.lrn, mode).url,
-                          visuallyHiddenText = Some("additional identifier"),
-                          attributes = Map("id" -> "change-location-of-goods-additional-identifier")
-                        )
-                      )
-                    )
-                  )
-                )
-              )
           }
         }
       }

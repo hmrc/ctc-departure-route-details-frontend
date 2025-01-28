@@ -18,7 +18,7 @@ package utils.cyaHelpers.locationOfGoods
 
 import config.FrontendAppConfig
 import models.reference.{Country, CustomsOffice, LocationOfGoodsIdentification, LocationType}
-import models.{Coordinates, DynamicAddress, Mode, PostalCodeAddress, UserAnswers}
+import models.{Coordinates, DynamicAddress, Mode, UserAnswers}
 import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
 import pages.locationOfGoods._
 import play.api.i18n.Messages
@@ -96,13 +96,6 @@ class LocationOfGoodsCheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode
     formatAnswer = formatAsDynamicAddress,
     prefix = "locationOfGoods.address",
     id = Some("change-location-of-goods-address")
-  )
-
-  def postalCode: Option[SummaryListRow] = getAnswerAndBuildRow[PostalCodeAddress](
-    page = PostalCodePage,
-    formatAnswer = formatAsPostalCodeAddress,
-    prefix = "locationOfGoods.postalCode",
-    id = Some("change-location-of-goods-postal-code")
   )
 
   def additionalIdentifierYesNo: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
