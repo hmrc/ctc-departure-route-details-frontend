@@ -16,8 +16,12 @@
 
 package pages.routing.index
 
-import models.reference.Country
+import models.Index
+import models.reference.{Country, CountryCode}
 import pages.behaviours.PageBehaviours
+import pages.sections.exit.ExitSection
+import pages.sections.transit.TransitSection
+import play.api.libs.json.Json
 
 class CountryOfRoutingPageSpec extends PageBehaviours {
 
@@ -29,5 +33,49 @@ class CountryOfRoutingPageSpec extends PageBehaviours {
 
     beRemovable[Country](CountryOfRoutingPage(index))
 
+    "cleanup" - {
+
+      "must remove transit and exit sections" - {
+        "when country of routing changes" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(CountryOfRoutingPage(Index(0)), Country(CountryCode("FR"), "France"))
+            .setValue(TransitSection, Json.obj("foo" -> "bar"))
+            .setValue(ExitSection, Json.obj("foo" -> "bar"))
+
+          val result = userAnswers.setValue(CountryOfRoutingPage(Index(0)), Country(CountryCode("ES"), "Spain"))
+
+          result.get(TransitSection) must not be defined
+          result.get(ExitSection) must not be defined
+        }
+
+        "when country of routing added" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(CountryOfRoutingPage(Index(0)), Country(CountryCode("FR"), "France"))
+            .setValue(TransitSection, Json.obj("foo" -> "bar"))
+            .setValue(ExitSection, Json.obj("foo" -> "bar"))
+
+          val result = userAnswers.setValue(CountryOfRoutingPage(Index(1)), Country(CountryCode("ES"), "Spain"))
+
+          result.get(TransitSection) must not be defined
+          result.get(ExitSection) must not be defined
+        }
+      }
+
+      "must not remove transit and exit sections" - {
+        "when country of routing doesn't change" in {
+          val country = Country(CountryCode("FR"), "France")
+
+          val userAnswers = emptyUserAnswers
+            .setValue(CountryOfRoutingPage(Index(0)), country)
+            .setValue(TransitSection, Json.obj("foo" -> "bar"))
+            .setValue(ExitSection, Json.obj("foo" -> "bar"))
+
+          val result = userAnswers.setValue(CountryOfRoutingPage(Index(0)), country)
+
+          result.get(TransitSection) must be(defined)
+          result.get(ExitSection) must be(defined)
+        }
+      }
+    }
   }
 }
