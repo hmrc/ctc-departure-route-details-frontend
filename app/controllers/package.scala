@@ -18,18 +18,12 @@ import cats.data.ReaderT
 import config.PhaseConfig
 import models.TaskStatus.InProgress
 import models.UserAnswers
-import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.OpsError.WriterError
-import models.journeyDomain.RouteDetailsDomain
-import models.reference.Country
+import models.journeyDomain.{RouteDetailsDomain, UserAnswersReader}
 import models.requests.MandatoryDataRequest
 import navigation.UserAnswersNavigator
 import pages.QuestionPage
-import pages.exit.index.OfficeOfExitPage
-import pages.sections.exit.{OfficeOfExitSection, OfficesOfExitSection}
-import pages.sections.transit.{OfficeOfTransitSection, OfficesOfTransitSection}
-import pages.transit.index.OfficeOfTransitPage
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
 import repositories.SessionRepository
@@ -67,38 +61,6 @@ package object controllers {
   }
 
   implicit class SettableOpsRunner[A](userAnswersWriter: UserAnswersWriter[Write[A]]) {
-
-    def removeOffices(previousSelectedCountry: Option[Country], selectedCountry: Country): UserAnswersWriter[Write[A]] =
-      userAnswersWriter.flatMapF {
-        case (page, userAnswers) =>
-          previousSelectedCountry match {
-            case Some(previousCountry) =>
-              Right(
-                (page,
-                 userAnswers
-                   .findAndRemoveOffices(
-                     OfficesOfTransitSection,
-                     OfficeOfTransitSection.apply,
-                     OfficeOfTransitPage.apply,
-                     previousCountry.code.code,
-                     selectedCountry.code.code
-                   )
-                   .findAndRemoveOffices(
-                     OfficesOfExitSection,
-                     OfficeOfExitSection.apply,
-                     OfficeOfExitPage.apply,
-                     previousCountry.code.code,
-                     selectedCountry.code.code
-                   )
-                )
-              )
-            case None =>
-              Right(
-                (page, userAnswers)
-              )
-          }
-
-      }
 
     def appendValue[B](subPage: QuestionPage[B], value: B)(implicit format: Format[B]): UserAnswersWriter[Write[A]] =
       userAnswersWriter.flatMapF {
