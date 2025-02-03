@@ -80,7 +80,6 @@ class CountryOfRoutingController @Inject() (
                     val navigator: UserAnswersNavigator = navigatorProvider(mode, index)
                     CountryOfRoutingPage(index)
                       .writeToUserAnswers(value)
-                      .removeOffices(request.userAnswers.get(CountryOfRoutingPage(index)), value)
                       .appendValue(CountryOfRoutingInCL112Page(index), isInCL112)
                       .appendValue(CountryOfRoutingInCL147Page(index), isInCL147)
                       .updateTask()

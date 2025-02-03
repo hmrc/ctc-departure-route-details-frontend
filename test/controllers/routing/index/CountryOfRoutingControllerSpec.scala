@@ -19,22 +19,20 @@ package controllers.routing.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.SelectableFormProvider
 import generators.Generators
-import models.reference.{Country, CountryCode, CustomsOffice}
-import models.{Index, NormalMode, SelectableList, UserAnswers}
+import models.reference.{Country, CountryCode}
+import models.{NormalMode, SelectableList, UserAnswers}
 import navigation.CountryOfRoutingNavigatorProvider
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.exit.index.OfficeOfExitPage
 import pages.routing.index.CountryOfRoutingPage
-import pages.transit.index.OfficeOfTransitPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.routing.index.CountryOfRoutingView
 
 import scala.concurrent.Future
@@ -182,87 +180,5 @@ class CountryOfRoutingControllerSpec extends SpecBase with AppWithDefaultMockFix
 
       redirectLocation(result).value mustEqual frontendAppConfig.sessionExpiredUrl(lrn)
     }
-
-    "must redirect to add another country of routing  and remove officeOfTransits/exit with the changed country code" in {
-      forAll(arbitrary[Boolean], arbitrary[Boolean]) {
-        (isInCL112, isInCL147) =>
-          beforeEach()
-          when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
-          when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))
-          when(mockCountriesService.isInCL147(any())(any())).thenReturn(Future.successful(isInCL147))
-          when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
-
-          val userAnswers = emptyUserAnswers
-            .setValue(CountryOfRoutingPage(index), country1)
-            .setValue(OfficeOfTransitPage(index), CustomsOffice(country1.code.code, "port1", country1.code.code))
-            .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice(country1.code.code, "port2", country1.code.code))
-            .setValue(OfficeOfExitPage(index), CustomsOffice(country1.code.code, "port1", country1.code.code))
-            .setValue(OfficeOfExitPage(Index(1)), CustomsOffice(country1.code.code, "port1", country1.code.code))
-            .setValue(OfficeOfExitPage(Index(2)), CustomsOffice(country2.code.code, "port1", country2.code.code))
-            .setValue(OfficeOfExitPage(Index(3)), CustomsOffice(country2.code.code, "port1", country2.code.code))
-
-          setExistingUserAnswers(userAnswers)
-
-          val request = FakeRequest(POST, countryOfRoutingRoute)
-            .withFormUrlEncodedBody(("value", country2.code.code))
-
-          val result = route(app, request).value
-
-          status(result) mustEqual SEE_OTHER
-
-          redirectLocation(result).value mustEqual onwardRoute.url
-
-          val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-          verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
-          userAnswersCaptor.getValue.get(OfficeOfTransitPage(index)) mustNot be(defined)
-          userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(1))) mustNot be(defined)
-          userAnswersCaptor.getValue.get(OfficeOfExitPage(index)) must be(defined)
-          userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(1))) must be(defined)
-          userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(2))) mustNot be(defined)
-          userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(3))) mustNot be(defined)
-      }
-    }
-
-    "must redirect to add another country of routing  and not remove officeOfTransits if the country is changed to the same country" in {
-      forAll(arbitrary[Boolean], arbitrary[Boolean]) {
-        (isInCL112, isInCL147) =>
-          beforeEach()
-          val userAnswers = emptyUserAnswers
-            .setValue(CountryOfRoutingPage(index), countryFrance)
-            .setValue(OfficeOfTransitPage(index), CustomsOffice("id0", "port37", country1.code.code))
-            .setValue(OfficeOfTransitPage(Index(1)), CustomsOffice("id1", "port1", countryFrance.code.code))
-            .setValue(OfficeOfTransitPage(Index(2)), CustomsOffice("id2", "port2", countryFrance.code.code))
-            .setValue(OfficeOfExitPage(index), CustomsOffice(country1.code.code, "port1", country1.code.code))
-            .setValue(OfficeOfExitPage(Index(1)), CustomsOffice(country1.code.code, "port2", country1.code.code))
-            .setValue(OfficeOfExitPage(Index(2)), CustomsOffice(country2.code.code, "port2", country2.code.code))
-
-          when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countryList))
-          when(mockCountriesService.isInCL112(any())(any())).thenReturn(Future.successful(isInCL112))
-          when(mockCountriesService.isInCL147(any())(any())).thenReturn(Future.successful(isInCL147))
-          when(mockSessionRepository.set(any())(any())).thenReturn(Future.successful(true))
-
-          setExistingUserAnswers(userAnswers)
-
-          val request = FakeRequest(POST, countryOfRoutingRoute)
-            .withFormUrlEncodedBody(("value", countryFrance.code.code))
-
-          val result = route(app, request).value
-
-          status(result) mustEqual SEE_OTHER
-
-          redirectLocation(result).value mustEqual onwardRoute.url
-
-          val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-          verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
-          userAnswersCaptor.getValue.get(OfficeOfTransitPage(index)) must be(defined)
-          userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(1))) must be(defined)
-          userAnswersCaptor.getValue.get(OfficeOfTransitPage(Index(2))) must be(defined)
-          userAnswersCaptor.getValue.get(OfficeOfExitPage(index)) must be(defined)
-          userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(1))) must be(defined)
-          userAnswersCaptor.getValue.get(OfficeOfExitPage(Index(2))) must be(defined)
-
-      }
-    }
-
   }
 }
