@@ -16,7 +16,7 @@
 
 package controllers.transit.index
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.DateTimeFormProvider
@@ -45,7 +45,7 @@ class OfficeOfTransitETAController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: OfficeOfTransitETAView,
   dateTimeService: DateTimeService
-)(implicit ec: ExecutionContext, config: FrontendAppConfig, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

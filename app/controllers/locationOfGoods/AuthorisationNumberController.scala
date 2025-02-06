@@ -16,7 +16,7 @@
 
 package controllers.locationOfGoods
 
-import config.PhaseConfig
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.locationOfGoods.AuthorisationNumberFormProvider
@@ -40,7 +40,7 @@ class AuthorisationNumberController @Inject() (
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
   view: AuthorisationNumberView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

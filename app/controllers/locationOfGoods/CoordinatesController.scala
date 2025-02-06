@@ -16,7 +16,7 @@
 
 package controllers.locationOfGoods
 
-import config.PhaseConfig
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.locationOfGoods.CoordinatesFormProvider
@@ -40,7 +40,7 @@ class CoordinatesController @Inject() (
   formProvider: CoordinatesFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: CoordinatesView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

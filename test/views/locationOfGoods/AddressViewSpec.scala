@@ -26,7 +26,7 @@ import views.html.locationOfGoods.AddressView
 
 class AddressViewSpec extends DynamicAddressViewBehaviours with Generators {
 
-  private val formProvider = new DynamicAddressFormProvider()(phaseConfig)
+  private val formProvider = new DynamicAddressFormProvider()(frontendAppConfig)
 
   override def form: Form[DynamicAddress] = formProvider(prefix, isPostalCodeRequired)
 

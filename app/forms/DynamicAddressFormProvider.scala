@@ -16,7 +16,7 @@
 
 package forms
 
-import config.PhaseConfig
+import config.FrontendAppConfig
 import forms.mappings.Mappings
 import models.AddressLine._
 import models.DynamicAddress
@@ -26,7 +26,7 @@ import play.api.i18n.Messages
 
 import javax.inject.Inject
 
-class DynamicAddressFormProvider @Inject() (implicit phaseConfig: PhaseConfig) extends Mappings {
+class DynamicAddressFormProvider @Inject() (implicit config: FrontendAppConfig) extends Mappings {
 
   def apply(prefix: String, isPostalCodeRequired: Boolean, args: Any*)(implicit messages: Messages): Form[DynamicAddress] =
     Form(

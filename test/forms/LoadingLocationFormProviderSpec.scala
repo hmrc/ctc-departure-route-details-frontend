@@ -62,16 +62,8 @@ class LoadingLocationFormProviderSpec extends StringFieldBehaviours with SpecBas
       )
     }
 
-    "when during transition" - {
-      val app = transitionApplicationBuilder().build()
-      running(app) {
-        val formProvider = app.injector.instanceOf[LoadingLocationFormProvider]
-        runTests(formProvider(prefix), 17)
-      }
-    }
-
     "when post transition" - {
-      val app = postTransitionApplicationBuilder().build()
+      val app = guiceApplicationBuilder().build()
       running(app) {
         val formProvider = app.injector.instanceOf[LoadingLocationFormProvider]
         runTests(formProvider(prefix), 35)

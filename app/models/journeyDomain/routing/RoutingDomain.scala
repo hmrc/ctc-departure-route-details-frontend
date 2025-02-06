@@ -16,8 +16,7 @@
 
 package models.journeyDomain.routing
 
-import config.PhaseConfig
-import models.journeyDomain.{JourneyDomainModel, _}
+import models.journeyDomain.{JourneyDomainModel, *}
 import models.reference.{Country, CustomsOffice}
 import pages.routing.{BindingItineraryPage, CountryOfDestinationPage, OfficeOfDestinationPage}
 import pages.sections.Section
@@ -35,7 +34,7 @@ case class RoutingDomain(
 
 object RoutingDomain {
 
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[RoutingDomain] =
+  implicit def userAnswersReader: Read[RoutingDomain] =
     (
       CountryOfDestinationPage.reader,
       OfficeOfDestinationPage.reader,

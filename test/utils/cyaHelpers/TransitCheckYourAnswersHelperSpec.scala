@@ -17,15 +17,13 @@
 package utils.cyaHelpers
 
 import base.SpecBase
-import config.Constants.SecurityType._
-import config.PhaseConfig
-import controllers.transit.index.{routes => indexRoutes}
+import config.Constants.SecurityType.*
+import controllers.transit.index.routes as indexRoutes
 import generators.Generators
 import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.transit.OfficeOfTransitDomain
 import models.reference.{Country, CustomsOffice}
-import models.{Index, Mode, Phase}
-import org.mockito.Mockito.when
+import models.{Index, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.external.{OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
@@ -34,8 +32,8 @@ import pages.sections.transit.OfficeOfTransitSection
 import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitPage}
 import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
 import play.api.libs.json.Json
-import uk.gov.hmrc.govukfrontend.views.Aliases._
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+import uk.gov.hmrc.govukfrontend.views.Aliases.*
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 import utils.cyaHelpers.transit.TransitCheckYourAnswersHelper
 import viewModels.ListItem
 
@@ -198,9 +196,6 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
 
     "listItems" - {
       "must return list items" - {
-        val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
-        when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
-
         "when multiple" in {
           val mode = arbitrary[Mode].sample.value
 
@@ -227,7 +222,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             .setValue(AddOfficeOfTransitETAYesNoPage(Index(1)), false)
             .setValue(OfficeOfTransitCountryPage(Index(2)), country3)
 
-          val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig, phaseConfig = mockPhaseConfig)
+          val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
           helper.listItems mustBe Seq(
             Right(
               ListItem(
@@ -274,7 +269,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                 .setValue(OfficeOfTransitCountryPage(Index(0)), country1)
                 .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
 
-              val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig, phaseConfig = mockPhaseConfig)
+              val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
               helper.listItems mustBe Seq(
                 Left(
                   ListItem(
@@ -304,7 +299,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                 .setValue(OfficeOfTransitCountryPage(Index(0)), country1)
                 .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
 
-              val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig, phaseConfig = mockPhaseConfig)
+              val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
               helper.listItems mustBe Seq(
                 Left(
                   ListItem(
@@ -338,7 +333,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                 .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
                 .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
 
-              val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig, phaseConfig = mockPhaseConfig)
+              val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
               helper.listItems mustBe Seq(
                 Right(
                   ListItem(
@@ -369,7 +364,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                 .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
                 .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
 
-              val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig, phaseConfig = mockPhaseConfig)
+              val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
               helper.listItems mustBe Seq(
                 Right(
                   ListItem(

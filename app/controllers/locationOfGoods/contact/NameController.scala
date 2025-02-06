@@ -16,7 +16,7 @@
 
 package controllers.locationOfGoods.contact
 
-import config.PhaseConfig
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.NameFormProvider
@@ -40,7 +40,7 @@ class NameController @Inject() (
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
   view: NameView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

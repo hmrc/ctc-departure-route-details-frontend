@@ -17,20 +17,18 @@
 package models.journeyDomain.transit
 
 import base.SpecBase
-import config.Constants.CountryCode._
-import config.Constants.SecurityType._
-import config.PhaseConfig
+import config.Constants.CountryCode.*
+import config.Constants.SecurityType.*
 import generators.Generators
 import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
-import models.{DateTime, Index, Phase}
-import org.mockito.Mockito.when
+import models.{DateTime, Index}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import pages.external.{OfficeOfDepartureInCL010Page, SecurityDetailsTypePage}
-import pages.routing._
+import pages.external.SecurityDetailsTypePage
+import pages.routing.*
 import pages.sections.transit.OfficeOfTransitSection
-import pages.transit.index._
+import pages.transit.index.*
 
 class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
@@ -43,237 +41,18 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
     val eta = arbitrary[DateTime].sample.value
 
     val securityType1Or3    = Gen.oneOf(EntrySummaryDeclarationSecurityDetails, EntryAndExitSummaryDeclarationSecurityDetails).sample.value
-    val securityType1Or2or3 = arbitrary[String](arbitrarySomeSecurityDetailsType).sample.value
     val securityTypeNot1Or3 = Gen.oneOf(NoSecurityDetails, ExitSummaryDeclarationSecurityDetails).sample.value
 
     val officeOfTransit = arbitrary[CustomsOffice].sample.value
 
     "can be parsed from UserAnswers" - {
-      "when is post transition" - {
-        val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
-        when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
+      "when first in sequence" - {
+        val index = Index(0)
 
-        "when first in sequence" - {
-          val index = Index(0)
-
-          "and office of destination is in set CL112" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationInCL112Page, true)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-            val expectedResult = OfficeOfTransitDomain(
-              country = None,
-              customsOffice = officeOfTransit,
-              eta = None
-            )(index)
-
-            val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index)
-            )
-          }
-
-          "and office of destination is in 'AD'" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice.copy(countryId = AD))
-              .setValue(OfficeOfDestinationInCL112Page, false)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-            val expectedResult = OfficeOfTransitDomain(
-              country = None,
-              customsOffice = officeOfTransit,
-              eta = None
-            )(index)
-
-            val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index)
-            )
-          }
-
-          "and office of destination is not in 'AD'" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, false)
-              .setValue(OfficeOfTransitCountryPage(index), country)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-            val expectedResult = OfficeOfTransitDomain(
-              country = Some(country),
-              customsOffice = officeOfTransit,
-              eta = None
-            )(index)
-
-            val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitCountryPage(index),
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index)
-            )
-          }
-        }
-
-        "when not first in sequence" in {
-          val index = Index(1)
-
+        "and office of destination is in set CL112" in {
           val userAnswers = emptyUserAnswers
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-            .setValue(OfficeOfDestinationInCL112Page, false)
-            .setValue(OfficeOfTransitCountryPage(Index(0)), country)
-            .setValue(OfficeOfTransitCountryPage(index), country)
-            .setValue(OfficeOfTransitPage(index), officeOfTransit)
-            .setValue(AddOfficeOfTransitETAYesNoPage(index), true)
-            .setValue(OfficeOfTransitETAPage(index), eta)
-
-          val expectedResult = OfficeOfTransitDomain(
-            country = Some(country),
-            customsOffice = officeOfTransit,
-            eta = Some(eta)
-          )(index)
-
-          val result = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-          ).run(userAnswers)
-
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
-            OfficeOfTransitCountryPage(index),
-            OfficeOfTransitPage(index),
-            AddOfficeOfTransitETAYesNoPage(index),
-            OfficeOfTransitETAPage(index),
-            OfficeOfTransitSection(index)
-          )
-        }
-
-        "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
-          "and office of transit is in set CL147" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, securityType1Or3)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, false)
-              .setValue(OfficeOfTransitCountryPage(index), country)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(OfficeOfTransitInCL147Page(index), true)
-              .setValue(OfficeOfTransitETAPage(index), eta)
-
-            val expectedResult = OfficeOfTransitDomain(
-              country = Some(country),
-              customsOffice = officeOfTransit,
-              eta = Some(eta)
-            )(index)
-
-            val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitCountryPage(index),
-              OfficeOfTransitPage(index),
-              OfficeOfTransitETAPage(index),
-              OfficeOfTransitSection(index)
-            )
-          }
-
-          "and office of transit is not in CL147" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, securityType1Or3)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, false)
-              .setValue(OfficeOfTransitCountryPage(index), country)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(OfficeOfTransitInCL147Page(index), false)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-            val expectedResult = OfficeOfTransitDomain(
-              country = Some(country),
-              customsOffice = officeOfTransit,
-              eta = None
-            )(index)
-
-            val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitCountryPage(index),
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index)
-            )
-          }
-        }
-
-        "when security type is not one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" in {
-          val userAnswers = emptyUserAnswers
-            .setValue(SecurityDetailsTypePage, securityTypeNot1Or3)
-            .setValue(OfficeOfDestinationPage, customsOffice)
-            .setValue(OfficeOfDestinationInCL112Page, false)
-            .setValue(OfficeOfTransitCountryPage(index), country)
-            .setValue(OfficeOfTransitPage(index), officeOfTransit)
-            .setValue(OfficeOfTransitInCL147Page(index), false)
-            .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-          val expectedResult = OfficeOfTransitDomain(
-            country = Some(country),
-            customsOffice = officeOfTransit,
-            eta = None
-          )(index)
-
-          val result = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-          ).run(userAnswers)
-
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
-            OfficeOfDestinationPage,
-            OfficeOfTransitCountryPage(index),
-            OfficeOfTransitPage(index),
-            AddOfficeOfTransitETAYesNoPage(index),
-            OfficeOfTransitSection(index)
-          )
-        }
-      }
-
-      "when is transition" - {
-        val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
-        when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
-
-        val inCL112 = arbitrary[Boolean].sample.value
-
-        "and office of destination is in 'AD'" in {
-          val userAnswers = emptyUserAnswers
-            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-            .setValue(OfficeOfDestinationPage, customsOffice.copy(countryId = AD))
-            .setValue(OfficeOfDestinationInCL112Page, inCL112)
+            .setValue(OfficeOfDestinationInCL112Page, true)
             .setValue(OfficeOfTransitPage(index), officeOfTransit)
             .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
 
@@ -284,7 +63,33 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           )(index)
 
           val result = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
+            OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
+          ).run(userAnswers)
+
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfTransitPage(index),
+            AddOfficeOfTransitETAYesNoPage(index),
+            OfficeOfTransitSection(index)
+          )
+        }
+
+        "and office of destination is in 'AD'" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+            .setValue(OfficeOfDestinationPage, customsOffice.copy(countryId = AD))
+            .setValue(OfficeOfDestinationInCL112Page, false)
+            .setValue(OfficeOfTransitPage(index), officeOfTransit)
+            .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+
+          val expectedResult = OfficeOfTransitDomain(
+            country = None,
+            customsOffice = officeOfTransit,
+            eta = None
+          )(index)
+
+          val result = UserAnswersReader[OfficeOfTransitDomain](
+            OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
@@ -300,7 +105,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           val userAnswers = emptyUserAnswers
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice)
-            .setValue(OfficeOfDestinationInCL112Page, inCL112)
+            .setValue(OfficeOfDestinationInCL112Page, false)
             .setValue(OfficeOfTransitCountryPage(index), country)
             .setValue(OfficeOfTransitPage(index), officeOfTransit)
             .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
@@ -312,7 +117,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           )(index)
 
           val result = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
+            OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
@@ -324,80 +129,79 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitSection(index)
           )
         }
+      }
 
-        "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration' or 'exitSummaryDeclaration'" - {
-          "and office of transit is in set CL010 and office of departure is not in CL010" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, securityType1Or2or3)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, false)
-              .setValue(OfficeOfTransitCountryPage(index), country)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(OfficeOfTransitInCL010Page(index), true)
-              .setValue(OfficeOfDepartureInCL010Page, false)
-              .setValue(OfficeOfTransitETAPage(index), eta)
+      "when not first in sequence" in {
+        val index = Index(1)
 
-            val expectedResult = OfficeOfTransitDomain(
-              country = Some(country),
-              customsOffice = officeOfTransit,
-              eta = Some(eta)
-            )(index)
+        val userAnswers = emptyUserAnswers
+          .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+          .setValue(OfficeOfDestinationInCL112Page, false)
+          .setValue(OfficeOfTransitCountryPage(Index(0)), country)
+          .setValue(OfficeOfTransitCountryPage(index), country)
+          .setValue(OfficeOfTransitPage(index), officeOfTransit)
+          .setValue(AddOfficeOfTransitETAYesNoPage(index), true)
+          .setValue(OfficeOfTransitETAPage(index), eta)
 
-            val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-            ).run(userAnswers)
+        val expectedResult = OfficeOfTransitDomain(
+          country = Some(country),
+          customsOffice = officeOfTransit,
+          eta = Some(eta)
+        )(index)
 
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitCountryPage(index),
-              OfficeOfTransitPage(index),
-              OfficeOfTransitETAPage(index),
-              OfficeOfTransitSection(index)
-            )
-          }
+        val result = UserAnswersReader[OfficeOfTransitDomain](
+          OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
+        ).run(userAnswers)
 
-          "and office of transit is not in CL010 or office of departure is in CL010" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, securityType1Or2or3)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, false)
-              .setValue(OfficeOfTransitCountryPage(index), country)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(OfficeOfTransitInCL010Page(index), false)
-              .setValue(OfficeOfDepartureInCL010Page, true)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+        result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          OfficeOfTransitCountryPage(index),
+          OfficeOfTransitPage(index),
+          AddOfficeOfTransitETAYesNoPage(index),
+          OfficeOfTransitETAPage(index),
+          OfficeOfTransitSection(index)
+        )
+      }
 
-            val expectedResult = OfficeOfTransitDomain(
-              country = Some(country),
-              customsOffice = officeOfTransit,
-              eta = None
-            )(index)
-
-            val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitCountryPage(index),
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index)
-            )
-          }
-        }
-
-        "when security type is 'noSecurity''" in {
+      "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
+        "and office of transit is in set CL147" in {
           val userAnswers = emptyUserAnswers
-            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+            .setValue(SecurityDetailsTypePage, securityType1Or3)
             .setValue(OfficeOfDestinationPage, customsOffice)
             .setValue(OfficeOfDestinationInCL112Page, false)
             .setValue(OfficeOfTransitCountryPage(index), country)
             .setValue(OfficeOfTransitPage(index), officeOfTransit)
-            .setValue(OfficeOfTransitInCL010Page(index), true)
-            .setValue(OfficeOfDepartureInCL010Page, false)
+            .setValue(OfficeOfTransitInCL147Page(index), true)
+            .setValue(OfficeOfTransitETAPage(index), eta)
+
+          val expectedResult = OfficeOfTransitDomain(
+            country = Some(country),
+            customsOffice = officeOfTransit,
+            eta = Some(eta)
+          )(index)
+
+          val result = UserAnswersReader[OfficeOfTransitDomain](
+            OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
+          ).run(userAnswers)
+
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfDestinationPage,
+            OfficeOfTransitCountryPage(index),
+            OfficeOfTransitPage(index),
+            OfficeOfTransitETAPage(index),
+            OfficeOfTransitSection(index)
+          )
+        }
+
+        "and office of transit is not in CL147" in {
+          val userAnswers = emptyUserAnswers
+            .setValue(SecurityDetailsTypePage, securityType1Or3)
+            .setValue(OfficeOfDestinationPage, customsOffice)
+            .setValue(OfficeOfDestinationInCL112Page, false)
+            .setValue(OfficeOfTransitCountryPage(index), country)
+            .setValue(OfficeOfTransitPage(index), officeOfTransit)
+            .setValue(OfficeOfTransitInCL147Page(index), false)
             .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
 
           val expectedResult = OfficeOfTransitDomain(
@@ -407,7 +211,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           )(index)
 
           val result = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
+            OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
@@ -420,150 +224,63 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           )
         }
       }
+
+      "when security type is not one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" in {
+        val userAnswers = emptyUserAnswers
+          .setValue(SecurityDetailsTypePage, securityTypeNot1Or3)
+          .setValue(OfficeOfDestinationPage, customsOffice)
+          .setValue(OfficeOfDestinationInCL112Page, false)
+          .setValue(OfficeOfTransitCountryPage(index), country)
+          .setValue(OfficeOfTransitPage(index), officeOfTransit)
+          .setValue(OfficeOfTransitInCL147Page(index), false)
+          .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+
+        val expectedResult = OfficeOfTransitDomain(
+          country = Some(country),
+          customsOffice = officeOfTransit,
+          eta = None
+        )(index)
+
+        val result = UserAnswersReader[OfficeOfTransitDomain](
+          OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
+        ).run(userAnswers)
+
+        result.value.value mustBe expectedResult
+        result.value.pages mustBe Seq(
+          OfficeOfDestinationPage,
+          OfficeOfTransitCountryPage(index),
+          OfficeOfTransitPage(index),
+          AddOfficeOfTransitETAYesNoPage(index),
+          OfficeOfTransitSection(index)
+        )
+      }
     }
 
     "cannot be parsed from user answers" - {
-      "when is post transition" - {
-        val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
-        when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
+      "when first in sequence" in {}
 
-        "when first in sequence" in {}
+      "when not first in sequence" - {
+        val index = Index(1)
 
-        "when not first in sequence" - {
-          val index = Index(1)
-
-          "when country missing" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfTransitCountryPage(Index(0)), country)
-
-            val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.left.value.page mustBe OfficeOfTransitCountryPage(index)
-          }
-
-          "when office missing" - {
-            "and country defined" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfTransitCountryPage(Index(0)), country)
-                .setValue(OfficeOfTransitCountryPage(index), country)
-
-              val result = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.left.value.page mustBe OfficeOfTransitPage(index)
-            }
-
-            "and inferred country defined" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfTransitCountryPage(Index(0)), country)
-                .setValue(InferredOfficeOfTransitCountryPage(index), country)
-
-              val result = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.left.value.page mustBe OfficeOfTransitPage(index)
-            }
-          }
-
-          "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
-            "and office of transit is in set CL147" - {
-              "and eta missing" in {
-                val userAnswers = emptyUserAnswers
-                  .setValue(SecurityDetailsTypePage, securityType1Or3)
-                  .setValue(OfficeOfTransitCountryPage(Index(0)), country)
-                  .setValue(OfficeOfTransitCountryPage(index), country)
-                  .setValue(OfficeOfTransitPage(index), officeOfTransit)
-                  .setValue(OfficeOfTransitInCL147Page(index), true)
-
-                val result = UserAnswersReader[OfficeOfTransitDomain](
-                  OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-                ).run(userAnswers)
-
-                result.left.value.page mustBe OfficeOfTransitETAPage(index)
-              }
-            }
-
-            "and office of transit is not in set CL147" - {
-              "and eta yes/no missing" in {
-                val userAnswers = emptyUserAnswers
-                  .setValue(SecurityDetailsTypePage, securityType1Or3)
-                  .setValue(OfficeOfTransitCountryPage(Index(0)), country)
-                  .setValue(OfficeOfTransitCountryPage(index), country)
-                  .setValue(OfficeOfTransitPage(index), officeOfTransit)
-                  .setValue(OfficeOfTransitInCL147Page(index), false)
-
-                val result = UserAnswersReader[OfficeOfTransitDomain](
-                  OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-                ).run(userAnswers)
-
-                result.left.value.page mustBe AddOfficeOfTransitETAYesNoPage(index)
-              }
-            }
-          }
-
-          "when security type is not one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
-            "and eta yes/no missing" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(SecurityDetailsTypePage, securityTypeNot1Or3)
-                .setValue(OfficeOfTransitCountryPage(Index(0)), country)
-                .setValue(OfficeOfTransitCountryPage(index), country)
-                .setValue(OfficeOfTransitPage(index), officeOfTransit)
-                .setValue(OfficeOfTransitInCL147Page(index), arbitrary[Boolean].sample.value)
-
-              val result = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.left.value.page mustBe AddOfficeOfTransitETAYesNoPage(index)
-            }
-          }
-
-          "when eta yes/no is true and eta missing" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, securityTypeNot1Or3)
-              .setValue(OfficeOfTransitCountryPage(Index(0)), country)
-              .setValue(OfficeOfTransitCountryPage(index), country)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(OfficeOfTransitInCL147Page(index), false)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), true)
-
-            val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.left.value.page mustBe OfficeOfTransitETAPage(index)
-          }
-        }
-      }
-
-      "when is transition" - {
-        val mockPhaseConfig: PhaseConfig = mock[PhaseConfig]
-        when(mockPhaseConfig.phase).thenReturn(Phase.Transition)
-
-        "when office of destination missing" in {
+        "when country missing" in {
           val userAnswers = emptyUserAnswers
             .setValue(OfficeOfTransitCountryPage(Index(0)), country)
 
           val result = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
+            OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
-          result.left.value.page mustBe OfficeOfDestinationPage
+          result.left.value.page mustBe OfficeOfTransitCountryPage(index)
         }
 
         "when office missing" - {
           "and country defined" in {
             val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDestinationPage, customsOffice)
               .setValue(OfficeOfTransitCountryPage(Index(0)), country)
               .setValue(OfficeOfTransitCountryPage(index), country)
 
             val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
+              OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
             ).run(userAnswers)
 
             result.left.value.page mustBe OfficeOfTransitPage(index)
@@ -571,51 +288,46 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
           "and inferred country defined" in {
             val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDestinationPage, customsOffice)
               .setValue(OfficeOfTransitCountryPage(Index(0)), country)
               .setValue(InferredOfficeOfTransitCountryPage(index), country)
 
             val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
+              OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
             ).run(userAnswers)
 
             result.left.value.page mustBe OfficeOfTransitPage(index)
           }
         }
 
-        "when security type is one of 'entrySummaryDeclaration' or 'exitSummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
-          "and office of transit is in set CL010 and office of departure is not in CL010" - {
+        "when security type is one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
+          "and office of transit is in set CL147" - {
             "and eta missing" in {
               val userAnswers = emptyUserAnswers
-                .setValue(SecurityDetailsTypePage, securityType1Or2or3)
-                .setValue(OfficeOfDestinationPage, customsOffice)
+                .setValue(SecurityDetailsTypePage, securityType1Or3)
                 .setValue(OfficeOfTransitCountryPage(Index(0)), country)
                 .setValue(OfficeOfTransitCountryPage(index), country)
                 .setValue(OfficeOfTransitPage(index), officeOfTransit)
-                .setValue(OfficeOfTransitInCL010Page(index), true)
-                .setValue(OfficeOfDepartureInCL010Page, false)
+                .setValue(OfficeOfTransitInCL147Page(index), true)
 
               val result = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
+                OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
               ).run(userAnswers)
 
               result.left.value.page mustBe OfficeOfTransitETAPage(index)
             }
           }
 
-          "and office of transit is not in set CL010 or office of departure is in set CL010" - {
+          "and office of transit is not in set CL147" - {
             "and eta yes/no missing" in {
               val userAnswers = emptyUserAnswers
-                .setValue(SecurityDetailsTypePage, securityType1Or2or3)
-                .setValue(OfficeOfDestinationPage, customsOffice)
+                .setValue(SecurityDetailsTypePage, securityType1Or3)
                 .setValue(OfficeOfTransitCountryPage(Index(0)), country)
                 .setValue(OfficeOfTransitCountryPage(index), country)
                 .setValue(OfficeOfTransitPage(index), officeOfTransit)
-                .setValue(OfficeOfTransitInCL010Page(index), false)
-                .setValue(OfficeOfDepartureInCL010Page, true)
+                .setValue(OfficeOfTransitInCL147Page(index), false)
 
               val result = UserAnswersReader[OfficeOfTransitDomain](
-                OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
+                OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
               ).run(userAnswers)
 
               result.left.value.page mustBe AddOfficeOfTransitETAYesNoPage(index)
@@ -623,19 +335,17 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           }
         }
 
-        "when security type is not one of 'entrySummaryDeclaration' or 'exitSummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
+        "when security type is not one of 'entrySummaryDeclaration' or 'entryAndExitSummaryDeclaration'" - {
           "and eta yes/no missing" in {
             val userAnswers = emptyUserAnswers
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice)
+              .setValue(SecurityDetailsTypePage, securityTypeNot1Or3)
               .setValue(OfficeOfTransitCountryPage(Index(0)), country)
               .setValue(OfficeOfTransitCountryPage(index), country)
               .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(OfficeOfTransitInCL010Page(index), arbitrary[Boolean].sample.value)
-              .setValue(OfficeOfDepartureInCL010Page, arbitrary[Boolean].sample.value)
+              .setValue(OfficeOfTransitInCL147Page(index), arbitrary[Boolean].sample.value)
 
             val result = UserAnswersReader[OfficeOfTransitDomain](
-              OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
+              OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
             ).run(userAnswers)
 
             result.left.value.page mustBe AddOfficeOfTransitETAYesNoPage(index)
@@ -644,17 +354,15 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
 
         "when eta yes/no is true and eta missing" in {
           val userAnswers = emptyUserAnswers
-            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-            .setValue(OfficeOfDestinationPage, customsOffice)
+            .setValue(SecurityDetailsTypePage, securityTypeNot1Or3)
             .setValue(OfficeOfTransitCountryPage(Index(0)), country)
             .setValue(OfficeOfTransitCountryPage(index), country)
             .setValue(OfficeOfTransitPage(index), officeOfTransit)
-            .setValue(OfficeOfTransitInCL010Page(index), arbitrary[Boolean].sample.value)
-            .setValue(OfficeOfDepartureInCL010Page, arbitrary[Boolean].sample.value)
+            .setValue(OfficeOfTransitInCL147Page(index), false)
             .setValue(AddOfficeOfTransitETAYesNoPage(index), true)
 
           val result = UserAnswersReader[OfficeOfTransitDomain](
-            OfficeOfTransitDomain.userAnswersReader(index)(mockPhaseConfig).apply(Nil)
+            OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
           result.left.value.page mustBe OfficeOfTransitETAPage(index)

@@ -19,14 +19,13 @@ package models.journeyDomain
 import config.Constants.AdditionalDeclarationType.*
 import config.Constants.DeclarationType.*
 import config.Constants.SecurityType.*
-import config.PhaseConfig
+import models.ProcedureType
 import models.journeyDomain.exit.ExitDomain
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
 import models.journeyDomain.locationOfGoods.LocationOfGoodsDomain
 import models.journeyDomain.routing.RoutingDomain
 import models.journeyDomain.transit.TransitDomain
 import models.reference.SpecificCircumstanceIndicator
-import models.{Phase, ProcedureType}
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.external.*
 import pages.locationOfGoods.AddLocationOfGoodsPage
@@ -56,7 +55,7 @@ object RouteDetailsDomain {
         UserAnswersReader.none
     }
 
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): UserAnswersReader[RouteDetailsDomain] =
+  implicit def userAnswersReader: UserAnswersReader[RouteDetailsDomain] =
     (
       specificCircumstanceIndicatorReader,
       RoutingDomain.userAnswersReader,
@@ -66,7 +65,7 @@ object RouteDetailsDomain {
       LoadingAndUnloadingDomain.userAnswersReader
     ).map(RouteDetailsDomain.apply).apply(Nil)
 
-  implicit def transitReader(implicit phaseConfig: PhaseConfig): Read[Option[TransitDomain]] =
+  implicit def transitReader: Read[Option[TransitDomain]] =
     DeclarationTypePage.reader.to {
       case TIR => UserAnswersReader.none
       case _   => TransitDomain.userAnswersReader.toOption
@@ -83,32 +82,24 @@ object RouteDetailsDomain {
         UserAnswersReader.none
     }
 
-  implicit def locationOfGoodsReader(implicit phaseConfig: PhaseConfig): Read[Option[LocationOfGoodsDomain]] = {
+  implicit def locationOfGoodsReader: Read[Option[LocationOfGoodsDomain]] = {
     lazy val optionalReader: Read[Option[LocationOfGoodsDomain]] =
       AddLocationOfGoodsPage.filterOptionalDependent(identity)(LocationOfGoodsDomain.userAnswersReader)
 
     lazy val mandatoryReader: Read[Option[LocationOfGoodsDomain]] =
       LocationOfGoodsDomain.userAnswersReader.toOption
 
-    phaseConfig.phase match {
-      case Phase.Transition =>
-        ProcedureTypePage.reader.to {
-          case ProcedureType.Normal     => optionalReader
-          case ProcedureType.Simplified => mandatoryReader
-        }
-      case Phase.PostTransition =>
-        ProcedureTypePage.reader.to {
-          case ProcedureType.Simplified =>
-            mandatoryReader
-          case ProcedureType.Normal =>
-            AdditionalDeclarationTypePage.reader.to {
-              case PreLodge =>
-                optionalReader
-              case _ =>
-                OfficeOfDepartureInCL147Page.reader.to {
-                  case true  => optionalReader
-                  case false => mandatoryReader
-                }
+    ProcedureTypePage.reader.to {
+      case ProcedureType.Simplified =>
+        mandatoryReader
+      case ProcedureType.Normal =>
+        AdditionalDeclarationTypePage.reader.to {
+          case PreLodge =>
+            optionalReader
+          case _ =>
+            OfficeOfDepartureInCL147Page.reader.to {
+              case true  => optionalReader
+              case false => mandatoryReader
             }
         }
     }

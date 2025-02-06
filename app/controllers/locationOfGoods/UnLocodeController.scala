@@ -16,7 +16,7 @@
 
 package controllers.locationOfGoods
 
-import config.PhaseConfig
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.UnLocodeFormProvider
@@ -43,7 +43,7 @@ class UnLocodeController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   unLocodesService: UnLocodesService,
   view: UnLocodeView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

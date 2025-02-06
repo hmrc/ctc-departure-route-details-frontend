@@ -27,46 +27,19 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
     "officeOfTransitETA" - {
 
-      "in Transition" - {
+      val app = guiceApplicationBuilder().build()
 
-        val app = transitionApplicationBuilder().build()
+      "etaDateDaysBefore must be 0" in {
 
-        val config = app.injector.instanceOf[FrontendAppConfig]
-
-        "etaDateDaysBefore must be 44" in {
-
-          running(app) {
-            config.etaDateDaysBefore mustBe 44
-          }
+        running(app) {
+          frontendAppConfig.etaDateDaysBefore mustBe 0
         }
-
-        "etaDateDaysAfter must be 60" in {
-
-          running(app) {
-            config.etaDateDaysAfter mustBe 60
-          }
-        }
-
       }
 
-      "in Post-Transition" - {
+      "etaDateDaysAfter must be 60" in {
 
-        val app = postTransitionApplicationBuilder().build()
-
-        val config = app.injector.instanceOf[FrontendAppConfig]
-
-        "etaDateDaysBefore must be 0" in {
-
-          running(app) {
-            config.etaDateDaysBefore mustBe 0
-          }
-        }
-
-        "etaDateDaysAfter must be 60" in {
-
-          running(app) {
-            config.etaDateDaysAfter mustBe 60
-          }
+        running(app) {
+          frontendAppConfig.etaDateDaysAfter mustBe 60
         }
       }
     }

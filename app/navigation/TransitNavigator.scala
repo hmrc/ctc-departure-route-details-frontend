@@ -16,7 +16,7 @@
 
 package navigation
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.transit.TransitDomain
 import models.{CheckMode, Mode, NormalMode}
@@ -24,7 +24,7 @@ import models.{CheckMode, Mode, NormalMode}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class TransitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig, phaseConfig: PhaseConfig) extends TransitNavigatorProvider {
+class TransitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends TransitNavigatorProvider {
 
   def apply(mode: Mode): UserAnswersNavigator =
     mode match {
@@ -42,7 +42,7 @@ trait TransitNavigatorProvider {
 
 class TransitNavigator(
   override val mode: Mode
-)(implicit override val config: FrontendAppConfig, override val phaseConfig: PhaseConfig)
+)(implicit override val config: FrontendAppConfig)
     extends UserAnswersNavigator {
 
   override type T = TransitDomain

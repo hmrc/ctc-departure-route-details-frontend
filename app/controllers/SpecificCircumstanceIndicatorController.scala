@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.PhaseConfig
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.EnumerableFormProvider
 import models.reference.SpecificCircumstanceIndicator
@@ -43,7 +43,7 @@ class SpecificCircumstanceIndicatorController @Inject() (
   specificCircumstanceIndicatorsService: SpecificCircumstanceIndicatorsService,
   val controllerComponents: MessagesControllerComponents,
   view: SpecificCircumstanceIndicatorView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
