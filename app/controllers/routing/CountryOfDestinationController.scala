@@ -16,9 +16,8 @@
 
 package controllers.routing
 
-import config.FrontendAppConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
 import models.{LocalReferenceNumber, Mode}
@@ -45,7 +44,7 @@ class CountryOfDestinationController @Inject() (
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
   view: CountryOfDestinationView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

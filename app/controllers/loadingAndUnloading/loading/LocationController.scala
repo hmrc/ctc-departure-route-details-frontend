@@ -16,9 +16,9 @@
 
 package controllers.loadingAndUnloading.loading
 
-import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
+import forms.Constants.loadingLocationMaxLength
 import forms.LoadingLocationFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LoadingAndUnloadingNavigatorProvider, UserAnswersNavigator}
@@ -41,7 +41,7 @@ class LocationController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   view: LocationView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -55,7 +55,7 @@ class LocationController @Inject() (
           case None        => form
           case Some(value) => form.fill(value)
         }
-        Ok(view(preparedForm, lrn, countryName, config.loadingLocationMaxLength, mode))
+        Ok(view(preparedForm, lrn, countryName, loadingLocationMaxLength, mode))
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
@@ -68,7 +68,7 @@ class LocationController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryName, config.loadingLocationMaxLength, mode))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, countryName, loadingLocationMaxLength, mode))),
             value => {
               val navigator: UserAnswersNavigator = navigatorProvider(mode)
               LocationPage

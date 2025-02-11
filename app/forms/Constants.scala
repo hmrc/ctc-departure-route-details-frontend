@@ -25,4 +25,7 @@ object Constants {
   lazy val additionalIdentifierMaxLength: Int = 4
   lazy val unloadingLocationMaxLength: Int    = 35
   lazy val exactLoCodeLength: Int             = 5
+  lazy val maxNumberAndStreetLength: Int      = 70
+  lazy val maxPostcodeLength: Int             = 17
+  lazy val loadingLocationMaxLength: Int      = 35
 }

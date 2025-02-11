@@ -34,7 +34,7 @@ class DynamicAddressFormProviderSpec extends StringFieldBehaviours with SpecBase
   private val lengthKey   = s"$prefix.error.length"
   private val invalidKey  = s"$prefix.error.invalid"
 
-  private val formProvider = new DynamicAddressFormProvider()(frontendAppConfig)
+  private val formProvider = new DynamicAddressFormProvider()
 
   "when postal code is required" - {
 

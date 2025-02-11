@@ -16,8 +16,7 @@
 
 package controllers.routing.index
 
-import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
 import models.reference.Country
@@ -44,7 +43,7 @@ class CountryOfRoutingController @Inject() (
   countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   view: CountryOfRoutingView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

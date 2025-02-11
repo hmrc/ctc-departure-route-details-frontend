@@ -17,6 +17,7 @@
 package controllers.loadingAndUnloading.loading
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import forms.Constants.loadingLocationMaxLength
 import forms.LoadingLocationFormProvider
 import generators.Generators
 import models.NormalMode
@@ -29,7 +30,7 @@ import pages.loadingAndUnloading.loading.{CountryPage, LocationPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.loadingAndUnloading.loading.LocationView
 
 import scala.concurrent.Future
@@ -63,7 +64,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrn, country.description, frontendAppConfig.loadingLocationMaxLength, mode)(request, messages).toString
+        view(form, lrn, country.description, loadingLocationMaxLength, mode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -85,7 +86,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, country.description, frontendAppConfig.loadingLocationMaxLength, mode)(request, messages).toString
+        view(filledForm, lrn, country.description, loadingLocationMaxLength, mode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -122,7 +123,7 @@ class LocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       val view = injector.instanceOf[LocationView]
 
       contentAsString(result) mustEqual
-        view(filledForm, lrn, countryName, frontendAppConfig.loadingLocationMaxLength, mode)(request, messages).toString
+        view(filledForm, lrn, countryName, loadingLocationMaxLength, mode)(request, messages).toString
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

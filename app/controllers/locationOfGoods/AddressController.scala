@@ -16,8 +16,7 @@
 
 package controllers.locationOfGoods
 
-import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.DynamicAddressFormProvider
 import models.reference.Country
@@ -46,7 +45,7 @@ class AddressController @Inject() (
   countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   view: AddressView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -16,8 +16,7 @@
 
 package controllers.locationOfGoods
 
-import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.locationOfGoods.AuthorisationNumberFormProvider
 import models.{LocalReferenceNumber, Mode}
@@ -40,7 +39,7 @@ class AuthorisationNumberController @Inject() (
   actions: Actions,
   val controllerComponents: MessagesControllerComponents,
   view: AuthorisationNumberView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -16,10 +16,9 @@
 
 package controllers.exit.index
 
-import config.FrontendAppConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import controllers.actions._
 import forms.SelectableFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
@@ -45,7 +44,7 @@ class OfficeOfExitCountryController @Inject() (
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
   view: OfficeOfExitCountryView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

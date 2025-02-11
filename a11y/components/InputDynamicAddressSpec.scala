@@ -34,7 +34,7 @@ class InputDynamicAddressSpec extends A11ySpecBase {
     val caption     = Gen.option(nonEmptyString).sample.value
     val headingArgs = listWithMaxLength[Any]().sample.value
 
-    val formProvider = new DynamicAddressFormProvider()(config)
+    val formProvider = new DynamicAddressFormProvider()
 
     "pass accessibility checks" when {
       "postal code is required" in {

@@ -16,8 +16,7 @@
 
 package controllers.routing
 
-import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
 import models.reference.CustomsOffice
@@ -46,7 +45,7 @@ class OfficeOfDestinationController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   view: OfficeOfDestinationView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

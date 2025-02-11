@@ -16,8 +16,7 @@
 
 package controllers.exit.index
 
-import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
@@ -43,7 +42,7 @@ class OfficeOfExitController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   view: OfficeOfExitView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

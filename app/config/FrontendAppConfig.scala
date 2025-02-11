@@ -68,9 +68,4 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val cacheUrl: String = servicesConfig.fullServiceUrl("manage-transit-movements-departure-cache")
 
   val dependentTasks: Seq[String] = configuration.get[Seq[String]]("dependent-tasks")
-
-  val apiVersion               = configuration.get[Double]("apiVersion")
-  val maxNumberAndStreetLength = configuration.get[Int]("maxNumberAndStreetLength")
-  val maxPostcodeLength        = configuration.get[Int]("maxPostcodeLength")
-  val loadingLocationMaxLength = configuration.get[Int]("loadingLocationMaxLength")
 }

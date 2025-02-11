@@ -16,8 +16,7 @@
 
 package controllers.locationOfGoods
 
-import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
 import models.{LocalReferenceNumber, Mode}
@@ -42,7 +41,7 @@ class CountryController @Inject() (
   countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   view: CountryView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

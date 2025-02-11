@@ -16,14 +16,13 @@
 
 package controllers.transit.index
 
-import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
 import pages.routing.CountryOfDestinationPage
-import pages.transit.index._
+import pages.transit.index.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -45,7 +44,7 @@ class OfficeOfTransitController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: OfficeOfTransitView,
   getMandatoryPage: SpecificDataRequiredActionProvider
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

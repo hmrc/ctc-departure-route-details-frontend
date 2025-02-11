@@ -16,8 +16,7 @@
 
 package controllers
 
-import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.YesNoFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
@@ -39,7 +38,7 @@ class AddSpecificCircumstanceIndicatorYesNoController @Inject() (
   formProvider: YesNoFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AddSpecificCircumstanceIndicatorYesNoView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
