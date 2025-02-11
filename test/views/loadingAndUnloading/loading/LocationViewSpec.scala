@@ -23,7 +23,6 @@ import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.Application
 import play.api.data.Form
-import play.api.test.Helpers.running
 import play.twirl.api.HtmlFormat
 import viewModels.InputSize
 import views.behaviours.InputTextViewBehaviours
@@ -42,11 +41,6 @@ class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefau
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
     applyView(app, form)
 
-  private def applyView(app: Application): HtmlFormat.Appendable = {
-    val form = app.injector.instanceOf[LoadingLocationFormProvider].apply(prefix, countryName)
-    applyView(app, form)
-  }
-
   private def applyView(app: Application, form: Form[String]): HtmlFormat.Appendable =
     app.injector.instanceOf[LocationView].apply(form, lrn, countryName, loadingLocationMaxLength, NormalMode)(fakeRequest, messages)
 
@@ -64,14 +58,7 @@ class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefau
 
   behave like pageWithSubmitButton("Save and continue")
 
-  "when post transition" - {
-    val app = guiceApplicationBuilder().build()
-    running(app) {
-      val doc = parseView(applyView(app))
-      behave like pageWithHint(
-        doc,
-        "Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 35 characters long."
-      )
-    }
-  }
+  behave like pageWithHint(
+    "Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 35 characters long."
+  )
 }

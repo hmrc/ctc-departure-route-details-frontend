@@ -20,50 +20,45 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.behaviours.StringFieldBehaviours
 import models.domain.StringFieldRegex.stringFieldRegex
 import org.scalacheck.Gen
-import play.api.data.{Form, FormError}
+import play.api.data.FormError
 
 class LoadingLocationFormProviderSpec extends StringFieldBehaviours with SpecBase with AppWithDefaultMockFixtures {
 
-  private val prefix = Gen.alphaNumStr.sample.value
-  val requiredKey    = s"$prefix.error.required"
-  val lengthKey      = s"$prefix.error.length"
-  val invalidKey     = s"$prefix.error.invalid"
+  private val prefix       = Gen.alphaNumStr.sample.value
+  val requiredKey          = s"$prefix.error.required"
+  val lengthKey            = s"$prefix.error.length"
+  val invalidKey           = s"$prefix.error.invalid"
+  private val formProvider = new LoadingLocationFormProvider()
+  val form                 = formProvider.apply(prefix)
+  val locationMaxLength    = formProvider.locationMaxLength
 
   ".value" - {
 
     val fieldName = "value"
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      stringsWithMaxLength(locationMaxLength)
+    )
 
-    def runTests(form: Form[String], locationMaxLength: Int): Unit = {
-      behave like fieldThatBindsValidData(
-        form,
-        fieldName,
-        stringsWithMaxLength(locationMaxLength)
-      )
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength = locationMaxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(locationMaxLength))
+    )
 
-      behave like fieldWithMaxLength(
-        form,
-        fieldName,
-        maxLength = locationMaxLength,
-        lengthError = FormError(fieldName, lengthKey, Seq(locationMaxLength))
-      )
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
 
-      behave like mandatoryField(
-        form,
-        fieldName,
-        requiredError = FormError(fieldName, requiredKey)
-      )
-
-      behave like fieldWithInvalidCharacters(
-        form,
-        fieldName,
-        error = FormError(fieldName, invalidKey, Seq(stringFieldRegex.regex)),
-        locationMaxLength
-      )
-    }
-
-    "when post transition" - {
-      val formProvider = new LoadingLocationFormProvider()
-      runTests(formProvider(prefix), 35)
-    }
+    behave like fieldWithInvalidCharacters(
+      form,
+      fieldName,
+      error = FormError(fieldName, invalidKey, Seq(stringFieldRegex.regex)),
+      locationMaxLength
+    )
   }
 }
