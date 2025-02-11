@@ -16,7 +16,6 @@
 
 package a11ySpecBase
 
-import config.FrontendAppConfig
 import generators.Generators
 import models.LocalReferenceNumber
 import org.scalacheck.Arbitrary.arbitrary
@@ -42,8 +41,6 @@ trait A11ySpecBase extends AnyWordSpec with Matchers with GuiceOneAppPerSuite wi
     new GuiceApplicationBuilder()
       .configure()
       .build()
-
-  implicit def config: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   implicit lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/foo")
 
