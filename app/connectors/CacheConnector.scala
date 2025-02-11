@@ -38,15 +38,10 @@ class CacheConnector @Inject() (
 
   private val baseUrl = s"${config.cacheUrl}"
 
-  private val headers = Seq(
-    "APIVersion" -> "2.1"
-  )
-
   def get(lrn: LocalReferenceNumber)(implicit hc: HeaderCarrier): Future[UserAnswersResponse] = {
     val url = url"$baseUrl/user-answers/$lrn"
     http
       .get(url)
-      .setHeader(headers*)
       .execute[UserAnswersResponse]
   }
 

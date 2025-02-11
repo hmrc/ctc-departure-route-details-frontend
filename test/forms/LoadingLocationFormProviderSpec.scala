@@ -21,7 +21,6 @@ import forms.behaviours.StringFieldBehaviours
 import models.domain.StringFieldRegex.stringFieldRegex
 import org.scalacheck.Gen
 import play.api.data.{Form, FormError}
-import play.api.test.Helpers.running
 
 class LoadingLocationFormProviderSpec extends StringFieldBehaviours with SpecBase with AppWithDefaultMockFixtures {
 
@@ -63,11 +62,8 @@ class LoadingLocationFormProviderSpec extends StringFieldBehaviours with SpecBas
     }
 
     "when post transition" - {
-      val app = guiceApplicationBuilder().build()
-      running(app) {
-        val formProvider = app.injector.instanceOf[LoadingLocationFormProvider]
-        runTests(formProvider(prefix), 35)
-      }
+      val formProvider = new LoadingLocationFormProvider()
+      runTests(formProvider(prefix), 35)
     }
   }
 }

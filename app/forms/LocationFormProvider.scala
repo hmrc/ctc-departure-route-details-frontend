@@ -16,7 +16,6 @@
 
 package forms
 
-import com.google.inject.Inject
 import forms.Constants.{loadingLocationMaxLength, unloadingLocationMaxLength}
 import forms.mappings.Mappings
 import models.domain.StringFieldRegex.stringFieldRegex
@@ -38,7 +37,7 @@ sealed trait LocationFormProvider extends Mappings {
     )
 }
 
-class LoadingLocationFormProvider @Inject() extends LocationFormProvider {
+class LoadingLocationFormProvider extends LocationFormProvider {
   override val locationMaxLength: Int = loadingLocationMaxLength
 }
 

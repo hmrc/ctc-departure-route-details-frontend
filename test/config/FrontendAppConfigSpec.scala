@@ -19,7 +19,6 @@ package config
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.test.Helpers.running
 
 class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with AppWithDefaultMockFixtures {
 
@@ -27,20 +26,12 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
     "officeOfTransitETA" - {
 
-      val app = guiceApplicationBuilder().build()
-
       "etaDateDaysBefore must be 0" in {
-
-        running(app) {
-          frontendAppConfig.etaDateDaysBefore mustBe 0
-        }
+        frontendAppConfig.etaDateDaysBefore mustBe 0
       }
 
       "etaDateDaysAfter must be 60" in {
-
-        running(app) {
-          frontendAppConfig.etaDateDaysAfter mustBe 60
-        }
+        frontendAppConfig.etaDateDaysAfter mustBe 60
       }
     }
   }
