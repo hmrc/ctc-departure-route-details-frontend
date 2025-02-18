@@ -16,8 +16,8 @@
 
 package models
 
-import config.PhaseConfig
-import models.domain.StringFieldRegex._
+import forms.Constants.*
+import models.domain.StringFieldRegex.*
 import play.api.i18n.Messages
 
 import scala.util.matching.Regex
@@ -34,31 +34,25 @@ object AddressLine {
   }
 
   sealed trait AddressLineWithValidation extends AddressLine {
-    def length(implicit phaseConfig: PhaseConfig): Int
+    def length: Int
     val regex: Regex
   }
 
-  case object StreetNumber extends AddressLineWithValidation {
-    override val field: String                         = "streetNumber"
-    def length(implicit phaseConfig: PhaseConfig): Int = 17
-    override val regex: Regex                          = alphaNumericRegex
-  }
-
   case object NumberAndStreet extends AddressLineWithValidation {
-    override val field: String                         = "numberAndStreet"
-    def length(implicit phaseConfig: PhaseConfig): Int = phaseConfig.values.maxNumberAndStreetLength
-    override val regex: Regex                          = stringFieldRegex
+    override val field: String = "numberAndStreet"
+    def length: Int            = maxNumberAndStreetLength
+    override val regex: Regex  = stringFieldRegex
   }
 
   case object City extends AddressLineWithValidation {
-    override val field: String                         = "city"
-    def length(implicit phaseConfig: PhaseConfig): Int = 35
-    override val regex: Regex                          = stringFieldRegex
+    override val field: String = "city"
+    def length: Int            = 35
+    override val regex: Regex  = stringFieldRegex
   }
 
   case object PostalCode extends AddressLineWithValidation {
-    override val field: String                         = "postalCode"
-    def length(implicit phaseConfig: PhaseConfig): Int = phaseConfig.values.maxPostcodeLength
-    override val regex: Regex                          = alphaNumericWithSpacesRegex
+    override val field: String = "postalCode"
+    def length: Int            = maxPostcodeLength
+    override val regex: Regex  = alphaNumericWithSpacesRegex
   }
 }

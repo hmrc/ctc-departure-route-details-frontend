@@ -17,7 +17,7 @@
 package controllers
 
 import com.google.inject.Inject
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import controllers.actions.Actions
 import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -32,7 +32,7 @@ class RouteDetailsAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: RouteDetailsAnswersView,
   viewModelProvider: RouteDetailsAnswersViewModelProvider
-)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig)
+)(implicit config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -17,10 +17,8 @@
 package viewModels.loadingAndUnloading
 
 import base.SpecBase
-import config.PhaseConfig
 import generators.Generators
-import models.{Mode, Phase}
-import org.mockito.Mockito.when
+import models.Mode
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.loadingAndUnloading
@@ -87,73 +85,66 @@ class LoadingAndUnloadingAnswersViewModelSpec extends SpecBase with ScalaCheckPr
     }
 
     "unloading answers" - {
-
-      "when post-transition" - {
-
-        val mockPhaseConfig = mock[PhaseConfig]
-        when(mockPhaseConfig.phase).thenReturn(Phase.PostTransition)
-
-        "when not adding a place of unloading" in {
-          val userAnswers = emptyUserAnswers.setValue(loadingAndUnloading.AddPlaceOfUnloadingPage, false)
-          forAll(arbitrary[Mode]) {
-            mode =>
-              val viewModelProvider = injector.instanceOf[LoadingAndUnloadingAnswersViewModelProvider]
-              val section           = viewModelProvider.apply(userAnswers, mode).sections.last
-              section.rows.size mustBe 1
-              section.sectionTitle.value mustBe "Place of unloading"
-          }
+      "when not adding a place of unloading" in {
+        val userAnswers = emptyUserAnswers.setValue(loadingAndUnloading.AddPlaceOfUnloadingPage, false)
+        forAll(arbitrary[Mode]) {
+          mode =>
+            val viewModelProvider = injector.instanceOf[LoadingAndUnloadingAnswersViewModelProvider]
+            val section           = viewModelProvider.apply(userAnswers, mode).sections.last
+            section.rows.size mustBe 1
+            section.sectionTitle.value mustBe "Place of unloading"
         }
+      }
 
-        "when adding a place of unloading" - {
-          "when adding a UN/LOCODE" - {
-            "and not adding country and location" - {
-              "must render 4 rows" in {
-                val initialAnswers = emptyUserAnswers
-                  .setValue(loadingAndUnloading.AddPlaceOfUnloadingPage, true)
-                  .setValue(unloading.UnLocodeYesNoPage, true)
-                  .setValue(unloading.AddExtraInformationYesNoPage, false)
-
-                forAll(arbitraryUnloadingAnswers(initialAnswers)(mockPhaseConfig), arbitrary[Mode]) {
-                  (userAnswers, mode) =>
-                    val viewModelProvider = injector.instanceOf[LoadingAndUnloadingAnswersViewModelProvider]
-                    val section           = viewModelProvider.apply(userAnswers, mode).sections.last
-                    section.rows.size mustBe 4
-                    section.sectionTitle.value mustBe "Place of unloading"
-                }
-              }
-            }
-
-            "and adding country and location" - {
-              "must render 6 rows" in {
-                val initialAnswers = emptyUserAnswers
-                  .setValue(loadingAndUnloading.AddPlaceOfUnloadingPage, true)
-                  .setValue(unloading.UnLocodeYesNoPage, true)
-                  .setValue(unloading.AddExtraInformationYesNoPage, true)
-
-                forAll(arbitraryUnloadingAnswers(initialAnswers)(mockPhaseConfig), arbitrary[Mode]) {
-                  (userAnswers, mode) =>
-                    val viewModelProvider = injector.instanceOf[LoadingAndUnloadingAnswersViewModelProvider]
-                    val section           = viewModelProvider.apply(userAnswers, mode).sections.last
-                    section.rows.size mustBe 6
-                    section.sectionTitle.value mustBe "Place of unloading"
-                }
-              }
-            }
-          }
-
-          "when not adding a UN/LOCODE" - {
+      "when adding a place of unloading" - {
+        "when adding a UN/LOCODE" - {
+          "and not adding country and location" - {
             "must render 4 rows" in {
               val initialAnswers = emptyUserAnswers
                 .setValue(loadingAndUnloading.AddPlaceOfUnloadingPage, true)
-                .setValue(unloading.UnLocodeYesNoPage, false)
+                .setValue(unloading.UnLocodeYesNoPage, true)
+                .setValue(unloading.AddExtraInformationYesNoPage, false)
 
-              forAll(arbitraryUnloadingAnswers(initialAnswers)(mockPhaseConfig), arbitrary[Mode]) {
+              forAll(arbitraryUnloadingAnswers(initialAnswers), arbitrary[Mode]) {
                 (userAnswers, mode) =>
                   val viewModelProvider = injector.instanceOf[LoadingAndUnloadingAnswersViewModelProvider]
                   val section           = viewModelProvider.apply(userAnswers, mode).sections.last
                   section.rows.size mustBe 4
                   section.sectionTitle.value mustBe "Place of unloading"
               }
+            }
+          }
+
+          "and adding country and location" - {
+            "must render 6 rows" in {
+              val initialAnswers = emptyUserAnswers
+                .setValue(loadingAndUnloading.AddPlaceOfUnloadingPage, true)
+                .setValue(unloading.UnLocodeYesNoPage, true)
+                .setValue(unloading.AddExtraInformationYesNoPage, true)
+
+              forAll(arbitraryUnloadingAnswers(initialAnswers), arbitrary[Mode]) {
+                (userAnswers, mode) =>
+                  val viewModelProvider = injector.instanceOf[LoadingAndUnloadingAnswersViewModelProvider]
+                  val section           = viewModelProvider.apply(userAnswers, mode).sections.last
+                  section.rows.size mustBe 6
+                  section.sectionTitle.value mustBe "Place of unloading"
+              }
+            }
+          }
+        }
+
+        "when not adding a UN/LOCODE" - {
+          "must render 4 rows" in {
+            val initialAnswers = emptyUserAnswers
+              .setValue(loadingAndUnloading.AddPlaceOfUnloadingPage, true)
+              .setValue(unloading.UnLocodeYesNoPage, false)
+
+            forAll(arbitraryUnloadingAnswers(initialAnswers), arbitrary[Mode]) {
+              (userAnswers, mode) =>
+                val viewModelProvider = injector.instanceOf[LoadingAndUnloadingAnswersViewModelProvider]
+                val section           = viewModelProvider.apply(userAnswers, mode).sections.last
+                section.rows.size mustBe 4
+                section.sectionTitle.value mustBe "Place of unloading"
             }
           }
         }

@@ -17,9 +17,8 @@
 package utils.cyaHelpers
 
 import config.FrontendAppConfig
-import models.journeyDomain.UserAnswersReader
-import models.journeyDomain.{JourneyDomainModel, ReaderSuccess}
 import models.journeyDomain.Stage.AccessingJourney
+import models.journeyDomain.{JourneyDomainModel, ReaderSuccess, UserAnswersReader}
 import models.{Index, LocalReferenceNumber, Mode, RichJsArray, RichOptionalJsArray, UserAnswers}
 import navigation.UserAnswersNavigator
 import pages.QuestionPage
@@ -51,33 +50,6 @@ class AnswersHelper(userAnswers: UserAnswers, mode: Mode)(implicit messages: Mes
       call = call,
       args = args*
     )
-
-  protected def getAnswerAndBuildRowWithDynamicLink[T](
-    page: QuestionPage[T],
-    formatAnswer: T => Content,
-    prefix: String,
-    id: Option[String],
-    args: Any*
-  )(predicate: T => Boolean)(implicit rds: Reads[T]): Option[SummaryListRow] =
-    for {
-      answer <- userAnswers.get(page)
-      call   <- page.route(userAnswers, mode)
-    } yield
-      if (predicate(answer)) {
-        buildRowWithNoChangeLink(
-          prefix = prefix,
-          answer = formatAnswer(answer),
-          args = args*
-        )
-      } else {
-        buildRow(
-          prefix = prefix,
-          answer = formatAnswer(answer),
-          id = id,
-          call = call,
-          args = args*
-        )
-      }
 
   def getAnswersAndBuildSectionRows(section: Section[JsArray])(f: Index => Option[SummaryListRow]): Seq[SummaryListRow] =
     userAnswers

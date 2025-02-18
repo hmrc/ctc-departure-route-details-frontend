@@ -71,7 +71,7 @@ class RouteDetailsAnswersViewModelSpec extends SpecBase with AppWithDefaultMockF
           beforeEach()
 
           when(mockRoutingAnswersViewModelProvider.apply(any(), any())(any(), any())).thenReturn(RoutingAnswersViewModel(dummySections))
-          when(mockTransitAnswersViewModelProvider.apply(any(), any())(any(), any(), any())).thenReturn(TransitAnswersViewModel(dummySections))
+          when(mockTransitAnswersViewModelProvider.apply(any(), any())(any(), any())).thenReturn(TransitAnswersViewModel(dummySections))
           when(mockExitAnswersViewModelProvider.apply(any(), any())(any(), any())).thenReturn(ExitAnswersViewModel(dummySections))
           when(mockLocationOfGoodsAnswersViewModelProvider.apply(any(), any())(any(), any())).thenReturn(LocationOfGoodsAnswersViewModel(dummySection))
           when(mockLoadingAndUnloadingAnswersViewModelProvider.apply(any(), any())(any(), any())).thenReturn(LoadingAndUnloadingAnswersViewModel(dummySections))
@@ -79,7 +79,7 @@ class RouteDetailsAnswersViewModelSpec extends SpecBase with AppWithDefaultMockF
           viewModelProvider.apply(answers)
 
           verify(mockRoutingAnswersViewModelProvider).apply(eqTo(answers), eqTo(CheckMode))(any(), any())
-          verify(mockTransitAnswersViewModelProvider).apply(eqTo(answers), eqTo(CheckMode))(any(), any(), any())
+          verify(mockTransitAnswersViewModelProvider).apply(eqTo(answers), eqTo(CheckMode))(any(), any())
           verify(mockExitAnswersViewModelProvider).apply(eqTo(answers), eqTo(CheckMode))(any(), any())
           verify(mockLocationOfGoodsAnswersViewModelProvider).apply(eqTo(answers), eqTo(CheckMode))(any(), any())
           verify(mockLoadingAndUnloadingAnswersViewModelProvider).apply(eqTo(answers), eqTo(CheckMode))(any(), any())
