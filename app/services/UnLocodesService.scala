@@ -17,7 +17,6 @@
 package services
 
 import connectors.ReferenceDataConnector
-import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -30,10 +29,5 @@ class UnLocodesService @Inject() (
   def doesUnLocodeExist(unLocode: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     referenceDataConnector
       .getUnLocode(unLocode)
-      .map {
-        _ => true
-      }
-      .recover {
-        case _: NoReferenceDataFoundException => false
-      }
+      .map(_.isDefined)
 }

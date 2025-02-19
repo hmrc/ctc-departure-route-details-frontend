@@ -30,5 +30,6 @@ class SpecificCircumstanceIndicatorsService @Inject() (
   def getSpecificCircumstanceIndicators()(implicit hc: HeaderCarrier): Future[Seq[SpecificCircumstanceIndicator]] =
     referenceDataConnector
       .getSpecificCircumstanceIndicators()
+      .map(_.resolve())
       .map(_.toSeq)
 }

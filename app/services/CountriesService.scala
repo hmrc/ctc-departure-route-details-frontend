@@ -18,7 +18,6 @@ package services
 
 import config.Constants.DeclarationType.TIR
 import connectors.ReferenceDataConnector
-import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.reference.Country
 import models.{Index, RichOptionalJsArray, SelectableList, UserAnswers}
 import pages.external.DeclarationTypePage
@@ -93,25 +92,16 @@ class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector
   private def getCountries(listName: String)(implicit hc: HeaderCarrier): Future[SelectableList[Country]] =
     referenceDataConnector
       .getCountries(listName)
+      .map(_.resolve())
       .map(SelectableList(_))
 
   private def isCountryInCodeList(listName: String, countryId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     referenceDataConnector
       .getCountry(listName, countryId)
-      .map {
-        _ => true
-      }
-      .recover {
-        case _: NoReferenceDataFoundException => false
-      }
+      .map(_.isDefined)
 
   def doesCountryRequireZip(country: Country)(implicit hc: HeaderCarrier): Future[Boolean] =
     referenceDataConnector
       .getCountriesWithoutZipCountry(country.code.code)
-      .map {
-        _ => true
-      }
-      .recover {
-        case _: NoReferenceDataFoundException => false
-      }
+      .map(_.isDefined)
 }

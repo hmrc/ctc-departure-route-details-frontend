@@ -60,7 +60,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         val userAnswers = emptyUserAnswers.setValue(DeclarationTypePage, TIR)
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+          .thenReturn(Future.successful(Right(countries)))
 
         service.getDestinationCountries(userAnswers).futureValue mustBe
           SelectableList(Seq(country2, country3, country1))
@@ -74,7 +74,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         val userAnswers     = emptyUserAnswers.setValue(DeclarationTypePage, generatedOption)
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+          .thenReturn(Future.successful(Right(countries)))
 
         service.getDestinationCountries(userAnswers).futureValue mustBe
           SelectableList(Seq(country2, country3, country1))
@@ -87,7 +87,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
       "must return a list of sorted countries" in {
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+          .thenReturn(Future.successful(Right(countries)))
 
         service.getCountries().futureValue mustBe
           SelectableList(Seq(country2, country3, country1))
@@ -100,7 +100,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
       "must return a list of sorted countries filtered  when 0 countries have been added" in {
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+          .thenReturn(Future.successful(Right(countries)))
 
         val userAnswers = emptyUserAnswers
 
@@ -112,7 +112,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
       "must return a list of sorted countries filtered  when 1 country has been added" in {
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+          .thenReturn(Future.successful(Right(countries)))
 
         val userAnswers = emptyUserAnswers.setValue(CountryOfRoutingPage(index), country1)
 
@@ -125,7 +125,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
       "must return a list of sorted countries filtered when 2 countries have been added" in {
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+          .thenReturn(Future.successful(Right(countries)))
 
         val userAnswers = emptyUserAnswers
           .setValue(CountryOfRoutingPage(index), country1)
@@ -140,7 +140,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
       "must return a list of sorted countries filtered when multiple have been added " in {
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+          .thenReturn(Future.successful(Right(countries)))
 
         val userAnswers = emptyUserAnswers
           .setValue(CountryOfRoutingPage(index), country2)
@@ -163,7 +163,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
               beforeEach()
 
               when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
-                .thenReturn(Future.successful(country))
+                .thenReturn(Future.successful(Right(country)))
 
               val result = service.isInCL112(countryId).futureValue
 
@@ -179,7 +179,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           forAll(nonEmptyString) {
             countryId =>
               when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
-                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+                .thenReturn(Future.successful(Left(NoReferenceDataFoundException(""))))
 
               val result = service.isInCL112(countryId).futureValue
 
@@ -211,7 +211,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
               beforeEach()
 
               when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
-                .thenReturn(Future.successful(country))
+                .thenReturn(Future.successful(Right(country)))
 
               val result = service.isInCL147(countryId).futureValue
 
@@ -227,7 +227,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           forAll(nonEmptyString) {
             countryId =>
               when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
-                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+                .thenReturn(Future.successful(Left(NoReferenceDataFoundException(""))))
 
               val result = service.isInCL147(countryId).futureValue
 
@@ -259,7 +259,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
               beforeEach()
 
               when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
-                .thenReturn(Future.successful(country))
+                .thenReturn(Future.successful(Right(country)))
 
               val result = service.isInCL010(countryId).futureValue
 
@@ -275,7 +275,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           forAll(nonEmptyString) {
             countryId =>
               when(mockRefDataConnector.getCountry(any(), any())(any(), any()))
-                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+                .thenReturn(Future.successful(Left(NoReferenceDataFoundException(""))))
 
               val result = service.isInCL010(countryId).futureValue
 
@@ -303,7 +303,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
       "must return a list of sorted address postcode based countries" in {
 
         when(mockRefDataConnector.getCountries(any())(any(), any()))
-          .thenReturn(Future.successful(countries))
+          .thenReturn(Future.successful(Right(countries)))
 
         service.getAddressPostcodeBasedCountries().futureValue mustBe
           SelectableList(Seq(country2, country3, country1))
@@ -333,7 +333,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
       "when there are no countries of routing in user answers" - {
         "must call getCountries" in {
           when(mockRefDataConnector.getCountries(any())(any(), any()))
-            .thenReturn(Future.successful(countries))
+            .thenReturn(Future.successful(Right(countries)))
 
           val result = service.getOfficeOfTransitCountries(emptyUserAnswers).futureValue
 
@@ -374,7 +374,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
               beforeEach()
 
               when(mockRefDataConnector.getCountries(any())(any(), any()))
-                .thenReturn(Future.successful(countries))
+                .thenReturn(Future.successful(Right(countries)))
 
               val result = service.getOfficeOfExitCountries(emptyUserAnswers, countryOfDestination).futureValue
 
@@ -392,7 +392,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           forAll(arbitrary[Country]) {
             country =>
               when(mockRefDataConnector.getCountriesWithoutZipCountry(any())(any(), any()))
-                .thenReturn(Future.successful(country.code))
+                .thenReturn(Future.successful(Right(country.code)))
 
               val result = service.doesCountryRequireZip(country).futureValue
 
@@ -406,7 +406,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           forAll(arbitrary[Country]) {
             country =>
               when(mockRefDataConnector.getCountriesWithoutZipCountry(any())(any(), any()))
-                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+                .thenReturn(Future.successful(Left(NoReferenceDataFoundException(""))))
 
               val result = service.doesCountryRequireZip(country).futureValue
 
