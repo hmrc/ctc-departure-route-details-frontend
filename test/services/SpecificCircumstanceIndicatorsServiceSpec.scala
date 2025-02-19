@@ -47,7 +47,7 @@ class SpecificCircumstanceIndicatorsServiceSpec extends SpecBase with BeforeAndA
       "must return a list of sorted specific circumstance indicators" in {
 
         when(mockRefDataConnector.getSpecificCircumstanceIndicators()(any(), any()))
-          .thenReturn(Future.successful(specificCircumstanceIndicators))
+          .thenReturn(Future.successful(Right(specificCircumstanceIndicators)))
 
         service.getSpecificCircumstanceIndicators().futureValue mustBe
           Seq(sci2, sci1)

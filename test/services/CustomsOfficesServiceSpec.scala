@@ -47,7 +47,7 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
       "must return a list of sorted customs offices of transit for a given country" in {
 
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
-          .thenReturn(Future.successful(customsOffices))
+          .thenReturn(Future.successful(Right(customsOffices)))
 
         service.getCustomsOfficesOfTransitForCountry(CountryCode("GB")).futureValue.values mustBe
           Seq(customsOffice2, customsOffice1)
@@ -60,7 +60,7 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
       "must return a list of sorted customs offices of destination for a given country" in {
 
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
-          .thenReturn(Future.successful(customsOffices))
+          .thenReturn(Future.successful(Right(customsOffices)))
 
         service.getCustomsOfficesOfDestinationForCountry(CountryCode("GB")).futureValue.values mustBe
           Seq(customsOffice2, customsOffice1)
@@ -73,7 +73,7 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
       "must return a list of sorted customs offices of exit for a given country" in {
 
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
-          .thenReturn(Future.successful(customsOffices))
+          .thenReturn(Future.successful(Right(customsOffices)))
 
         service.getCustomsOfficesOfExitForCountry(CountryCode("GB")).futureValue.values mustBe
           Seq(customsOffice2, customsOffice1)
@@ -86,7 +86,7 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
       "must return a list of sorted customs offices of departure for a given country" in {
 
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
-          .thenReturn(Future.successful(customsOffices))
+          .thenReturn(Future.successful(Right(customsOffices)))
 
         service.getCustomsOfficesOfDepartureForCountry("GB").futureValue.values mustBe
           Seq(customsOffice2, customsOffice1)

@@ -56,7 +56,7 @@ class LocationOfGoodsIdentificationTypeServiceSpec extends SpecBase with BeforeA
         "When LocationType is DesignatedLocation" in {
 
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
-            .thenReturn(Future.successful(identifiers))
+            .thenReturn(Future.successful(Right(identifiers)))
           val locationType = LocationType(DesignatedLocation, "Designated location")
           service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(unlocodeIdentifier, customsOfficeIdentifier)
         }
@@ -64,7 +64,7 @@ class LocationOfGoodsIdentificationTypeServiceSpec extends SpecBase with BeforeA
         "When LocationType is Authorised Place" in {
 
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
-            .thenReturn(Future.successful(identifiers))
+            .thenReturn(Future.successful(Right(identifiers)))
           val locationType = LocationType(AuthorisedPlace, "Authorised place")
           service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(authorisationNumber)
         }
@@ -72,7 +72,7 @@ class LocationOfGoodsIdentificationTypeServiceSpec extends SpecBase with BeforeA
         "When LocationType is Approved Place" in {
 
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
-            .thenReturn(Future.successful(identifiers))
+            .thenReturn(Future.successful(Right(identifiers)))
           val locationType = LocationType(ApprovedPlace, "Approved place")
           service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(
             unlocodeIdentifier,
@@ -85,7 +85,7 @@ class LocationOfGoodsIdentificationTypeServiceSpec extends SpecBase with BeforeA
         "When LocationType is Other" in {
 
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
-            .thenReturn(Future.successful(identifiers))
+            .thenReturn(Future.successful(Right(identifiers)))
           val locationType = LocationType(Other, "Other")
           service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(
             unlocodeIdentifier,
