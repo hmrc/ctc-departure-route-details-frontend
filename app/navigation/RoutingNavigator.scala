@@ -16,7 +16,7 @@
 
 package navigation
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.routing.RoutingDomain
 import models.{CheckMode, Mode, NormalMode}
@@ -24,7 +24,7 @@ import models.{CheckMode, Mode, NormalMode}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RoutingNavigatorProviderImpl @Inject() (implicit val config: FrontendAppConfig, phaseConfig: PhaseConfig) extends RoutingNavigatorProvider {
+class RoutingNavigatorProviderImpl @Inject() (implicit val config: FrontendAppConfig) extends RoutingNavigatorProvider {
 
   def apply(mode: Mode): UserAnswersNavigator =
     mode match {
@@ -40,8 +40,7 @@ trait RoutingNavigatorProvider {
   def apply(mode: Mode): UserAnswersNavigator
 }
 
-class RoutingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig, override val phaseConfig: PhaseConfig)
-    extends UserAnswersNavigator {
+class RoutingNavigator(override val mode: Mode)(implicit override val config: FrontendAppConfig) extends UserAnswersNavigator {
 
   override type T = RoutingDomain
 

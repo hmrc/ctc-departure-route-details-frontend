@@ -16,7 +16,6 @@
 
 package generators
 
-import config.PhaseConfig
 import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.OpsError.ReaderError
 import models.journeyDomain.RouteDetailsDomain
@@ -28,7 +27,7 @@ import models.SubmissionState
 trait UserAnswersGenerator extends UserAnswersEntryGenerators with RouteDetailsUserAnswersGenerator {
   self: Generators =>
 
-  implicit def arbitraryUserAnswers(implicit phaseConfig: PhaseConfig): Arbitrary[UserAnswers] =
+  implicit def arbitraryUserAnswers: Arbitrary[UserAnswers] =
     Arbitrary {
       for {
         lrn             <- arbitrary[LocalReferenceNumber]

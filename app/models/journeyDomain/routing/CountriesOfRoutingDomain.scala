@@ -16,10 +16,8 @@
 
 package models.journeyDomain.routing
 
-import config.Constants.SecurityType._
-import config.PhaseConfig
-import models.Phase.{PostTransition, Transition}
-import models.journeyDomain._
+import config.Constants.SecurityType.*
+import models.journeyDomain.*
 import models.{Index, RichJsArray}
 import pages.external.SecurityDetailsTypePage
 import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage}
@@ -38,7 +36,7 @@ case class CountriesOfRoutingDomain(
 
 object CountriesOfRoutingDomain {
 
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[CountriesOfRoutingDomain] = {
+  implicit def userAnswersReader: Read[CountriesOfRoutingDomain] = {
     lazy val arrayReader: Read[Seq[CountryOfRoutingDomain]] =
       CountriesOfRoutingSection.arrayReader.to {
         case x if x.isEmpty =>
@@ -54,9 +52,7 @@ object CountriesOfRoutingDomain {
       SecurityDetailsTypePage.reader,
       BindingItineraryPage.reader
     ).to {
-      case (NoSecurityDetails, _) if phaseConfig.phase == Transition =>
-        emptyArrayReader
-      case (NoSecurityDetails, false) if phaseConfig.phase == PostTransition =>
+      case (NoSecurityDetails, false) =>
         AddCountryOfRoutingYesNoPage.reader.to {
           case true =>
             arrayReader.map(CountriesOfRoutingDomain.apply)

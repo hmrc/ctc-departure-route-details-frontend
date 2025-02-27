@@ -16,9 +16,8 @@
 
 package controllers.transit.index
 
-import config.PhaseConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
 import models.reference.Country
@@ -48,7 +47,7 @@ class OfficeOfTransitCountryController @Inject() (
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
   view: OfficeOfTransitCountryView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

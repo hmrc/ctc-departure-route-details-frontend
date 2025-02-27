@@ -16,7 +16,7 @@
 
 package base
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import models.reference.Country
 import models.{EoriNumber, Index, LocalReferenceNumber, RichJsObject, SubmissionState, UserAnswers}
 import org.scalacheck.Gen
@@ -67,7 +67,6 @@ trait SpecBase
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   implicit def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
-  implicit def phaseConfig: PhaseConfig             = injector.instanceOf[PhaseConfig]
 
   implicit class RichUserAnswers(userAnswers: UserAnswers) {
 

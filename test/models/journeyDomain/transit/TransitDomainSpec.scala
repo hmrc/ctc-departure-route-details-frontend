@@ -17,29 +17,18 @@
 package models.journeyDomain.transit
 
 import base.SpecBase
-import config.Constants.DeclarationType.*
 import config.Constants.SecurityType.*
-import config.PhaseConfig
 import generators.Generators
 import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
-import models.{Index, Phase}
-import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
-import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
+import pages.external.{OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.routing.*
-import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingPage}
 import pages.sections.transit.{OfficeOfTransitSection, OfficesOfTransitSection}
 import pages.transit.*
 import pages.transit.index.*
 
 class TransitDomainSpec extends SpecBase with Generators {
-
-  private val mockTransitionPhaseConfig: PhaseConfig = mock[PhaseConfig]
-  when(mockTransitionPhaseConfig.phase).thenReturn(Phase.Transition)
-
-  private val mockPostTransitionPhaseConfig: PhaseConfig = mock[PhaseConfig]
-  when(mockPostTransitionPhaseConfig.phase).thenReturn(Phase.PostTransition)
 
   "TransitDomain" - {
 
@@ -49,7 +38,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
     "can be parsed from UserAnswers" - {
 
-      "when transition mode and office of departure country code is in set CL112" in {
+      "when office of departure country code is in set CL112" in {
         val userAnswers = emptyUserAnswers
           .setValue(OfficeOfDeparturePage, customsOffice)
           .setValue(OfficeOfDepartureInCL112Page, true)
@@ -59,26 +48,27 @@ class TransitDomainSpec extends SpecBase with Generators {
           .setValue(OfficeOfTransitCountryPage(index), country)
           .setValue(OfficeOfTransitPage(index), officeOfTransit)
           .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+          .setValue(AddOfficeOfTransitYesNoPage, true)
 
         val expectedResult = TransitDomain(
           isT2DeclarationType = None,
           officesOfTransit = Some(
             OfficesOfTransitDomain(
               Seq(
-                OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index)
+                OfficeOfTransitDomain(None, officeOfTransit, None)(index) // without country when OfficeOfDestinationInCL112Page true
               )
             )
           )
         )
 
         val result = UserAnswersReader[TransitDomain](
-          TransitDomain.userAnswersReader(mockTransitionPhaseConfig).apply(Nil)
+          TransitDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
         result.value.value mustBe expectedResult
         result.value.pages mustBe Seq(
           OfficeOfDestinationPage,
-          OfficeOfTransitCountryPage(index),
+          AddOfficeOfTransitYesNoPage,
           OfficeOfTransitPage(index),
           AddOfficeOfTransitETAYesNoPage(index),
           OfficeOfTransitSection(index),
@@ -86,542 +76,454 @@ class TransitDomainSpec extends SpecBase with Generators {
         )
       }
 
-      "when offices of departure and destination country codes are in set CL112 and both have same country code" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(OfficeOfDeparturePage, customsOffice)
-          .setValue(OfficeOfDepartureInCL112Page, true)
-          .setValue(OfficeOfDestinationPage, customsOffice)
-          .setValue(OfficeOfDestinationInCL112Page, true)
-          .setValue(AddOfficeOfTransitYesNoPage, false)
-
-        val expectedResult = TransitDomain(
-          isT2DeclarationType = None,
-          officesOfTransit = None
-        )
-
-        val result = UserAnswersReader[TransitDomain](
-          TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-        ).run(userAnswers)
-
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
-          OfficeOfDestinationPage,
-          AddOfficeOfTransitYesNoPage
-        )
-      }
-
-      "when T2 declaration type" in {
-        val userAnswers = emptyUserAnswers
-          .setValue(OfficeOfDeparturePage, customsOffice)
-          .setValue(OfficeOfDepartureInCL112Page, false)
-          .setValue(DeclarationTypePage, T2)
-          .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-          .setValue(OfficeOfDestinationPage, customsOffice)
-          .setValue(OfficeOfDestinationInCL112Page, false)
-          .setValue(OfficeOfTransitCountryPage(index), country)
-          .setValue(OfficeOfTransitPage(index), officeOfTransit)
-          .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-        val expectedResult = TransitDomain(
-          isT2DeclarationType = None,
-          officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
-        )
-
-        val result = UserAnswersReader[TransitDomain](
-          TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-        ).run(userAnswers)
-
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
-          OfficeOfDestinationPage,
-          OfficeOfTransitCountryPage(index),
-          OfficeOfTransitPage(index),
-          AddOfficeOfTransitETAYesNoPage(index),
-          OfficeOfTransitSection(index),
-          OfficesOfTransitSection
-        )
-      }
-
-      "when T declaration type" - {
-
-        "and some items are T2 declaration type" in {
-          val userAnswers = emptyUserAnswers
-            .setValue(OfficeOfDeparturePage, customsOffice)
-            .setValue(OfficeOfDepartureInCL112Page, false)
-            .setValue(DeclarationTypePage, T)
-            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-            .setValue(OfficeOfDestinationPage, customsOffice)
-            .setValue(OfficeOfDestinationInCL112Page, false)
-            .setValue(T2DeclarationTypeYesNoPage, true)
-            .setValue(OfficeOfTransitCountryPage(index), country)
-            .setValue(OfficeOfTransitPage(index), officeOfTransit)
-            .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-          val expectedResult = TransitDomain(
-            isT2DeclarationType = Some(true),
-            officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
-          )
-
-          val result = UserAnswersReader[TransitDomain](
-            TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-          ).run(userAnswers)
-
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
-            OfficeOfDestinationPage,
-            T2DeclarationTypeYesNoPage,
-            OfficeOfTransitCountryPage(index),
-            OfficeOfTransitPage(index),
-            AddOfficeOfTransitETAYesNoPage(index),
-            OfficeOfTransitSection(index),
-            OfficesOfTransitSection
-          )
-        }
-
-        "and no items are T2 declaration type" - {
-          "and country code for office of departure is in set CL112" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, customsOffice)
-              .setValue(OfficeOfDepartureInCL112Page, true)
-              .setValue(DeclarationTypePage, T)
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, false)
-              .setValue(T2DeclarationTypeYesNoPage, false)
-              .setValue(OfficeOfTransitCountryPage(index), country)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-            val expectedResult = TransitDomain(
-              isT2DeclarationType = Some(false),
-              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
-            )
-
-            val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              T2DeclarationTypeYesNoPage,
-              OfficeOfTransitCountryPage(index),
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index),
-              OfficesOfTransitSection
-            )
-          }
-
-          "and country code for office of destination is in set CL112" - {
-            "when is post transition" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, T)
-                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, true)
-                .setValue(T2DeclarationTypeYesNoPage, false)
-                .setValue(OfficeOfTransitPage(index), officeOfTransit)
-                .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-              val expectedResult = TransitDomain(
-                isT2DeclarationType = Some(false),
-                officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))))
-              )
-
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.value.value mustBe expectedResult
-              result.value.pages mustBe Seq(
-                OfficeOfDestinationPage,
-                T2DeclarationTypeYesNoPage,
-                OfficeOfTransitPage(index),
-                AddOfficeOfTransitETAYesNoPage(index),
-                OfficeOfTransitSection(index),
-                OfficesOfTransitSection
-              )
-            }
-
-            "when is transition" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, T)
-                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, true)
-                .setValue(T2DeclarationTypeYesNoPage, false)
-                .setValue(OfficeOfTransitCountryPage(index), country)
-                .setValue(OfficeOfTransitPage(index), officeOfTransit)
-                .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-              val expectedResult = TransitDomain(
-                isT2DeclarationType = Some(false),
-                officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
-              )
-
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.value.value mustBe expectedResult
-              result.value.pages mustBe Seq(
-                OfficeOfDestinationPage,
-                T2DeclarationTypeYesNoPage,
-                OfficeOfTransitCountryPage(index),
-                OfficeOfTransitPage(index),
-                AddOfficeOfTransitETAYesNoPage(index),
-                OfficeOfTransitSection(index),
-                OfficesOfTransitSection
-              )
-            }
-          }
-
-          "and country code for neither office of departure nor office of destination is in set CL112" - {
-
-            "and at least one country of routing is in set CL112" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, T)
-                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, false)
-                .setValue(BindingItineraryPage, true)
-                .setValue(CountryOfRoutingPage(index), country)
-                .setValue(CountryOfRoutingInCL112Page(index), true)
-                .setValue(T2DeclarationTypeYesNoPage, false)
-                .setValue(OfficeOfTransitCountryPage(index), country)
-                .setValue(OfficeOfTransitPage(index), officeOfTransit)
-                .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-              val expectedResult = TransitDomain(
-                isT2DeclarationType = Some(false),
-                officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
-              )
-
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.value.value mustBe expectedResult
-              result.value.pages mustBe Seq(
-                OfficeOfDestinationPage,
-                T2DeclarationTypeYesNoPage,
-                OfficeOfTransitCountryPage(index),
-                OfficeOfTransitPage(index),
-                AddOfficeOfTransitETAYesNoPage(index),
-                OfficeOfTransitSection(index),
-                OfficesOfTransitSection
-              )
-            }
-
-            "and no countries of routing are in set CL112" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, T)
-                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, false)
-                .setValue(BindingItineraryPage, true)
-                .setValue(CountryOfRoutingPage(index), country)
-                .setValue(CountryOfRoutingInCL112Page(index), false)
-                .setValue(T2DeclarationTypeYesNoPage, false)
-                .setValue(AddOfficeOfTransitYesNoPage, false)
-
-              val expectedResult = TransitDomain(
-                isT2DeclarationType = Some(false),
-                officesOfTransit = None
-              )
-
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.value.value mustBe expectedResult
-              result.value.pages mustBe Seq(
-                OfficeOfDestinationPage,
-                T2DeclarationTypeYesNoPage,
-                AddOfficeOfTransitYesNoPage
-              )
-            }
-          }
-        }
-      }
-
-      "when declaration type is neither T nor T2" - {
-
-        val declarationType = arbitrary[String](arbitraryT1OrT2FDeclarationType).sample.value
-
-        "and country code for office of departure is in set CL112" in {
-          val userAnswers = emptyUserAnswers
-            .setValue(OfficeOfDeparturePage, customsOffice)
-            .setValue(OfficeOfDepartureInCL112Page, true)
-            .setValue(DeclarationTypePage, declarationType)
-            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-            .setValue(OfficeOfDestinationPage, customsOffice)
-            .setValue(OfficeOfDestinationInCL112Page, false)
-            .setValue(OfficeOfTransitCountryPage(index), country)
-            .setValue(OfficeOfTransitPage(index), officeOfTransit)
-            .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-          val expectedResult = TransitDomain(
-            isT2DeclarationType = None,
-            officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
-          )
-
-          val result = UserAnswersReader[TransitDomain](
-            TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-          ).run(userAnswers)
-
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
-            OfficeOfDestinationPage,
-            OfficeOfTransitCountryPage(index),
-            OfficeOfTransitPage(index),
-            AddOfficeOfTransitETAYesNoPage(index),
-            OfficeOfTransitSection(index),
-            OfficesOfTransitSection
-          )
-        }
-
-        "and country code for office of destination is in set CL112" - {
-
-          "when is post transition" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, customsOffice)
-              .setValue(OfficeOfDepartureInCL112Page, false)
-              .setValue(DeclarationTypePage, declarationType)
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, true)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-            val expectedResult = TransitDomain(
-              isT2DeclarationType = None,
-              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))))
-            )
-
-            val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index),
-              OfficesOfTransitSection
-            )
-          }
-
-          "when is transition" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, customsOffice)
-              .setValue(OfficeOfDepartureInCL112Page, false)
-              .setValue(DeclarationTypePage, declarationType)
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, true)
-              .setValue(OfficeOfTransitCountryPage(index), country)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-            val expectedResult = TransitDomain(
-              isT2DeclarationType = None,
-              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
-            )
-
-            val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockTransitionPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitCountryPage(index),
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index),
-              OfficesOfTransitSection
-            )
-          }
-        }
-
-        "and country code for neither office of departure nor office of destination is in set CL112" - {
-
-          "and at least one country of routing is in set CL112" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, customsOffice)
-              .setValue(OfficeOfDepartureInCL112Page, false)
-              .setValue(DeclarationTypePage, declarationType)
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, false)
-              .setValue(BindingItineraryPage, true)
-              .setValue(CountryOfRoutingPage(index), country)
-              .setValue(CountryOfRoutingInCL112Page(index), true)
-              .setValue(OfficeOfTransitCountryPage(index), country)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-            val expectedResult = TransitDomain(
-              isT2DeclarationType = None,
-              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
-            )
-
-            val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitCountryPage(index),
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index),
-              OfficesOfTransitSection
-            )
-          }
-
-          "and no countries of routing are in set CL112" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, customsOffice)
-              .setValue(OfficeOfDepartureInCL112Page, false)
-              .setValue(DeclarationTypePage, declarationType)
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, false)
-              .setValue(BindingItineraryPage, true)
-              .setValue(CountryOfRoutingPage(index), country)
-              .setValue(CountryOfRoutingInCL112Page(index), false)
-              .setValue(AddOfficeOfTransitYesNoPage, false)
-
-            val expectedResult = TransitDomain(
-              isT2DeclarationType = None,
-              officesOfTransit = None
-            )
-
-            val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              AddOfficeOfTransitYesNoPage
-            )
-          }
-        }
-      }
+//      "when offices of departure and destination country codes are in set CL112 and both have same country code" in {
+//        val userAnswers = emptyUserAnswers
+//          .setValue(OfficeOfDeparturePage, customsOffice)
+//          .setValue(OfficeOfDepartureInCL112Page, true)
+//          .setValue(OfficeOfDestinationPage, customsOffice)
+//          .setValue(OfficeOfDestinationInCL112Page, true)
+//          .setValue(AddOfficeOfTransitYesNoPage, false)
+//
+//        val expectedResult = TransitDomain(
+//          isT2DeclarationType = None,
+//          officesOfTransit = None
+//        )
+//
+//        val result = UserAnswersReader[TransitDomain](
+//          TransitDomain.userAnswersReader.apply(Nil)
+//        ).run(userAnswers)
+//
+//        result.value.value mustBe expectedResult
+//        result.value.pages mustBe Seq(
+//          OfficeOfDestinationPage,
+//          AddOfficeOfTransitYesNoPage
+//        )
+//      }
+//
+//      "when T2 declaration type" in {
+//        val userAnswers = emptyUserAnswers
+//          .setValue(OfficeOfDeparturePage, customsOffice)
+//          .setValue(OfficeOfDepartureInCL112Page, false)
+//          .setValue(DeclarationTypePage, T2)
+//          .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//          .setValue(OfficeOfDestinationPage, customsOffice)
+//          .setValue(OfficeOfDestinationInCL112Page, false)
+//          .setValue(OfficeOfTransitCountryPage(index), country)
+//          .setValue(OfficeOfTransitPage(index), officeOfTransit)
+//          .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+//
+//        val expectedResult = TransitDomain(
+//          isT2DeclarationType = None,
+//          officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
+//        )
+//
+//        val result = UserAnswersReader[TransitDomain](
+//          TransitDomain.userAnswersReader.apply(Nil)
+//        ).run(userAnswers)
+//
+//        result.value.value mustBe expectedResult
+//        result.value.pages mustBe Seq(
+//          OfficeOfDestinationPage,
+//          OfficeOfTransitCountryPage(index),
+//          OfficeOfTransitPage(index),
+//          AddOfficeOfTransitETAYesNoPage(index),
+//          OfficeOfTransitSection(index),
+//          OfficesOfTransitSection
+//        )
+//      }
+//
+//      "when T declaration type" - {
+//
+//        "and some items are T2 declaration type" in {
+//          val userAnswers = emptyUserAnswers
+//            .setValue(OfficeOfDeparturePage, customsOffice)
+//            .setValue(OfficeOfDepartureInCL112Page, false)
+//            .setValue(DeclarationTypePage, T)
+//            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//            .setValue(OfficeOfDestinationPage, customsOffice)
+//            .setValue(OfficeOfDestinationInCL112Page, false)
+//            .setValue(T2DeclarationTypeYesNoPage, true)
+//            .setValue(OfficeOfTransitCountryPage(index), country)
+//            .setValue(OfficeOfTransitPage(index), officeOfTransit)
+//            .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+//
+//          val expectedResult = TransitDomain(
+//            isT2DeclarationType = Some(true),
+//            officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
+//          )
+//
+//          val result = UserAnswersReader[TransitDomain](
+//            TransitDomain.userAnswersReader.apply(Nil)
+//          ).run(userAnswers)
+//
+//          result.value.value mustBe expectedResult
+//          result.value.pages mustBe Seq(
+//            OfficeOfDestinationPage,
+//            T2DeclarationTypeYesNoPage,
+//            OfficeOfTransitCountryPage(index),
+//            OfficeOfTransitPage(index),
+//            AddOfficeOfTransitETAYesNoPage(index),
+//            OfficeOfTransitSection(index),
+//            OfficesOfTransitSection
+//          )
+//        }
+//
+//        "and no items are T2 declaration type" - {
+//          "and country code for office of departure is in set CL112" in {
+//            val userAnswers = emptyUserAnswers
+//              .setValue(OfficeOfDeparturePage, customsOffice)
+//              .setValue(OfficeOfDepartureInCL112Page, true)
+//              .setValue(DeclarationTypePage, T)
+//              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//              .setValue(OfficeOfDestinationPage, customsOffice)
+//              .setValue(OfficeOfDestinationInCL112Page, false)
+//              .setValue(T2DeclarationTypeYesNoPage, false)
+//              .setValue(OfficeOfTransitCountryPage(index), country)
+//              .setValue(OfficeOfTransitPage(index), officeOfTransit)
+//              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+//
+//            val expectedResult = TransitDomain(
+//              isT2DeclarationType = Some(false),
+//              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
+//            )
+//
+//            val result = UserAnswersReader[TransitDomain](
+//              TransitDomain.userAnswersReader.apply(Nil)
+//            ).run(userAnswers)
+//
+//            result.value.value mustBe expectedResult
+//            result.value.pages mustBe Seq(
+//              OfficeOfDestinationPage,
+//              T2DeclarationTypeYesNoPage,
+//              OfficeOfTransitCountryPage(index),
+//              OfficeOfTransitPage(index),
+//              AddOfficeOfTransitETAYesNoPage(index),
+//              OfficeOfTransitSection(index),
+//              OfficesOfTransitSection
+//            )
+//          }
+//
+//          "and country code for office of destination is in set CL112" - {
+//            val userAnswers = emptyUserAnswers
+//              .setValue(OfficeOfDeparturePage, customsOffice)
+//              .setValue(OfficeOfDepartureInCL112Page, false)
+//              .setValue(DeclarationTypePage, T)
+//              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//              .setValue(OfficeOfDestinationPage, customsOffice)
+//              .setValue(OfficeOfDestinationInCL112Page, true)
+//              .setValue(T2DeclarationTypeYesNoPage, false)
+//              .setValue(OfficeOfTransitPage(index), officeOfTransit)
+//              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+//
+//            val expectedResult = TransitDomain(
+//              isT2DeclarationType = Some(false),
+//              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))))
+//            )
+//
+//            val result = UserAnswersReader[TransitDomain](
+//              TransitDomain.userAnswersReader.apply(Nil)
+//            ).run(userAnswers)
+//
+//            result.value.value mustBe expectedResult
+//            result.value.pages mustBe Seq(
+//              OfficeOfDestinationPage,
+//              T2DeclarationTypeYesNoPage,
+//              OfficeOfTransitPage(index),
+//              AddOfficeOfTransitETAYesNoPage(index),
+//              OfficeOfTransitSection(index),
+//              OfficesOfTransitSection
+//            )
+//          }
+//
+//          "and country code for neither office of departure nor office of destination is in set CL112" - {
+//
+//            "and at least one country of routing is in set CL112" in {
+//              val userAnswers = emptyUserAnswers
+//                .setValue(OfficeOfDeparturePage, customsOffice)
+//                .setValue(OfficeOfDepartureInCL112Page, false)
+//                .setValue(DeclarationTypePage, T)
+//                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//                .setValue(OfficeOfDestinationPage, customsOffice)
+//                .setValue(OfficeOfDestinationInCL112Page, false)
+//                .setValue(BindingItineraryPage, true)
+//                .setValue(CountryOfRoutingPage(index), country)
+//                .setValue(CountryOfRoutingInCL112Page(index), true)
+//                .setValue(T2DeclarationTypeYesNoPage, false)
+//                .setValue(OfficeOfTransitCountryPage(index), country)
+//                .setValue(OfficeOfTransitPage(index), officeOfTransit)
+//                .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+//
+//              val expectedResult = TransitDomain(
+//                isT2DeclarationType = Some(false),
+//                officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
+//              )
+//
+//              val result = UserAnswersReader[TransitDomain](
+//                TransitDomain.userAnswersReader.apply(Nil)
+//              ).run(userAnswers)
+//
+//              result.value.value mustBe expectedResult
+//              result.value.pages mustBe Seq(
+//                OfficeOfDestinationPage,
+//                T2DeclarationTypeYesNoPage,
+//                OfficeOfTransitCountryPage(index),
+//                OfficeOfTransitPage(index),
+//                AddOfficeOfTransitETAYesNoPage(index),
+//                OfficeOfTransitSection(index),
+//                OfficesOfTransitSection
+//              )
+//            }
+//
+//            "and no countries of routing are in set CL112" in {
+//              val userAnswers = emptyUserAnswers
+//                .setValue(OfficeOfDeparturePage, customsOffice)
+//                .setValue(OfficeOfDepartureInCL112Page, false)
+//                .setValue(DeclarationTypePage, T)
+//                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//                .setValue(OfficeOfDestinationPage, customsOffice)
+//                .setValue(OfficeOfDestinationInCL112Page, false)
+//                .setValue(BindingItineraryPage, true)
+//                .setValue(CountryOfRoutingPage(index), country)
+//                .setValue(CountryOfRoutingInCL112Page(index), false)
+//                .setValue(T2DeclarationTypeYesNoPage, false)
+//                .setValue(AddOfficeOfTransitYesNoPage, false)
+//
+//              val expectedResult = TransitDomain(
+//                isT2DeclarationType = Some(false),
+//                officesOfTransit = None
+//              )
+//
+//              val result = UserAnswersReader[TransitDomain](
+//                TransitDomain.userAnswersReader.apply(Nil)
+//              ).run(userAnswers)
+//
+//              result.value.value mustBe expectedResult
+//              result.value.pages mustBe Seq(
+//                OfficeOfDestinationPage,
+//                T2DeclarationTypeYesNoPage,
+//                AddOfficeOfTransitYesNoPage
+//              )
+//            }
+//          }
+//        }
+//      }
+//
+//      "when declaration type is neither T nor T2" - {
+//
+//        val declarationType = arbitrary[String](arbitraryT1OrT2FDeclarationType).sample.value
+//
+//        "and country code for office of departure is in set CL112" in {
+//          val userAnswers = emptyUserAnswers
+//            .setValue(OfficeOfDeparturePage, customsOffice)
+//            .setValue(OfficeOfDepartureInCL112Page, true)
+//            .setValue(DeclarationTypePage, declarationType)
+//            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//            .setValue(OfficeOfDestinationPage, customsOffice)
+//            .setValue(OfficeOfDestinationInCL112Page, false)
+//            .setValue(OfficeOfTransitCountryPage(index), country)
+//            .setValue(OfficeOfTransitPage(index), officeOfTransit)
+//            .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+//
+//          val expectedResult = TransitDomain(
+//            isT2DeclarationType = None,
+//            officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
+//          )
+//
+//          val result = UserAnswersReader[TransitDomain](
+//            TransitDomain.userAnswersReader.apply(Nil)
+//          ).run(userAnswers)
+//
+//          result.value.value mustBe expectedResult
+//          result.value.pages mustBe Seq(
+//            OfficeOfDestinationPage,
+//            OfficeOfTransitCountryPage(index),
+//            OfficeOfTransitPage(index),
+//            AddOfficeOfTransitETAYesNoPage(index),
+//            OfficeOfTransitSection(index),
+//            OfficesOfTransitSection
+//          )
+//        }
+//
+//        "and country code for office of destination is in set CL112" - {
+//          val userAnswers = emptyUserAnswers
+//            .setValue(OfficeOfDeparturePage, customsOffice)
+//            .setValue(OfficeOfDepartureInCL112Page, false)
+//            .setValue(DeclarationTypePage, declarationType)
+//            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//            .setValue(OfficeOfDestinationPage, customsOffice)
+//            .setValue(OfficeOfDestinationInCL112Page, true)
+//            .setValue(OfficeOfTransitPage(index), officeOfTransit)
+//            .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+//
+//          val expectedResult = TransitDomain(
+//            isT2DeclarationType = None,
+//            officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))))
+//          )
+//
+//          val result = UserAnswersReader[TransitDomain](
+//            TransitDomain.userAnswersReader.apply(Nil)
+//          ).run(userAnswers)
+//
+//          result.value.value mustBe expectedResult
+//          result.value.pages mustBe Seq(
+//            OfficeOfDestinationPage,
+//            OfficeOfTransitPage(index),
+//            AddOfficeOfTransitETAYesNoPage(index),
+//            OfficeOfTransitSection(index),
+//            OfficesOfTransitSection
+//          )
+//        }
+//
+//        "and country code for neither office of departure nor office of destination is in set CL112" - {
+//
+//          "and at least one country of routing is in set CL112" in {
+//            val userAnswers = emptyUserAnswers
+//              .setValue(OfficeOfDeparturePage, customsOffice)
+//              .setValue(OfficeOfDepartureInCL112Page, false)
+//              .setValue(DeclarationTypePage, declarationType)
+//              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//              .setValue(OfficeOfDestinationPage, customsOffice)
+//              .setValue(OfficeOfDestinationInCL112Page, false)
+//              .setValue(BindingItineraryPage, true)
+//              .setValue(CountryOfRoutingPage(index), country)
+//              .setValue(CountryOfRoutingInCL112Page(index), true)
+//              .setValue(OfficeOfTransitCountryPage(index), country)
+//              .setValue(OfficeOfTransitPage(index), officeOfTransit)
+//              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+//
+//            val expectedResult = TransitDomain(
+//              isT2DeclarationType = None,
+//              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
+//            )
+//
+//            val result = UserAnswersReader[TransitDomain](
+//              TransitDomain.userAnswersReader.apply(Nil)
+//            ).run(userAnswers)
+//
+//            result.value.value mustBe expectedResult
+//            result.value.pages mustBe Seq(
+//              OfficeOfDestinationPage,
+//              OfficeOfTransitCountryPage(index),
+//              OfficeOfTransitPage(index),
+//              AddOfficeOfTransitETAYesNoPage(index),
+//              OfficeOfTransitSection(index),
+//              OfficesOfTransitSection
+//            )
+//          }
+//
+//          "and no countries of routing are in set CL112" in {
+//            val userAnswers = emptyUserAnswers
+//              .setValue(OfficeOfDeparturePage, customsOffice)
+//              .setValue(OfficeOfDepartureInCL112Page, false)
+//              .setValue(DeclarationTypePage, declarationType)
+//              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//              .setValue(OfficeOfDestinationPage, customsOffice)
+//              .setValue(OfficeOfDestinationInCL112Page, false)
+//              .setValue(BindingItineraryPage, true)
+//              .setValue(CountryOfRoutingPage(index), country)
+//              .setValue(CountryOfRoutingInCL112Page(index), false)
+//              .setValue(AddOfficeOfTransitYesNoPage, false)
+//
+//            val expectedResult = TransitDomain(
+//              isT2DeclarationType = None,
+//              officesOfTransit = None
+//            )
+//
+//            val result = UserAnswersReader[TransitDomain](
+//              TransitDomain.userAnswersReader.apply(Nil)
+//            ).run(userAnswers)
+//
+//            result.value.value mustBe expectedResult
+//            result.value.pages mustBe Seq(
+//              OfficeOfDestinationPage,
+//              AddOfficeOfTransitYesNoPage
+//            )
+//          }
+//        }
+//      }
     }
 
-    "cannot be parsed from UserAnswers" - {
-
-      "when offices of departure and destination are in CL112 and have same country code" - {
-        "and add office of transit yes/no unanswered" in {
-          val userAnswers = emptyUserAnswers
-            .setValue(OfficeOfDeparturePage, customsOffice)
-            .setValue(OfficeOfDepartureInCL112Page, true)
-            .setValue(OfficeOfDestinationPage, customsOffice)
-            .setValue(OfficeOfDestinationInCL112Page, true)
-
-          val result = UserAnswersReader[TransitDomain](
-            TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-          ).run(userAnswers)
-
-          result.left.value.page mustBe AddOfficeOfTransitYesNoPage
-        }
-      }
-
-      "when declaration type is T2" - {
-        "and office of destination in set CL112" - {
-          "and empty json at index 0" - {
-            "when is post transition" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, T2)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, true)
-
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.left.value.page mustBe OfficeOfTransitPage(Index(0))
-            }
-
-            "when is transition" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, T2)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, true)
-
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.left.value.page mustBe OfficeOfTransitCountryPage(Index(0))
-            }
-          }
-        }
-
-        "and office of destination not in set CL112" - {
-          "and empty json at index 0" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, customsOffice)
-              .setValue(OfficeOfDepartureInCL112Page, false)
-              .setValue(DeclarationTypePage, T2)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, false)
-
-            val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.left.value.page mustBe OfficeOfTransitCountryPage(Index(0))
-          }
-        }
-      }
-
-      "when declaration type is neither T nor T2" - {
-
-        val declarationType = arbitrary[String](arbitraryT1OrT2FDeclarationType).sample.value
-
-        "and country code for neither office of departure nor office of destination is in set CL112" - {
-          "and no countries of routing are in set CL112" - {
-            "and add office of transit yes/no unanswered" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, declarationType)
-                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, false)
-                .setValue(BindingItineraryPage, true)
-                .setValue(CountryOfRoutingPage(index), country)
-                .setValue(CountryOfRoutingInCL112Page(index), false)
-
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.left.value.page mustBe AddOfficeOfTransitYesNoPage
-            }
-          }
-        }
-      }
-    }
+//    "cannot be parsed from UserAnswers" - {
+//
+//      "when offices of departure and destination are in CL112 and have same country code" - {
+//        "and add office of transit yes/no unanswered" in {
+//          val userAnswers = emptyUserAnswers
+//            .setValue(OfficeOfDeparturePage, customsOffice)
+//            .setValue(OfficeOfDepartureInCL112Page, true)
+//            .setValue(OfficeOfDestinationPage, customsOffice)
+//            .setValue(OfficeOfDestinationInCL112Page, true)
+//
+//          val result = UserAnswersReader[TransitDomain](
+//            TransitDomain.userAnswersReader.apply(Nil)
+//          ).run(userAnswers)
+//
+//          result.left.value.page mustBe AddOfficeOfTransitYesNoPage
+//        }
+//      }
+//
+//      "when declaration type is T2" - {
+//        "and office of destination in set CL112" - {
+//          "and empty json at index 0" in {
+//            val userAnswers = emptyUserAnswers
+//              .setValue(OfficeOfDeparturePage, customsOffice)
+//              .setValue(OfficeOfDepartureInCL112Page, false)
+//              .setValue(DeclarationTypePage, T2)
+//              .setValue(OfficeOfDestinationPage, customsOffice)
+//              .setValue(OfficeOfDestinationInCL112Page, true)
+//
+//            val result = UserAnswersReader[TransitDomain](
+//              TransitDomain.userAnswersReader.apply(Nil)
+//            ).run(userAnswers)
+//
+//            result.left.value.page mustBe OfficeOfTransitPage(Index(0))
+//          }
+//        }
+//
+//        "and office of destination not in set CL112" - {
+//          "and empty json at index 0" in {
+//            val userAnswers = emptyUserAnswers
+//              .setValue(OfficeOfDeparturePage, customsOffice)
+//              .setValue(OfficeOfDepartureInCL112Page, false)
+//              .setValue(DeclarationTypePage, T2)
+//              .setValue(OfficeOfDestinationPage, customsOffice)
+//              .setValue(OfficeOfDestinationInCL112Page, false)
+//
+//            val result = UserAnswersReader[TransitDomain](
+//              TransitDomain.userAnswersReader.apply(Nil)
+//            ).run(userAnswers)
+//
+//            result.left.value.page mustBe OfficeOfTransitCountryPage(Index(0))
+//          }
+//        }
+//      }
+//
+//      "when declaration type is neither T nor T2" - {
+//
+//        val declarationType = arbitrary[String](arbitraryT1OrT2FDeclarationType).sample.value
+//
+//        "and country code for neither office of departure nor office of destination is in set CL112" - {
+//          "and no countries of routing are in set CL112" - {
+//            "and add office of transit yes/no unanswered" in {
+//              val userAnswers = emptyUserAnswers
+//                .setValue(OfficeOfDeparturePage, customsOffice)
+//                .setValue(OfficeOfDepartureInCL112Page, false)
+//                .setValue(DeclarationTypePage, declarationType)
+//                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+//                .setValue(OfficeOfDestinationPage, customsOffice)
+//                .setValue(OfficeOfDestinationInCL112Page, false)
+//                .setValue(BindingItineraryPage, true)
+//                .setValue(CountryOfRoutingPage(index), country)
+//                .setValue(CountryOfRoutingInCL112Page(index), false)
+//
+//              val result = UserAnswersReader[TransitDomain](
+//                TransitDomain.userAnswersReader.apply(Nil)
+//              ).run(userAnswers)
+//
+//              result.left.value.page mustBe AddOfficeOfTransitYesNoPage
+//            }
+//          }
+//        }
+//      }
+//    }
   }
 }
