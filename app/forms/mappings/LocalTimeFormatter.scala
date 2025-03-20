@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import forms.mappings.Field.*
+import forms.mappings.LocalDateTimeFormatter.*
 import models.RichString
 import play.api.data.FormError
 import play.api.data.format.Formatter
@@ -30,25 +30,12 @@ private[mappings] class LocalTimeFormatter(
 ) extends Formatter[LocalTime]
     with LocalDateTimeFormatter {
 
-  private def toTime(key: String, hour: Int, minute: Int): Either[Seq[FormError], LocalTime] =
-    Try(LocalTime.of(hour, minute, 0)) match {
-      case Success(time) =>
-        Right(time)
-      case Failure(_) =>
-        Left(
-          Seq(
-            FieldError(HourField, invalidError).toFormError(key),
-            FieldError(MinuteField, invalidError).toFormError(key)
-          )
-        )
-    }
-
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] = {
-    def bind(fieldKey: String): Either[Seq[FormError], String] =
-      stringFormatter(requiredKey, Seq(fieldKey))(_.removeSpaces()).bind(s"$key${fieldKey.capitalize}", data)
+    def bind(field: Field): Either[Seq[FormError], String] =
+      stringFormatter(requiredKey, Seq(field.key))(_.removeSpaces()).bind(field.id(key), data)
 
     def bindHour: Either[FieldError, Int] =
-      bind(HourField.key) match {
+      bind(HourField) match {
         case Left(_) =>
           Left(FieldError(HourField, requiredError))
         case Right(value) =>
@@ -61,7 +48,7 @@ private[mappings] class LocalTimeFormatter(
       }
 
     def bindMinute: Either[FieldError, Int] =
-      bind(MinuteField.key) match {
+      bind(MinuteField) match {
         case Left(_) =>
           Left(FieldError(MinuteField, requiredError))
         case Right(value) =>
@@ -73,9 +60,22 @@ private[mappings] class LocalTimeFormatter(
           }
       }
 
+    def toTime(hour: Int, minute: Int): Either[Seq[FormError], LocalTime] =
+      Try(LocalTime.of(hour, minute, 0)) match {
+        case Success(time) =>
+          Right(time)
+        case Failure(_) =>
+          Left(
+            Seq(
+              FieldError(HourField, invalidError).toFormError(key),
+              FieldError(MinuteField, invalidError).toFormError(key)
+            )
+          )
+      }
+
     (bindHour, bindMinute) match {
       case (Right(hour), Right(minute)) =>
-        toTime(key, hour, minute)
+        toTime(hour, minute)
       case (hourBinding, minuteBinding) =>
         Left(Seq(hourBinding, minuteBinding).toFormErrors(key))
     }
@@ -83,8 +83,8 @@ private[mappings] class LocalTimeFormatter(
 
   override def unbind(key: String, value: LocalTime): Map[String, String] =
     Map(
-      s"$key${HourField.key.capitalize}"   -> value.getHour.toString,
-      s"$key${MinuteField.key.capitalize}" -> value.getMinute.toString
+      HourField.id(key)   -> value.getHour.toString,
+      MinuteField.id(key) -> value.getMinute.toString
     )
 }
 

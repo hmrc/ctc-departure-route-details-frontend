@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import forms.mappings.Error.*
+import forms.mappings.LocalDateTimeFormatter.Field
 import play.api.data.FormError
 
 trait LocalDateTimeFormatter extends Formatters {
@@ -42,6 +42,49 @@ trait LocalDateTimeFormatter extends Formatters {
           case _                                   => Nil
         }
   }
+
+  sealed trait Error {
+    val key: String
+  }
+
+  case class RequiredError(key: String) extends Error
+
+  case class InvalidError(key: String) extends Error
+
+  case class FieldError(field: Field, error: Error, args: Any*) {
+
+    val messageKey: String = s"${error.key}.${field.key}"
+
+    def toFormError(key: String): FormError =
+      FormError(key, messageKey, args :+ field.key)
+  }
 }
 
-object LocalDateTimeFormatter {}
+object LocalDateTimeFormatter {
+
+  sealed trait Field {
+    val key: String
+
+    def id(field: String): String = s"$field${key.capitalize}"
+  }
+
+  case object MinuteField extends Field {
+    override val key: String = "minute"
+  }
+
+  case object HourField extends Field {
+    override val key: String = "hour"
+  }
+
+  case object DayField extends Field {
+    override val key: String = "day"
+  }
+
+  case object MonthField extends Field {
+    override val key: String = "month"
+  }
+
+  case object YearField extends Field {
+    override val key: String = "year"
+  }
+}

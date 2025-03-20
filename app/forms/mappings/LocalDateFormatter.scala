@@ -16,8 +16,7 @@
 
 package forms.mappings
 
-import forms.mappings.Error.*
-import forms.mappings.Field.*
+import forms.mappings.LocalDateTimeFormatter.*
 import models.RichString
 import play.api.data.FormError
 import play.api.data.format.Formatter
@@ -31,34 +30,26 @@ private[mappings] class LocalDateFormatter(
 ) extends Formatter[LocalDate]
     with LocalDateTimeFormatter {
 
-  private def toDate(key: String, day: Int, month: Month, year: Year): Either[Seq[FormError], LocalDate] =
-    Try(LocalDate.of(year.getValue, month, day)) match {
-      case Success(date) =>
-        Right(date)
-      case Failure(_) =>
-        lazy val days = month.length(year.isLeap)
-        Left(Seq(FieldError(DayField, invalidError, days).toFormError(key)))
-    }
-
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
-    def bind(fieldKey: String): Either[Seq[FormError], String] =
-      stringFormatter(requiredKey, Seq(fieldKey))(_.removeSpaces()).bind(s"$key${fieldKey.capitalize}", data)
+    def bind(field: Field): Either[Seq[FormError], String] =
+      stringFormatter(requiredKey, Seq(field.key))(_.removeSpaces()).bind(field.id(key), data)
 
     def bindDay: Either[FieldError, Int] =
-      bind(DayField.key) match {
+      bind(DayField) match {
         case Left(_) =>
           Left(FieldError(DayField, RequiredError(requiredKey)))
         case Right(value) =>
+          val days = 31
           Try(Integer.parseInt(value)) match {
-            case Success(day) if 1 to 31 contains day =>
+            case Success(day) if 1 to days contains day =>
               Right(day)
             case _ =>
-              Left(FieldError(DayField, invalidError, 31))
+              Left(FieldError(DayField, invalidError, days))
           }
       }
 
     def bindMonth: Either[FieldError, Month] =
-      bind(MonthField.key) match {
+      bind(MonthField) match {
         case Left(_) =>
           Left(FieldError(MonthField, requiredError))
         case Right(value) =>
@@ -71,7 +62,7 @@ private[mappings] class LocalDateFormatter(
       }
 
     def bindYear: Either[FieldError, Year] =
-      bind(YearField.key) match {
+      bind(YearField) match {
         case Left(errors) =>
           Left(FieldError(YearField, requiredError))
         case Right(value) =>
@@ -83,9 +74,18 @@ private[mappings] class LocalDateFormatter(
           }
       }
 
+    def toDate(day: Int, month: Month, year: Year): Either[Seq[FormError], LocalDate] =
+      Try(LocalDate.of(year.getValue, month, day)) match {
+        case Success(date) =>
+          Right(date)
+        case Failure(_) =>
+          lazy val days = month.length(year.isLeap)
+          Left(Seq(FieldError(DayField, invalidError, days).toFormError(key)))
+      }
+
     (bindDay, bindMonth, bindYear) match {
       case (Right(day), Right(month), Right(year)) =>
-        toDate(key, day, month, year)
+        toDate(day, month, year)
       case (dayBinding, monthBinding, yearBinding) =>
         Left(Seq(dayBinding, monthBinding, yearBinding).toFormErrors(key))
     }
@@ -93,9 +93,9 @@ private[mappings] class LocalDateFormatter(
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(
-      s"$key${DayField.key.capitalize}"   -> value.getDayOfMonth.toString,
-      s"$key${MonthField.key.capitalize}" -> value.getMonthValue.toString,
-      s"$key${YearField.key.capitalize}"  -> value.getYear.toString
+      DayField.id(key)   -> value.getDayOfMonth.toString,
+      MonthField.id(key) -> value.getMonthValue.toString,
+      YearField.id(key)  -> value.getYear.toString
     )
 }
 
