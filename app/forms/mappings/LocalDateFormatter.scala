@@ -16,70 +16,90 @@
 
 package forms.mappings
 
-import forms.mappings.LocalDateFormatter.{dayField, fieldKeys, monthField, yearField}
+import forms.mappings.Error.*
+import forms.mappings.Field.*
+import models.RichString
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
-import java.time.LocalDate
+import java.time.{LocalDate, Month, Year}
 import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalDateFormatter(
-  invalidKey: String,
-  requiredKey: String
+  override val invalidKey: String,
+  override val requiredKey: String
 ) extends Formatter[LocalDate]
-    with Formatters {
+    with LocalDateTimeFormatter {
 
-  private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
-    Try(LocalDate.of(year, month, day)) match {
+  private def toDate(key: String, day: Int, month: Month, year: Year): Either[Seq[FormError], LocalDate] =
+    Try(LocalDate.of(year.getValue, month, day)) match {
       case Success(date) =>
         Right(date)
       case Failure(_) =>
-        Left(Seq(FormError(key, s"$invalidKey.all", fieldKeys)))
+        lazy val days = month.length(year.isLeap)
+        Left(Seq(FieldError(DayField, invalidError, days).toFormError(key)))
     }
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
-    def binding(fieldKey: String): Either[Seq[FormError], Int] =
-      intFormatter(requiredKey, invalidKey, invalidKey, Seq(fieldKey)).bind(s"$key${fieldKey.capitalize}", data)
+    def bind(fieldKey: String): Either[Seq[FormError], String] =
+      stringFormatter(requiredKey, Seq(fieldKey))(_.removeSpaces()).bind(s"$key${fieldKey.capitalize}", data)
 
-    val dayBinding   = binding(dayField)
-    val monthBinding = binding(monthField)
-    val yearBinding  = binding(yearField)
+    def bindDay: Either[FieldError, Int] =
+      bind(DayField.key) match {
+        case Left(_) =>
+          Left(FieldError(DayField, RequiredError(requiredKey)))
+        case Right(value) =>
+          Try(Integer.parseInt(value)) match {
+            case Success(day) if 1 to 31 contains day =>
+              Right(day)
+            case _ =>
+              Left(FieldError(DayField, invalidError, 31))
+          }
+      }
 
-    (dayBinding, monthBinding, yearBinding) match {
+    def bindMonth: Either[FieldError, Month] =
+      bind(MonthField.key) match {
+        case Left(_) =>
+          Left(FieldError(MonthField, requiredError))
+        case Right(value) =>
+          Try(Month.of(Integer.parseInt(value))) match {
+            case Success(month) =>
+              Right(month)
+            case _ =>
+              Left(FieldError(MonthField, invalidError))
+          }
+      }
+
+    def bindYear: Either[FieldError, Year] =
+      bind(YearField.key) match {
+        case Left(errors) =>
+          Left(FieldError(YearField, requiredError))
+        case Right(value) =>
+          Try(Year.of(Integer.parseInt(value))) match {
+            case Success(year) =>
+              Right(year)
+            case _ =>
+              Left(FieldError(YearField, invalidError))
+          }
+      }
+
+    (bindDay, bindMonth, bindYear) match {
       case (Right(day), Right(month), Right(year)) =>
         toDate(key, day, month, year)
-      case _ =>
-        Left {
-          Seq(dayBinding, monthBinding, yearBinding)
-            .collect {
-              case Left(formErrors) => formErrors
-            }
-            .flatten
-            .groupByPreserveOrder(_.message)
-            .map {
-              case (errorKey, formErrors) => errorKey -> formErrors.toSeq.flatMap(_.args)
-            }
-            .flatMap {
-              case (errorKey, args) if args.size == 3 => Seq(FormError(key, s"$errorKey.all", args))
-              case (errorKey, args) if args.size == 2 => Seq(FormError(key, s"$errorKey.multiple", args))
-              case (errorKey, args) if args.size == 1 => Seq(FormError(key, errorKey, args))
-              case _                                  => Nil
-            }
-        }
+      case (dayBinding, monthBinding, yearBinding) =>
+        Left(Seq(dayBinding, monthBinding, yearBinding).toFormErrors(key))
     }
   }
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(
-      s"${key}Day"   -> value.getDayOfMonth.toString,
-      s"${key}Month" -> value.getMonthValue.toString,
-      s"${key}Year"  -> value.getYear.toString
+      s"$key${DayField.key.capitalize}"   -> value.getDayOfMonth.toString,
+      s"$key${MonthField.key.capitalize}" -> value.getMonthValue.toString,
+      s"$key${YearField.key.capitalize}"  -> value.getYear.toString
     )
 }
 
 object LocalDateFormatter {
-  val dayField: String        = "day"
-  val monthField: String      = "month"
-  val yearField: String       = "year"
-  val fieldKeys: List[String] = List(dayField, monthField, yearField)
+
+  val fieldKeys: List[String] = List(DayField.key, MonthField.key, YearField.key)
 }

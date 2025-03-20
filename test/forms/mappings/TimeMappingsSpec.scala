@@ -73,7 +73,7 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
     val result = form.bind(Map.empty[String, String])
 
-    result.errors must contain only FormError("value", "error.required.all", List("hour", "minute"))
+    result.errors must contain only FormError("value", "error.required.multiple", List("hour", "minute"))
   }
 
   "must fail to bind a time with a missing minute" in {
@@ -147,7 +147,7 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors mustBe Seq(
+        result.errors mustEqual Seq(
           FormError("value", "error.required.hour", List("hour")),
           FormError("value", "error.invalid.minute", List("minute"))
         )
@@ -165,25 +165,68 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors mustBe Seq(
+        result.errors mustEqual Seq(
           FormError("value", "error.invalid.hour", List("hour")),
           FormError("value", "error.required.minute", List("minute"))
         )
     }
   }
 
-  "must fail to bind an invalid minute and hour" in {
+  "must fail to bind an invalid time" - {
 
-    forAll(invalidField -> "invalid minute", invalidField -> "invalid hour") {
-      (minute, hour) =>
-        val data = Map(
-          "valueHour"   -> hour,
-          "valueMinute" -> minute
-        )
+    "when time contains an hour not between 0 and 23" in {
 
-        val result = form.bind(data)
+      val data = Map(
+        "valueHour"   -> "24",
+        "valueMinute" -> "13"
+      )
 
-        result.errors must contain only FormError("value", "error.invalid.all", List("hour", "minute"))
+      val result = form.bind(data)
+
+      result.errors mustEqual Seq(
+        FormError("value", "error.invalid.hour", List("hour"))
+      )
+    }
+
+    "when time contains a minute not between 0 and 59" in {
+
+      val data = Map(
+        "valueHour"   -> "12",
+        "valueMinute" -> "60"
+      )
+
+      val result = form.bind(data)
+
+      result.errors mustEqual Seq(
+        FormError("value", "error.invalid.minute", List("minute"))
+      )
+    }
+
+    "when hour and minute are both invalid numbers" in {
+
+      val data = Map(
+        "valueHour"   -> "24",
+        "valueMinute" -> "60"
+      )
+
+      val result = form.bind(data)
+
+      result.errors must contain only FormError("value", "error.invalid.multiple", List("hour", "minute"))
+    }
+
+    "when hour and minute are invalid characters" in {
+
+      forAll(invalidField -> "invalid minute", invalidField -> "invalid hour") {
+        (minute, hour) =>
+          val data = Map(
+            "valueHour"   -> hour,
+            "valueMinute" -> minute
+          )
+
+          val result = form.bind(data)
+
+          result.errors must contain only FormError("value", "error.invalid.multiple", List("hour", "minute"))
+      }
     }
   }
 
@@ -193,8 +236,8 @@ class TimeMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
       time =>
         val filledForm = form.fill(time)
 
-        filledForm("valueMinute").value.value mustEqual time.getMinute.toString
         filledForm("valueHour").value.value mustEqual time.getHour.toString
+        filledForm("valueMinute").value.value mustEqual time.getMinute.toString
     }
   }
 }
