@@ -44,15 +44,12 @@ private[mappings] class LocalDateFormatter(
       _ => true
     }
 
-  private def toDate(day: Int, month: Month, year: Year): Either[Seq[FormError], LocalDate] =
-    Right(LocalDate.of(year.getValue, month, day))
-
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] =
     (bindMonth(key, data), bindYear(key, data)) match {
       case (Right(month), Right(year)) =>
         bindDay(key, data, month, year.isLeap) match {
           case Right(day) =>
-            toDate(day, month, year)
+            Right(LocalDate.of(year.getValue, month, day))
           case dayBinding @ Left(_) =>
             Left(Seq(dayBinding).toFormErrors(key))
         }

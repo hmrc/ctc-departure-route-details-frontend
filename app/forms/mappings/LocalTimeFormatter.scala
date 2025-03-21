@@ -34,13 +34,10 @@ private[mappings] class LocalTimeFormatter(
   private def bindMinute(key: String, data: Map[String, String]): Either[FieldError, Int] =
     bind(key, data, MinuteField)(identity)(0 to 59 contains _)
 
-  private def toTime(hour: Int, minute: Int): Either[Seq[FormError], LocalTime] =
-    Right(LocalTime.of(hour, minute, 0))
-
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] =
     (bindHour(key, data), bindMinute(key, data)) match {
       case (Right(hour), Right(minute)) =>
-        toTime(hour, minute)
+        Right(LocalTime.of(hour, minute, 0))
       case (hourBinding, minuteBinding) =>
         Left(Seq(hourBinding, minuteBinding).toFormErrors(key))
     }
