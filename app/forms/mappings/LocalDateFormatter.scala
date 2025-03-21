@@ -57,12 +57,8 @@ private[mappings] class LocalDateFormatter(
             Left(Seq(dayError.toFormError(key)))
         }
       case (Right(month), yearBinding @ Left(_)) =>
-        bindDay(key, data, month, false) match {
-          case Right(_) =>
-            Left(Seq(yearBinding).toFormErrors(key))
-          case dayBinding @ Left(_) =>
-            Left(Seq(dayBinding, yearBinding).toFormErrors(key))
-        }
+        val dayBinding = bindDay(key, data, month, false)
+        Left(Seq(dayBinding, yearBinding).toFormErrors(key))
       case (monthBinding, yearBinding) =>
         val dayBinding = bindDay(key, data, 31)
         Left(Seq(dayBinding, monthBinding, yearBinding).toFormErrors(key))
