@@ -19,7 +19,7 @@ package controllers.transit.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import forms.SelectableFormProvider
-import forms.SelectableFormProvider.OfficeFormProvider
+import forms.SelectableFormProvider.CountryFormProvider
 import generators.Generators
 import models.reference.CustomsOffice
 import models.{NormalMode, SelectableList, UserAnswers}
@@ -33,7 +33,7 @@ import play.api.data.FormError
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.CustomsOfficesService
 import views.html.transit.index.OfficeOfTransitCountryView
 
@@ -45,7 +45,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
   private val country2    = arbitraryCountry.arbitrary.sample.get
   private val countryList = SelectableList(Seq(country1, country2))
 
-  private val formProvider = new OfficeFormProvider()
+  private val formProvider = new CountryFormProvider()
   private val form         = formProvider.apply("transit.index.officeOfTransitCountry", countryList)
   private val field        = formProvider.field
   private val mode         = NormalMode
@@ -160,7 +160,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
 
       setExistingUserAnswers(emptyUserAnswers)
 
-      val request   = FakeRequest(POST, officeOfTransitCountryRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val request   = FakeRequest(POST, officeOfTransitCountryRoute).withFormUrlEncodedBody((field, "invalid value"))
       val boundForm = form.bind(Map(field -> "invalid value"))
 
       val result = route(app, request).value

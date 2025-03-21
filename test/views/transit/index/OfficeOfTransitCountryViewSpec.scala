@@ -17,7 +17,7 @@
 package views.transit.index
 
 import forms.SelectableFormProvider
-import forms.SelectableFormProvider.OfficeFormProvider
+import forms.SelectableFormProvider.{CountryFormProvider, OfficeFormProvider}
 import models.reference.Country
 import models.{NormalMode, SelectableList}
 import org.scalacheck.Arbitrary
@@ -27,7 +27,7 @@ import views.behaviours.InputSelectViewBehaviours
 import views.html.transit.index.OfficeOfTransitCountryView
 
 class OfficeOfTransitCountryViewSpec extends InputSelectViewBehaviours[Country] {
-  private val formProvider         = new OfficeFormProvider()
+  private val formProvider         = new CountryFormProvider()
   override def form: Form[Country] = formProvider.apply(prefix, SelectableList(values))
 
   override val field: String = formProvider.field
