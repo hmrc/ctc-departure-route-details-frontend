@@ -401,6 +401,22 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
       )
     }
 
+    "when date is 31st of a month with max 29 days in an unknown year" in {
+
+      val data = Map(
+        "valueDay"   -> "31",
+        "valueMonth" -> "02",
+        "valueYear"  -> ""
+      )
+
+      val result = form.bind(data)
+
+      result.errors mustEqual Seq(
+        FormError("value", "error.invalid.day", List(29, "day")),
+        FormError("value", "error.required.year", List("year"))
+      )
+    }
+
     "when date contains a month not between 1 and 12" in {
 
       val data = Map(
