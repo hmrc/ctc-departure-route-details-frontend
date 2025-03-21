@@ -18,6 +18,7 @@ package controllers.exit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.OfficeFormProvider
 import generators.Generators
 import models.{NormalMode, SelectableList}
 import navigation.OfficeOfExitNavigatorProvider
@@ -27,7 +28,7 @@ import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.CustomsOfficesService
 import views.html.exit.index.OfficeOfExitView
 
@@ -40,8 +41,9 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
   private val customsOfficeList = SelectableList(Seq(customsOffice1, customsOffice2))
   private val country           = arbitraryCountry.arbitrary.sample.get
 
-  private val formProvider = new SelectableFormProvider()
-  private val form         = formProvider("exit.index.officeOfExit", customsOfficeList, country.description)
+  private val formProvider = new OfficeFormProvider()
+  private val form         = formProvider.apply("exit.index.officeOfExit", customsOfficeList, country.description)
+  private val field        = formProvider.field
   private val mode         = NormalMode
 
   private val mockCustomsOfficesService: CustomsOfficesService = mock[CustomsOfficesService]
@@ -86,7 +88,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
       val result = route(app, request).value
 
-      val filledForm = form.bind(Map("value" -> customsOffice1.id))
+      val filledForm = form.bind(Map(field -> customsOffice1.id))
 
       val view = injector.instanceOf[OfficeOfExitView]
 
@@ -104,7 +106,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
       setExistingUserAnswers(baseAnswers)
 
       val request = FakeRequest(POST, officeOfExitRoute)
-        .withFormUrlEncodedBody(("value", customsOffice1.id))
+        .withFormUrlEncodedBody((field, customsOffice1.id))
 
       val result = route(app, request).value
 
@@ -120,7 +122,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
       setExistingUserAnswers(baseAnswers)
 
       val request   = FakeRequest(POST, officeOfExitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val boundForm = form.bind(Map(field -> "invalid value"))
 
       val result = route(app, request).value
 
@@ -149,7 +151,7 @@ class OfficeOfExitControllerSpec extends SpecBase with AppWithDefaultMockFixture
       setNoExistingUserAnswers()
 
       val request = FakeRequest(POST, officeOfExitRoute)
-        .withFormUrlEncodedBody(("value", customsOffice1.id))
+        .withFormUrlEncodedBody((field, customsOffice1.id))
 
       val result = route(app, request).value
 

@@ -21,6 +21,7 @@
 @import models.Selectable._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import viewModels.components.InputSelectViewModel._
+@import forms.SelectableFormProvider.OfficeFormProvider.field
 @import views.html.components.{Button, ErrorSummary, InputSelect}
 
 @this(
@@ -44,7 +45,7 @@
         @errorSummary(form.errors)
 
         @inputSelect(
-            field = form("value"),
+            field = form(field),
             selectType = OrdinarySelect(
                 heading = messages("exit.index.officeOfExit.heading", countryName),
                 caption = Some(messages("exit.caption"))

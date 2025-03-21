@@ -17,9 +17,10 @@
 package controllers.locationOfGoods
 
 import config.PhaseConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.CountryFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
 import pages.locationOfGoods.CountryPage
@@ -38,7 +39,7 @@ class CountryController @Inject() (
   sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
-  formProvider: SelectableFormProvider,
+  formProvider: CountryFormProvider,
   countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   view: CountryView

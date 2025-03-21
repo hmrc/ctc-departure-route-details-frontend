@@ -17,9 +17,10 @@
 package controllers.routing.index
 
 import config.PhaseConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.CountryFormProvider
 import models.reference.Country
 import models.{Index, LocalReferenceNumber, Mode, SelectableList}
 import navigation.{CountryOfRoutingNavigatorProvider, UserAnswersNavigator}
@@ -40,7 +41,7 @@ class CountryOfRoutingController @Inject() (
   sessionRepository: SessionRepository,
   navigatorProvider: CountryOfRoutingNavigatorProvider,
   actions: Actions,
-  formProvider: SelectableFormProvider,
+  formProvider: CountryFormProvider,
   countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,
   view: CountryOfRoutingView
