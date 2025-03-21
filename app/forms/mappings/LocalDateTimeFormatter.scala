@@ -27,9 +27,6 @@ trait LocalDateTimeFormatter extends Formatters {
   val invalidKey: String
   val requiredKey: String
 
-  val invalidError: Error  = InvalidError(invalidKey)
-  val requiredError: Error = RequiredError(requiredKey)
-
   def bind[T](
     key: String,
     data: Map[String, String],
@@ -38,13 +35,13 @@ trait LocalDateTimeFormatter extends Formatters {
   )(f: Int => T)(predicate: T => Boolean): Either[FieldError, T] =
     stringFormatter(requiredKey, Seq(field.key))(_.removeSpaces()).bind(field.id(key), data) match {
       case Left(errors) =>
-        Left(FieldError(field, requiredError))
+        Left(FieldError(field, RequiredError(requiredKey)))
       case Right(value) =>
         Try(f(Integer.parseInt(value))) match {
           case Success(t) if predicate(t) =>
             Right(t)
           case _ =>
-            Left(FieldError(field, invalidError, args*))
+            Left(FieldError(field, InvalidError(invalidKey), args*))
         }
     }
 
