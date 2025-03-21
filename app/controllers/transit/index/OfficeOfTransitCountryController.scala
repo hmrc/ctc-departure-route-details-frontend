@@ -18,9 +18,10 @@ package controllers.transit.index
 
 import config.PhaseConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.OfficeFormProvider
 import models.reference.Country
 import models.requests.DataRequest
 import models.{Index, LocalReferenceNumber, Mode, SelectableList}
@@ -28,6 +29,7 @@ import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
 import pages.QuestionPage
 import pages.transit.index.{InferredOfficeOfTransitCountryPage, OfficeOfTransitCountryPage}
 import play.api.data.FormError
+import forms.SelectableFormProvider.OfficeFormProvider.field
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
@@ -43,7 +45,7 @@ class OfficeOfTransitCountryController @Inject() (
   sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfTransitNavigatorProvider,
   actions: Actions,
-  formProvider: SelectableFormProvider,
+  formProvider: OfficeFormProvider,
   countriesService: CountriesService,
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
@@ -87,7 +89,7 @@ class OfficeOfTransitCountryController @Inject() (
                   }
                   .recover {
                     case _: NoReferenceDataFoundException =>
-                      val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
+                      val formWithErrors = form.withError(FormError(field, s"$prefix.error.noOffices"))
                       BadRequest(view(formWithErrors, lrn, countryList.values, mode, index))
                   }
             )

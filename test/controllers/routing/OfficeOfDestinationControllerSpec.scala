@@ -18,6 +18,7 @@ package controllers.routing
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.OfficeFormProvider
 import generators.Generators
 import models.reference.{Country, CountryCode, CustomsOffice}
 import models.{NormalMode, SelectableList, UserAnswers}
@@ -32,7 +33,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.CustomsOfficesService
 import views.html.routing.OfficeOfDestinationView
 
@@ -45,8 +46,9 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
   private val customsOfficeList = SelectableList(Seq(customsOffice1, customsOffice2))
   private val country           = Country(CountryCode("FR"), "France")
 
-  private val formProvider = new SelectableFormProvider()
-  private val form         = formProvider("routing.officeOfDestination", customsOfficeList)
+  private val formProvider = new OfficeFormProvider()
+  private val form         = formProvider.apply("routing.officeOfDestination", customsOfficeList)
+  private val field        = formProvider.field
   private val mode         = NormalMode
 
   private val mockCustomsOfficesService: CustomsOfficesService = mock[CustomsOfficesService]
@@ -91,7 +93,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
 
       val result = route(app, request).value
 
-      val filledForm = form.bind(Map("value" -> customsOffice1.id))
+      val filledForm = form.bind(Map(field -> customsOffice1.id))
 
       val view = injector.instanceOf[OfficeOfDestinationView]
 
@@ -117,7 +119,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
           setExistingUserAnswers(userAnswers)
 
           val request = FakeRequest(POST, officeOfDestinationRoute)
-            .withFormUrlEncodedBody(("value", customsOffice.id))
+            .withFormUrlEncodedBody((field, customsOffice.id))
 
           val result = route(app, request).value
 
@@ -157,7 +159,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
       setExistingUserAnswers(userAnswers)
 
       val request   = FakeRequest(POST, officeOfDestinationRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val boundForm = form.bind(Map(field -> "invalid value"))
 
       val result = route(app, request).value
 
@@ -186,7 +188,7 @@ class OfficeOfDestinationControllerSpec extends SpecBase with AppWithDefaultMock
       setNoExistingUserAnswers()
 
       val request = FakeRequest(POST, officeOfDestinationRoute)
-        .withFormUrlEncodedBody(("value", customsOffice1.id))
+        .withFormUrlEncodedBody((field, customsOffice1.id))
 
       val result = route(app, request).value
 

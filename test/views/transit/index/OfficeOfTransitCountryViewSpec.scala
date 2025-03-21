@@ -17,6 +17,7 @@
 package views.transit.index
 
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.OfficeFormProvider
 import models.reference.Country
 import models.{NormalMode, SelectableList}
 import org.scalacheck.Arbitrary
@@ -26,8 +27,10 @@ import views.behaviours.InputSelectViewBehaviours
 import views.html.transit.index.OfficeOfTransitCountryView
 
 class OfficeOfTransitCountryViewSpec extends InputSelectViewBehaviours[Country] {
+  private val formProvider         = new OfficeFormProvider()
+  override def form: Form[Country] = formProvider.apply(prefix, SelectableList(values))
 
-  override def form: Form[Country] = new SelectableFormProvider()(prefix, SelectableList(values))
+  override val field: String = formProvider.field
 
   override def applyView(form: Form[Country]): HtmlFormat.Appendable =
     injector.instanceOf[OfficeOfTransitCountryView].apply(form, lrn, values, NormalMode, index)(fakeRequest, messages)
