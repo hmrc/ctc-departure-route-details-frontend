@@ -17,7 +17,6 @@
 package forms.mappings
 
 import forms.mappings.LocalDateTimeFormatter.*
-import models.RichString
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -31,34 +30,11 @@ private[mappings] class LocalTimeFormatter(
     with LocalDateTimeFormatter {
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] = {
-    def bind(field: Field): Either[Seq[FormError], String] =
-      stringFormatter(requiredKey, Seq(field.key))(_.removeSpaces()).bind(field.id(key), data)
-
     def bindHour: Either[FieldError, Int] =
-      bind(HourField) match {
-        case Left(_) =>
-          Left(FieldError(HourField, requiredError))
-        case Right(value) =>
-          Try(Integer.parseInt(value)) match {
-            case Success(hour) if 0 to 23 contains hour =>
-              Right(hour)
-            case _ =>
-              Left(FieldError(HourField, invalidError))
-          }
-      }
+      bind(key, data, HourField)(identity)(0 to 23 contains _)
 
     def bindMinute: Either[FieldError, Int] =
-      bind(MinuteField) match {
-        case Left(_) =>
-          Left(FieldError(MinuteField, requiredError))
-        case Right(value) =>
-          Try(Integer.parseInt(value)) match {
-            case Success(minute) if 0 to 59 contains minute =>
-              Right(minute)
-            case _ =>
-              Left(FieldError(MinuteField, invalidError))
-          }
-      }
+      bind(key, data, MinuteField)(identity)(0 to 59 contains _)
 
     def toTime(hour: Int, minute: Int): Either[Seq[FormError], LocalTime] =
       Try(LocalTime.of(hour, minute, 0)) match {

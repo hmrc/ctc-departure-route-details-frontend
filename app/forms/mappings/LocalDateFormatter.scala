@@ -17,7 +17,6 @@
 package forms.mappings
 
 import forms.mappings.LocalDateTimeFormatter.*
-import models.RichString
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -31,47 +30,19 @@ private[mappings] class LocalDateFormatter(
     with LocalDateTimeFormatter {
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
-    def bind(field: Field): Either[Seq[FormError], String] =
-      stringFormatter(requiredKey, Seq(field.key))(_.removeSpaces()).bind(field.id(key), data)
-
-    def bindDay: Either[FieldError, Int] =
-      bind(DayField) match {
-        case Left(_) =>
-          Left(FieldError(DayField, RequiredError(requiredKey)))
-        case Right(value) =>
-          val days = 31
-          Try(Integer.parseInt(value)) match {
-            case Success(day) if 1 to days contains day =>
-              Right(day)
-            case _ =>
-              Left(FieldError(DayField, invalidError, days))
-          }
-      }
+    def bindDay: Either[FieldError, Int] = {
+      val days = 31
+      bind(key, data, DayField, days)(identity)(1 to days contains _)
+    }
 
     def bindMonth: Either[FieldError, Month] =
-      bind(MonthField) match {
-        case Left(_) =>
-          Left(FieldError(MonthField, requiredError))
-        case Right(value) =>
-          Try(Month.of(Integer.parseInt(value))) match {
-            case Success(month) =>
-              Right(month)
-            case _ =>
-              Left(FieldError(MonthField, invalidError))
-          }
+      bind(key, data, MonthField)(Month.of) {
+        _ => true
       }
 
     def bindYear: Either[FieldError, Year] =
-      bind(YearField) match {
-        case Left(errors) =>
-          Left(FieldError(YearField, requiredError))
-        case Right(value) =>
-          Try(Year.of(Integer.parseInt(value))) match {
-            case Success(year) =>
-              Right(year)
-            case _ =>
-              Left(FieldError(YearField, invalidError))
-          }
+      bind(key, data, YearField)(Year.of) {
+        _ => true
       }
 
     def toDate(day: Int, month: Month, year: Year): Either[Seq[FormError], LocalDate] =

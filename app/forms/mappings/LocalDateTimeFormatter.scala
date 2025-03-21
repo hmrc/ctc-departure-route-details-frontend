@@ -17,7 +17,10 @@
 package forms.mappings
 
 import forms.mappings.LocalDateTimeFormatter.Field
+import models.RichString
 import play.api.data.FormError
+
+import scala.util.{Success, Try}
 
 trait LocalDateTimeFormatter extends Formatters {
 
@@ -26,6 +29,24 @@ trait LocalDateTimeFormatter extends Formatters {
 
   val invalidError: Error  = InvalidError(invalidKey)
   val requiredError: Error = RequiredError(requiredKey)
+
+  def bind[T](
+    key: String,
+    data: Map[String, String],
+    field: Field,
+    args: Any*
+  )(f: Int => T)(predicate: T => Boolean): Either[FieldError, T] =
+    stringFormatter(requiredKey, Seq(field.key))(_.removeSpaces()).bind(field.id(key), data) match {
+      case Left(errors) =>
+        Left(FieldError(field, requiredError))
+      case Right(value) =>
+        Try(f(Integer.parseInt(value))) match {
+          case Success(t) if predicate(t) =>
+            Right(t)
+          case _ =>
+            Left(FieldError(field, invalidError, args*))
+        }
+    }
 
   implicit class RichBindings(value: Seq[Either[FieldError, ?]]) {
 
@@ -47,9 +68,9 @@ trait LocalDateTimeFormatter extends Formatters {
     val key: String
   }
 
-  case class RequiredError(key: String) extends Error
+  private case class RequiredError(key: String) extends Error
 
-  case class InvalidError(key: String) extends Error
+  private case class InvalidError(key: String) extends Error
 
   case class FieldError(field: Field, error: Error, args: Any*) {
 
