@@ -54,7 +54,7 @@ class IdentificationController @Inject() (
   private type Request = SpecificDataRequestProvider1[LocationType]#SpecificDataRequest[?]
 
   private def form(locationOfGoodsIdentification: Seq[LocationOfGoodsIdentification]): Form[LocationOfGoodsIdentification] =
-    formProvider("locationOfGoods.locationOfGoodsIdentificationType", locationOfGoodsIdentification)
+    formProvider("locationOfGoods.identification", locationOfGoodsIdentification)
 
   def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions
     .requireData(lrn)
