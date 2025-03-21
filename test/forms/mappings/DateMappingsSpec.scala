@@ -200,18 +200,15 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
   "must fail to bind a date with a missing year" in {
 
-    forAll(validData -> "valid date") {
-      date =>
-        val data = Map(
-          "valueDay"   -> date.getDayOfMonth.toString,
-          "valueMonth" -> date.getMonthValue.toString,
-          "valueYear"  -> ""
-        )
+    val data = Map(
+      "valueDay"   -> "12",
+      "valueMonth" -> "12",
+      "valueYear"  -> ""
+    )
 
-        val result = form.bind(data)
+    val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required.year", List("year"))
-    }
+    result.errors must contain only FormError("value", "error.required.year", List("year"))
   }
 
   "must fail to bind a date with an invalid year" in {

@@ -53,8 +53,8 @@ private[mappings] class LocalDateFormatter(
         bindDay(key, data, month, year.isLeap) match {
           case Right(day) =>
             toDate(day, month, year)
-          case Left(dayError) =>
-            Left(Seq(dayError.toFormError(key)))
+          case dayBinding @ Left(_) =>
+            Left(Seq(dayBinding).toFormErrors(key))
         }
       case (Right(month), yearBinding @ Left(_)) =>
         val dayBinding = bindDay(key, data, month, false)

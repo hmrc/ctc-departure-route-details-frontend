@@ -75,9 +75,6 @@ trait LocalDateTimeFormatter extends Formatters {
   case class FieldError(field: Field, error: Error, args: Any*) {
 
     val messageKey: String = s"${error.key}.${field.key}"
-
-    def toFormError(key: String): FormError =
-      FormError(key, messageKey, args :+ field.key)
   }
 }
 
