@@ -21,7 +21,6 @@ import play.api.data.FormError
 import play.api.data.format.Formatter
 
 import java.time.LocalTime
-import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalTimeFormatter(
   override val invalidKey: String,
@@ -29,33 +28,22 @@ private[mappings] class LocalTimeFormatter(
 ) extends Formatter[LocalTime]
     with LocalDateTimeFormatter {
 
-  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] = {
-    def bindHour: Either[FieldError, Int] =
-      bind(key, data, HourField)(identity)(0 to 23 contains _)
+  private def bindHour(key: String, data: Map[String, String]): Either[FieldError, Int] =
+    bind(key, data, HourField)(identity)(0 to 23 contains _)
 
-    def bindMinute: Either[FieldError, Int] =
-      bind(key, data, MinuteField)(identity)(0 to 59 contains _)
+  private def bindMinute(key: String, data: Map[String, String]): Either[FieldError, Int] =
+    bind(key, data, MinuteField)(identity)(0 to 59 contains _)
 
-    def toTime(hour: Int, minute: Int): Either[Seq[FormError], LocalTime] =
-      Try(LocalTime.of(hour, minute, 0)) match {
-        case Success(time) =>
-          Right(time)
-        case Failure(_) =>
-          Left(
-            Seq(
-              FieldError(HourField, invalidError).toFormError(key),
-              FieldError(MinuteField, invalidError).toFormError(key)
-            )
-          )
-      }
+  private def toTime(hour: Int, minute: Int): Either[Seq[FormError], LocalTime] =
+    Right(LocalTime.of(hour, minute, 0))
 
-    (bindHour, bindMinute) match {
+  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] =
+    (bindHour(key, data), bindMinute(key, data)) match {
       case (Right(hour), Right(minute)) =>
         toTime(hour, minute)
       case (hourBinding, minuteBinding) =>
         Left(Seq(hourBinding, minuteBinding).toFormErrors(key))
     }
-  }
 
   override def unbind(key: String, value: LocalTime): Map[String, String] =
     Map(

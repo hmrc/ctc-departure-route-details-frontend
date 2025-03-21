@@ -122,7 +122,9 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.invalid.day", List(31, "day"))
+        val days = date.getMonth.length(date.isLeapYear)
+
+        result.errors must contain only FormError("value", "error.invalid.day", List(days, "day"))
     }
   }
 
@@ -369,6 +371,36 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
       result.errors mustEqual Seq(
         FormError("value", "error.invalid.day", List(30, "day"))
+      )
+    }
+
+    "when date is 32nd of a month with only 28 days" in {
+
+      val data = Map(
+        "valueDay"   -> "32",
+        "valueMonth" -> "02",
+        "valueYear"  -> "2025"
+      )
+
+      val result = form.bind(data)
+
+      result.errors mustEqual Seq(
+        FormError("value", "error.invalid.day", List(28, "day"))
+      )
+    }
+
+    "when date is 31st of a month with only 28 days in an invalid year" in {
+
+      val data = Map(
+        "valueDay"   -> "31",
+        "valueMonth" -> "02",
+        "valueYear"  -> "foo"
+      )
+
+      val result = form.bind(data)
+
+      result.errors mustEqual Seq(
+        FormError("value", "error.invalid.multiple", List("day", "year"))
       )
     }
 

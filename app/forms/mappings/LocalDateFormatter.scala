@@ -21,7 +21,6 @@ import play.api.data.FormError
 import play.api.data.format.Formatter
 
 import java.time.{LocalDate, Month, Year}
-import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalDateFormatter(
   override val invalidKey: String,
@@ -29,38 +28,45 @@ private[mappings] class LocalDateFormatter(
 ) extends Formatter[LocalDate]
     with LocalDateTimeFormatter {
 
-  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
-    def bindDay: Either[FieldError, Int] = {
-      val days = 31
-      bind(key, data, DayField, days)(identity)(1 to days contains _)
+  private def bindDay(key: String, data: Map[String, String], month: Month, isLeap: Boolean): Either[FieldError, Int] =
+    bindDay(key, data, month.length(isLeap))
+
+  private def bindDay(key: String, data: Map[String, String], days: Int): Either[FieldError, Int] =
+    bind(key, data, DayField, days)(identity)(1 to days contains _)
+
+  private def bindMonth(key: String, data: Map[String, String]): Either[FieldError, Month] =
+    bind(key, data, MonthField)(Month.of) {
+      _ => true
     }
 
-    def bindMonth: Either[FieldError, Month] =
-      bind(key, data, MonthField)(Month.of) {
-        _ => true
-      }
+  private def bindYear(key: String, data: Map[String, String]): Either[FieldError, Year] =
+    bind(key, data, YearField)(Year.of) {
+      _ => true
+    }
 
-    def bindYear: Either[FieldError, Year] =
-      bind(key, data, YearField)(Year.of) {
-        _ => true
-      }
+  private def toDate(day: Int, month: Month, year: Year): Either[Seq[FormError], LocalDate] =
+    Right(LocalDate.of(year.getValue, month, day))
 
-    def toDate(day: Int, month: Month, year: Year): Either[Seq[FormError], LocalDate] =
-      Try(LocalDate.of(year.getValue, month, day)) match {
-        case Success(date) =>
-          Right(date)
-        case Failure(_) =>
-          lazy val days = month.length(year.isLeap)
-          Left(Seq(FieldError(DayField, invalidError, days).toFormError(key)))
-      }
-
-    (bindDay, bindMonth, bindYear) match {
-      case (Right(day), Right(month), Right(year)) =>
-        toDate(day, month, year)
-      case (dayBinding, monthBinding, yearBinding) =>
+  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] =
+    (bindMonth(key, data), bindYear(key, data)) match {
+      case (Right(month), Right(year)) =>
+        bindDay(key, data, month, year.isLeap) match {
+          case Right(day) =>
+            toDate(day, month, year)
+          case Left(dayError) =>
+            Left(Seq(dayError.toFormError(key)))
+        }
+      case (Right(month), yearBinding @ Left(_)) =>
+        bindDay(key, data, month, false) match {
+          case Right(_) =>
+            Left(Seq(yearBinding).toFormErrors(key))
+          case dayBinding @ Left(_) =>
+            Left(Seq(dayBinding, yearBinding).toFormErrors(key))
+        }
+      case (monthBinding, yearBinding) =>
+        val dayBinding = bindDay(key, data, 31)
         Left(Seq(dayBinding, monthBinding, yearBinding).toFormErrors(key))
     }
-  }
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(
