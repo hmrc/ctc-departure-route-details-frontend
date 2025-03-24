@@ -19,7 +19,7 @@ package controllers.exit.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import forms.SelectableFormProvider
-import forms.SelectableFormProvider.OfficeFormProvider
+import forms.SelectableFormProvider.CountryFormProvider
 import generators.Generators
 import models.reference.CustomsOffice
 import models.{NormalMode, SelectableList}
@@ -45,7 +45,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
   private val country2    = arbitraryCountry.arbitrary.sample.get
   private val countryList = SelectableList(Seq(country1, country2))
 
-  private val formProvider = new OfficeFormProvider()
+  private val formProvider = new CountryFormProvider()
   private val form         = formProvider.apply("exit.index.officeOfExitCountry", countryList)
   private val field        = formProvider.field
   private val mode         = NormalMode

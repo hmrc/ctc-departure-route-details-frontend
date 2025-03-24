@@ -17,7 +17,7 @@
 package views.exit.index
 
 import forms.SelectableFormProvider
-import forms.SelectableFormProvider.OfficeFormProvider
+import forms.SelectableFormProvider.{CountryFormProvider, OfficeFormProvider}
 import models.reference.Country
 import models.{NormalMode, SelectableList}
 import org.scalacheck.Arbitrary
@@ -28,7 +28,7 @@ import views.html.exit.index.OfficeOfExitCountryView
 
 class OfficeOfExitCountryViewSpec extends InputSelectViewBehaviours[Country] {
 
-  private val formProvider = new OfficeFormProvider()
+  private val formProvider = new CountryFormProvider()
 
   override def form: Form[Country] = formProvider.apply(prefix, SelectableList(values))
 

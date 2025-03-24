@@ -21,7 +21,7 @@ import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
-import forms.SelectableFormProvider.OfficeFormProvider
+import forms.SelectableFormProvider.CountryFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
 import pages.exit.index.OfficeOfExitCountryPage
@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{CountriesService, CustomsOfficesService}
-import forms.SelectableFormProvider.OfficeFormProvider.field
+import forms.SelectableFormProvider.CountryFormProvider.field
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.exit.index.OfficeOfExitCountryView
 
@@ -42,7 +42,7 @@ class OfficeOfExitCountryController @Inject() (
   sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfExitNavigatorProvider,
   actions: Actions,
-  formProvider: OfficeFormProvider,
+  formProvider: CountryFormProvider,
   countriesService: CountriesService,
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
