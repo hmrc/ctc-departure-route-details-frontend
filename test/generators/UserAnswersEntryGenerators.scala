@@ -16,13 +16,14 @@
 
 package generators
 
-import config.Constants.AdditionalDeclarationType._
-import models.reference._
+import config.Constants.AdditionalDeclarationType.*
+import models.reference.*
 import models.{Coordinates, DateTime, DynamicAddress, ProcedureType}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import pages.exit.AddCustomsOfficeOfExitYesNoPage
-import play.api.libs.json._
+import pages.loadingAndUnloading.AddPlaceOfLoadingYesNoPage
+import play.api.libs.json.*
 import queries.Gettable
 
 trait UserAnswersEntryGenerators {
@@ -40,9 +41,10 @@ trait UserAnswersEntryGenerators {
       generateLoadingAndUnloadingAnswer
 
   private def generateExternalAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
-    import pages.external._
+    import pages.external.*
     {
       case AdditionalDeclarationTypePage => Gen.oneOf(Standard, PreLodge).map(JsString.apply)
+      case AddPlaceOfLoadingYesNoPage    => arbitrary[Boolean].map(JsBoolean)
       case ProcedureTypePage             => arbitrary[ProcedureType].map(Json.toJson(_))
       case OfficeOfDeparturePage         => arbitrary[CustomsOffice](arbitraryOfficeOfDeparture).map(Json.toJson(_))
       case OfficeOfDepartureInCL112Page  => arbitrary[Boolean].map(JsBoolean)
@@ -54,7 +56,7 @@ trait UserAnswersEntryGenerators {
   }
 
   private def generateSpecificCircumstanceIndicatorAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
-    import pages._
+    import pages.*
     {
       case AddSpecificCircumstanceIndicatorYesNoPage => arbitrary[Boolean].map(JsBoolean)
       case SpecificCircumstanceIndicatorPage         => arbitrary[SpecificCircumstanceIndicator].map(Json.toJson(_))
@@ -62,8 +64,8 @@ trait UserAnswersEntryGenerators {
   }
 
   private def generateRoutingAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
-    import pages.routing._
-    import pages.routing.index._
+    import pages.routing.*
+    import pages.routing.index.*
     {
       case CountryOfDestinationPage       => arbitrary[Country].map(Json.toJson(_))
       case OfficeOfDestinationPage        => arbitrary[CustomsOffice].map(Json.toJson(_))
@@ -77,8 +79,8 @@ trait UserAnswersEntryGenerators {
   }
 
   private def generateTransitAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
-    import pages.transit._
-    import pages.transit.index._
+    import pages.transit.*
+    import pages.transit.index.*
     {
       case T2DeclarationTypeYesNoPage        => arbitrary[Boolean].map(JsBoolean)
       case AddOfficeOfTransitYesNoPage       => arbitrary[Boolean].map(JsBoolean)
@@ -92,7 +94,7 @@ trait UserAnswersEntryGenerators {
   }
 
   private def generateExitAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
-    import pages.exit.index._
+    import pages.exit.index.*
     {
       case AddCustomsOfficeOfExitYesNoPage => arbitrary[Boolean].map(JsBoolean)
       case OfficeOfExitCountryPage(_)      => arbitrary[Country].map(Json.toJson(_))
@@ -101,7 +103,7 @@ trait UserAnswersEntryGenerators {
   }
 
   private def generateLocationOfGoodsAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
-    import pages.locationOfGoods._
+    import pages.locationOfGoods.*
     {
       val pf: PartialFunction[Gettable[?], Gen[JsValue]] = {
         case AddLocationOfGoodsPage => arbitrary[Boolean].map(JsBoolean)
@@ -117,7 +119,7 @@ trait UserAnswersEntryGenerators {
   }
 
   private def generateLocationOfGoodsIdentifierAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
-    import pages.locationOfGoods._
+    import pages.locationOfGoods.*
     {
       case CustomsOfficeIdentifierPage => arbitrary[CustomsOffice].map(Json.toJson(_))
       case EoriPage                    => Gen.alphaNumStr.map(JsString.apply)
@@ -132,7 +134,7 @@ trait UserAnswersEntryGenerators {
   }
 
   private def generateLocationOfGoodsContactAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
-    import pages.locationOfGoods.contact._
+    import pages.locationOfGoods.contact.*
     {
       case NamePage            => Gen.alphaNumStr.map(JsString.apply)
       case TelephoneNumberPage => Gen.alphaNumStr.map(JsString.apply)
@@ -140,7 +142,7 @@ trait UserAnswersEntryGenerators {
   }
 
   private def generateLoadingAndUnloadingAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
-    import pages.loadingAndUnloading._
+    import pages.loadingAndUnloading.*
     {
       val pf: PartialFunction[Gettable[?], Gen[JsValue]] = {
         case AddPlaceOfUnloadingPage => arbitrary[Boolean].map(JsBoolean)
@@ -153,7 +155,7 @@ trait UserAnswersEntryGenerators {
   }
 
   private def generateLoadingAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
-    import pages.loadingAndUnloading.loading._
+    import pages.loadingAndUnloading.loading.*
     {
       case AddUnLocodeYesNoPage         => arbitrary[Boolean].map(JsBoolean)
       case UnLocodePage                 => arbitrary[String].map(Json.toJson(_))
@@ -165,7 +167,7 @@ trait UserAnswersEntryGenerators {
 
   private def generateUnloadingAnswer: PartialFunction[Gettable[?], Gen[JsValue]] = {
     import pages.loadingAndUnloading.AddPlaceOfUnloadingPage
-    import pages.loadingAndUnloading.unloading._
+    import pages.loadingAndUnloading.unloading.*
     {
       case AddPlaceOfUnloadingPage      => arbitrary[Boolean].map(JsBoolean)
       case UnLocodeYesNoPage            => arbitrary[Boolean].map(JsBoolean)

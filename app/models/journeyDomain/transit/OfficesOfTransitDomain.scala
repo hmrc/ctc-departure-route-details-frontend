@@ -16,8 +16,7 @@
 
 package models.journeyDomain.transit
 
-import config.PhaseConfig
-import models.journeyDomain._
+import models.journeyDomain.*
 import models.{Index, RichJsArray}
 import pages.sections.Section
 import pages.sections.transit.OfficesOfTransitSection
@@ -34,7 +33,7 @@ case class OfficesOfTransitDomain(
 
 object OfficesOfTransitDomain {
 
-  implicit def userAnswersReader(implicit phaseConfig: PhaseConfig): Read[OfficesOfTransitDomain] = {
+  implicit def userAnswersReader: Read[OfficesOfTransitDomain] = {
 
     implicit val officesOfTransitReader: Read[Seq[OfficeOfTransitDomain]] =
       OfficesOfTransitSection.arrayReader.to {

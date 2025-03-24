@@ -16,7 +16,7 @@
 
 package navigation
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import models._
 import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.exit.OfficeOfExitDomain
@@ -24,7 +24,7 @@ import models.journeyDomain.exit.OfficeOfExitDomain
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class OfficeOfExitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig, phaseConfig: PhaseConfig) extends OfficeOfExitNavigatorProvider {
+class OfficeOfExitNavigatorProviderImpl @Inject() (implicit config: FrontendAppConfig) extends OfficeOfExitNavigatorProvider {
 
   def apply(mode: Mode, index: Index): UserAnswersNavigator =
     mode match {
@@ -43,7 +43,7 @@ trait OfficeOfExitNavigatorProvider {
 class OfficeOfExitNavigator(
   override val mode: Mode,
   index: Index
-)(implicit override val config: FrontendAppConfig, override val phaseConfig: PhaseConfig)
+)(implicit override val config: FrontendAppConfig)
     extends UserAnswersNavigator {
 
   override type T = OfficeOfExitDomain

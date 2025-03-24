@@ -21,7 +21,6 @@ import forms.behaviours.StringFieldBehaviours
 import models.AddressLine.{City, NumberAndStreet, PostalCode}
 import org.scalacheck.Gen
 import play.api.data.FormError
-import play.api.test.Helpers.running
 
 class DynamicAddressFormProviderSpec extends StringFieldBehaviours with SpecBase with AppWithDefaultMockFixtures {
 
@@ -34,86 +33,44 @@ class DynamicAddressFormProviderSpec extends StringFieldBehaviours with SpecBase
   private val lengthKey   = s"$prefix.error.length"
   private val invalidKey  = s"$prefix.error.invalid"
 
-  private val formProvider = new DynamicAddressFormProvider()(phaseConfig)
+  private val formProvider = new DynamicAddressFormProvider()
 
   "when postal code is required" - {
 
     val isPostalCodeRequired = true
-    val form                 = formProvider.apply(prefix, isPostalCodeRequired, args*)
 
     ".numberAndStreet" - {
 
-      val fieldName = NumberAndStreet.field
+      val fieldName                = NumberAndStreet.field
+      val maxNumberAndStreetLength = 70
 
-      "during transition" - {
-        val app                      = transitionApplicationBuilder().build()
-        val maxNumberAndStreetLength = 35
+      val form = formProvider.apply(prefix, isPostalCodeRequired, args*)
 
-        running(app) {
-          val form = app.injector.instanceOf[DynamicAddressFormProvider].apply(prefix, isPostalCodeRequired, args*)
+      behave like fieldThatBindsValidData(
+        form = form,
+        fieldName = fieldName,
+        validDataGenerator = stringsWithMaxLength(maxNumberAndStreetLength)
+      )
 
-          behave like fieldThatBindsValidData(
-            form = form,
-            fieldName = fieldName,
-            validDataGenerator = stringsWithMaxLength(maxNumberAndStreetLength)
-          )
+      behave like fieldWithMaxLength(
+        form = form,
+        fieldName = fieldName,
+        maxLength = maxNumberAndStreetLength,
+        lengthError = FormError(fieldName, lengthKey, Seq(NumberAndStreet.arg, arg1, arg2, maxNumberAndStreetLength))
+      )
 
-          behave like fieldWithMaxLength(
-            form = form,
-            fieldName = fieldName,
-            maxLength = maxNumberAndStreetLength,
-            lengthError = FormError(fieldName, lengthKey, Seq(NumberAndStreet.arg, arg1, arg2, maxNumberAndStreetLength))
-          )
+      behave like mandatoryField(
+        form = form,
+        fieldName = fieldName,
+        requiredError = FormError(fieldName, requiredKey, Seq(NumberAndStreet.arg, arg1, arg2))
+      )
 
-          behave like mandatoryField(
-            form = form,
-            fieldName = fieldName,
-            requiredError = FormError(fieldName, requiredKey, Seq(NumberAndStreet.arg, arg1, arg2))
-          )
-
-          behave like fieldWithInvalidCharacters(
-            form = form,
-            fieldName = fieldName,
-            error = FormError(fieldName, invalidKey, Seq(NumberAndStreet.arg, arg1, arg2)),
-            length = maxNumberAndStreetLength
-          )
-        }
-      }
-
-      "post transition" - {
-        val app                      = postTransitionApplicationBuilder().build()
-        val maxNumberAndStreetLength = 70
-
-        running(app) {
-          val form = app.injector.instanceOf[DynamicAddressFormProvider].apply(prefix, isPostalCodeRequired, args*)
-
-          behave like fieldThatBindsValidData(
-            form = form,
-            fieldName = fieldName,
-            validDataGenerator = stringsWithMaxLength(maxNumberAndStreetLength)
-          )
-
-          behave like fieldWithMaxLength(
-            form = form,
-            fieldName = fieldName,
-            maxLength = maxNumberAndStreetLength,
-            lengthError = FormError(fieldName, lengthKey, Seq(NumberAndStreet.arg, arg1, arg2, maxNumberAndStreetLength))
-          )
-
-          behave like mandatoryField(
-            form = form,
-            fieldName = fieldName,
-            requiredError = FormError(fieldName, requiredKey, Seq(NumberAndStreet.arg, arg1, arg2))
-          )
-
-          behave like fieldWithInvalidCharacters(
-            form = form,
-            fieldName = fieldName,
-            error = FormError(fieldName, invalidKey, Seq(NumberAndStreet.arg, arg1, arg2)),
-            length = maxNumberAndStreetLength
-          )
-        }
-      }
+      behave like fieldWithInvalidCharacters(
+        form = form,
+        fieldName = fieldName,
+        error = FormError(fieldName, invalidKey, Seq(NumberAndStreet.arg, arg1, arg2)),
+        length = maxNumberAndStreetLength
+      )
 
       ".city" - {
 
@@ -190,77 +147,36 @@ class DynamicAddressFormProviderSpec extends StringFieldBehaviours with SpecBase
 
       ".numberAndStreet" - {
 
-        val fieldName = NumberAndStreet.field
+        val fieldName                = NumberAndStreet.field
+        val maxNumberAndStreetLength = 70
 
-        "during transition" - {
-          val app                      = transitionApplicationBuilder().build()
-          val maxNumberAndStreetLength = 35
+        val form = formProvider.apply(prefix, isPostalCodeRequired, args*)
 
-          running(app) {
-            val form = app.injector.instanceOf[DynamicAddressFormProvider].apply(prefix, isPostalCodeRequired, args*)
+        behave like fieldThatBindsValidData(
+          form = form,
+          fieldName = fieldName,
+          validDataGenerator = stringsWithMaxLength(maxNumberAndStreetLength)
+        )
 
-            behave like fieldThatBindsValidData(
-              form = form,
-              fieldName = fieldName,
-              validDataGenerator = stringsWithMaxLength(maxNumberAndStreetLength)
-            )
+        behave like fieldWithMaxLength(
+          form = form,
+          fieldName = fieldName,
+          maxLength = maxNumberAndStreetLength,
+          lengthError = FormError(fieldName, lengthKey, Seq(NumberAndStreet.arg, arg1, arg2, maxNumberAndStreetLength))
+        )
 
-            behave like fieldWithMaxLength(
-              form = form,
-              fieldName = fieldName,
-              maxLength = maxNumberAndStreetLength,
-              lengthError = FormError(fieldName, lengthKey, Seq(NumberAndStreet.arg, arg1, arg2, maxNumberAndStreetLength))
-            )
+        behave like mandatoryField(
+          form = form,
+          fieldName = fieldName,
+          requiredError = FormError(fieldName, requiredKey, Seq(NumberAndStreet.arg, arg1, arg2))
+        )
 
-            behave like mandatoryField(
-              form = form,
-              fieldName = fieldName,
-              requiredError = FormError(fieldName, requiredKey, Seq(NumberAndStreet.arg, arg1, arg2))
-            )
-
-            behave like fieldWithInvalidCharacters(
-              form = form,
-              fieldName = fieldName,
-              error = FormError(fieldName, invalidKey, Seq(NumberAndStreet.arg, arg1, arg2)),
-              length = maxNumberAndStreetLength
-            )
-          }
-        }
-
-        "post transition" - {
-          val app                      = postTransitionApplicationBuilder().build()
-          val maxNumberAndStreetLength = 70
-
-          running(app) {
-            val form = app.injector.instanceOf[DynamicAddressFormProvider].apply(prefix, isPostalCodeRequired, args*)
-
-            behave like fieldThatBindsValidData(
-              form = form,
-              fieldName = fieldName,
-              validDataGenerator = stringsWithMaxLength(maxNumberAndStreetLength)
-            )
-
-            behave like fieldWithMaxLength(
-              form = form,
-              fieldName = fieldName,
-              maxLength = maxNumberAndStreetLength,
-              lengthError = FormError(fieldName, lengthKey, Seq(NumberAndStreet.arg, arg1, arg2, maxNumberAndStreetLength))
-            )
-
-            behave like mandatoryField(
-              form = form,
-              fieldName = fieldName,
-              requiredError = FormError(fieldName, requiredKey, Seq(NumberAndStreet.arg, arg1, arg2))
-            )
-
-            behave like fieldWithInvalidCharacters(
-              form = form,
-              fieldName = fieldName,
-              error = FormError(fieldName, invalidKey, Seq(NumberAndStreet.arg, arg1, arg2)),
-              length = maxNumberAndStreetLength
-            )
-          }
-        }
+        behave like fieldWithInvalidCharacters(
+          form = form,
+          fieldName = fieldName,
+          error = FormError(fieldName, invalidKey, Seq(NumberAndStreet.arg, arg1, arg2)),
+          length = maxNumberAndStreetLength
+        )
       }
 
       ".city" - {

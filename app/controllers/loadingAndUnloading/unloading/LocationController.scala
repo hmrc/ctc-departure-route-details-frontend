@@ -16,7 +16,6 @@
 
 package controllers.loadingAndUnloading.unloading
 
-import config.PhaseConfig
 import controllers.actions._
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.UnloadingLocationFormProvider
@@ -41,7 +40,7 @@ class LocationController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   view: LocationView
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

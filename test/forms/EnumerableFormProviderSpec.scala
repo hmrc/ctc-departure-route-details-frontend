@@ -30,7 +30,6 @@ class EnumerableFormProviderSpec extends OptionFieldBehaviours {
   }
 
   private object FakeEnum extends EnumerableType[FakeEnum] {
-    lazy val messageKeyPrefix: String = prefix
 
     case class Foo(code: String) extends FakeEnum
     case class Bar(code: String) extends FakeEnum
