@@ -46,6 +46,7 @@ class LocationOfGoodsIdentificationTypeService @Inject() (
 
     referenceDataConnector
       .getQualifierOfTheIdentifications()
+      .map(_.resolve())
       .map(_.toSeq)
       .map(filter)
   }
