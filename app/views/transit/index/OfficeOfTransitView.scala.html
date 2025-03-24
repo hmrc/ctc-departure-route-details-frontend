@@ -20,6 +20,7 @@
 @import models.Selectable
 @import models.Selectable._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import forms.SelectableFormProvider.OfficeFormProvider.field
 @import viewModels.components.InputSelectViewModel._
 @import views.html.components.{Button, ErrorSummary, InputSelect}
 
@@ -44,7 +45,7 @@
         @errorSummary(form.errors)
 
         @inputSelect(
-            field = form("value"),
+            field = form(field),
             selectType = OrdinarySelect(
                 heading = messages("transit.index.officeOfTransit.heading", countryName),
                 caption = Some(messages("transit.caption"))

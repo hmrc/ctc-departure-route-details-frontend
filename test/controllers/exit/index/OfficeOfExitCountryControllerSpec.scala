@@ -19,6 +19,7 @@ package controllers.exit.index
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.CountryFormProvider
 import generators.Generators
 import models.reference.CustomsOffice
 import models.{NormalMode, SelectableList}
@@ -32,7 +33,7 @@ import play.api.data.FormError
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.CustomsOfficesService
 import views.html.exit.index.OfficeOfExitCountryView
 
@@ -44,8 +45,9 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
   private val country2    = arbitraryCountry.arbitrary.sample.get
   private val countryList = SelectableList(Seq(country1, country2))
 
-  private val formProvider = new SelectableFormProvider()
-  private val form         = formProvider("exit.index.officeOfExitCountry", countryList)
+  private val formProvider = new CountryFormProvider()
+  private val form         = formProvider.apply("exit.index.officeOfExitCountry", countryList)
+  private val field        = formProvider.field
   private val mode         = NormalMode
 
   private val mockCustomsOfficesService: CustomsOfficesService = mock[CustomsOfficesService]
@@ -98,7 +100,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
 
       val result = route(app, request).value
 
-      val filledForm = form.bind(Map("value" -> country1.code.code))
+      val filledForm = form.bind(Map(field -> country1.code.code))
 
       val view = injector.instanceOf[OfficeOfExitCountryView]
 
@@ -121,7 +123,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
       setExistingUserAnswers(baseAnswers)
 
       val request = FakeRequest(POST, officeOfExitCountryRoute)
-        .withFormUrlEncodedBody(("value", country1.code.code))
+        .withFormUrlEncodedBody((field, country1.code.code))
 
       val result = route(app, request).value
 
@@ -137,8 +139,8 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
 
       setExistingUserAnswers(baseAnswers)
 
-      val request   = FakeRequest(POST, officeOfExitCountryRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request   = FakeRequest(POST, officeOfExitCountryRoute).withFormUrlEncodedBody((field, "invalid value"))
+      val boundForm = form.bind(Map(field -> "invalid value"))
 
       val result = route(app, request).value
 
@@ -162,10 +164,10 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
 
       setExistingUserAnswers(baseAnswers)
 
-      val request = FakeRequest(POST, officeOfExitCountryRoute).withFormUrlEncodedBody(("value", country1.code.code))
+      val request = FakeRequest(POST, officeOfExitCountryRoute).withFormUrlEncodedBody((field, country1.code.code))
 
       val boundForm = form
-        .withError(FormError("value", "This country does not have any offices of exit for transit. Select another country."))
+        .withError(FormError(field, "This country does not have any offices of exit for transit. Select another country."))
 
       val result = route(app, request).value
 
@@ -194,7 +196,7 @@ class OfficeOfExitCountryControllerSpec extends SpecBase with AppWithDefaultMock
       setNoExistingUserAnswers()
 
       val request = FakeRequest(POST, officeOfExitCountryRoute)
-        .withFormUrlEncodedBody(("value", country1.code.code))
+        .withFormUrlEncodedBody((field, country1.code.code))
 
       val result = route(app, request).value
 

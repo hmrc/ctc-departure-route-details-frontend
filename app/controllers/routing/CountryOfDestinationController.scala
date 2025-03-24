@@ -18,9 +18,11 @@ package controllers.routing
 
 import config.PhaseConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import controllers.actions._
+import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.CountryFormProvider
+import forms.SelectableFormProvider.CountryFormProvider.field
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
 import pages.routing.CountryOfDestinationPage
@@ -40,7 +42,7 @@ class CountryOfDestinationController @Inject() (
   sessionRepository: SessionRepository,
   navigatorProvider: RoutingNavigatorProvider,
   actions: Actions,
-  formProvider: SelectableFormProvider,
+  formProvider: CountryFormProvider,
   countriesService: CountriesService,
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
@@ -88,7 +90,7 @@ class CountryOfDestinationController @Inject() (
                   }
                   .recover {
                     case _: NoReferenceDataFoundException =>
-                      val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
+                      val formWithErrors = form.withError(FormError(field, s"$prefix.error.noOffices"))
                       BadRequest(view(formWithErrors, lrn, countryList.values, mode))
                   }
             )
