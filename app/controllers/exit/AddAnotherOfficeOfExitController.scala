@@ -16,33 +16,38 @@
 
 package controllers.exit
 
-import config.FrontendAppConfig
-import controllers.actions._
-import controllers.exit.index.{routes => indexRoutes}
+import config.{FrontendAppConfig, PhaseConfig}
+import controllers.actions.*
+import controllers.exit.index.routes as indexRoutes
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.AddAnotherFormProvider
 import models.requests.DataRequest
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
+import pages.exit.AddAnotherOfficeOfExitPage
 import pages.sections.exit.OfficesOfExitSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.exit.AddAnotherOfficeOfExitViewModel
 import viewModels.exit.AddAnotherOfficeOfExitViewModel.AddAnotherOfficeOfExitViewModelProvider
 import views.html.exit.AddAnotherOfficeOfExitView
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddAnotherOfficeOfExitController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   navigatorProvider: RouteDetailsNavigatorProvider,
   actions: Actions,
   formProvider: AddAnotherFormProvider,
   viewModelProvider: AddAnotherOfficeOfExitViewModelProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AddAnotherOfficeOfExitView
-)(implicit config: FrontendAppConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -53,27 +58,37 @@ class AddAnotherOfficeOfExitController @Inject() (
     implicit request =>
       val viewModel = viewModelProvider(request.userAnswers, mode)
       viewModel.count match {
-        case 0 => redirectToNextPage(mode)
-        case _ => Ok(view(form(viewModel), lrn, viewModel))
+        case 0 => Redirect(redirectToNextPage(mode))
+        case _ =>
+          val preparedForm = request.userAnswers.get(AddAnotherOfficeOfExitPage) match {
+            case None        => form(viewModel)
+            case Some(value) => form(viewModel).fill(value)
+          }
+          Ok(view(preparedForm, lrn, viewModel))
       }
   }
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
       val viewModel = viewModelProvider(request.userAnswers, mode)
       form(viewModel)
         .bindFromRequest()
         .fold(
-          formWithErrors => BadRequest(view(formWithErrors, lrn, viewModel)),
-          {
-            case true  => Redirect(indexRoutes.OfficeOfExitCountryController.onPageLoad(lrn, viewModel.nextIndex, mode))
-            case false => redirectToNextPage(mode)
-          }
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, viewModel))),
+          value =>
+            AddAnotherOfficeOfExitPage
+              .writeToUserAnswers(value)
+              .updateTask()
+              .writeToSession(sessionRepository)
+              .navigateTo {
+                if value then indexRoutes.OfficeOfExitCountryController.onPageLoad(lrn, viewModel.nextIndex, mode)
+                else redirectToNextPage(mode)
+              }
         )
   }
 
-  private def redirectToNextPage(mode: Mode)(implicit request: DataRequest[?]): Result = {
+  private def redirectToNextPage(mode: Mode)(implicit request: DataRequest[?]): Call = {
     val navigator: UserAnswersNavigator = navigatorProvider(mode)
-    Redirect(navigator.nextPage(request.userAnswers, Some(OfficesOfExitSection)))
+    navigator.nextPage(request.userAnswers, Some(OfficesOfExitSection))
   }
 }
