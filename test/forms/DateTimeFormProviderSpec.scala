@@ -88,7 +88,7 @@ class DateTimeFormProviderSpec extends FieldBehaviours with Generators {
 
           val formattedArg = invalidDateTime.toLocalDate.formatAsString
 
-          result.errors mustBe Seq(FormError(fieldName, List(maxDate), List(formattedArg)))
+          result.errors mustEqual Seq(FormError(fieldName, List(maxDate), List(formattedArg, "day", "month", "year")))
       }
     }
 
@@ -117,7 +117,7 @@ class DateTimeFormProviderSpec extends FieldBehaviours with Generators {
 
           val formattedArg = invalidDateTime.toLocalDate.formatAsString
 
-          result.errors mustBe Seq(FormError(fieldName, List(minDate), List(formattedArg)))
+          result.errors mustEqual Seq(FormError(fieldName, List(minDate), List(formattedArg, "day", "month", "year")))
       }
     }
   }
