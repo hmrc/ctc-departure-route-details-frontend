@@ -17,31 +17,36 @@
 package controllers.transit
 
 import config.{FrontendAppConfig, PhaseConfig}
-import controllers.actions._
-import controllers.transit.index.{routes => indexRoutes}
+import controllers.actions.*
+import controllers.transit.index.routes as indexRoutes
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.AddAnotherFormProvider
+import models.requests.DataRequest
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
-import pages.sections.transit.OfficesOfTransitSection
+import pages.sections.transit.{AddAnotherOfficeOfTransitPage, OfficesOfTransitSection}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.transit.AddAnotherOfficeOfTransitViewModel
 import viewModels.transit.AddAnotherOfficeOfTransitViewModel.AddAnotherOfficeOfTransitViewModelProvider
 import views.html.transit.AddAnotherOfficeOfTransitView
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddAnotherOfficeOfTransitController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   navigatorProvider: RouteDetailsNavigatorProvider,
   actions: Actions,
   formProvider: AddAnotherFormProvider,
   viewModelProvider: AddAnotherOfficeOfTransitViewModelProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AddAnotherOfficeOfTransitView
-)(implicit config: FrontendAppConfig, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig, phaseConfig: PhaseConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -53,23 +58,36 @@ class AddAnotherOfficeOfTransitController @Inject() (
       val viewModel = viewModelProvider(request.userAnswers, mode)
       viewModel.count match {
         case 0 => Redirect(routes.AddOfficeOfTransitYesNoController.onPageLoad(lrn, mode))
-        case _ => Ok(view(form(viewModel), lrn, viewModel))
+        case _ =>
+          val preparedForm = request.userAnswers.get(AddAnotherOfficeOfTransitPage) match {
+            case None        => form(viewModel)
+            case Some(value) => form(viewModel).fill(value)
+          }
+          Ok(view(preparedForm, lrn, viewModel))
       }
   }
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
       val viewModel = viewModelProvider(request.userAnswers, mode)
       form(viewModel)
         .bindFromRequest()
         .fold(
-          formWithErrors => BadRequest(view(formWithErrors, lrn, viewModel)),
-          {
-            case true => Redirect(indexRoutes.OfficeOfTransitCountryController.onPageLoad(lrn, mode, viewModel.nextIndex))
-            case false =>
-              val navigator: UserAnswersNavigator = navigatorProvider(mode)
-              Redirect(navigator.nextPage(request.userAnswers, Some(OfficesOfTransitSection)))
-          }
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, viewModel))),
+          value =>
+            AddAnotherOfficeOfTransitPage
+              .writeToUserAnswers(value)
+              .updateTask()
+              .writeToSession(sessionRepository)
+              .navigateTo {
+                if value then indexRoutes.OfficeOfTransitController.onPageLoad(lrn, mode, viewModel.nextIndex)
+                else redirectToNextPage(mode)
+              }
         )
+  }
+
+  private def redirectToNextPage(mode: Mode)(implicit request: DataRequest[?]): Call = {
+    val navigator: UserAnswersNavigator = navigatorProvider(mode)
+    navigator.nextPage(request.userAnswers, Some(OfficesOfTransitSection))
   }
 }
