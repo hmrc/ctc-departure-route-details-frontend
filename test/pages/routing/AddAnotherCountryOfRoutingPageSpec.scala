@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.routing.index
+package pages.routing
 
 import pages.behaviours.PageBehaviours
-import pages.routing.AddAnotherCountryOfRoutingPage
 
 class AddAnotherCountryOfRoutingPageSpec extends PageBehaviours {
 
-  "AddAnotherCountryOfRoutingYesNoPage" - {
+  "AddAnotherCountryOfRoutingPage" - {
 
     beRetrievable[Boolean](AddAnotherCountryOfRoutingPage)
 

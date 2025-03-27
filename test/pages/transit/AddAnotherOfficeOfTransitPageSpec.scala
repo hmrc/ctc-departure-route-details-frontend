@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package views.transit
+package pages.transit
 
 import pages.behaviours.PageBehaviours
 import pages.sections.transit.AddAnotherOfficeOfTransitPage
 
 class AddAnotherOfficeOfTransitPageSpec extends PageBehaviours {
 
-  "AddAnotherOfficeOfTransitYesNoPage" - {
+  "AddAnotherOfficeOfTransitPage" - {
 
     beRetrievable[Boolean](AddAnotherOfficeOfTransitPage)
 

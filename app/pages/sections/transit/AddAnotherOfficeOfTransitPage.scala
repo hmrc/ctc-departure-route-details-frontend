@@ -19,13 +19,12 @@ package pages.sections.transit
 import controllers.transit.routes
 import models.{Mode, UserAnswers}
 import pages.QuestionPage
-import pages.sections.routing.RoutingSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
 case object AddAnotherOfficeOfTransitPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = RoutingSection.path \ toString
+  override def path: JsPath = TransitSection.path \ toString
 
   override def toString: String = "addAnotherOfficeOfTransit"
 
