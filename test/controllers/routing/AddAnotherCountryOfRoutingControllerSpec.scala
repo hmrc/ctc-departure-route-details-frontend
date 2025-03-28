@@ -21,20 +21,21 @@ import config.Constants.SecurityType.NoSecurityDetails
 import forms.AddAnotherFormProvider
 import generators.Generators
 import models.reference.{Country, CountryCode}
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, UserAnswers}
 import navigation.RoutingNavigatorProvider
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.external.SecurityDetailsTypePage
-import pages.routing.BindingItineraryPage
+import pages.routing.{AddAnotherCountryOfRoutingPage, BindingItineraryPage}
 import pages.routing.index.CountryOfRoutingPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import viewModels.ListItem
 import viewModels.routing.AddAnotherCountryOfRoutingViewModel
 import viewModels.routing.AddAnotherCountryOfRoutingViewModel.AddAnotherCountryOfRoutingViewModelProvider
@@ -136,6 +137,48 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
           view(form(maxedOutViewModel), lrn, maxedOutViewModel)(request, messages, frontendAppConfig).toString
       }
     }
+    "must populate the view correctly on a GET when the question has previously been answered " - {
+      "when max limit not reached " in {
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
+          .thenReturn(notMaxedOutViewModel)
+
+        setExistingUserAnswers(emptyUserAnswers.setValue(AddAnotherCountryOfRoutingPage, true))
+
+        val request = FakeRequest(GET, addAnotherCountryOfRoutingRoute)
+
+        val result = route(app, request).value
+
+        val filledForm = form(notMaxedOutViewModel).bind(Map("value" -> "true"))
+
+        val view = injector.instanceOf[AddAnotherCountryOfRoutingView]
+
+        status(result) mustEqual OK
+
+        contentAsString(result) mustEqual
+          view(filledForm, lrn, notMaxedOutViewModel)(request, messages, frontendAppConfig).toString
+      }
+
+      "when max limit reached " in {
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
+          .thenReturn(maxedOutViewModel)
+
+        setExistingUserAnswers(emptyUserAnswers.setValue(AddAnotherCountryOfRoutingPage, true))
+
+        val request = FakeRequest(GET, addAnotherCountryOfRoutingRoute)
+
+        val result = route(app, request).value
+
+        val filledForm = form(maxedOutViewModel).bind(Map("value" -> "true"))
+
+        val view = injector.instanceOf[AddAnotherCountryOfRoutingView]
+
+        status(result) mustEqual OK
+
+        contentAsString(result) mustEqual
+          view(filledForm, lrn, maxedOutViewModel)(request, messages, frontendAppConfig).toString
+      }
+
+    }
 
     "when max limit not reached" - {
       "when yes submitted" - {
@@ -154,6 +197,11 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
 
           redirectLocation(result).value mustEqual
             controllers.routing.index.routes.CountryOfRoutingController.onPageLoad(lrn, mode, Index(listItems.length)).url
+
+          val userAnswerCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(mockSessionRepository).set(userAnswerCaptor.capture())(any())
+          userAnswerCaptor.getValue.get(AddAnotherCountryOfRoutingPage).value mustEqual true
+
         }
       }
 
@@ -180,6 +228,10 @@ class AddAnotherCountryOfRoutingControllerSpec extends SpecBase with AppWithDefa
           status(result) mustEqual SEE_OTHER
 
           redirectLocation(result).value mustEqual onwardRoute.url
+
+          val userAnswerCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(mockSessionRepository).set(userAnswerCaptor.capture())(any())
+          userAnswerCaptor.getValue.get(AddAnotherCountryOfRoutingPage).value mustEqual false
         }
       }
     }
