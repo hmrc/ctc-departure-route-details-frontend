@@ -189,7 +189,7 @@ class AddAnotherOfficeOfTransitControllerSpec extends SpecBase with AppWithDefau
           status(result) mustEqual SEE_OTHER
 
           redirectLocation(result).value mustEqual
-            controllers.transit.index.routes.OfficeOfTransitController.onPageLoad(lrn, mode, Index(listItems.length)).url
+            controllers.transit.index.routes.OfficeOfTransitCountryController.onPageLoad(lrn, mode, Index(listItems.length)).url
 
           val userAnswerCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
           verify(mockSessionRepository).set(userAnswerCaptor.capture())(any())

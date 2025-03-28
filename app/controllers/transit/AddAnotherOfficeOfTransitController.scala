@@ -80,7 +80,7 @@ class AddAnotherOfficeOfTransitController @Inject() (
               .updateTask()
               .writeToSession(sessionRepository)
               .navigateTo {
-                if value then indexRoutes.OfficeOfTransitController.onPageLoad(lrn, mode, viewModel.nextIndex)
+                if value then indexRoutes.OfficeOfTransitCountryController.onPageLoad(lrn, mode, viewModel.nextIndex)
                 else redirectToNextPage(mode)
               }
         )
