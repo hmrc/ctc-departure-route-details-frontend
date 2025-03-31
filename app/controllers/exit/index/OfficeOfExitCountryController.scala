@@ -20,6 +20,7 @@ import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.CountryFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
 import pages.exit.index.OfficeOfExitCountryPage
@@ -28,6 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{CountriesService, CustomsOfficesService}
+import forms.SelectableFormProvider.CountryFormProvider.field
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.exit.index.OfficeOfExitCountryView
 
@@ -39,7 +41,7 @@ class OfficeOfExitCountryController @Inject() (
   sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfExitNavigatorProvider,
   actions: Actions,
-  formProvider: SelectableFormProvider,
+  formProvider: CountryFormProvider,
   countriesService: CountriesService,
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
@@ -91,7 +93,7 @@ class OfficeOfExitCountryController @Inject() (
                     }
                     .recover {
                       case _: NoReferenceDataFoundException =>
-                        val formWithErrors = form.withError(FormError("value", s"$prefix.error.noOffices"))
+                        val formWithErrors = form.withError(FormError(field, s"$prefix.error.noOffices"))
                         BadRequest(view(formWithErrors, lrn, countryList.values, index, mode))
                     }
               )

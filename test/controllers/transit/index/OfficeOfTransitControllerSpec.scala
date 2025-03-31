@@ -18,6 +18,7 @@ package controllers.transit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.OfficeFormProvider
 import generators.Generators
 import models.reference.{Country, CountryCode, CustomsOffice}
 import models.{reference, NormalMode, SelectableList, UserAnswers}
@@ -33,7 +34,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.CustomsOfficesService
 import views.html.transit.index.OfficeOfTransitView
 
@@ -47,8 +48,9 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
   private val country            = arbitrary[Country].sample.value
   private val destinationCountry = arbitrary[Country].sample.value
 
-  private val formProvider           = new SelectableFormProvider()
-  private def form(country: Country) = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
+  private val formProvider           = new OfficeFormProvider()
+  private def form(country: Country) = formProvider.apply("transit.index.officeOfTransit", customsOfficeList, country.description)
+  private val field                  = formProvider.field
   private val mode                   = NormalMode
 
   private val mockCustomsOfficesService: CustomsOfficesService = mock[CustomsOfficesService]
@@ -134,7 +136,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
 
         val result = route(app, request).value
 
-        val filledForm = form(country).bind(Map("value" -> customsOffice1.id))
+        val filledForm = form(country).bind(Map(field -> customsOffice1.id))
 
         val view = injector.instanceOf[OfficeOfTransitView]
 
@@ -157,7 +159,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
 
         val result = route(app, request).value
 
-        val filledForm = form(destinationCountry).bind(Map("value" -> customsOffice1.id))
+        val filledForm = form(destinationCountry).bind(Map(field -> customsOffice1.id))
 
         val view = injector.instanceOf[OfficeOfTransitView]
 
@@ -181,7 +183,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
 
         val result = route(app, request).value
 
-        val filledForm = form(country).bind(Map("value" -> customsOffice1.id))
+        val filledForm = form(country).bind(Map(field -> customsOffice1.id))
 
         val view = injector.instanceOf[OfficeOfTransitView]
 
@@ -212,7 +214,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
           setExistingUserAnswers(emptyUserAnswers.setValue(OfficeOfTransitCountryPage(index), country))
 
           val request = FakeRequest(POST, officeOfTransitRoute)
-            .withFormUrlEncodedBody(("value", customsOffice.id))
+            .withFormUrlEncodedBody((field, customsOffice.id))
 
           val result = route(app, request).value
 
@@ -255,7 +257,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         setExistingUserAnswers(emptyUserAnswers.setOfficeOfTransitCountry(country))
 
         val request   = FakeRequest(POST, officeOfTransitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = form(country).bind(Map("value" -> "invalid value"))
+        val boundForm = form(country).bind(Map(field -> "invalid value"))
 
         val result = route(app, request).value
 
@@ -274,7 +276,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         setExistingUserAnswers(userAnswers)
 
         val request   = FakeRequest(POST, officeOfTransitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = form(destinationCountry).bind(Map("value" -> "invalid value"))
+        val boundForm = form(destinationCountry).bind(Map(field -> "invalid value"))
 
         val result = route(app, request).value
 
@@ -296,7 +298,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
         setExistingUserAnswers(userAnswers)
 
         val request   = FakeRequest(POST, officeOfTransitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = form(country).bind(Map("value" -> "invalid value"))
+        val boundForm = form(country).bind(Map(field -> "invalid value"))
 
         val result = route(app, request).value
 
@@ -326,7 +328,7 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
       setNoExistingUserAnswers()
 
       val request = FakeRequest(POST, officeOfTransitRoute)
-        .withFormUrlEncodedBody(("value", customsOffice1.id))
+        .withFormUrlEncodedBody((field, customsOffice1.id))
 
       val result = route(app, request).value
 

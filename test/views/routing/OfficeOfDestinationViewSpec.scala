@@ -17,6 +17,7 @@
 package views.routing
 
 import forms.SelectableFormProvider
+import forms.SelectableFormProvider.OfficeFormProvider
 import models.reference.CustomsOffice
 import models.{NormalMode, SelectableList}
 import org.scalacheck.Arbitrary
@@ -29,7 +30,11 @@ class OfficeOfDestinationViewSpec extends InputSelectViewBehaviours[CustomsOffic
 
   private val country = arbitraryCountry.arbitrary.sample.value
 
-  override def form: Form[CustomsOffice] = new SelectableFormProvider()(prefix, SelectableList(values))
+  private val formProvider = new OfficeFormProvider()
+
+  override def form: Form[CustomsOffice] = formProvider.apply(prefix, SelectableList(values))
+
+  override val field: String = formProvider.field
 
   override def applyView(form: Form[CustomsOffice]): HtmlFormat.Appendable =
     injector.instanceOf[OfficeOfDestinationView].apply(form, lrn, country.description, values, NormalMode)(fakeRequest, messages)

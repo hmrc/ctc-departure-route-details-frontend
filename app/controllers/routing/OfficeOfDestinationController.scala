@@ -18,7 +18,7 @@ package controllers.routing
 
 import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.SelectableFormProvider
+import forms.SelectableFormProvider.OfficeFormProvider
 import models.reference.CustomsOffice
 import models.{LocalReferenceNumber, Mode, SelectableList}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
@@ -39,7 +39,7 @@ class OfficeOfDestinationController @Inject() (
   sessionRepository: SessionRepository,
   navigatorProvider: RoutingNavigatorProvider,
   actions: Actions,
-  formProvider: SelectableFormProvider,
+  formProvider: OfficeFormProvider,
   customsOfficesService: CustomsOfficesService,
   countriesService: CountriesService,
   val controllerComponents: MessagesControllerComponents,

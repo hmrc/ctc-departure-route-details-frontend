@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.mappings.Mappings
+import forms.mappings.{LocalDateFormatter, Mappings}
 import models.DateTime
 import play.api.data.Form
 import play.api.data.Forms.mapping
@@ -35,8 +35,16 @@ class DateTimeFormProvider @Inject() extends Mappings {
             invalidKey = s"$prefix.date.error.invalid",
             requiredKey = s"$prefix.date.error.required"
           ).verifying(
-            maxDate(maximumDate, s"$prefix.date.error.futureDate", maximumDate.plusDays(1).formatAsString),
-            minDate(minimumDate, s"$prefix.date.error.pastDate", minimumDate.minusDays(1).formatAsString)
+            maxDate(
+              maximumDate,
+              s"$prefix.date.error.futureDate",
+              maximumDate.plusDays(1).formatAsString +: LocalDateFormatter.fieldKeys*
+            ),
+            minDate(
+              minimumDate,
+              s"$prefix.date.error.pastDate",
+              minimumDate.minusDays(1).formatAsString +: LocalDateFormatter.fieldKeys*
+            )
           )
         },
         "time" -> {

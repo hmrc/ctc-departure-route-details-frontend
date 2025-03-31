@@ -18,7 +18,7 @@ package controllers.exit.index
 
 import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.SelectableFormProvider
+import forms.SelectableFormProvider.OfficeFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfExitNavigatorProvider, UserAnswersNavigator}
 import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
@@ -37,7 +37,7 @@ class OfficeOfExitController @Inject() (
   sessionRepository: SessionRepository,
   navigatorProvider: OfficeOfExitNavigatorProvider,
   actions: Actions,
-  formProvider: SelectableFormProvider,
+  formProvider: OfficeFormProvider,
   customsOfficesService: CustomsOfficesService,
   val controllerComponents: MessagesControllerComponents,
   getMandatoryPage: SpecificDataRequiredActionProvider,

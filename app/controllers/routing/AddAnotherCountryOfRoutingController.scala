@@ -17,31 +17,37 @@
 package controllers.routing
 
 import config.FrontendAppConfig
-import controllers.actions._
-import controllers.routing.index.{routes => indexRoutes}
+import controllers.actions.*
+import controllers.routing.index.routes as indexRoutes
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.AddAnotherFormProvider
+import models.requests.DataRequest
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
+import pages.routing.AddAnotherCountryOfRoutingPage
 import pages.sections.routing.CountriesOfRoutingSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
+import play.api.mvc.*
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.routing.AddAnotherCountryOfRoutingViewModel
 import viewModels.routing.AddAnotherCountryOfRoutingViewModel.AddAnotherCountryOfRoutingViewModelProvider
 import views.html.routing.AddAnotherCountryOfRoutingView
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddAnotherCountryOfRoutingController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   navigatorProvider: RoutingNavigatorProvider,
   actions: Actions,
   formProvider: AddAnotherFormProvider,
   val controllerComponents: MessagesControllerComponents,
   viewModelProvider: AddAnotherCountryOfRoutingViewModelProvider,
   view: AddAnotherCountryOfRoutingView
-)(implicit config: FrontendAppConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -53,24 +59,36 @@ class AddAnotherCountryOfRoutingController @Inject() (
       val viewModel = viewModelProvider(request.userAnswers, mode)
       viewModel.count match {
         case 0 => Redirect(routes.BindingItineraryController.onPageLoad(lrn, mode))
-        case _ => Ok(view(form(viewModel), lrn, viewModel))
+        case _ =>
+          val preparedForm = request.userAnswers.get(AddAnotherCountryOfRoutingPage) match {
+            case None        => form(viewModel)
+            case Some(value) => form(viewModel).fill(value)
+          }
+          Ok(view(preparedForm, lrn, viewModel))
       }
   }
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn) {
+  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = actions.requireData(lrn).async {
     implicit request =>
       val viewModel = viewModelProvider(request.userAnswers, mode)
       form(viewModel)
         .bindFromRequest()
         .fold(
-          formWithErrors => BadRequest(view(formWithErrors, lrn, viewModel)),
-          {
-            case true =>
-              Redirect(indexRoutes.CountryOfRoutingController.onPageLoad(lrn, mode, viewModel.nextIndex))
-            case false =>
-              val navigator: UserAnswersNavigator = navigatorProvider(mode)
-              Redirect(navigator.nextPage(request.userAnswers, Some(CountriesOfRoutingSection)))
-          }
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, viewModel))),
+          value =>
+            AddAnotherCountryOfRoutingPage
+              .writeToUserAnswers(value)
+              .updateTask()
+              .writeToSession(sessionRepository)
+              .navigateTo {
+                if value then indexRoutes.CountryOfRoutingController.onPageLoad(lrn, mode, viewModel.nextIndex)
+                else redirectToNextPage(mode)
+              }
         )
+  }
+
+  private def redirectToNextPage(mode: Mode)(implicit request: DataRequest[?]): Call = {
+    val navigator: UserAnswersNavigator = navigatorProvider(mode)
+    navigator.nextPage(request.userAnswers, Some(CountriesOfRoutingSection))
   }
 }

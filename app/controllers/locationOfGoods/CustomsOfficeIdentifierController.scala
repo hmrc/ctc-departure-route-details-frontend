@@ -18,7 +18,7 @@ package controllers.locationOfGoods
 
 import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.SelectableFormProvider
+import forms.SelectableFormProvider.OfficeFormProvider
 import models.{LocalReferenceNumber, Mode}
 import navigation.{LocationOfGoodsNavigatorProvider, UserAnswersNavigator}
 import pages.external.OfficeOfDeparturePage
@@ -38,7 +38,7 @@ class CustomsOfficeIdentifierController @Inject() (
   sessionRepository: SessionRepository,
   navigatorProvider: LocationOfGoodsNavigatorProvider,
   actions: Actions,
-  formProvider: SelectableFormProvider,
+  formProvider: OfficeFormProvider,
   customsOfficesService: CustomsOfficesService,
   getMandatoryPage: SpecificDataRequiredActionProvider,
   val controllerComponents: MessagesControllerComponents,
