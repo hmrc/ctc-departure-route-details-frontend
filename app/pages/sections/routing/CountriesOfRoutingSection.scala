@@ -16,22 +16,21 @@
 
 package pages.sections.routing
 
-import controllers.routing.routes
-import models.journeyDomain.{ReaderSuccess, _}
-import models.{Index, Mode, UserAnswers}
+import models.Index
+import models.journeyDomain.{ReaderSuccess, *}
+import pages.AddAnotherPage
+import pages.routing.AddAnotherCountryOfRoutingPage
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingInCL147Page}
-import pages.sections.Section
-import play.api.libs.json.{JsArray, JsPath}
-import play.api.mvc.Call
+import pages.sections.AddAnotherSection
+import play.api.libs.json.JsPath
 
-case object CountriesOfRoutingSection extends Section[JsArray] {
+case object CountriesOfRoutingSection extends AddAnotherSection {
 
   override def path: JsPath = RoutingSection.path \ toString
 
   override def toString: String = "countriesOfRouting"
 
-  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
-    Some(routes.AddAnotherCountryOfRoutingController.onPageLoad(userAnswers.lrn, mode))
+  override val addAnotherPage: AddAnotherPage = AddAnotherCountryOfRoutingPage
 
   def atLeastOneCountryOfRoutingIsInCL147: Read[Boolean] =
     this.arrayReader.apply(_).map(_.to(_.value.length)).flatMap {

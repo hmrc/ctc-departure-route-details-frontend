@@ -18,12 +18,13 @@ package pages.exit
 
 import controllers.exit.routes
 import models.{Mode, UserAnswers}
-import pages.QuestionPage
-import pages.sections.exit.ExitSection
+import pages.AddAnotherPage
+import pages.sections.AddAnotherSection
+import pages.sections.exit.{ExitSection, OfficesOfExitSection}
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-case object AddAnotherOfficeOfExitPage extends QuestionPage[Boolean] {
+case object AddAnotherOfficeOfExitPage extends AddAnotherPage {
 
   override def path: JsPath = ExitSection.path \ toString
 
@@ -31,4 +32,6 @@ case object AddAnotherOfficeOfExitPage extends QuestionPage[Boolean] {
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.AddAnotherOfficeOfExitController.onPageLoad(userAnswers.lrn, mode))
+
+  override val section: AddAnotherSection = OfficesOfExitSection
 }

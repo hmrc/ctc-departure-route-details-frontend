@@ -16,6 +16,7 @@
 
 package pages
 
+import pages.sections.AddAnotherSection
 import queries.{Gettable, Settable}
 
 trait QuestionPage[A] extends Gettable[A] with Settable[A]
@@ -23,3 +24,8 @@ trait QuestionPage[A] extends Gettable[A] with Settable[A]
 trait InferredPage[A] extends QuestionPage[A]
 
 trait ReadOnlyPage[A] extends Gettable[A]
+
+trait AddAnotherPage extends QuestionPage[Boolean] {
+
+  val section: AddAnotherSection
+}
