@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package pages.sections.transit
+package pages.transit
 
 import controllers.transit.routes
 import models.{Mode, UserAnswers}
 import pages.AddAnotherPage
+import pages.sections.transit.TransitSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 

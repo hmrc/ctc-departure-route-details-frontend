@@ -20,6 +20,7 @@ import models.Index
 import models.journeyDomain.*
 import pages.AddAnotherPage
 import pages.sections.AddAnotherSection
+import pages.transit.AddAnotherOfficeOfTransitPage
 import pages.transit.index.OfficeOfTransitInCL147Page
 import play.api.libs.json.JsPath
 

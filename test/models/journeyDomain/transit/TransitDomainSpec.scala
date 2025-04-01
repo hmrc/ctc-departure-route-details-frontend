@@ -29,7 +29,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.routing.*
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingPage}
-import pages.sections.transit.{AddAnotherOfficeOfTransitPage, OfficeOfTransitSection}
+import pages.sections.transit.OfficeOfTransitSection
 import pages.transit.*
 import pages.transit.index.*
 
