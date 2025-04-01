@@ -17,7 +17,7 @@
 package models.journeyDomain.routing
 
 import base.SpecBase
-import config.Constants.SecurityType._
+import config.Constants.SecurityType.*
 import config.PhaseConfig
 import generators.Generators
 import models.journeyDomain.UserAnswersReader
@@ -26,9 +26,9 @@ import models.{Index, Phase}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import pages.external.SecurityDetailsTypePage
-import pages.routing._
+import pages.routing.*
 import pages.routing.index.CountryOfRoutingPage
-import pages.sections.routing.{CountriesOfRoutingSection, CountryOfRoutingSection, RoutingSection}
+import pages.sections.routing.{CountryOfRoutingSection, RoutingSection}
 
 class RoutingDomainSpec extends SpecBase with Generators {
 
@@ -78,7 +78,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
               BindingItineraryPage,
               CountryOfRoutingPage(index),
               CountryOfRoutingSection(index),
-              CountriesOfRoutingSection,
+              AddAnotherCountryOfRoutingPage,
               RoutingSection
             )
           }
@@ -149,7 +149,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
               BindingItineraryPage,
               CountryOfRoutingPage(index),
               CountryOfRoutingSection(index),
-              CountriesOfRoutingSection,
+              AddAnotherCountryOfRoutingPage,
               RoutingSection
             )
           }
@@ -185,7 +185,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
               BindingItineraryPage,
               CountryOfRoutingPage(index),
               CountryOfRoutingSection(index),
-              CountriesOfRoutingSection,
+              AddAnotherCountryOfRoutingPage,
               RoutingSection
             )
           }
@@ -260,7 +260,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
             BindingItineraryPage,
             CountryOfRoutingPage(index),
             CountryOfRoutingSection(index),
-            CountriesOfRoutingSection,
+            AddAnotherCountryOfRoutingPage,
             RoutingSection
           )
         }

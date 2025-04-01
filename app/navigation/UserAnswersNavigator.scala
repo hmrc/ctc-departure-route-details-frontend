@@ -21,7 +21,7 @@ import models.journeyDomain.OpsError.ReaderError
 import models.journeyDomain.Stage.CompletingJourney
 import models.journeyDomain.{EitherType, JourneyDomainModel, ReaderSuccess, Stage, UserAnswersReader}
 import models.{CheckMode, Mode, UserAnswers}
-import pages.{AddAnotherPage, Page}
+import pages.Page
 import play.api.Logging
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HttpVerbs.GET
@@ -52,10 +52,7 @@ object UserAnswersNavigator extends Logging {
     stage: Stage = CompletingJourney
   )(implicit userAnswersReader: UserAnswersReader[T], appConfig: FrontendAppConfig): Call =
     nextPage(
-      currentPage map {
-        case page: AddAnotherPage => page.section
-        case page                 => page
-      },
+      currentPage,
       userAnswersReader.run(userAnswers),
       mode
     ).apply(userAnswers, stage).getOrElse {
