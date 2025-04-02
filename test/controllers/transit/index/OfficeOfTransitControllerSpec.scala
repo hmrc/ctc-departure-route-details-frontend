@@ -17,7 +17,7 @@
 package controllers.transit.index
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import forms.SelectableFormProvider
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import forms.SelectableFormProvider.OfficeFormProvider
 import generators.Generators
 import models.reference.{Country, CountryCode, CustomsOffice}
@@ -63,6 +63,21 @@ class OfficeOfTransitControllerSpec extends SpecBase with AppWithDefaultMockFixt
       .overrides(bind(classOf[CustomsOfficesService]).toInstance(mockCustomsOfficesService))
 
   "OfficeOfTransit Controller" - {
+
+    "must redirect to NoOfficesAvailableController when no offices found for country of transit" in {
+      when(mockCustomsOfficesService.getCustomsOfficesOfTransitForCountry(any())(any()))
+        .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+
+      setExistingUserAnswers(emptyUserAnswers.setOfficeOfTransitCountry(country))
+
+      val request = FakeRequest(GET, officeOfTransitRoute)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.NoOfficesAvailableController.onPageLoad(lrn, index).url
+    }
 
     "must return OK and the correct view for a GET" - {
       "when country defined at index" in {

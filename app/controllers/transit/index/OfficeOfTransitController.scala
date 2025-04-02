@@ -17,9 +17,9 @@
 package controllers.transit.index
 
 import config.PhaseConfig
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
-import forms.SelectableFormProvider
 import forms.SelectableFormProvider.OfficeFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
 import navigation.{OfficeOfTransitNavigatorProvider, UserAnswersNavigator}
@@ -56,15 +56,21 @@ class OfficeOfTransitController @Inject() (
     .async {
       implicit request =>
         val country = request.arg
-        customsOfficesService.getCustomsOfficesOfTransitForCountry(country.code).map {
-          customsOfficeList =>
-            val form = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
-            val preparedForm = request.userAnswers.get(OfficeOfTransitPage(index)) match {
-              case None        => form
-              case Some(value) => form.fill(value)
-            }
-            Ok(view(preparedForm, lrn, customsOfficeList.values, country.description, mode, index))
-        }
+        customsOfficesService
+          .getCustomsOfficesOfTransitForCountry(country.code)
+          .map {
+            customsOfficeList =>
+              val form = formProvider("transit.index.officeOfTransit", customsOfficeList, country.description)
+              val preparedForm = request.userAnswers.get(OfficeOfTransitPage(index)) match {
+                case None        => form
+                case Some(value) => form.fill(value)
+              }
+              Ok(view(preparedForm, lrn, customsOfficeList.values, country.description, mode, index))
+          }
+          .recover {
+            case _: NoReferenceDataFoundException =>
+              Redirect(routes.NoOfficesAvailableController.onPageLoad(lrn, index))
+          }
     }
 
   def onSubmit(lrn: LocalReferenceNumber, mode: Mode, index: Index): Action[AnyContent] = actions

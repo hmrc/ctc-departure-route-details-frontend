@@ -173,6 +173,11 @@ transit.index.officeOfTransit.change.hidden = office of transit
 transit.index.officeOfTransit.checkYourAnswersLabel = Office of transit
 transit.index.officeOfTransit.error.required = Enter where the office of transit is in {0}
 
+transit.index.noOfficesAvailable.title = No offices of transit
+transit.index.noOfficesAvailable.heading = No offices of transit
+transit.index.noOfficesAvailable.paragraph = There are no offices of transit in {0}. Check that you have entered the correct information in the
+transit.index.noOfficesAvailable.link = country of routing summary page
+
 transit.index.addOfficeOfTransitETAYesNo.title = Do you want to add a time of arrival in {0}?
 transit.index.addOfficeOfTransitETAYesNo.heading = Do you want to add a time of arrival in {0}?
 transit.index.addOfficeOfTransitETAYesNo.hint = Adding a time of arrival is optional.
