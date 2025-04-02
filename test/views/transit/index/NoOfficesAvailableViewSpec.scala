@@ -39,12 +39,12 @@ class NoOfficesAvailableViewSpec extends ViewBehaviours with Generators {
 
   behave like pageWithContent(
     "p",
-    s"There are no offices of transit in $country. Check that you have entered the correct information in the country of routing summary page."
+    s"There are no offices of transit in $country. Check that you have entered the correct information in the transit route summary page."
   )
 
   behave like pageWithLink(
     id = "review",
-    expectedText = "country of routing summary page",
+    expectedText = "transit route summary page",
     expectedHref = controllers.routing.routes.CheckYourAnswersController.onPageLoad(lrn, NormalMode).url
   )
 }
