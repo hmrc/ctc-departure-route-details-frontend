@@ -22,8 +22,9 @@ import models.Index
 import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
-import pages.exit.index._
-import pages.sections.exit.{OfficeOfExitSection, OfficesOfExitSection}
+import pages.exit.AddAnotherOfficeOfExitPage
+import pages.exit.index.*
+import pages.sections.exit.OfficeOfExitSection
 
 class ExitDomainSpec extends SpecBase with Generators {
 
@@ -59,7 +60,7 @@ class ExitDomainSpec extends SpecBase with Generators {
           OfficeOfExitCountryPage(index),
           OfficeOfExitPage(index),
           OfficeOfExitSection(index),
-          OfficesOfExitSection
+          AddAnotherOfficeOfExitPage
         )
       }
     }

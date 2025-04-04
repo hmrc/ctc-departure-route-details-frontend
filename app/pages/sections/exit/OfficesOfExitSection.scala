@@ -16,18 +16,16 @@
 
 package pages.sections.exit
 
-import controllers.exit.routes
-import models.{Mode, UserAnswers}
-import pages.sections.Section
-import play.api.libs.json.{JsArray, JsPath}
-import play.api.mvc.Call
+import pages.AddAnotherPage
+import pages.exit.AddAnotherOfficeOfExitPage
+import pages.sections.AddAnotherSection
+import play.api.libs.json.JsPath
 
-case object OfficesOfExitSection extends Section[JsArray] {
+case object OfficesOfExitSection extends AddAnotherSection {
 
   override def path: JsPath = ExitSection.path \ toString
 
   override def toString: String = "officesOfExit"
 
-  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
-    Some(routes.AddAnotherOfficeOfExitController.onPageLoad(userAnswers.lrn, mode))
+  override val addAnotherPage: AddAnotherPage = AddAnotherOfficeOfExitPage
 }

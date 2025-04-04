@@ -9,6 +9,8 @@ POST       /office-of-transit/:index/office/:lrn                        controll
 GET        /office-of-transit/:index/change-office/:lrn                 controllers.transit.index.OfficeOfTransitController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)
 POST       /office-of-transit/:index/change-office/:lrn                 controllers.transit.index.OfficeOfTransitController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)
 
+GET        /office-of-transit/:index/no-offices-avilable/:lrn           controllers.transit.index.NoOfficesAvailableController.onPageLoad(lrn: LocalReferenceNumber, index: Index)
+
 GET        /office-of-transit/:index/add-eta/:lrn                       controllers.transit.index.AddOfficeOfTransitETAYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode, index: Index)
 POST       /office-of-transit/:index/add-eta/:lrn                       controllers.transit.index.AddOfficeOfTransitETAYesNoController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode, index: Index)
 GET        /office-of-transit/:index/change-add-eta/:lrn                controllers.transit.index.AddOfficeOfTransitETAYesNoController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode, index: Index)

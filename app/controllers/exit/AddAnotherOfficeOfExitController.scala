@@ -21,14 +21,12 @@ import controllers.actions.*
 import controllers.exit.index.routes as indexRoutes
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.AddAnotherFormProvider
-import models.requests.DataRequest
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RouteDetailsNavigatorProvider, UserAnswersNavigator}
 import pages.exit.AddAnotherOfficeOfExitPage
-import pages.sections.exit.OfficesOfExitSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.exit.AddAnotherOfficeOfExitViewModel
@@ -58,7 +56,9 @@ class AddAnotherOfficeOfExitController @Inject() (
     implicit request =>
       val viewModel = viewModelProvider(request.userAnswers, mode)
       viewModel.count match {
-        case 0 => Redirect(redirectToNextPage(mode))
+        case 0 =>
+          val navigator: UserAnswersNavigator = navigatorProvider(mode)
+          Redirect(navigator.nextPage(request.userAnswers, Some(AddAnotherOfficeOfExitPage)))
         case _ =>
           val preparedForm = request.userAnswers.get(AddAnotherOfficeOfExitPage) match {
             case None        => form(viewModel)
@@ -80,15 +80,14 @@ class AddAnotherOfficeOfExitController @Inject() (
               .writeToUserAnswers(value)
               .updateTask()
               .writeToSession(sessionRepository)
-              .navigateTo {
-                if value then indexRoutes.OfficeOfExitCountryController.onPageLoad(lrn, viewModel.nextIndex, mode)
-                else redirectToNextPage(mode)
+              .and {
+                if (value) {
+                  _.navigateTo(indexRoutes.OfficeOfExitCountryController.onPageLoad(lrn, viewModel.nextIndex, mode))
+                } else {
+                  val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                  _.navigateWith(navigator)
+                }
               }
         )
-  }
-
-  private def redirectToNextPage(mode: Mode)(implicit request: DataRequest[?]): Call = {
-    val navigator: UserAnswersNavigator = navigatorProvider(mode)
-    navigator.nextPage(request.userAnswers, Some(OfficesOfExitSection))
   }
 }

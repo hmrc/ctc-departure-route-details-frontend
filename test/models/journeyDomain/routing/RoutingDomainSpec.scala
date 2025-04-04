@@ -26,7 +26,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import pages.external.SecurityDetailsTypePage
 import pages.routing.*
 import pages.routing.index.CountryOfRoutingPage
-import pages.sections.routing.{CountriesOfRoutingSection, CountryOfRoutingSection, RoutingSection}
+import pages.sections.routing.{CountryOfRoutingSection, RoutingSection}
 
 class RoutingDomainSpec extends SpecBase with Generators {
 
@@ -71,7 +71,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
             BindingItineraryPage,
             CountryOfRoutingPage(index),
             CountryOfRoutingSection(index),
-            CountriesOfRoutingSection,
+            AddAnotherCountryOfRoutingPage,
             RoutingSection
           )
         }
@@ -142,7 +142,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
             BindingItineraryPage,
             CountryOfRoutingPage(index),
             CountryOfRoutingSection(index),
-            CountriesOfRoutingSection,
+            AddAnotherCountryOfRoutingPage,
             RoutingSection
           )
         }
@@ -178,7 +178,7 @@ class RoutingDomainSpec extends SpecBase with Generators {
             BindingItineraryPage,
             CountryOfRoutingPage(index),
             CountryOfRoutingSection(index),
-            CountriesOfRoutingSection,
+            AddAnotherCountryOfRoutingPage,
             RoutingSection
           )
         }

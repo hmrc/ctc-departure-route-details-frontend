@@ -18,12 +18,12 @@ package pages.routing
 
 import controllers.routing.routes
 import models.{Mode, UserAnswers}
-import pages.QuestionPage
+import pages.AddAnotherPage
 import pages.sections.routing.RoutingSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-case object AddAnotherCountryOfRoutingPage extends QuestionPage[Boolean] {
+case object AddAnotherCountryOfRoutingPage extends AddAnotherPage {
 
   override def path: JsPath = RoutingSection.path \ toString
 
