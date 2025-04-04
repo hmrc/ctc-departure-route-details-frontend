@@ -18,13 +18,15 @@ package views.transit.index
 
 import generators.Generators
 import models.NormalMode
+import models.reference.Country
+import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.transit.index.NoOfficesAvailableView
 
 class NoOfficesAvailableViewSpec extends ViewBehaviours with Generators {
 
-  private val country = nonEmptyString.sample.value
+  private val country = arbitrary[Country].sample.value
 
   override def view: HtmlFormat.Appendable =
     injector.instanceOf[NoOfficesAvailableView].apply(lrn, country)(fakeRequest, messages)
@@ -39,7 +41,7 @@ class NoOfficesAvailableViewSpec extends ViewBehaviours with Generators {
 
   behave like pageWithContent(
     "p",
-    s"There are no offices of transit in $country. Check that you have entered the correct information in the transit route summary page."
+    s"There are no offices of transit in ${country.description} (${country.code.code}). Check that you have entered the correct information in the transit route summary page."
   )
 
   behave like pageWithLink(

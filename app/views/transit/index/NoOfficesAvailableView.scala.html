@@ -16,6 +16,7 @@
 
 @import controllers.routing.routes
 @import models.LocalReferenceNumber
+@import models.reference.Country
 @import models.NormalMode
 @import views.html.components.Heading
 
@@ -24,7 +25,7 @@
     heading: Heading
 )
 
-@(lrn: LocalReferenceNumber, country: String)(implicit request: Request[?], messages: Messages)
+@(lrn: LocalReferenceNumber, country: Country)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("transit.index.noOfficesAvailable.title"),
@@ -38,6 +39,6 @@
     )
 
     <p class="govuk-body">
-        @messages("transit.index.noOfficesAvailable.paragraph", country) <a class="govuk-link" id="review" href="@routes.CheckYourAnswersController.onPageLoad(lrn, NormalMode)">@messages("transit.index.noOfficesAvailable.link")</a>.
+        @messages("transit.index.noOfficesAvailable.paragraph", country.description, country.code.code) <a class="govuk-link" id="review" href="@routes.CheckYourAnswersController.onPageLoad(lrn, NormalMode)">@messages("transit.index.noOfficesAvailable.link")</a>.
     </p>
 }
