@@ -19,7 +19,6 @@ package config
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.test.Helpers.running
 
 class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with AppWithDefaultMockFixtures {
 
@@ -27,47 +26,12 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
     "officeOfTransitETA" - {
 
-      "in Transition" - {
-
-        val app = transitionApplicationBuilder().build()
-
-        val config = app.injector.instanceOf[FrontendAppConfig]
-
-        "etaDateDaysBefore must be 44" in {
-
-          running(app) {
-            config.etaDateDaysBefore mustBe 44
-          }
-        }
-
-        "etaDateDaysAfter must be 60" in {
-
-          running(app) {
-            config.etaDateDaysAfter mustBe 60
-          }
-        }
-
+      "etaDateDaysBefore must be 0" in {
+        frontendAppConfig.etaDateDaysBefore mustBe 0
       }
 
-      "in Post-Transition" - {
-
-        val app = postTransitionApplicationBuilder().build()
-
-        val config = app.injector.instanceOf[FrontendAppConfig]
-
-        "etaDateDaysBefore must be 0" in {
-
-          running(app) {
-            config.etaDateDaysBefore mustBe 0
-          }
-        }
-
-        "etaDateDaysAfter must be 60" in {
-
-          running(app) {
-            config.etaDateDaysAfter mustBe 60
-          }
-        }
+      "etaDateDaysAfter must be 60" in {
+        frontendAppConfig.etaDateDaysAfter mustBe 60
       }
     }
   }

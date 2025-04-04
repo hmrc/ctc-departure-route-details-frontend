@@ -17,13 +17,12 @@
 package views.loadingAndUnloading.loading
 
 import base.AppWithDefaultMockFixtures
-import config.PhaseConfig
+import forms.Constants.loadingLocationMaxLength
 import forms.LoadingLocationFormProvider
 import models.NormalMode
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.Application
 import play.api.data.Form
-import play.api.test.Helpers.running
 import play.twirl.api.HtmlFormat
 import viewModels.InputSize
 import views.behaviours.InputTextViewBehaviours
@@ -40,16 +39,10 @@ class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefau
   override def form: Form[String] = formProvider(prefix)
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
-    applyView(app, form, phaseConfig)
+    applyView(app, form)
 
-  private def applyView(app: Application): HtmlFormat.Appendable = {
-    val phaseConfig = app.injector.instanceOf[PhaseConfig]
-    val form        = app.injector.instanceOf[LoadingLocationFormProvider].apply(prefix, countryName)
-    applyView(app, form, phaseConfig)
-  }
-
-  private def applyView(app: Application, form: Form[String], phaseConfig: PhaseConfig): HtmlFormat.Appendable =
-    app.injector.instanceOf[LocationView].apply(form, lrn, countryName, phaseConfig.values.loadingLocationMaxLength, NormalMode)(fakeRequest, messages)
+  private def applyView(app: Application, form: Form[String]): HtmlFormat.Appendable =
+    app.injector.instanceOf[LocationView].apply(form, lrn, countryName, loadingLocationMaxLength, NormalMode)(fakeRequest, messages)
 
   implicit override val arbitraryT: Arbitrary[String] = Arbitrary(Gen.alphaStr)
 
@@ -65,25 +58,7 @@ class LocationViewSpec extends InputTextViewBehaviours[String] with AppWithDefau
 
   behave like pageWithSubmitButton("Save and continue")
 
-  "when during transition" - {
-    val app = transitionApplicationBuilder().build()
-    running(app) {
-      val doc = parseView(applyView(app))
-      behave like pageWithHint(
-        doc,
-        "Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 17 characters long."
-      )
-    }
-  }
-
-  "when post transition" - {
-    val app = postTransitionApplicationBuilder().build()
-    running(app) {
-      val doc = parseView(applyView(app))
-      behave like pageWithHint(
-        doc,
-        "Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 35 characters long."
-      )
-    }
-  }
+  behave like pageWithHint(
+    "Enter the specific location, such as the warehouse, shed or wharf, where the goods are being loaded. This can be up to 35 characters long."
+  )
 }

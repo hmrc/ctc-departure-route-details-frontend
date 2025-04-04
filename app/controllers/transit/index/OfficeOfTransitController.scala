@@ -16,7 +16,6 @@
 
 package controllers.transit.index
 
-import config.PhaseConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import controllers.actions.*
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
@@ -46,7 +45,7 @@ class OfficeOfTransitController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: OfficeOfTransitView,
   getMandatoryPage: SpecificDataRequiredActionProvider
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

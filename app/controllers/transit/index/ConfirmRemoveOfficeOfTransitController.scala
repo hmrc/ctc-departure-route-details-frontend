@@ -16,9 +16,8 @@
 
 package controllers.transit.index
 
-import config.PhaseConfig
-import controllers.actions._
-import controllers.transit.{routes => transitRoutes}
+import controllers.actions.*
+import controllers.transit.routes as transitRoutes
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.YesNoFormProvider
 import models.{Index, LocalReferenceNumber, Mode}
@@ -43,7 +42,7 @@ class ConfirmRemoveOfficeOfTransitController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: ConfirmRemoveOfficeOfTransitView,
   viewModelProvider: RemoveOfficeOfTransitViewModelProvider
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -75,7 +75,7 @@ class AddAnotherOfficeOfTransitControllerSpec extends SpecBase with AppWithDefau
 
     "redirect to add office of transit yes/no" - {
       "when 0 offices of transit" in {
-        when(mockViewModelProvider.apply(any(), any())(any(), any(), any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(emptyViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -94,7 +94,7 @@ class AddAnotherOfficeOfTransitControllerSpec extends SpecBase with AppWithDefau
     "must return OK and the correct view for a GET" - {
       "when max limit not reached" in {
 
-        when(mockViewModelProvider.apply(any(), any())(any(), any(), any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(notMaxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -113,7 +113,7 @@ class AddAnotherOfficeOfTransitControllerSpec extends SpecBase with AppWithDefau
 
       "when max limit reached" in {
 
-        when(mockViewModelProvider.apply(any(), any())(any(), any(), any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(maxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -132,7 +132,7 @@ class AddAnotherOfficeOfTransitControllerSpec extends SpecBase with AppWithDefau
     }
     "must populate the view correctly on a GET when the question has previously been answered " - {
       "when max limit not reached " in {
-        when(mockViewModelProvider.apply(any(), any())(any(), any(), any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(notMaxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers.setValue(AddAnotherOfficeOfTransitPage, true))
@@ -152,7 +152,7 @@ class AddAnotherOfficeOfTransitControllerSpec extends SpecBase with AppWithDefau
       }
 
       "when max limit reached " in {
-        when(mockViewModelProvider.apply(any(), any())(any(), any(), any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(maxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers.setValue(AddAnotherOfficeOfTransitPage, true))
@@ -176,7 +176,7 @@ class AddAnotherOfficeOfTransitControllerSpec extends SpecBase with AppWithDefau
     "when max limit not reached" - {
       "when yes submitted" - {
         "must redirect to office of transit country page at next index" in {
-          when(mockViewModelProvider.apply(any(), any())(any(), any(), any()))
+          when(mockViewModelProvider.apply(any(), any())(any(), any()))
             .thenReturn(notMaxedOutViewModel)
 
           setExistingUserAnswers(emptyUserAnswers)
@@ -199,7 +199,7 @@ class AddAnotherOfficeOfTransitControllerSpec extends SpecBase with AppWithDefau
 
       "when no submitted" - {
         "must redirect to the next page" in {
-          when(mockViewModelProvider.apply(any(), any())(any(), any(), any()))
+          when(mockViewModelProvider.apply(any(), any())(any(), any()))
             .thenReturn(notMaxedOutViewModel)
 
           setExistingUserAnswers(emptyUserAnswers)
@@ -222,7 +222,7 @@ class AddAnotherOfficeOfTransitControllerSpec extends SpecBase with AppWithDefau
 
     "when max limit reached" - {
       "must redirect to the next page" in {
-        when(mockViewModelProvider.apply(any(), any())(any(), any(), any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(maxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)
@@ -240,7 +240,7 @@ class AddAnotherOfficeOfTransitControllerSpec extends SpecBase with AppWithDefau
 
     "must return a Bad Request and errors" - {
       "when invalid data is submitted and max limit not reached" in {
-        when(mockViewModelProvider.apply(any(), any())(any(), any(), any()))
+        when(mockViewModelProvider.apply(any(), any())(any(), any()))
           .thenReturn(notMaxedOutViewModel)
 
         setExistingUserAnswers(emptyUserAnswers)

@@ -16,7 +16,7 @@
 
 package controllers.routing
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import controllers.actions.*
 import controllers.routing.index.routes as indexRoutes
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
@@ -45,7 +45,7 @@ class AddAnotherCountryOfRoutingController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   viewModelProvider: AddAnotherCountryOfRoutingViewModelProvider,
   view: AddAnotherCountryOfRoutingView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

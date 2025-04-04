@@ -16,17 +16,16 @@
 
 package models.journeyDomain.transit
 
-import config.Constants.CountryCode._
-import config.Constants.SecurityType._
-import config.PhaseConfig
-import models.journeyDomain._
+import config.Constants.CountryCode.*
+import config.Constants.SecurityType.*
+import models.journeyDomain.*
 import models.reference.{Country, CustomsOffice}
-import models.{DateTime, Index, Phase}
-import pages.external.{OfficeOfDepartureInCL010Page, SecurityDetailsTypePage}
+import models.{DateTime, Index}
+import pages.external.SecurityDetailsTypePage
 import pages.routing.{OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import pages.sections.Section
 import pages.sections.transit.OfficeOfTransitSection
-import pages.transit.index._
+import pages.transit.index.*
 
 case class OfficeOfTransitDomain(
   country: Option[Country],
@@ -48,36 +47,19 @@ object OfficeOfTransitDomain {
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
-  implicit def userAnswersReader(index: Index)(implicit phaseConfig: PhaseConfig): Read[OfficeOfTransitDomain] = {
+  implicit def userAnswersReader(index: Index): Read[OfficeOfTransitDomain] = {
 
     lazy val etaReads: Read[Option[DateTime]] =
-      phaseConfig.phase match {
-        case Phase.PostTransition =>
-          SecurityDetailsTypePage.reader.to {
-            case EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
-              OfficeOfTransitInCL147Page(index).reader.to {
-                case true =>
-                  OfficeOfTransitETAPage(index).reader.toOption
-                case false =>
-                  AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
-              }
-            case _ =>
+      SecurityDetailsTypePage.reader.to {
+        case EntrySummaryDeclarationSecurityDetails | EntryAndExitSummaryDeclarationSecurityDetails =>
+          OfficeOfTransitInCL147Page(index).reader.to {
+            case true =>
+              OfficeOfTransitETAPage(index).reader.toOption
+            case false =>
               AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
           }
-
-        case Phase.Transition =>
-          SecurityDetailsTypePage.reader.to {
-            case NoSecurityDetails =>
-              AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
-            case _ =>
-              (
-                OfficeOfTransitInCL010Page(index).reader,
-                OfficeOfDepartureInCL010Page.reader
-              ).to {
-                case (true, false) => OfficeOfTransitETAPage(index).reader.toOption
-                case _             => AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
-              }
-          }
+        case _ =>
+          AddOfficeOfTransitETAYesNoPage(index).filterOptionalDependent(identity)(OfficeOfTransitETAPage(index).reader)
       }
 
     lazy val readsWithoutCountry: Read[OfficeOfTransitDomain] =
@@ -101,14 +83,13 @@ object OfficeOfTransitDomain {
         }
       }
 
-    (index.position, phaseConfig.phase) match {
-      case (0, Phase.PostTransition) =>
+    index.position match {
+      case 0 =>
         OfficeOfDestinationInCL112Page.reader.to {
           case true  => readsWithoutCountry
           case false => reads
         }
-      case (_, Phase.Transition) => reads
-      case _                     => readsWithCountry
+      case _ => readsWithCountry
     }
   }
   // scalastyle:on cyclomatic.complexity

@@ -16,7 +16,7 @@
 
 package controllers.exit
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import controllers.actions.*
 import controllers.exit.index.routes as indexRoutes
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
@@ -45,7 +45,7 @@ class AddAnotherOfficeOfExitController @Inject() (
   viewModelProvider: AddAnotherOfficeOfExitViewModelProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AddAnotherOfficeOfExitView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

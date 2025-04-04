@@ -19,12 +19,10 @@ package models.journeyDomain.transit
 import base.SpecBase
 import config.Constants.DeclarationType.*
 import config.Constants.SecurityType.*
-import config.PhaseConfig
 import generators.Generators
+import models.Index
 import models.journeyDomain.UserAnswersReader
 import models.reference.{Country, CustomsOffice}
-import models.{Index, Phase}
-import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.routing.*
@@ -35,12 +33,6 @@ import pages.transit.index.*
 
 class TransitDomainSpec extends SpecBase with Generators {
 
-  private val mockTransitionPhaseConfig: PhaseConfig = mock[PhaseConfig]
-  when(mockTransitionPhaseConfig.phase).thenReturn(Phase.Transition)
-
-  private val mockPostTransitionPhaseConfig: PhaseConfig = mock[PhaseConfig]
-  when(mockPostTransitionPhaseConfig.phase).thenReturn(Phase.PostTransition)
-
   "TransitDomain" - {
 
     val country         = arbitrary[Country].sample.value
@@ -49,7 +41,7 @@ class TransitDomainSpec extends SpecBase with Generators {
 
     "can be parsed from UserAnswers" - {
 
-      "when transition mode and office of departure country code is in set CL112" in {
+      "when office of departure country code is in set CL112" in {
         val userAnswers = emptyUserAnswers
           .setValue(OfficeOfDeparturePage, customsOffice)
           .setValue(OfficeOfDepartureInCL112Page, true)
@@ -59,26 +51,27 @@ class TransitDomainSpec extends SpecBase with Generators {
           .setValue(OfficeOfTransitCountryPage(index), country)
           .setValue(OfficeOfTransitPage(index), officeOfTransit)
           .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+          .setValue(AddOfficeOfTransitYesNoPage, true)
 
         val expectedResult = TransitDomain(
           isT2DeclarationType = None,
           officesOfTransit = Some(
             OfficesOfTransitDomain(
               Seq(
-                OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index)
+                OfficeOfTransitDomain(None, officeOfTransit, None)(index) // without country when OfficeOfDestinationInCL112Page true
               )
             )
           )
         )
 
         val result = UserAnswersReader[TransitDomain](
-          TransitDomain.userAnswersReader(mockTransitionPhaseConfig).apply(Nil)
+          TransitDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
         result.value.value mustBe expectedResult
         result.value.pages mustBe Seq(
           OfficeOfDestinationPage,
-          OfficeOfTransitCountryPage(index),
+          AddOfficeOfTransitYesNoPage,
           OfficeOfTransitPage(index),
           AddOfficeOfTransitETAYesNoPage(index),
           OfficeOfTransitSection(index),
@@ -100,7 +93,7 @@ class TransitDomainSpec extends SpecBase with Generators {
         )
 
         val result = UserAnswersReader[TransitDomain](
-          TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+          TransitDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
         result.value.value mustBe expectedResult
@@ -128,7 +121,7 @@ class TransitDomainSpec extends SpecBase with Generators {
         )
 
         val result = UserAnswersReader[TransitDomain](
-          TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+          TransitDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
         result.value.value mustBe expectedResult
@@ -163,7 +156,7 @@ class TransitDomainSpec extends SpecBase with Generators {
           )
 
           val result = UserAnswersReader[TransitDomain](
-            TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+            TransitDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
@@ -198,7 +191,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             )
 
             val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+              TransitDomain.userAnswersReader.apply(Nil)
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
@@ -214,71 +207,35 @@ class TransitDomainSpec extends SpecBase with Generators {
           }
 
           "and country code for office of destination is in set CL112" - {
-            "when is post transition" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, T)
-                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, true)
-                .setValue(T2DeclarationTypeYesNoPage, false)
-                .setValue(OfficeOfTransitPage(index), officeOfTransit)
-                .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+            val userAnswers = emptyUserAnswers
+              .setValue(OfficeOfDeparturePage, customsOffice)
+              .setValue(OfficeOfDepartureInCL112Page, false)
+              .setValue(DeclarationTypePage, T)
+              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+              .setValue(OfficeOfDestinationPage, customsOffice)
+              .setValue(OfficeOfDestinationInCL112Page, true)
+              .setValue(T2DeclarationTypeYesNoPage, false)
+              .setValue(OfficeOfTransitPage(index), officeOfTransit)
+              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
 
-              val expectedResult = TransitDomain(
-                isT2DeclarationType = Some(false),
-                officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))))
-              )
+            val expectedResult = TransitDomain(
+              isT2DeclarationType = Some(false),
+              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))))
+            )
 
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
+            val result = UserAnswersReader[TransitDomain](
+              TransitDomain.userAnswersReader.apply(Nil)
+            ).run(userAnswers)
 
-              result.value.value mustBe expectedResult
-              result.value.pages mustBe Seq(
-                OfficeOfDestinationPage,
-                T2DeclarationTypeYesNoPage,
-                OfficeOfTransitPage(index),
-                AddOfficeOfTransitETAYesNoPage(index),
-                OfficeOfTransitSection(index),
-                AddAnotherOfficeOfTransitPage
-              )
-            }
-
-            "when is transition" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, T)
-                .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, true)
-                .setValue(T2DeclarationTypeYesNoPage, false)
-                .setValue(OfficeOfTransitCountryPage(index), country)
-                .setValue(OfficeOfTransitPage(index), officeOfTransit)
-                .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-              val expectedResult = TransitDomain(
-                isT2DeclarationType = Some(false),
-                officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
-              )
-
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.value.value mustBe expectedResult
-              result.value.pages mustBe Seq(
-                OfficeOfDestinationPage,
-                T2DeclarationTypeYesNoPage,
-                OfficeOfTransitCountryPage(index),
-                OfficeOfTransitPage(index),
-                AddOfficeOfTransitETAYesNoPage(index),
-                OfficeOfTransitSection(index),
-                AddAnotherOfficeOfTransitPage
-              )
-            }
+            result.value.value mustBe expectedResult
+            result.value.pages mustBe Seq(
+              OfficeOfDestinationPage,
+              T2DeclarationTypeYesNoPage,
+              OfficeOfTransitPage(index),
+              AddOfficeOfTransitETAYesNoPage(index),
+              OfficeOfTransitSection(index),
+              AddAnotherOfficeOfTransitPage
+            )
           }
 
           "and country code for neither office of departure nor office of destination is in set CL112" - {
@@ -305,7 +262,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               )
 
               val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+                TransitDomain.userAnswersReader.apply(Nil)
               ).run(userAnswers)
 
               result.value.value mustBe expectedResult
@@ -340,7 +297,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               )
 
               val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+                TransitDomain.userAnswersReader.apply(Nil)
               ).run(userAnswers)
 
               result.value.value mustBe expectedResult
@@ -376,7 +333,7 @@ class TransitDomainSpec extends SpecBase with Generators {
           )
 
           val result = UserAnswersReader[TransitDomain](
-            TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+            TransitDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
           result.value.value mustBe expectedResult
@@ -391,68 +348,33 @@ class TransitDomainSpec extends SpecBase with Generators {
         }
 
         "and country code for office of destination is in set CL112" - {
+          val userAnswers = emptyUserAnswers
+            .setValue(OfficeOfDeparturePage, customsOffice)
+            .setValue(OfficeOfDepartureInCL112Page, false)
+            .setValue(DeclarationTypePage, declarationType)
+            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+            .setValue(OfficeOfDestinationPage, customsOffice)
+            .setValue(OfficeOfDestinationInCL112Page, true)
+            .setValue(OfficeOfTransitPage(index), officeOfTransit)
+            .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
 
-          "when is post transition" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, customsOffice)
-              .setValue(OfficeOfDepartureInCL112Page, false)
-              .setValue(DeclarationTypePage, declarationType)
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, true)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
+          val expectedResult = TransitDomain(
+            isT2DeclarationType = None,
+            officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))))
+          )
 
-            val expectedResult = TransitDomain(
-              isT2DeclarationType = None,
-              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(None, officeOfTransit, None)(index))))
-            )
+          val result = UserAnswersReader[TransitDomain](
+            TransitDomain.userAnswersReader.apply(Nil)
+          ).run(userAnswers)
 
-            val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index),
-              AddAnotherOfficeOfTransitPage
-            )
-          }
-
-          "when is transition" in {
-            val userAnswers = emptyUserAnswers
-              .setValue(OfficeOfDeparturePage, customsOffice)
-              .setValue(OfficeOfDepartureInCL112Page, false)
-              .setValue(DeclarationTypePage, declarationType)
-              .setValue(SecurityDetailsTypePage, NoSecurityDetails)
-              .setValue(OfficeOfDestinationPage, customsOffice)
-              .setValue(OfficeOfDestinationInCL112Page, true)
-              .setValue(OfficeOfTransitCountryPage(index), country)
-              .setValue(OfficeOfTransitPage(index), officeOfTransit)
-              .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
-
-            val expectedResult = TransitDomain(
-              isT2DeclarationType = None,
-              officesOfTransit = Some(OfficesOfTransitDomain(Seq(OfficeOfTransitDomain(Some(country), officeOfTransit, None)(index))))
-            )
-
-            val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockTransitionPhaseConfig).apply(Nil)
-            ).run(userAnswers)
-
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
-              OfficeOfDestinationPage,
-              OfficeOfTransitCountryPage(index),
-              OfficeOfTransitPage(index),
-              AddOfficeOfTransitETAYesNoPage(index),
-              OfficeOfTransitSection(index),
-              AddAnotherOfficeOfTransitPage
-            )
-          }
+          result.value.value mustBe expectedResult
+          result.value.pages mustBe Seq(
+            OfficeOfDestinationPage,
+            OfficeOfTransitPage(index),
+            AddOfficeOfTransitETAYesNoPage(index),
+            OfficeOfTransitSection(index),
+            AddAnotherOfficeOfTransitPage
+          )
         }
 
         "and country code for neither office of departure nor office of destination is in set CL112" - {
@@ -478,7 +400,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             )
 
             val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+              TransitDomain.userAnswersReader.apply(Nil)
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
@@ -511,7 +433,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             )
 
             val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+              TransitDomain.userAnswersReader.apply(Nil)
             ).run(userAnswers)
 
             result.value.value mustBe expectedResult
@@ -523,7 +445,6 @@ class TransitDomainSpec extends SpecBase with Generators {
         }
       }
     }
-
     "cannot be parsed from UserAnswers" - {
 
       "when offices of departure and destination are in CL112 and have same country code" - {
@@ -535,7 +456,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             .setValue(OfficeOfDestinationInCL112Page, true)
 
           val result = UserAnswersReader[TransitDomain](
-            TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+            TransitDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
           result.left.value.page mustBe AddOfficeOfTransitYesNoPage
@@ -544,36 +465,19 @@ class TransitDomainSpec extends SpecBase with Generators {
 
       "when declaration type is T2" - {
         "and office of destination in set CL112" - {
-          "and empty json at index 0" - {
-            "when is post transition" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, T2)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, true)
+          "and empty json at index 0" in {
+            val userAnswers = emptyUserAnswers
+              .setValue(OfficeOfDeparturePage, customsOffice)
+              .setValue(OfficeOfDepartureInCL112Page, false)
+              .setValue(DeclarationTypePage, T2)
+              .setValue(OfficeOfDestinationPage, customsOffice)
+              .setValue(OfficeOfDestinationInCL112Page, true)
 
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
+            val result = UserAnswersReader[TransitDomain](
+              TransitDomain.userAnswersReader.apply(Nil)
+            ).run(userAnswers)
 
-              result.left.value.page mustBe OfficeOfTransitPage(Index(0))
-            }
-
-            "when is transition" in {
-              val userAnswers = emptyUserAnswers
-                .setValue(OfficeOfDeparturePage, customsOffice)
-                .setValue(OfficeOfDepartureInCL112Page, false)
-                .setValue(DeclarationTypePage, T2)
-                .setValue(OfficeOfDestinationPage, customsOffice)
-                .setValue(OfficeOfDestinationInCL112Page, true)
-
-              val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockTransitionPhaseConfig).apply(Nil)
-              ).run(userAnswers)
-
-              result.left.value.page mustBe OfficeOfTransitCountryPage(Index(0))
-            }
+            result.left.value.page mustBe OfficeOfTransitPage(Index(0))
           }
         }
 
@@ -587,7 +491,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               .setValue(OfficeOfDestinationInCL112Page, false)
 
             val result = UserAnswersReader[TransitDomain](
-              TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+              TransitDomain.userAnswersReader.apply(Nil)
             ).run(userAnswers)
 
             result.left.value.page mustBe OfficeOfTransitCountryPage(Index(0))
@@ -614,7 +518,7 @@ class TransitDomainSpec extends SpecBase with Generators {
                 .setValue(CountryOfRoutingInCL112Page(index), false)
 
               val result = UserAnswersReader[TransitDomain](
-                TransitDomain.userAnswersReader(mockPostTransitionPhaseConfig).apply(Nil)
+                TransitDomain.userAnswersReader.apply(Nil)
               ).run(userAnswers)
 
               result.left.value.page mustBe AddOfficeOfTransitYesNoPage

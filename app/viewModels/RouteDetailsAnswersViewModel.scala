@@ -16,7 +16,7 @@
 
 package viewModels
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import models.{CheckMode, UserAnswers}
 import play.api.i18n.Messages
 import viewModels.exit.ExitAnswersViewModel.ExitAnswersViewModelProvider
@@ -40,7 +40,7 @@ object RouteDetailsAnswersViewModel {
     loadingAndUnloadingAnswersViewModelProvider: LoadingAndUnloadingAnswersViewModelProvider
   ) {
 
-    def apply(userAnswers: UserAnswers)(implicit messages: Messages, config: FrontendAppConfig, phaseConfig: PhaseConfig): RouteDetailsAnswersViewModel = {
+    def apply(userAnswers: UserAnswers)(implicit messages: Messages, config: FrontendAppConfig): RouteDetailsAnswersViewModel = {
       val mode = CheckMode
       new RouteDetailsAnswersViewModel(
         routingAnswersViewModelProvider.apply(userAnswers, mode).sections ++

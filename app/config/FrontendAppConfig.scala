@@ -18,25 +18,16 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import models.LocalReferenceNumber
-import models.Phase._
 import play.api.Configuration
 
 @Singleton
-class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: MyServicesConfig, phaseConfig: PhaseConfig) {
+class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: MyServicesConfig) {
 
   val appName: String = configuration.get[String]("appName")
 
-  val etaDateDaysBefore: Int =
-    phaseConfig.phase match {
-      case Transition     => configuration.get[Int]("dates.officeOfTransitETA.transition.daysBefore")
-      case PostTransition => configuration.get[Int]("dates.officeOfTransitETA.postTransition.daysBefore")
-    }
+  val etaDateDaysBefore: Int = configuration.get[Int]("dates.officeOfTransitETA.daysBefore")
 
-  val etaDateDaysAfter: Int =
-    phaseConfig.phase match {
-      case Transition     => configuration.get[Int]("dates.officeOfTransitETA.transition.daysAfter")
-      case PostTransition => configuration.get[Int]("dates.officeOfTransitETA.postTransition.daysAfter")
-    }
+  val etaDateDaysAfter: Int = configuration.get[Int]("dates.officeOfTransitETA.daysAfter")
 
   val enrolmentProxyUrl: String      = servicesConfig.fullServiceUrl("enrolment-store-proxy")
   val eccEnrolmentSplashPage: String = configuration.get[String]("urls.eccEnrolmentSplashPage")

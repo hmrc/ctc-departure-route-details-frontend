@@ -16,7 +16,7 @@
 
 package controllers.transit
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import controllers.actions.*
 import controllers.transit.index.routes as indexRoutes
 import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
@@ -45,7 +45,7 @@ class AddAnotherOfficeOfTransitController @Inject() (
   viewModelProvider: AddAnotherOfficeOfTransitViewModelProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AddAnotherOfficeOfTransitView
-)(implicit ec: ExecutionContext, config: FrontendAppConfig, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -16,7 +16,6 @@
 
 package generators
 
-import config.PhaseConfig
 import models.journeyDomain.RouteDetailsDomain
 import models.journeyDomain.exit.{ExitDomain, OfficeOfExitDomain}
 import models.journeyDomain.loadingAndUnloading.LoadingAndUnloadingDomain
@@ -31,10 +30,10 @@ import org.scalacheck.Gen
 trait RouteDetailsUserAnswersGenerator {
   self: UserAnswersGenerator =>
 
-  def arbitraryRouteDetailsAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
+  def arbitraryRouteDetailsAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
     buildUserAnswers[RouteDetailsDomain](userAnswers)
 
-  def arbitraryRoutingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
+  def arbitraryRoutingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
     buildUserAnswers[RoutingDomain](userAnswers)(
       RoutingDomain.userAnswersReader.apply(Nil)
     )
@@ -44,17 +43,17 @@ trait RouteDetailsUserAnswersGenerator {
       CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
     )
 
-  def arbitraryTransitAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
+  def arbitraryTransitAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
     buildUserAnswers[TransitDomain](userAnswers)(
       TransitDomain.userAnswersReader.apply(Nil)
     )
 
-  def arbitraryOfficesOfTransitAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
+  def arbitraryOfficesOfTransitAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
     buildUserAnswers[OfficesOfTransitDomain](userAnswers)(
       OfficesOfTransitDomain.userAnswersReader.apply(Nil)
     )
 
-  def arbitraryOfficeOfTransitAnswers(userAnswers: UserAnswers, index: Index)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
+  def arbitraryOfficeOfTransitAnswers(userAnswers: UserAnswers, index: Index): Gen[UserAnswers] =
     buildUserAnswers[OfficeOfTransitDomain](userAnswers)(
       OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
     )
@@ -79,12 +78,12 @@ trait RouteDetailsUserAnswersGenerator {
       LoadingDomain.userAnswersReader.apply(Nil)
     )
 
-  def arbitraryUnloadingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
+  def arbitraryUnloadingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
     buildUserAnswers[UnloadingDomain](userAnswers)(
       UnloadingDomain.userAnswersReader.apply(Nil)
     )
 
-  def arbitraryLoadingAndUnloadingAnswers(userAnswers: UserAnswers)(implicit phaseConfig: PhaseConfig): Gen[UserAnswers] =
+  def arbitraryLoadingAndUnloadingAnswers(userAnswers: UserAnswers): Gen[UserAnswers] =
     buildUserAnswers[LoadingAndUnloadingDomain](userAnswers)(
       LoadingAndUnloadingDomain.userAnswersReader.apply(Nil)
     )
