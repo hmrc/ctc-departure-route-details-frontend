@@ -18,14 +18,12 @@ package controllers.routing
 
 import config.{FrontendAppConfig, PhaseConfig}
 import controllers.actions.*
-import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import controllers.routing.index.routes as indexRoutes
+import controllers.{NavigatorOps, SettableOps, SettableOpsRunner}
 import forms.AddAnotherFormProvider
-import models.requests.DataRequest
 import models.{LocalReferenceNumber, Mode}
 import navigation.{RoutingNavigatorProvider, UserAnswersNavigator}
 import pages.routing.AddAnotherCountryOfRoutingPage
-import pages.sections.routing.CountriesOfRoutingSection
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.*
@@ -80,15 +78,14 @@ class AddAnotherCountryOfRoutingController @Inject() (
               .writeToUserAnswers(value)
               .updateTask()
               .writeToSession(sessionRepository)
-              .navigateTo {
-                if value then indexRoutes.CountryOfRoutingController.onPageLoad(lrn, mode, viewModel.nextIndex)
-                else redirectToNextPage(mode)
+              .and {
+                if (value) {
+                  _.navigateTo(indexRoutes.CountryOfRoutingController.onPageLoad(lrn, mode, viewModel.nextIndex))
+                } else {
+                  val navigator: UserAnswersNavigator = navigatorProvider(mode)
+                  _.navigateWith(navigator)
+                }
               }
         )
-  }
-
-  private def redirectToNextPage(mode: Mode)(implicit request: DataRequest[?]): Call = {
-    val navigator: UserAnswersNavigator = navigatorProvider(mode)
-    navigator.nextPage(request.userAnswers, Some(CountriesOfRoutingSection))
   }
 }

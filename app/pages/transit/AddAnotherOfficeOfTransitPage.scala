@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package pages.sections.transit
+package pages.transit
 
 import controllers.transit.routes
 import models.{Mode, UserAnswers}
-import pages.QuestionPage
+import pages.AddAnotherPage
+import pages.sections.transit.TransitSection
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-case object AddAnotherOfficeOfTransitPage extends QuestionPage[Boolean] {
+case object AddAnotherOfficeOfTransitPage extends AddAnotherPage {
 
   override def path: JsPath = TransitSection.path \ toString
 
@@ -30,5 +31,4 @@ case object AddAnotherOfficeOfTransitPage extends QuestionPage[Boolean] {
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.AddAnotherOfficeOfTransitController.onPageLoad(userAnswers.lrn, mode))
-
 }

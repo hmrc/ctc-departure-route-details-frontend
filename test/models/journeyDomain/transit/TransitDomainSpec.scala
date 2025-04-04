@@ -29,7 +29,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import pages.external.{DeclarationTypePage, OfficeOfDepartureInCL112Page, OfficeOfDeparturePage, SecurityDetailsTypePage}
 import pages.routing.*
 import pages.routing.index.{CountryOfRoutingInCL112Page, CountryOfRoutingPage}
-import pages.sections.transit.{OfficeOfTransitSection, OfficesOfTransitSection}
+import pages.sections.transit.OfficeOfTransitSection
 import pages.transit.*
 import pages.transit.index.*
 
@@ -82,7 +82,7 @@ class TransitDomainSpec extends SpecBase with Generators {
           OfficeOfTransitPage(index),
           AddOfficeOfTransitETAYesNoPage(index),
           OfficeOfTransitSection(index),
-          OfficesOfTransitSection
+          AddAnotherOfficeOfTransitPage
         )
       }
 
@@ -138,7 +138,7 @@ class TransitDomainSpec extends SpecBase with Generators {
           OfficeOfTransitPage(index),
           AddOfficeOfTransitETAYesNoPage(index),
           OfficeOfTransitSection(index),
-          OfficesOfTransitSection
+          AddAnotherOfficeOfTransitPage
         )
       }
 
@@ -174,7 +174,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitPage(index),
             AddOfficeOfTransitETAYesNoPage(index),
             OfficeOfTransitSection(index),
-            OfficesOfTransitSection
+            AddAnotherOfficeOfTransitPage
           )
         }
 
@@ -209,7 +209,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               OfficeOfTransitPage(index),
               AddOfficeOfTransitETAYesNoPage(index),
               OfficeOfTransitSection(index),
-              OfficesOfTransitSection
+              AddAnotherOfficeOfTransitPage
             )
           }
 
@@ -242,7 +242,7 @@ class TransitDomainSpec extends SpecBase with Generators {
                 OfficeOfTransitPage(index),
                 AddOfficeOfTransitETAYesNoPage(index),
                 OfficeOfTransitSection(index),
-                OfficesOfTransitSection
+                AddAnotherOfficeOfTransitPage
               )
             }
 
@@ -276,7 +276,7 @@ class TransitDomainSpec extends SpecBase with Generators {
                 OfficeOfTransitPage(index),
                 AddOfficeOfTransitETAYesNoPage(index),
                 OfficeOfTransitSection(index),
-                OfficesOfTransitSection
+                AddAnotherOfficeOfTransitPage
               )
             }
           }
@@ -316,7 +316,7 @@ class TransitDomainSpec extends SpecBase with Generators {
                 OfficeOfTransitPage(index),
                 AddOfficeOfTransitETAYesNoPage(index),
                 OfficeOfTransitSection(index),
-                OfficesOfTransitSection
+                AddAnotherOfficeOfTransitPage
               )
             }
 
@@ -386,7 +386,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitPage(index),
             AddOfficeOfTransitETAYesNoPage(index),
             OfficeOfTransitSection(index),
-            OfficesOfTransitSection
+            AddAnotherOfficeOfTransitPage
           )
         }
 
@@ -418,7 +418,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               OfficeOfTransitPage(index),
               AddOfficeOfTransitETAYesNoPage(index),
               OfficeOfTransitSection(index),
-              OfficesOfTransitSection
+              AddAnotherOfficeOfTransitPage
             )
           }
 
@@ -450,7 +450,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               OfficeOfTransitPage(index),
               AddOfficeOfTransitETAYesNoPage(index),
               OfficeOfTransitSection(index),
-              OfficesOfTransitSection
+              AddAnotherOfficeOfTransitPage
             )
           }
         }
@@ -488,7 +488,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               OfficeOfTransitPage(index),
               AddOfficeOfTransitETAYesNoPage(index),
               OfficeOfTransitSection(index),
-              OfficesOfTransitSection
+              AddAnotherOfficeOfTransitPage
             )
           }
 

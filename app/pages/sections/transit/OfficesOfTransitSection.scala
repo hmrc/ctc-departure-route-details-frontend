@@ -16,22 +16,21 @@
 
 package pages.sections.transit
 
-import controllers.transit.routes
-import models.journeyDomain._
-import models.{Index, Mode, UserAnswers}
-import pages.sections.Section
+import models.Index
+import models.journeyDomain.*
+import pages.AddAnotherPage
+import pages.sections.AddAnotherSection
+import pages.transit.AddAnotherOfficeOfTransitPage
 import pages.transit.index.OfficeOfTransitInCL147Page
-import play.api.libs.json.{JsArray, JsPath}
-import play.api.mvc.Call
+import play.api.libs.json.JsPath
 
-case object OfficesOfTransitSection extends Section[JsArray] {
+case object OfficesOfTransitSection extends AddAnotherSection {
 
   override def path: JsPath = TransitSection.path \ toString
 
   override def toString: String = "officesOfTransit"
 
-  override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
-    Some(routes.AddAnotherOfficeOfTransitController.onPageLoad(userAnswers.lrn, mode))
+  override val addAnotherPage: AddAnotherPage = AddAnotherOfficeOfTransitPage
 
   def atLeastOneOfficeOfTransitIsNotInCL147: Read[Boolean] =
     this.arrayReader.apply(_).map(_.to(_.value.length)).flatMap {
