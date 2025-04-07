@@ -42,6 +42,6 @@ class NoOfficesAvailableController @Inject() (
     .requireData(lrn)
     .andThen(getMandatoryPage(OfficeOfTransitCountryPage(index), InferredOfficeOfTransitCountryPage(index), CountryOfDestinationPage)) {
       implicit request =>
-        Ok(view(lrn, request.arg.description))
+        Ok(view(lrn, request.arg))
     }
 }

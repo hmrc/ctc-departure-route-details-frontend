@@ -52,7 +52,7 @@ class NoOfficesAvailableControllerSpec extends SpecBase with AppWithDefaultMockF
             status(result) mustEqual OK
 
             contentAsString(result) mustEqual
-              view(lrn, transitCountry.description)(request, messages).toString
+              view(lrn, transitCountry)(request, messages).toString
         }
       }
 
@@ -74,7 +74,7 @@ class NoOfficesAvailableControllerSpec extends SpecBase with AppWithDefaultMockF
             status(result) mustEqual OK
 
             contentAsString(result) mustEqual
-              view(lrn, transitCountry.description)(request, messages).toString
+              view(lrn, transitCountry)(request, messages).toString
         }
       }
 
@@ -95,7 +95,7 @@ class NoOfficesAvailableControllerSpec extends SpecBase with AppWithDefaultMockF
             status(result) mustEqual OK
 
             contentAsString(result) mustEqual
-              view(lrn, destinationCounty.description)(request, messages).toString
+              view(lrn, destinationCounty)(request, messages).toString
         }
       }
     }
