@@ -101,8 +101,6 @@ class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckP
 
     "when session does not have an auth token" - {
       "must not render timeout dialog or sign out link" in {
-        implicit lazy val request: FakeRequest[AnyContent] = FakeRequest("GET", path)
-
         forAll(Gen.alphaNumStr, Gen.alphaNumStr, arbitrary[LocalReferenceNumber]) {
           (content, title, lrn) =>
             val view = app.injector
@@ -188,8 +186,6 @@ class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckP
 
     "when session does not have an auth token" - {
       "must not render timeout dialog or sign out link" in {
-        implicit lazy val request: FakeRequest[AnyContent] = FakeRequest("GET", path)
-
         forAll(Gen.alphaNumStr, Gen.alphaNumStr, arbitrary[LocalReferenceNumber]) {
           (content, title, lrn) =>
             val view = app.injector
