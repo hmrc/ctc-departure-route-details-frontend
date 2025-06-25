@@ -23,6 +23,8 @@ import play.api.Configuration
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: MyServicesConfig) {
 
+  val isPhase6Enabled: Boolean = configuration.get[Boolean]("feature-flags.phase-6-enabled")
+
   val appName: String = configuration.get[String]("appName")
 
   val etaDateDaysBefore: Int = configuration.get[Int]("dates.officeOfTransitETA.daysBefore")

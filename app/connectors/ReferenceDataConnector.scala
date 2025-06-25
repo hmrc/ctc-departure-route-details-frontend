@@ -37,47 +37,57 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   private def get[T](url: URL)(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: HttpReads[Responses[T]]): Future[Responses[T]] =
     http
       .get(url)
-      .setHeader(HeaderNames.Accept -> "application/vnd.hmrc.1.0+json")
+      .setHeader(HeaderNames.Accept -> {
+        val version = if (config.isPhase6Enabled) "2.0" else "1.0"
+        s"application/vnd.hmrc.$version+json"
+      })
       .execute[Responses[T]]
 
   private def getOne[T](url: URL)(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: HttpReads[Responses[T]]): Future[Response[T]] =
     get[T](url).map(_.map(_.head))
 
   def getCountries(listName: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Responses[Country]] = {
-    val url = url"${config.referenceDataUrl}/lists/$listName"
+    implicit val reads: Reads[Country] = Country.reads(config)
+    val url                            = url"${config.referenceDataUrl}/lists/$listName"
     get[Country](url)
   }
 
   def getCountry(listName: String, countryId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Country]] = {
-    val queryParameters = Seq("data.code" -> countryId)
-    val url             = url"${config.referenceDataUrl}/lists/$listName?$queryParameters"
+    implicit val reads: Reads[Country] = Country.reads(config)
+    val queryParameters                = Country.queryParams(countryId)(config)
+    val url                            = url"${config.referenceDataUrl}/lists/$listName?$queryParameters"
     getOne[Country](url)
   }
 
   def getCountriesWithoutZipCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[CountryCode]] = {
-    val queryParameters = Seq("data.code" -> code)
-    val url             = url"${config.referenceDataUrl}/lists/CountryWithoutZip?$queryParameters"
+    implicit val reads: Reads[CountryCode] = CountryCode.reads(config)
+    val queryParameters                    = CountryCode.queryParams(code)(config)
+    val url                                = url"${config.referenceDataUrl}/lists/CountryWithoutZip?$queryParameters"
     getOne[CountryCode](url)
   }
 
   def getUnLocode(unLocode: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[UnLocode]] = {
-    val queryParameters = Seq("data.unLocodeExtendedCode" -> unLocode)
-    val url             = url"${config.referenceDataUrl}/lists/UnLocodeExtended?$queryParameters"
+    implicit val reads: Reads[UnLocode] = UnLocode.reads(config)
+    val queryParameters                 = UnLocode.queryParams(unLocode)(config)
+    val url                             = url"${config.referenceDataUrl}/lists/UnLocodeExtended?$queryParameters"
     getOne[UnLocode](url)
   }
 
   def getSpecificCircumstanceIndicators()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Responses[SpecificCircumstanceIndicator]] = {
-    val url = url"${config.referenceDataUrl}/lists/SpecificCircumstanceIndicatorCode"
+    implicit val reads: Reads[SpecificCircumstanceIndicator] = SpecificCircumstanceIndicator.reads(config)
+    val url                                                  = url"${config.referenceDataUrl}/lists/SpecificCircumstanceIndicatorCode"
     get[SpecificCircumstanceIndicator](url)
   }
 
   def getTypesOfLocation()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Responses[LocationType]] = {
-    val url = url"${config.referenceDataUrl}/lists/TypeOfLocation"
+    implicit val reads: Reads[LocationType] = LocationType.reads(config)
+    val url                                 = url"${config.referenceDataUrl}/lists/TypeOfLocation"
     get[LocationType](url)
   }
 
   def getQualifierOfTheIdentifications()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Responses[LocationOfGoodsIdentification]] = {
-    val url = url"${config.referenceDataUrl}/lists/QualifierOfTheIdentification"
+    implicit val reads: Reads[LocationOfGoodsIdentification] = LocationOfGoodsIdentification.reads(config)
+    val url                                                  = url"${config.referenceDataUrl}/lists/QualifierOfTheIdentification"
     get[LocationOfGoodsIdentification](url)
   }
 
@@ -94,7 +104,8 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     (_: String, url: String, response: HttpResponse) =>
       response.status match {
         case OK =>
-          (response.json \ "data").validate[List[A]] match {
+          val json = if (config.isPhase6Enabled) response.json else response.json \ "data"
+          json.validate[List[A]] match {
             case JsSuccess(Nil, _) =>
               Left(NoReferenceDataFoundException(url))
             case JsSuccess(head :: tail, _) =>
