@@ -18,12 +18,14 @@ package models.reference
 
 import base.SpecBase
 import cats.data.NonEmptySet
+import config.FrontendAppConfig
 import generators.Generators
 import models.SelectableList
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
+import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 class CountrySpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -34,7 +36,7 @@ class CountrySpec extends SpecBase with ScalaCheckPropertyChecks with Generators
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
         (code, description) =>
           val country = Country(CountryCode(code), description)
-          Json.toJson(country) mustBe Json.parse(s"""
+          Json.toJson(country) mustEqual Json.parse(s"""
               |{
               |  "code": "$code",
               |  "description": "$description"
@@ -43,32 +45,74 @@ class CountrySpec extends SpecBase with ScalaCheckPropertyChecks with Generators
       }
     }
 
-    "must deserialise" in {
-      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-        (code, description) =>
-          val country = Country(CountryCode(code), description)
-          Json
-            .parse(s"""
-              |{
-              |  "code": "$code",
-              |  "description": "$description"
-              |}
-              |""".stripMargin)
-            .as[Country] mustBe country
+    "must deserialise" - {
+      "when reading from mongo" in {
+        forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+          (code, description) =>
+            val country = Country(CountryCode(code), description)
+            Json
+              .parse(s"""
+                   |{
+                   |  "code": "$code",
+                   |  "description": "$description"
+                   |}
+                   |""".stripMargin)
+              .as[Country] mustEqual country
+        }
+      }
+
+      "when reading from reference data" - {
+        "when phase 5" in {
+          running(_.configure("feature-flags.phase-6-enabled" -> false)) {
+            app =>
+              val config = app.injector.instanceOf[FrontendAppConfig]
+              forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+                (code, description) =>
+                  val country = Country(CountryCode(code), description)
+                  Json
+                    .parse(s"""
+                         |{
+                         |  "code": "$code",
+                         |  "description": "$description"
+                         |}
+                         |""".stripMargin)
+                    .as[Country](Country.reads(config)) mustEqual country
+              }
+          }
+        }
+
+        "when phase 6" in {
+          running(_.configure("feature-flags.phase-6-enabled" -> true)) {
+            app =>
+              val config = app.injector.instanceOf[FrontendAppConfig]
+              forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+                (code, description) =>
+                  val country = Country(CountryCode(code), description)
+                  Json
+                    .parse(s"""
+                         |{
+                         |  "key": "$code",
+                         |  "value": "$description"
+                         |}
+                         |""".stripMargin)
+                    .as[Country](Country.reads(config)) mustEqual country
+              }
+          }
+        }
       }
     }
 
     "must convert to select item" in {
       forAll(arbitrary[Country], arbitrary[Boolean]) {
         (country, selected) =>
-          country.toSelectItem(selected) mustBe SelectItem(Some(country.code.code), s"${country.description} - ${country.code.code}", selected)
+          country.toSelectItem(selected) mustEqual SelectItem(Some(country.code.code), s"${country.description} - ${country.code.code}", selected)
       }
     }
 
     "must format as string" in {
       forAll(arbitrary[Country]) {
         country =>
-          country.toString mustBe s"${country.description} - ${country.code.code}"
+          country.toString mustEqual s"${country.description} - ${country.code.code}"
       }
     }
 
@@ -81,7 +125,7 @@ class CountrySpec extends SpecBase with ScalaCheckPropertyChecks with Generators
 
       val result = SelectableList(countries).values
 
-      result mustBe Seq(
+      result mustEqual Seq(
         country3,
         country1,
         country2

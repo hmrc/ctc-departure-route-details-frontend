@@ -81,6 +81,14 @@ trait ModelGenerators {
       } yield Country(code, name)
     }
 
+  implicit lazy val arbitraryUnLocode: Arbitrary[UnLocode] =
+    Arbitrary {
+      for {
+        unLocodeExtendedCode <- stringsWithExactLength(5)
+        name                 <- nonEmptyString
+      } yield UnLocode(unLocodeExtendedCode, name)
+    }
+
   implicit def arbitrarySelectableList[T <: Selectable](implicit arbitrary: Arbitrary[T]): Arbitrary[SelectableList[T]] = Arbitrary {
     for {
       values <- listWithMaxLength[T]()
@@ -101,13 +109,6 @@ trait ModelGenerators {
         name      <- nonEmptyString
         countryId <- nonEmptyString
       } yield CustomsOffice(id, name, countryId)
-    }
-
-  implicit lazy val arbitraryUnLocode: Arbitrary[String] =
-    Arbitrary {
-      for {
-        code <- stringsWithExactLength(5, 5: Int)
-      } yield code
     }
 
   implicit lazy val arbitrarySpecificCircumstanceIndicator: Arbitrary[SpecificCircumstanceIndicator] =

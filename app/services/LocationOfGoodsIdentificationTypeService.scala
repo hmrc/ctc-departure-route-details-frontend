@@ -33,13 +33,13 @@ class LocationOfGoodsIdentificationTypeService @Inject() (
     def filter(locationOfGoods: Seq[LocationOfGoodsIdentification]): Seq[LocationOfGoodsIdentification] =
       locationType.code match {
         case DesignatedLocation =>
-          locationOfGoods.filter(_.qualifierIsOneOf(CustomsOfficeIdentifier, UnlocodeIdentifier))
+          locationOfGoods.filter(_.isOneOf(CustomsOfficeIdentifier, UnlocodeIdentifier))
         case AuthorisedPlace =>
-          locationOfGoods.filter(_.qualifierIsOneOf(AuthorisationNumberIdentifier))
+          locationOfGoods.filter(_.isOneOf(AuthorisationNumberIdentifier))
         case ApprovedPlace =>
-          locationOfGoods.filter(_.qualifierIsOneOf(EoriNumberIdentifier, CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier))
+          locationOfGoods.filter(_.isOneOf(EoriNumberIdentifier, CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier))
         case Other =>
-          locationOfGoods.filter(_.qualifierIsOneOf(CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier))
+          locationOfGoods.filter(_.isOneOf(CoordinatesIdentifier, UnlocodeIdentifier, AddressIdentifier))
         case _ =>
           locationOfGoods
       }

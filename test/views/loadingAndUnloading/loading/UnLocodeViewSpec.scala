@@ -32,7 +32,7 @@ class UnLocodeViewSpec extends InputTextViewBehaviours[String] {
   override def applyView(form: Form[String]): HtmlFormat.Appendable =
     injector.instanceOf[UnLocodeView].apply(form, lrn, NormalMode)(fakeRequest, messages)
 
-  implicit override val arbitraryT: Arbitrary[String] = arbitraryUnLocode
+  implicit override val arbitraryT: Arbitrary[String] = Arbitrary(nonEmptyString)
 
   override val prefix: String = "loadingAndUnloading.loading.unLocode"
 

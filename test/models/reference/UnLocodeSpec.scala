@@ -17,24 +17,29 @@
 package models.reference
 
 import base.SpecBase
+import cats.data.NonEmptySet
 import config.FrontendAppConfig
+import generators.Generators
+import models.SelectableList
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import play.api.test.Helpers.running
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
-class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckPropertyChecks {
+class UnLocodeSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  "SpecificCircumstanceIndicator" - {
+  "UnLocode" - {
 
     "must serialise" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
         (code, description) =>
-          val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
-          Json.toJson(specificCircumstanceIndicator) mustEqual Json.parse(s"""
+          val unLocode = UnLocode(code, description)
+          Json.toJson(unLocode) mustEqual Json.parse(s"""
               |{
-              |  "code": "$code",
-              |  "description": "$description"
+              |  "unLocodeExtendedCode": "$code",
+              |  "name": "$description"
               |}
               |""".stripMargin)
       }
@@ -44,15 +49,15 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
       "when reading from mongo" in {
         forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
           (code, description) =>
-            val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
+            val unLocode = UnLocode(code, description)
             Json
               .parse(s"""
                    |{
-                   |  "code": "$code",
-                   |  "description": "$description"
+                   |  "unLocodeExtendedCode": "$code",
+                   |  "name": "$description"
                    |}
                    |""".stripMargin)
-              .as[SpecificCircumstanceIndicator] mustEqual specificCircumstanceIndicator
+              .as[UnLocode] mustEqual unLocode
         }
       }
 
@@ -63,15 +68,15 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
               val config = app.injector.instanceOf[FrontendAppConfig]
               forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
                 (code, description) =>
-                  val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
+                  val unLocode = UnLocode(code, description)
                   Json
                     .parse(s"""
                          |{
-                         |  "code": "$code",
-                         |  "description": "$description"
+                         |  "unLocodeExtendedCode": "$code",
+                         |  "name": "$description"
                          |}
                          |""".stripMargin)
-                    .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads(config)) mustEqual specificCircumstanceIndicator
+                    .as[UnLocode](UnLocode.reads(config)) mustEqual unLocode
               }
           }
         }
@@ -82,7 +87,7 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
               val config = app.injector.instanceOf[FrontendAppConfig]
               forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
                 (code, description) =>
-                  val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
+                  val unLocode = UnLocode(code, description)
                   Json
                     .parse(s"""
                          |{
@@ -90,19 +95,45 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
                          |  "value": "$description"
                          |}
                          |""".stripMargin)
-                    .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads(config)) mustEqual specificCircumstanceIndicator
+                    .as[UnLocode](UnLocode.reads(config)) mustEqual unLocode
               }
           }
         }
       }
     }
 
-    "must format as string" in {
-      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-        (code, description) =>
-          val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
-          specificCircumstanceIndicator.toString mustEqual s"$code - $description"
+    "must convert to select item" in {
+      forAll(arbitrary[UnLocode], arbitrary[Boolean]) {
+        (unLocode, selected) =>
+          unLocode.toSelectItem(selected) mustEqual SelectItem(
+            Some(unLocode.unLocodeExtendedCode),
+            s"${unLocode.name} (${unLocode.unLocodeExtendedCode})",
+            selected
+          )
       }
+    }
+
+    "must format as string" in {
+      forAll(arbitrary[UnLocode]) {
+        unLocode =>
+          unLocode.toString mustEqual s"${unLocode.name} (${unLocode.unLocodeExtendedCode})"
+      }
+    }
+
+    "must order" in {
+      val unLocode1 = UnLocode("FRTY4", "Thauvenay")
+      val unLocode2 = UnLocode("ZWZVS", "Zvishavane")
+      val unLocode3 = UnLocode("ADALV", "Andorra la Vella")
+
+      val unLocodes = NonEmptySet.of(unLocode1, unLocode2, unLocode3)
+
+      val result = SelectableList(unLocodes).values
+
+      result mustEqual Seq(
+        unLocode3,
+        unLocode1,
+        unLocode2
+      )
     }
   }
 

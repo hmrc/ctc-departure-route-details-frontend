@@ -18,41 +18,32 @@ package models.reference
 
 import base.SpecBase
 import config.FrontendAppConfig
+import generators.Generators
+import models.reference.LocationOfGoodsIdentification.*
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsString, Json}
 import play.api.test.Helpers.running
 
-class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckPropertyChecks {
+class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  "SpecificCircumstanceIndicator" - {
+  "LocationOfGoodsIdentification" - {
 
-    "must serialise" in {
-      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-        (code, description) =>
-          val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
-          Json.toJson(specificCircumstanceIndicator) mustEqual Json.parse(s"""
-              |{
-              |  "code": "$code",
-              |  "description": "$description"
-              |}
-              |""".stripMargin)
-      }
-    }
+    "must deserialise valid values" - {
 
-    "must deserialise" - {
       "when reading from mongo" in {
         forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-          (code, description) =>
-            val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
+          (qualifier, description) =>
+            val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
             Json
               .parse(s"""
                    |{
-                   |  "code": "$code",
+                   |  "qualifier": "$qualifier",
                    |  "description": "$description"
                    |}
                    |""".stripMargin)
-              .as[SpecificCircumstanceIndicator] mustEqual specificCircumstanceIndicator
+              .as[LocationOfGoodsIdentification] mustEqual locationOfGoodsIdentification
         }
       }
 
@@ -62,16 +53,16 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
             app =>
               val config = app.injector.instanceOf[FrontendAppConfig]
               forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-                (code, description) =>
-                  val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
+                (qualifier, description) =>
+                  val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
                   Json
                     .parse(s"""
                          |{
-                         |  "code": "$code",
+                         |  "qualifier": "$qualifier",
                          |  "description": "$description"
                          |}
                          |""".stripMargin)
-                    .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads(config)) mustEqual specificCircumstanceIndicator
+                    .as[LocationOfGoodsIdentification](LocationOfGoodsIdentification.reads(config)) mustEqual locationOfGoodsIdentification
               }
           }
         }
@@ -81,29 +72,45 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
             app =>
               val config = app.injector.instanceOf[FrontendAppConfig]
               forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-                (code, description) =>
-                  val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
+                (qualifier, description) =>
+                  val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
                   Json
                     .parse(s"""
                          |{
-                         |  "key": "$code",
+                         |  "key": "$qualifier",
                          |  "value": "$description"
                          |}
                          |""".stripMargin)
-                    .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads(config)) mustEqual specificCircumstanceIndicator
+                    .as[LocationOfGoodsIdentification](LocationOfGoodsIdentification.reads(config)) mustEqual locationOfGoodsIdentification
               }
           }
         }
       }
     }
 
-    "must format as string" in {
-      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-        (code, description) =>
-          val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
-          specificCircumstanceIndicator.toString mustEqual s"$code - $description"
+    "must fail to deserialise invalid values" in {
+
+      val gen = arbitrary[String] suchThat (!goodsIdentificationValues.map(_.toString).contains(_))
+
+      forAll(gen) {
+        invalidValue =>
+          JsString(invalidValue).validate[LocationOfGoodsIdentification] mustEqual JsError("error.expected.jsobject")
       }
     }
-  }
 
+    "must serialise" in {
+
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (qualifier, description) =>
+          val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
+          Json.toJson(locationOfGoodsIdentification) mustEqual Json.parse(s"""
+               |{
+               |  "qualifier": "$qualifier",
+               |  "description": "$description"
+               |}
+               |""".stripMargin)
+      }
+    }
+
+  }
 }

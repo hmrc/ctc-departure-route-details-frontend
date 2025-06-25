@@ -17,8 +17,10 @@
 package models.reference
 
 import cats.Order
+import config.FrontendAppConfig
 import models.{DynamicEnumerableType, Radioable}
-import play.api.libs.json.{Format, Json}
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.{__, Format, Json, Reads}
 
 case class LocationType(`type`: String, description: String) extends Radioable[LocationType] {
   override val messageKeyPrefix: String = "locationOfGoods.locationType"
@@ -28,6 +30,17 @@ case class LocationType(`type`: String, description: String) extends Radioable[L
 }
 
 object LocationType extends DynamicEnumerableType[LocationType] {
+
+  def reads(config: FrontendAppConfig): Reads[LocationType] =
+    if (config.isPhase6Enabled) {
+      (
+        (__ \ "key").read[String] and
+          (__ \ "value").read[String]
+      )(LocationType.apply)
+    } else {
+      Json.reads[LocationType]
+    }
+
   implicit val format: Format[LocationType] = Json.format[LocationType]
 
   implicit val order: Order[LocationType] = (x: LocationType, y: LocationType) => (x, y).compareBy(_.`type`)

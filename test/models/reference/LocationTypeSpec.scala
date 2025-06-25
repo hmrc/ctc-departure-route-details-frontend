@@ -16,27 +16,30 @@
 
 package models.reference
 
-import base.SpecBase
 import config.FrontendAppConfig
+import generators.Generators
 import org.scalacheck.Gen
+import org.scalatest.OptionValues
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import play.api.test.Helpers.running
 
-class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckPropertyChecks {
+class LocationTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with Generators {
 
-  "SpecificCircumstanceIndicator" - {
+  "LocationType" - {
 
     "must serialise" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
         (code, description) =>
-          val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
-          Json.toJson(specificCircumstanceIndicator) mustEqual Json.parse(s"""
-              |{
-              |  "code": "$code",
-              |  "description": "$description"
-              |}
-              |""".stripMargin)
+          val locationType = LocationType(code, description)
+          Json.toJson(locationType) mustEqual Json.parse(s"""
+            |{
+            |  "type": "$code",
+            |  "description": "$description"
+            |}
+            |""".stripMargin)
       }
     }
 
@@ -44,15 +47,15 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
       "when reading from mongo" in {
         forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
           (code, description) =>
-            val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
+            val locationType = LocationType(code, description)
             Json
               .parse(s"""
                    |{
-                   |  "code": "$code",
+                   |  "type": "$code",
                    |  "description": "$description"
                    |}
                    |""".stripMargin)
-              .as[SpecificCircumstanceIndicator] mustEqual specificCircumstanceIndicator
+              .as[LocationType] mustEqual locationType
         }
       }
 
@@ -63,15 +66,15 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
               val config = app.injector.instanceOf[FrontendAppConfig]
               forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
                 (code, description) =>
-                  val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
+                  val locationType = LocationType(code, description)
                   Json
                     .parse(s"""
                          |{
-                         |  "code": "$code",
+                         |  "type": "$code",
                          |  "description": "$description"
                          |}
                          |""".stripMargin)
-                    .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads(config)) mustEqual specificCircumstanceIndicator
+                    .as[LocationType](LocationType.reads(config)) mustEqual locationType
               }
           }
         }
@@ -82,7 +85,7 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
               val config = app.injector.instanceOf[FrontendAppConfig]
               forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
                 (code, description) =>
-                  val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
+                  val locationType = LocationType(code, description)
                   Json
                     .parse(s"""
                          |{
@@ -90,7 +93,7 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
                          |  "value": "$description"
                          |}
                          |""".stripMargin)
-                    .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads(config)) mustEqual specificCircumstanceIndicator
+                    .as[LocationType](LocationType.reads(config)) mustEqual locationType
               }
           }
         }
@@ -100,10 +103,9 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
     "must format as string" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
         (code, description) =>
-          val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
-          specificCircumstanceIndicator.toString mustEqual s"$code - $description"
+          val locationType = LocationType(code, description)
+          locationType.toString mustEqual s"$description"
       }
     }
   }
-
 }

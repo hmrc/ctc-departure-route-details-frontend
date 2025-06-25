@@ -18,12 +18,12 @@ package generators
 
 import cats.data.NonEmptyList
 import models.DateTime
-import org.scalacheck.Arbitrary._
-import org.scalacheck.Gen._
+import org.scalacheck.Arbitrary.*
+import org.scalacheck.Gen.*
 import org.scalacheck.{Arbitrary, Gen, Shrink}
 import wolfendale.scalacheck.regexp.RegexpGen
 
-import java.time._
+import java.time.*
 import scala.util.matching.Regex
 
 // scalastyle:off number.of.methods
@@ -138,10 +138,9 @@ trait Generators extends UserAnswersGenerator with ModelGenerators with ViewMode
       chars  <- listOfN(length, charGen)
     } yield chars.mkString
 
-  def stringsWithExactLength(minLength: Int, maxLength: Int, charGen: Gen[Char] = Gen.alphaNumChar): Gen[String] =
+  def stringsWithExactLength(length: Int, charGen: Gen[Char] = Gen.alphaNumChar): Gen[String] =
     for {
-      length <- choose(minLength, maxLength)
-      chars  <- listOfN(length, charGen)
+      chars <- listOfN(length, charGen)
     } yield chars.mkString
 
   def stringsWithExactLength(length: Int): Gen[String] =
