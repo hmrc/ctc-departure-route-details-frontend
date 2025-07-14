@@ -50,7 +50,7 @@ class DependentTasksActionSpec extends SpecBase with ScalaCheckPropertyChecks wi
       val userAnswers = emptyUserAnswers.copy(tasks = tasks)
       val result      = harness(userAnswers)
       status(result) mustBe OK
-      redirectLocation(result) mustBe None
+      redirectLocation(result) must not be defined
     }
 
     "return to task list" - {

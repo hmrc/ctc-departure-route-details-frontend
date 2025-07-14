@@ -34,7 +34,7 @@ class RemoveOfficeOfExitViewModelSpec extends SpecBase with AppWithDefaultMockFi
     "when office of exit undefined at index" in {
       val viewModel = viewModelProvider(emptyUserAnswers, Index(0))
 
-      viewModel.officeOfExit mustBe None
+      viewModel.officeOfExit must not be defined
       viewModel.title mustBe "Are you sure you want to remove this office of exit for transit?"
       viewModel.heading mustBe "Are you sure you want to remove this office of exit for transit?"
     }

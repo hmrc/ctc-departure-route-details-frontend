@@ -53,8 +53,8 @@ class CoordinatesFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
           val result: Form[Coordinates] = form.bind(data)
 
-          result.errors mustBe List.empty
-          result.value.value mustBe Coordinates(latitude, longitude)
+          result.errors mustEqual List.empty
+          result.value.value mustEqual Coordinates(latitude, longitude)
       }
 
     }

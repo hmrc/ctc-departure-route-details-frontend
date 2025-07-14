@@ -42,7 +42,7 @@ class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChe
             mode =>
               val helper = new ExitCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.officeOfExit(index)
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -58,15 +58,15 @@ class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChe
               val helper = new ExitCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.officeOfExit(index).get
 
-              result.key.value mustBe "Office of exit for transit 1"
-              result.value.value mustBe officeOfExit.label
+              result.key.value mustEqual "Office of exit for transit 1"
+              result.value.value mustEqual officeOfExit.label
               val actions = result.actions.get.items
-              actions.size mustBe 1
+              actions.size mustEqual 1
               val action = actions.head
-              action.content.value mustBe "Change"
-              action.href mustBe routes.CheckOfficeOfExitAnswersController.onPageLoad(userAnswers.lrn, index, mode).url
-              action.visuallyHiddenText.get mustBe "office of exit for transit 1"
-              action.id mustBe "change-office-of-exit-1"
+              action.content.value mustEqual "Change"
+              action.href mustEqual routes.CheckOfficeOfExitAnswersController.onPageLoad(userAnswers.lrn, index, mode).url
+              action.visuallyHiddenText.get mustEqual "office of exit for transit 1"
+              action.id mustEqual "change-office-of-exit-1"
           }
         }
       }
@@ -79,7 +79,7 @@ class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChe
             mode =>
               val helper = new ExitCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addOrRemoveOfficesOfExit
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -92,9 +92,9 @@ class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChe
               val helper  = new ExitCheckYourAnswersHelper(answers, mode)
               val result  = helper.addOrRemoveOfficesOfExit.get
 
-              result.id mustBe "add-or-remove-offices-of-exit"
-              result.text mustBe "Add or remove offices of exit for transit"
-              result.href mustBe controllers.exit.routes.AddAnotherOfficeOfExitController.onPageLoad(answers.lrn, mode).url
+              result.id mustEqual "add-or-remove-offices-of-exit"
+              result.text mustEqual "Add or remove offices of exit for transit"
+              result.href mustEqual controllers.exit.routes.AddAnotherOfficeOfExitController.onPageLoad(answers.lrn, mode).url
           }
         }
       }
@@ -112,7 +112,7 @@ class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChe
           .setValue(OfficeOfExitCountryPage(Index(1)), country)
 
         val helper = new ExitCheckYourAnswersHelper(answers, mode)
-        helper.listItems mustBe Seq(
+        helper.listItems mustEqual Seq(
           Right(
             ListItem(
               name = s"$country - $customsOffice",

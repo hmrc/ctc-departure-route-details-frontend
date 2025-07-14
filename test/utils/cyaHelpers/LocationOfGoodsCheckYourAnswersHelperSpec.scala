@@ -41,7 +41,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addLocationOfGoods
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -54,7 +54,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.addLocationOfGoods.get
 
-              result.key.value mustBe "Do you want to add a location of goods?"
+              result.key.value mustEqual "Do you want to add a location of goods?"
               result.value.value mustBe "Yes"
               val actions = result.actions.get.items
               actions.size mustBe 1
@@ -75,7 +75,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.locationType
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -88,7 +88,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.locationType
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Location type".toText),
                   value = Value(messages(s"$locationType").toText),
@@ -105,7 +105,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -118,7 +117,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.locationOfGoodsIdentification
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -131,7 +130,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.locationOfGoodsIdentification
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Identifier type for the location of goods".toText),
                   value = Value(messages(s"$locationOfGoodsIdentification").toText),
@@ -148,7 +147,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -161,7 +159,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.customsOfficeIdentifier
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -174,7 +172,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.customsOfficeIdentifier
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("What is the customs office identifier for the location of goods?".toText),
                   value = Value(customsOffice.toString.toText),
@@ -191,7 +189,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -204,7 +201,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.eori
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -217,7 +214,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.eori
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("EORI number or Trader Identification Number (TIN) for the location of goods".toText),
                   value = Value(eori.toText),
@@ -234,7 +231,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -247,7 +243,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.authorisationNumber
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -260,7 +256,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.authorisationNumber
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Authorisation number".toText),
                   value = Value(authorisationNumber.toText),
@@ -277,7 +273,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -290,7 +285,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.coordinates
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -303,7 +298,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.coordinates
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Coordinates".toText),
                   value = Value(coordinates.toString.toText),
@@ -320,7 +315,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -333,7 +327,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.unLocode
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -346,7 +340,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.unLocode
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("UN/LOCODE for the location of goods".toText),
                   value = Value(unLocode.toString.toText),
@@ -363,7 +357,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -376,7 +369,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.address
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -389,7 +382,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.address
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("What is the address for the location of goods?".toText),
                   value = Value(HtmlContent(address.toString)),
@@ -406,7 +399,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -419,7 +411,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.country
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -432,7 +424,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.country
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Location of goods country".toText),
                   value = Value(country.toString.toText),
@@ -449,7 +441,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -462,7 +453,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.additionalIdentifierYesNo
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -475,7 +466,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.additionalIdentifierYesNo
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add another identifier for the location of goods?".toText),
                   value = Value("Yes".toText),
@@ -492,7 +483,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -505,7 +495,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.additionalIdentifier
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -518,7 +508,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.contactYesNo
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -531,7 +521,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.contactYesNo
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add a contact for the location of goods?".toText),
                   value = Value("Yes".toText),
@@ -548,7 +538,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -561,7 +550,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.contactName
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -574,7 +563,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.contactName
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Contact’s name".toText),
                   value = Value(contactName.toText),
@@ -591,7 +580,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -604,7 +592,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new LocationOfGoodsCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.contactPhoneNumber
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -617,7 +605,7 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper  = new LocationOfGoodsCheckYourAnswersHelper(answers, mode)
               val result  = helper.contactPhoneNumber
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Contact’s phone number".toText),
                   value = Value(contactPhoneNumber.toText),
@@ -634,7 +622,6 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }

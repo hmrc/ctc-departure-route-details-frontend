@@ -41,7 +41,7 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new OfficeOfTransitCheckYourAnswersHelper(emptyUserAnswers, mode, index)
               val result = helper.officeOfTransitCountry
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -58,7 +58,7 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper = new OfficeOfTransitCheckYourAnswersHelper(answers, mode, index)
               val result = helper.officeOfTransitCountry
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Office of transit country".toText),
                   value = Value(country.toString.toText),
@@ -75,7 +75,6 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -88,7 +87,7 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new OfficeOfTransitCheckYourAnswersHelper(emptyUserAnswers, mode, index)
               val result = helper.officeOfTransit
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -105,7 +104,7 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper = new OfficeOfTransitCheckYourAnswersHelper(answers, mode, index)
               val result = helper.officeOfTransit
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Office of transit".toText),
                   value = Value(office.toString.toText),
@@ -122,7 +121,6 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -135,7 +133,7 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new OfficeOfTransitCheckYourAnswersHelper(emptyUserAnswers, mode, index)
               val result = helper.addOfficeOfTransitETA
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -152,7 +150,7 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper = new OfficeOfTransitCheckYourAnswersHelper(answers, mode, index)
               val result = helper.addOfficeOfTransitETA
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add a time of arrival?".toText),
                   value = Value("No".toText),
@@ -169,7 +167,6 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -182,7 +179,7 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
             mode =>
               val helper = new OfficeOfTransitCheckYourAnswersHelper(emptyUserAnswers, mode, index)
               val result = helper.officeOfTransitETA
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -199,7 +196,7 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val helper = new OfficeOfTransitCheckYourAnswersHelper(answers, mode, index)
               val result = helper.officeOfTransitETA
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Estimated date and time of arrival".toText),
                   value = Value("1 January 2000 23:12".toText),
@@ -216,7 +213,6 @@ class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
                     )
                   )
                 )
-              )
           }
         }
       }
