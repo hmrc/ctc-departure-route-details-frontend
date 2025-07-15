@@ -39,7 +39,7 @@ class OfficeOfExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPro
             mode =>
               val helper = new OfficeOfExitCheckYourAnswersHelper(emptyUserAnswers, mode, index)
               val result = helper.officeOfExitCountry
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -53,7 +53,7 @@ class OfficeOfExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPro
               val helper = new OfficeOfExitCheckYourAnswersHelper(answers, mode, index)
               val result = helper.officeOfExitCountry
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Country".toText),
                   value = Value(country.toString.toText),
@@ -70,7 +70,6 @@ class OfficeOfExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPro
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -83,7 +82,7 @@ class OfficeOfExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPro
             mode =>
               val helper = new OfficeOfExitCheckYourAnswersHelper(emptyUserAnswers, mode, index)
               val result = helper.officeOfExit
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -96,7 +95,7 @@ class OfficeOfExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPro
               val helper  = new OfficeOfExitCheckYourAnswersHelper(answers, mode, index)
               val result  = helper.officeOfExit
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Office location".toText),
                   value = Value(customsOffice.toString.toText),
@@ -113,7 +112,6 @@ class OfficeOfExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPro
                     )
                   )
                 )
-              )
           }
         }
       }

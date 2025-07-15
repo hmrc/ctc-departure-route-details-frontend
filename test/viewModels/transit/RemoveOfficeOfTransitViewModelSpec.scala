@@ -34,7 +34,7 @@ class RemoveOfficeOfTransitViewModelSpec extends SpecBase with AppWithDefaultMoc
     "when office of transit undefined at index" in {
       val viewModel = viewModelProvider(emptyUserAnswers, Index(0))
 
-      viewModel.officeOfTransit mustBe None
+      viewModel.officeOfTransit must not be defined
       viewModel.title mustBe "Are you sure you want to remove this office of transit?"
       viewModel.heading mustBe "Are you sure you want to remove this office of transit?"
     }

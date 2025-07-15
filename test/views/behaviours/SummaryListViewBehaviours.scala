@@ -46,7 +46,7 @@ trait SummaryListViewBehaviours extends ViewBehaviours {
 
                   "must contain a key" in {
                     val key = renderedRow.getElementsByClass("govuk-summary-list__key").text()
-                    Text(key) mustBe row.key.content
+                    Text(key) mustEqual row.key.content
                   }
 
                   "must contain a value" in {

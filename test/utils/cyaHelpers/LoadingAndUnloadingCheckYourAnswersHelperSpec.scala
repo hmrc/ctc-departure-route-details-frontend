@@ -42,7 +42,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addLoading
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -55,7 +55,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.addLoading
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add a place of loading?".toText),
                   value = Value("Yes".toText),
@@ -72,7 +72,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -85,7 +84,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addLoadingUnLocode
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -98,7 +97,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.addLoadingUnLocode
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add a UN/LOCODE for the place of loading?".toText),
                   value = Value("Yes".toText),
@@ -115,7 +114,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -128,7 +126,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.loadingUnLocode
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -141,7 +139,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.loadingUnLocode
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("UN/LOCODE".toText),
                   value = Value(unLocode.toString.toText),
@@ -158,7 +156,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -171,7 +168,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addLoadingCountryAndLocation
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -184,7 +181,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.addLoadingCountryAndLocation
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add extra information for the place of loading?".toText),
                   value = Value("Yes".toText),
@@ -201,7 +198,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -214,7 +210,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.loadingCountry
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -227,7 +223,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.loadingCountry
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Country".toText),
                   value = Value(country.toString.toText),
@@ -244,7 +240,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -257,7 +252,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.loadingLocation
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -270,7 +265,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.loadingLocation
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Location".toText),
                   value = Value(location.toText),
@@ -287,7 +282,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -300,7 +294,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addPlaceOfUnloading
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -313,7 +307,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.addPlaceOfUnloading
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add a place of unloading?".toText),
                   value = Value("Yes".toText),
@@ -330,7 +324,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -343,7 +336,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addUnloadingUnLocode
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -356,7 +349,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.addUnloadingUnLocode
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add a UN/LOCODE for the place of unloading?".toText),
                   value = Value("Yes".toText),
@@ -373,7 +366,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -386,7 +378,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.unloadingUnLocode
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -399,7 +391,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.unloadingUnLocode
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("UN/LOCODE".toText),
                   value = Value(unLocode.toString.toText),
@@ -416,7 +408,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -429,7 +420,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addUnloadingCountryAndLocation
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -442,7 +433,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.addUnloadingCountryAndLocation
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add extra information for the place of unloading?".toText),
                   value = Value("Yes".toText),
@@ -459,7 +450,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -472,7 +462,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.unloadingCountry
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -485,7 +475,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.unloadingCountry
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Country".toText),
                   value = Value(country.toString.toText),
@@ -502,7 +492,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -515,7 +504,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
             mode =>
               val helper = new LoadingAndUnloadingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.unloadingLocation
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -528,7 +517,7 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
               val helper  = new LoadingAndUnloadingCheckYourAnswersHelper(answers, mode)
               val result  = helper.unloadingLocation
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Location".toText),
                   value = Value(location.toText),
@@ -545,7 +534,6 @@ class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaC
                     )
                   )
                 )
-              )
           }
         }
       }

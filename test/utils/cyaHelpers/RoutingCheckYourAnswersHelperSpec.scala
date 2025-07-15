@@ -48,7 +48,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new RoutingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addSpecificCircumstanceIndicatorYesNo
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -62,7 +62,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new RoutingCheckYourAnswersHelper(answers, mode)
               val result = helper.addSpecificCircumstanceIndicatorYesNo
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add a specific circumstance indicator?".toText),
                   value = Value("Yes".toText),
@@ -79,7 +79,6 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -92,7 +91,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new RoutingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.specificCircumstanceIndicator
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -106,7 +105,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new RoutingCheckYourAnswersHelper(answers, mode)
               val result = helper.specificCircumstanceIndicator
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Specific circumstance indicator".toText),
                   value = Value(s"$specificCircumstanceIndicator".toText),
@@ -123,7 +122,6 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -136,7 +134,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new RoutingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.countryOfDestination
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -150,7 +148,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new RoutingCheckYourAnswersHelper(answers, mode)
               val result = helper.countryOfDestination
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Office of destination’s country".toText),
                   value = Value(country.toString.toText),
@@ -167,7 +165,6 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -180,7 +177,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new RoutingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.officeOfDestination
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -194,7 +191,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new RoutingCheckYourAnswersHelper(answers, mode)
               val result = helper.officeOfDestination
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Office of destination".toText),
                   value = Value(s"$customsOffice".toText),
@@ -211,7 +208,6 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -224,7 +220,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new RoutingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.bindingItinerary
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -238,7 +234,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new RoutingCheckYourAnswersHelper(answers, mode)
               val result = helper.bindingItinerary
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Are you using a binding itinerary?".toText),
                   value = Value("Yes".toText),
@@ -255,7 +251,6 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -268,7 +263,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new RoutingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addCountryOfRouting
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -282,7 +277,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new RoutingCheckYourAnswersHelper(answers, mode)
               val result = helper.addCountryOfRouting
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add a country to the transit route?".toText),
                   value = Value("Yes".toText),
@@ -299,7 +294,6 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -312,7 +306,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new RoutingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.countryOfRouting(index)
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -328,7 +322,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new RoutingCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.countryOfRouting(index).get
 
-              result.key.value mustBe "Country 1"
+              result.key.value mustEqual "Country 1"
               result.value.value mustBe countryOfRouting.country.toString
               val actions = result.actions.get.items
               actions.size mustBe 1
@@ -349,7 +343,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new RoutingCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addOrRemoveCountriesOfRouting
-              result mustBe None
+              result must not be defined
           }
         }
       }

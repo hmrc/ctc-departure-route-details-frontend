@@ -48,7 +48,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.includesT2Declarations
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -62,7 +62,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new TransitCheckYourAnswersHelper(answers, mode)
               val result = helper.includesT2Declarations
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Does the transit include any T2 declarations?".toText),
                   value = Value("Yes".toText),
@@ -79,7 +79,6 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -92,7 +91,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addOfficeOfTransit
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -106,7 +105,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new TransitCheckYourAnswersHelper(answers, mode)
               val result = helper.addOfficeOfTransit
 
-              result mustBe Some(
+              result.value mustEqual
                 SummaryListRow(
                   key = Key("Do you want to add an office of transit?".toText),
                   value = Value("Yes".toText),
@@ -123,7 +122,6 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                     )
                   )
                 )
-              )
           }
         }
       }
@@ -136,7 +134,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.officeOfTransit(index)
-              result mustBe None
+              result must not be defined
           }
         }
       }
@@ -152,7 +150,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper = new TransitCheckYourAnswersHelper(userAnswers, mode)
               val result = helper.officeOfTransit(index).get
 
-              result.key.value mustBe "Office of transit 1"
+              result.key.value mustEqual "Office of transit 1"
               result.value.value mustBe officeOfExit.label
               val actions = result.actions.get.items
               actions.size mustBe 1
@@ -173,7 +171,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             mode =>
               val helper = new TransitCheckYourAnswersHelper(emptyUserAnswers, mode)
               val result = helper.addOrRemoveOfficesOfTransit
-              result mustBe None
+              result must not be defined
           }
         }
       }

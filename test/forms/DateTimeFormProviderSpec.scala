@@ -58,8 +58,8 @@ class DateTimeFormProviderSpec extends FieldBehaviours with Generators {
           val date = dateTime.toLocalDate
           val time = dateTime.toLocalTime
 
-          result.errors mustBe List.empty
-          result.value.value mustBe DateTime(date, time)
+          result.errors mustEqual List.empty
+          result.value.value mustEqual DateTime(date, time)
       }
     }
 
