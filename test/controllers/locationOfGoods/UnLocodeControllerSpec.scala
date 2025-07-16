@@ -24,10 +24,11 @@ import navigation.LocationOfGoodsNavigatorProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.locationOfGoods.UnLocodePage
+import play.api.data.FormError
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.UnLocodesService
 import views.html.locationOfGoods.UnLocodeView
 
@@ -35,11 +36,13 @@ import scala.concurrent.Future
 
 class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
+  private val prefix = "locationOfGoods.unLocode"
+
   private val unLocode1 = arbitraryUnLocode.arbitrary.sample.get.unLocodeExtendedCode
 
   private val mockUnLocodesService: UnLocodesService = mock[UnLocodesService]
   private val formProvider                           = new UnLocodeFormProvider()
-  private val form                                   = formProvider("locationOfGoods.unLocode")
+  private val form                                   = formProvider(prefix)
   private val mode                                   = NormalMode
   private lazy val unLocodeRoute                     = routes.UnLocodeController.onPageLoad(lrn, mode).url
 
@@ -112,16 +115,21 @@ class UnLocodeControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
       setExistingUserAnswers(emptyUserAnswers)
 
+      val unknownAnswer = "ABCDE"
+
       val request = FakeRequest(POST, unLocodeRoute)
-        .withFormUrlEncodedBody(("value", unLocode1))
+        .withFormUrlEncodedBody(("value", unknownAnswer))
+
+      val boundForm = form.bind(Map("value" -> unknownAnswer)).withError(FormError("value", s"$prefix.error.not.exists"))
 
       val result = route(app, request).value
 
+      val view = injector.instanceOf[UnLocodeView]
+
       status(result) mustEqual BAD_REQUEST
 
-      contentAsString(result) must include(
-        "Please enter a valid UN/LOCODE. This is a 5-character code used to identify a transit-related location, like DEBER."
-      )
+      contentAsString(result) mustEqual
+        view(boundForm, lrn, mode)(request, messages).toString
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
