@@ -47,8 +47,8 @@ class AdditionalInformationDomainSpec extends SpecBase with Generators {
           AdditionalInformationDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           CountryPage,
           LocationPage
         )
@@ -68,8 +68,8 @@ class AdditionalInformationDomainSpec extends SpecBase with Generators {
           AdditionalInformationDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe CountryPage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual CountryPage
+        result.left.value.pages mustEqual Seq(
           CountryPage
         )
       }
@@ -84,8 +84,8 @@ class AdditionalInformationDomainSpec extends SpecBase with Generators {
           AdditionalInformationDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe LocationPage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual LocationPage
+        result.left.value.pages mustEqual Seq(
           CountryPage,
           LocationPage
         )

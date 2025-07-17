@@ -36,7 +36,7 @@ class RouteDetailsNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
             navigator
               .nextPage(answers, None)
-              .mustBe(routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
+              .mustEqual(routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
         }
       }
     }

@@ -55,8 +55,8 @@ class ExitDomainSpec extends SpecBase with Generators {
           ExitDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           OfficeOfExitCountryPage(index),
           OfficeOfExitPage(index),
           OfficeOfExitSection(index),
@@ -73,8 +73,8 @@ class ExitDomainSpec extends SpecBase with Generators {
           ExitDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe OfficeOfExitCountryPage(Index(0))
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual OfficeOfExitCountryPage(Index(0))
+        result.left.value.pages mustEqual Seq(
           OfficeOfExitCountryPage(Index(0))
         )
       }

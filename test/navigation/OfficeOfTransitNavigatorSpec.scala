@@ -37,7 +37,7 @@ class OfficeOfTransitNavigatorSpec extends SpecBase with ScalaCheckPropertyCheck
             answers =>
               navigator
                 .nextPage(answers, None)
-                .mustBe(controllers.transit.index.routes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, index))
+                .mustEqual(controllers.transit.index.routes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, index))
           }
         }
       }
@@ -55,7 +55,7 @@ class OfficeOfTransitNavigatorSpec extends SpecBase with ScalaCheckPropertyCheck
             answers =>
               navigator
                 .nextPage(answers, None)
-                .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
+                .mustEqual(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }
       }

@@ -46,7 +46,7 @@ class OfficeOfTransitAnswersViewModelSpec extends SpecBase with ScalaCheckProper
               val section           = viewModelProvider.apply(answers, mode, index).section
 
               section.sectionTitle mustNot be(defined)
-              section.rows.size mustBe 3
+              section.rows.size mustEqual 3
           }
         }
       }
@@ -65,7 +65,7 @@ class OfficeOfTransitAnswersViewModelSpec extends SpecBase with ScalaCheckProper
               val section           = viewModelProvider.apply(answers, mode, index).section
 
               section.sectionTitle mustNot be(defined)
-              section.rows.size mustBe 4
+              section.rows.size mustEqual 4
           }
         }
       }

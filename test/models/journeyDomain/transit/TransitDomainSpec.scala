@@ -68,8 +68,8 @@ class TransitDomainSpec extends SpecBase with Generators {
           TransitDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           OfficeOfDestinationPage,
           AddOfficeOfTransitYesNoPage,
           OfficeOfTransitPage(index),
@@ -96,8 +96,8 @@ class TransitDomainSpec extends SpecBase with Generators {
           TransitDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           OfficeOfDestinationPage,
           AddOfficeOfTransitYesNoPage
         )
@@ -124,8 +124,8 @@ class TransitDomainSpec extends SpecBase with Generators {
           TransitDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           OfficeOfDestinationPage,
           OfficeOfTransitCountryPage(index),
           OfficeOfTransitPage(index),
@@ -159,8 +159,8 @@ class TransitDomainSpec extends SpecBase with Generators {
             TransitDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             OfficeOfDestinationPage,
             T2DeclarationTypeYesNoPage,
             OfficeOfTransitCountryPage(index),
@@ -194,8 +194,8 @@ class TransitDomainSpec extends SpecBase with Generators {
               TransitDomain.userAnswersReader.apply(Nil)
             ).run(userAnswers)
 
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
+            result.value.value mustEqual expectedResult
+            result.value.pages mustEqual Seq(
               OfficeOfDestinationPage,
               T2DeclarationTypeYesNoPage,
               OfficeOfTransitCountryPage(index),
@@ -227,8 +227,8 @@ class TransitDomainSpec extends SpecBase with Generators {
               TransitDomain.userAnswersReader.apply(Nil)
             ).run(userAnswers)
 
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
+            result.value.value mustEqual expectedResult
+            result.value.pages mustEqual Seq(
               OfficeOfDestinationPage,
               T2DeclarationTypeYesNoPage,
               OfficeOfTransitPage(index),
@@ -265,8 +265,8 @@ class TransitDomainSpec extends SpecBase with Generators {
                 TransitDomain.userAnswersReader.apply(Nil)
               ).run(userAnswers)
 
-              result.value.value mustBe expectedResult
-              result.value.pages mustBe Seq(
+              result.value.value mustEqual expectedResult
+              result.value.pages mustEqual Seq(
                 OfficeOfDestinationPage,
                 T2DeclarationTypeYesNoPage,
                 OfficeOfTransitCountryPage(index),
@@ -300,8 +300,8 @@ class TransitDomainSpec extends SpecBase with Generators {
                 TransitDomain.userAnswersReader.apply(Nil)
               ).run(userAnswers)
 
-              result.value.value mustBe expectedResult
-              result.value.pages mustBe Seq(
+              result.value.value mustEqual expectedResult
+              result.value.pages mustEqual Seq(
                 OfficeOfDestinationPage,
                 T2DeclarationTypeYesNoPage,
                 AddOfficeOfTransitYesNoPage
@@ -336,8 +336,8 @@ class TransitDomainSpec extends SpecBase with Generators {
             TransitDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             OfficeOfDestinationPage,
             OfficeOfTransitCountryPage(index),
             OfficeOfTransitPage(index),
@@ -367,8 +367,8 @@ class TransitDomainSpec extends SpecBase with Generators {
             TransitDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             OfficeOfDestinationPage,
             OfficeOfTransitPage(index),
             AddOfficeOfTransitETAYesNoPage(index),
@@ -403,8 +403,8 @@ class TransitDomainSpec extends SpecBase with Generators {
               TransitDomain.userAnswersReader.apply(Nil)
             ).run(userAnswers)
 
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
+            result.value.value mustEqual expectedResult
+            result.value.pages mustEqual Seq(
               OfficeOfDestinationPage,
               OfficeOfTransitCountryPage(index),
               OfficeOfTransitPage(index),
@@ -436,8 +436,8 @@ class TransitDomainSpec extends SpecBase with Generators {
               TransitDomain.userAnswersReader.apply(Nil)
             ).run(userAnswers)
 
-            result.value.value mustBe expectedResult
-            result.value.pages mustBe Seq(
+            result.value.value mustEqual expectedResult
+            result.value.pages mustEqual Seq(
               OfficeOfDestinationPage,
               AddOfficeOfTransitYesNoPage
             )
@@ -459,7 +459,7 @@ class TransitDomainSpec extends SpecBase with Generators {
             TransitDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.left.value.page mustBe AddOfficeOfTransitYesNoPage
+          result.left.value.page mustEqual AddOfficeOfTransitYesNoPage
         }
       }
 
@@ -477,7 +477,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               TransitDomain.userAnswersReader.apply(Nil)
             ).run(userAnswers)
 
-            result.left.value.page mustBe OfficeOfTransitPage(Index(0))
+            result.left.value.page mustEqual OfficeOfTransitPage(Index(0))
           }
         }
 
@@ -494,7 +494,7 @@ class TransitDomainSpec extends SpecBase with Generators {
               TransitDomain.userAnswersReader.apply(Nil)
             ).run(userAnswers)
 
-            result.left.value.page mustBe OfficeOfTransitCountryPage(Index(0))
+            result.left.value.page mustEqual OfficeOfTransitCountryPage(Index(0))
           }
         }
       }
@@ -521,7 +521,7 @@ class TransitDomainSpec extends SpecBase with Generators {
                 TransitDomain.userAnswersReader.apply(Nil)
               ).run(userAnswers)
 
-              result.left.value.page mustBe AddOfficeOfTransitYesNoPage
+              result.left.value.page mustEqual AddOfficeOfTransitYesNoPage
             }
           }
         }

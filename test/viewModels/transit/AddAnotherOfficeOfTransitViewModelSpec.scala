@@ -35,11 +35,11 @@ class AddAnotherOfficeOfTransitViewModelSpec extends SpecBase with Generators wi
 
           val result = new AddAnotherOfficeOfTransitViewModelProvider()(userAnswers, mode)
 
-          result.listItems.length mustBe 1
-          result.title mustBe "You have added 1 office of transit"
-          result.heading mustBe "You have added 1 office of transit"
-          result.legend mustBe "Do you want to add another office of transit?"
-          result.maxLimitLabel mustBe "You cannot add any more offices of transit. To add another office, you need to remove one first."
+          result.listItems.length mustEqual 1
+          result.title mustEqual "You have added 1 office of transit"
+          result.heading mustEqual "You have added 1 office of transit"
+          result.legend mustEqual "Do you want to add another office of transit?"
+          result.maxLimitLabel mustEqual "You cannot add any more offices of transit. To add another office, you need to remove one first."
       }
     }
 
@@ -55,11 +55,11 @@ class AddAnotherOfficeOfTransitViewModelSpec extends SpecBase with Generators wi
 
           val result = new AddAnotherOfficeOfTransitViewModelProvider()(userAnswers, mode)
 
-          result.listItems.length mustBe count
-          result.title mustBe s"You have added ${formatter.format(count)} offices of transit"
-          result.heading mustBe s"You have added ${formatter.format(count)} offices of transit"
-          result.legend mustBe "Do you want to add another office of transit?"
-          result.maxLimitLabel mustBe "You cannot add any more offices of transit. To add another office, you need to remove one first."
+          result.listItems.length mustEqual count
+          result.title mustEqual s"You have added ${formatter.format(count)} offices of transit"
+          result.heading mustEqual s"You have added ${formatter.format(count)} offices of transit"
+          result.legend mustEqual "Do you want to add another office of transit?"
+          result.maxLimitLabel mustEqual "You cannot add any more offices of transit. To add another office, you need to remove one first."
       }
     }
   }

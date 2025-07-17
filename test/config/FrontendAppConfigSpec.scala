@@ -27,11 +27,11 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
     "officeOfTransitETA" - {
 
       "etaDateDaysBefore must be 0" in {
-        frontendAppConfig.etaDateDaysBefore mustBe 0
+        frontendAppConfig.etaDateDaysBefore mustEqual 0
       }
 
       "etaDateDaysAfter must be 60" in {
-        frontendAppConfig.etaDateDaysAfter mustBe 60
+        frontendAppConfig.etaDateDaysAfter mustEqual 60
       }
     }
   }

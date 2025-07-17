@@ -37,7 +37,7 @@ class TransitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with G
             answers =>
               navigator
                 .nextPage(answers, None)
-                .mustBe(controllers.transit.routes.AddAnotherOfficeOfTransitController.onPageLoad(answers.lrn, mode))
+                .mustEqual(controllers.transit.routes.AddAnotherOfficeOfTransitController.onPageLoad(answers.lrn, mode))
           }
         }
       }
@@ -55,7 +55,7 @@ class TransitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with G
             answers =>
               navigator
                 .nextPage(answers, None)
-                .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
+                .mustEqual(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }
       }
