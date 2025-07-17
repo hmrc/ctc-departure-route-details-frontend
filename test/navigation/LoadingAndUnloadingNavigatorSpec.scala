@@ -43,7 +43,7 @@ class LoadingAndUnloadingNavigatorSpec extends SpecBase with ScalaCheckPropertyC
             answers =>
               navigator
                 .nextPage(answers, None)
-                .mustBe(controllers.loadingAndUnloading.routes.LoadingAndUnloadingAnswersController.onPageLoad(answers.lrn, mode))
+                .mustEqual(controllers.loadingAndUnloading.routes.LoadingAndUnloadingAnswersController.onPageLoad(answers.lrn, mode))
           }
         }
       }
@@ -61,7 +61,7 @@ class LoadingAndUnloadingNavigatorSpec extends SpecBase with ScalaCheckPropertyC
             answers =>
               navigator
                 .nextPage(answers, None)
-                .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
+                .mustEqual(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }
       }

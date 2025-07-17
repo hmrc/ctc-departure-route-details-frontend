@@ -35,8 +35,8 @@ class RemoveOfficeOfExitViewModelSpec extends SpecBase with AppWithDefaultMockFi
       val viewModel = viewModelProvider(emptyUserAnswers, Index(0))
 
       viewModel.officeOfExit must not be defined
-      viewModel.title mustBe "Are you sure you want to remove this office of exit for transit?"
-      viewModel.heading mustBe "Are you sure you want to remove this office of exit for transit?"
+      viewModel.title mustEqual "Are you sure you want to remove this office of exit for transit?"
+      viewModel.heading mustEqual "Are you sure you want to remove this office of exit for transit?"
     }
 
     "when office of exit defined at index" in {
@@ -46,9 +46,9 @@ class RemoveOfficeOfExitViewModelSpec extends SpecBase with AppWithDefaultMockFi
           val userAnswers = emptyUserAnswers.setValue(OfficeOfExitPage(index), officeOfExit)
           val viewModel   = viewModelProvider(userAnswers, Index(0))
 
-          viewModel.officeOfExit.value mustBe officeOfExit
-          viewModel.title mustBe s"Are you sure you want to remove this office of exit for transit?"
-          viewModel.heading mustBe s"Are you sure you want to remove this office of exit for transit?"
+          viewModel.officeOfExit.value mustEqual officeOfExit
+          viewModel.title mustEqual s"Are you sure you want to remove this office of exit for transit?"
+          viewModel.heading mustEqual s"Are you sure you want to remove this office of exit for transit?"
       }
     }
   }

@@ -64,8 +64,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
             RoutingDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             CountryOfDestinationPage,
             OfficeOfDestinationPage,
             BindingItineraryPage,
@@ -96,8 +96,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
             RoutingDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             CountryOfDestinationPage,
             OfficeOfDestinationPage,
             BindingItineraryPage,
@@ -135,8 +135,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
             RoutingDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             CountryOfDestinationPage,
             OfficeOfDestinationPage,
             BindingItineraryPage,
@@ -171,8 +171,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
             RoutingDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             CountryOfDestinationPage,
             OfficeOfDestinationPage,
             BindingItineraryPage,
@@ -196,8 +196,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
           RoutingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe CountryOfDestinationPage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual CountryOfDestinationPage
+        result.left.value.pages mustEqual Seq(
           CountryOfDestinationPage
         )
       }
@@ -213,8 +213,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
           RoutingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe OfficeOfDestinationPage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual OfficeOfDestinationPage
+        result.left.value.pages mustEqual Seq(
           CountryOfDestinationPage,
           OfficeOfDestinationPage
         )
@@ -232,8 +232,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
           RoutingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe BindingItineraryPage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual BindingItineraryPage
+        result.left.value.pages mustEqual Seq(
           CountryOfDestinationPage,
           OfficeOfDestinationPage,
           BindingItineraryPage
@@ -252,8 +252,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
           RoutingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe AddCountryOfRoutingYesNoPage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual AddCountryOfRoutingYesNoPage
+        result.left.value.pages mustEqual Seq(
           CountryOfDestinationPage,
           OfficeOfDestinationPage,
           BindingItineraryPage,
@@ -274,8 +274,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
           RoutingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe CountryOfRoutingPage(Index(0))
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual CountryOfRoutingPage(Index(0))
+        result.left.value.pages mustEqual Seq(
           CountryOfDestinationPage,
           OfficeOfDestinationPage,
           BindingItineraryPage,
@@ -296,8 +296,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
           RoutingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe CountryOfRoutingPage(Index(0))
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual CountryOfRoutingPage(Index(0))
+        result.left.value.pages mustEqual Seq(
           CountryOfDestinationPage,
           OfficeOfDestinationPage,
           BindingItineraryPage,
@@ -320,8 +320,8 @@ class RoutingDomainSpec extends SpecBase with Generators {
           RoutingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe CountryOfRoutingPage(Index(0))
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual CountryOfRoutingPage(Index(0))
+        result.left.value.pages mustEqual Seq(
           CountryOfDestinationPage,
           OfficeOfDestinationPage,
           BindingItineraryPage,

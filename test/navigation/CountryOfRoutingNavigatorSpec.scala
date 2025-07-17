@@ -37,7 +37,7 @@ class CountryOfRoutingNavigatorSpec extends SpecBase with ScalaCheckPropertyChec
             answers =>
               navigator
                 .nextPage(answers, None)
-                .mustBe(controllers.routing.routes.AddAnotherCountryOfRoutingController.onPageLoad(answers.lrn, mode))
+                .mustEqual(controllers.routing.routes.AddAnotherCountryOfRoutingController.onPageLoad(answers.lrn, mode))
           }
         }
       }
@@ -55,7 +55,7 @@ class CountryOfRoutingNavigatorSpec extends SpecBase with ScalaCheckPropertyChec
             answers =>
               navigator
                 .nextPage(answers, None)
-                .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
+                .mustEqual(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }
       }

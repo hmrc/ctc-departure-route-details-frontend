@@ -38,8 +38,8 @@ class ExitAnswersViewModelSpec extends SpecBase with Generators {
     val viewModelProvider = injector.instanceOf[ExitAnswersViewModelProvider]
     val sections          = viewModelProvider.apply(userAnswers, mode).sections
 
-    sections.size mustBe 2
-    sections(1).rows.size mustBe 1
+    sections.size mustEqual 2
+    sections(1).rows.size mustEqual 1
     sections(1).addAnotherLink must be(defined)
   }
 

@@ -62,7 +62,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         when(mockRefDataConnector.getCountries(any())(any(), any()))
           .thenReturn(Future.successful(Right(countries)))
 
-        service.getDestinationCountries(userAnswers).futureValue mustBe
+        service.getDestinationCountries(userAnswers).futureValue mustEqual
           SelectableList(Seq(country2, country3, country1))
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommunity"))(any(), any())
@@ -76,7 +76,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         when(mockRefDataConnector.getCountries(any())(any(), any()))
           .thenReturn(Future.successful(Right(countries)))
 
-        service.getDestinationCountries(userAnswers).futureValue mustBe
+        service.getDestinationCountries(userAnswers).futureValue mustEqual
           SelectableList(Seq(country2, country3, country1))
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryCodesCommonTransit"))(any(), any())
@@ -89,7 +89,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         when(mockRefDataConnector.getCountries(any())(any(), any()))
           .thenReturn(Future.successful(Right(countries)))
 
-        service.getCountries().futureValue mustBe
+        service.getCountries().futureValue mustEqual
           SelectableList(Seq(country2, country3, country1))
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
@@ -104,7 +104,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
         val userAnswers = emptyUserAnswers
 
-        service.getCountriesOfRouting(userAnswers, index).futureValue mustBe
+        service.getCountriesOfRouting(userAnswers, index).futureValue mustEqual
           SelectableList(Seq(country2, country3, country1))
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
@@ -116,7 +116,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
         val userAnswers = emptyUserAnswers.setValue(CountryOfRoutingPage(index), country1)
 
-        service.getCountriesOfRouting(userAnswers, index).futureValue mustBe
+        service.getCountriesOfRouting(userAnswers, index).futureValue mustEqual
           SelectableList(Seq(country2, country3, country1))
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
@@ -131,7 +131,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .setValue(CountryOfRoutingPage(index), country1)
           .setValue(CountryOfRoutingPage(Index(1)), country2)
 
-        service.getCountriesOfRouting(userAnswers, Index(1)).futureValue mustBe
+        service.getCountriesOfRouting(userAnswers, Index(1)).futureValue mustEqual
           SelectableList(Seq(country2, country3))
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
@@ -148,7 +148,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
           .setValue(CountryOfRoutingPage(Index(2)), country1)
         countries.toSeq.zipWithIndex.map {
           case (country, i) =>
-            service.getCountriesOfRouting(userAnswers, Index(i)).futureValue mustBe
+            service.getCountriesOfRouting(userAnswers, Index(i)).futureValue mustEqual
               SelectableList(Seq(country))
         }
         verify(mockRefDataConnector, times(countries.toSeq.size)).getCountries(eqTo("CountryCodesFullList"))(any(), any())
@@ -167,7 +167,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               val result = service.isInCL112(countryId).futureValue
 
-              result mustBe true
+              result mustEqual true
 
               verify(mockRefDataConnector).getCountry(eqTo("CountryCodesCTC"), eqTo(countryId))(any(), any())
           }
@@ -183,7 +183,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               val result = service.isInCL112(countryId).futureValue
 
-              result mustBe false
+              result mustEqual false
           }
         }
       }
@@ -215,7 +215,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               val result = service.isInCL147(countryId).futureValue
 
-              result mustBe true
+              result mustEqual true
 
               verify(mockRefDataConnector).getCountry(eqTo("CountryCustomsSecurityAgreementArea"), eqTo(countryId))(any(), any())
           }
@@ -231,7 +231,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               val result = service.isInCL147(countryId).futureValue
 
-              result mustBe false
+              result mustEqual false
           }
         }
       }
@@ -263,7 +263,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               val result = service.isInCL010(countryId).futureValue
 
-              result mustBe true
+              result mustEqual true
 
               verify(mockRefDataConnector).getCountry(eqTo("CountryCodesCommunity"), eqTo(countryId))(any(), any())
           }
@@ -279,7 +279,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               val result = service.isInCL010(countryId).futureValue
 
-              result mustBe false
+              result mustEqual false
           }
         }
       }
@@ -305,7 +305,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
         when(mockRefDataConnector.getCountries(any())(any(), any()))
           .thenReturn(Future.successful(Right(countries)))
 
-        service.getAddressPostcodeBasedCountries().futureValue mustBe
+        service.getAddressPostcodeBasedCountries().futureValue mustEqual
           SelectableList(Seq(country2, country3, country1))
 
         verify(mockRefDataConnector).getCountries(eqTo("CountryAddressPostcodeBased"))(any(), any())
@@ -323,7 +323,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
               }
               val result = service.getOfficeOfTransitCountries(userAnswers).futureValue
 
-              result.values mustBe Seq.fill(numberOfCountries)(country1)
+              result.values mustEqual Seq.fill(numberOfCountries)(country1)
 
               verify(mockRefDataConnector, never()).getCountries(any())(any(), any())
           }
@@ -337,7 +337,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
           val result = service.getOfficeOfTransitCountries(emptyUserAnswers).futureValue
 
-          result.values mustBe Seq(country2, country3, country1)
+          result.values mustEqual Seq(country2, country3, country1)
 
           verify(mockRefDataConnector).getCountries(any())(any(), any())
         }
@@ -361,7 +361,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
           val result = service.getOfficeOfExitCountries(userAnswers, country3).futureValue
 
-          result.values mustBe Seq(country1, country2)
+          result.values mustEqual Seq(country1, country2)
 
           verify(mockRefDataConnector, never()).getCountries(eqTo("CountryCodesFullList"))(any(), any())
         }
@@ -378,7 +378,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               val result = service.getOfficeOfExitCountries(emptyUserAnswers, countryOfDestination).futureValue
 
-              result.values mustBe Seq(country2, country3, country1)
+              result.values mustEqual Seq(country2, country3, country1)
 
               verify(mockRefDataConnector).getCountries(eqTo("CountryCodesFullList"))(any(), any())
           }
@@ -396,7 +396,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               val result = service.doesCountryRequireZip(country).futureValue
 
-              result mustBe true
+              result mustEqual true
           }
         }
       }
@@ -410,7 +410,7 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
 
               val result = service.doesCountryRequireZip(country).futureValue
 
-              result mustBe false
+              result mustEqual false
           }
         }
       }

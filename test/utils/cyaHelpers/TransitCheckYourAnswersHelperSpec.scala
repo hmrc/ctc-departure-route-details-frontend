@@ -151,14 +151,14 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val result = helper.officeOfTransit(index).get
 
               result.key.value mustEqual "Office of transit 1"
-              result.value.value mustBe officeOfExit.label
+              result.value.value mustEqual officeOfExit.label
               val actions = result.actions.get.items
-              actions.size mustBe 1
+              actions.size mustEqual 1
               val action = actions.head
-              action.content.value mustBe "Change"
-              action.href mustBe indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(userAnswers.lrn, mode, index).url
-              action.visuallyHiddenText.get mustBe "office of transit 1"
-              action.id mustBe "change-office-of-transit-1"
+              action.content.value mustEqual "Change"
+              action.href mustEqual indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(userAnswers.lrn, mode, index).url
+              action.visuallyHiddenText.get mustEqual "office of transit 1"
+              action.id mustEqual "change-office-of-transit-1"
           }
         }
       }
@@ -184,9 +184,9 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper  = new TransitCheckYourAnswersHelper(answers, mode)
               val result  = helper.addOrRemoveOfficesOfTransit.get
 
-              result.id mustBe "add-or-remove-offices-of-transit"
-              result.text mustBe "Add or remove offices of transit"
-              result.href mustBe controllers.transit.routes.AddAnotherOfficeOfTransitController.onPageLoad(answers.lrn, mode).url
+              result.id mustEqual "add-or-remove-offices-of-transit"
+              result.text mustEqual "Add or remove offices of transit"
+              result.href mustEqual controllers.transit.routes.AddAnotherOfficeOfTransitController.onPageLoad(answers.lrn, mode).url
           }
         }
       }
@@ -221,7 +221,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
             .setValue(OfficeOfTransitCountryPage(Index(2)), country3)
 
           val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
-          helper.listItems mustBe Seq(
+          helper.listItems mustEqual Seq(
             Right(
               ListItem(
                 name = s"$customsOffice1",
@@ -268,7 +268,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                 .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
 
               val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
-              helper.listItems mustBe Seq(
+              helper.listItems mustEqual Seq(
                 Left(
                   ListItem(
                     name = s"$country1",
@@ -298,7 +298,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                 .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
 
               val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
-              helper.listItems mustBe Seq(
+              helper.listItems mustEqual Seq(
                 Left(
                   ListItem(
                     name = s"$country1",
@@ -332,7 +332,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                 .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
 
               val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
-              helper.listItems mustBe Seq(
+              helper.listItems mustEqual Seq(
                 Right(
                   ListItem(
                     name = s"$customsOffice1",
@@ -363,7 +363,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
                 .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
 
               val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
-              helper.listItems mustBe Seq(
+              helper.listItems mustEqual Seq(
                 Right(
                   ListItem(
                     name = s"$customsOffice1",

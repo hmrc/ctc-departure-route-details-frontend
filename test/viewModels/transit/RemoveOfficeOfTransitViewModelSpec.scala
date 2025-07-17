@@ -35,8 +35,8 @@ class RemoveOfficeOfTransitViewModelSpec extends SpecBase with AppWithDefaultMoc
       val viewModel = viewModelProvider(emptyUserAnswers, Index(0))
 
       viewModel.officeOfTransit must not be defined
-      viewModel.title mustBe "Are you sure you want to remove this office of transit?"
-      viewModel.heading mustBe "Are you sure you want to remove this office of transit?"
+      viewModel.title mustEqual "Are you sure you want to remove this office of transit?"
+      viewModel.heading mustEqual "Are you sure you want to remove this office of transit?"
     }
 
     "when office of transit defined at index" in {
@@ -46,9 +46,9 @@ class RemoveOfficeOfTransitViewModelSpec extends SpecBase with AppWithDefaultMoc
           val userAnswers = emptyUserAnswers.setValue(OfficeOfTransitPage(index), officeOfTransit)
           val viewModel   = viewModelProvider(userAnswers, Index(0))
 
-          viewModel.officeOfTransit.value mustBe officeOfTransit
-          viewModel.title mustBe s"Are you sure you want to remove this office of transit?"
-          viewModel.heading mustBe s"Are you sure you want to remove this office of transit?"
+          viewModel.officeOfTransit.value mustEqual officeOfTransit
+          viewModel.title mustEqual s"Are you sure you want to remove this office of transit?"
+          viewModel.heading mustEqual s"Are you sure you want to remove this office of transit?"
       }
     }
   }

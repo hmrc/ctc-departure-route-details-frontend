@@ -33,7 +33,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr) {
         (id, name, countryId) =>
           val customsOffice = CustomsOffice(id, name, countryId)
-          Json.toJson(customsOffice) mustBe Json.parse(s"""
+          Json.toJson(customsOffice) mustEqual Json.parse(s"""
                |{
                |  "id": "$id",
                |  "name": "$name",
@@ -55,7 +55,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
                  |  "countryId": "$countryId"
                  |}
                  |""".stripMargin)
-            .as[CustomsOffice] mustBe customsOffice
+            .as[CustomsOffice] mustEqual customsOffice
       }
     }
 
@@ -63,7 +63,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr, arbitrary[Boolean]) {
         (id, name, countryId, selected) =>
           val customsOffice = CustomsOffice(id, name, countryId)
-          customsOffice.toSelectItem(selected) mustBe SelectItem(Some(id), s"$name ($id)", selected)
+          customsOffice.toSelectItem(selected) mustEqual SelectItem(Some(id), s"$name ($id)", selected)
       }
     }
 
@@ -71,7 +71,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr, Gen.alphaNumStr) {
         (id, name, countryId) =>
           val customsOffice = CustomsOffice(id, name, countryId)
-          customsOffice.toString mustBe s"$name ($id)"
+          customsOffice.toString mustEqual s"$name ($id)"
       }
     }
 
@@ -85,7 +85,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
 
       val result = SelectableList(customsOffices).values
 
-      result mustBe Seq(
+      result mustEqual Seq(
         customsOffice4,
         customsOffice3,
         customsOffice2,
@@ -121,7 +121,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
 
           val result = json.as[List[CustomsOffice]]
 
-          result mustBe List(
+          result mustEqual List(
             CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD"),
             CustomsOffice("AD000002", "DCNJ PORTA", "AD"),
             CustomsOffice("IT261101", "PASSO NUOVO", "IT")
@@ -178,7 +178,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
 
           val result = json.as[List[CustomsOffice]]
 
-          result mustBe List(
+          result mustEqual List(
             CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD"),
             CustomsOffice("AD000002", "DCNJ PORTA", "AD"),
             CustomsOffice("IT261101", "PASSO NUOVO", "IT")
@@ -196,7 +196,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
 
           val result = json.validate[List[CustomsOffice]]
 
-          result mustBe JsError("Expected customs offices to be in a JsArray")
+          result mustEqual JsError("Expected customs offices to be in a JsArray")
         }
       }
     }

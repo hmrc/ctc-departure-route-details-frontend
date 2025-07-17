@@ -49,7 +49,7 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(customsOffices)))
 
-        service.getCustomsOfficesOfTransitForCountry(CountryCode("GB")).futureValue.values mustBe
+        service.getCustomsOfficesOfTransitForCountry(CountryCode("GB")).futureValue.values mustEqual
           Seq(customsOffice2, customsOffice1)
 
         verify(mockRefDataConnector).getCustomsOfficesForCountryAndRole(eqTo("GB"), eqTo("TRA"))(any(), any())
@@ -62,7 +62,7 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(customsOffices)))
 
-        service.getCustomsOfficesOfDestinationForCountry(CountryCode("GB")).futureValue.values mustBe
+        service.getCustomsOfficesOfDestinationForCountry(CountryCode("GB")).futureValue.values mustEqual
           Seq(customsOffice2, customsOffice1)
 
         verify(mockRefDataConnector).getCustomsOfficesForCountryAndRole(eqTo("GB"), eqTo("DES"))(any(), any())
@@ -75,7 +75,7 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(customsOffices)))
 
-        service.getCustomsOfficesOfExitForCountry(CountryCode("GB")).futureValue.values mustBe
+        service.getCustomsOfficesOfExitForCountry(CountryCode("GB")).futureValue.values mustEqual
           Seq(customsOffice2, customsOffice1)
 
         verify(mockRefDataConnector).getCustomsOfficesForCountryAndRole(eqTo("GB"), eqTo("EXT"))(any(), any())
@@ -88,7 +88,7 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
         when(mockRefDataConnector.getCustomsOfficesForCountryAndRole(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(customsOffices)))
 
-        service.getCustomsOfficesOfDepartureForCountry("GB").futureValue.values mustBe
+        service.getCustomsOfficesOfDepartureForCountry("GB").futureValue.values mustEqual
           Seq(customsOffice2, customsOffice1)
 
         verify(mockRefDataConnector).getCustomsOfficesForCountryAndRole(eqTo("GB"), eqTo("DEP"))(any(), any())

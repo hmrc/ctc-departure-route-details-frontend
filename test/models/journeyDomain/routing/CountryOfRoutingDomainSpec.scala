@@ -43,8 +43,8 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
           CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           CountryOfRoutingPage(index),
           CountryOfRoutingSection(index)
         )
@@ -59,8 +59,8 @@ class CountryOfRoutingDomainSpec extends SpecBase with Generators {
           CountryOfRoutingDomain.userAnswersReader(index).apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe CountryOfRoutingPage(index)
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual CountryOfRoutingPage(index)
+        result.left.value.pages mustEqual Seq(
           CountryOfRoutingPage(index)
         )
       }

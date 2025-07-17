@@ -323,14 +323,14 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val result = helper.countryOfRouting(index).get
 
               result.key.value mustEqual "Country 1"
-              result.value.value mustBe countryOfRouting.country.toString
+              result.value.value mustEqual countryOfRouting.country.toString
               val actions = result.actions.get.items
-              actions.size mustBe 1
+              actions.size mustEqual 1
               val action = actions.head
-              action.content.value mustBe "Change"
-              action.href mustBe indexRoutes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index).url
-              action.visuallyHiddenText.get mustBe "country 1 in the transit route"
-              action.id mustBe "change-country-of-routing-1"
+              action.content.value mustEqual "Change"
+              action.href mustEqual indexRoutes.CountryOfRoutingController.onPageLoad(userAnswers.lrn, mode, index).url
+              action.visuallyHiddenText.get mustEqual "country 1 in the transit route"
+              action.id mustEqual "change-country-of-routing-1"
           }
         }
       }
@@ -356,9 +356,9 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
               val helper  = new RoutingCheckYourAnswersHelper(answers, mode)
               val result  = helper.addOrRemoveCountriesOfRouting.get
 
-              result.id mustBe "add-or-remove-transit-route-countries"
-              result.text mustBe "Add or remove transit route countries"
-              result.href mustBe routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(answers.lrn, mode).url
+              result.id mustEqual "add-or-remove-transit-route-countries"
+              result.text mustEqual "Add or remove transit route countries"
+              result.href mustEqual routingRoutes.AddAnotherCountryOfRoutingController.onPageLoad(answers.lrn, mode).url
           }
         }
       }
@@ -375,7 +375,7 @@ class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckProperty
           .setValue(CountryOfRoutingPage(Index(1)), country2)
 
         val helper = new RoutingCheckYourAnswersHelper(answers, mode)
-        helper.listItems mustBe Seq(
+        helper.listItems mustEqual Seq(
           Right(
             ListItem(
               name = country1.toString,

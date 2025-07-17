@@ -51,8 +51,8 @@ class LoadingDomainSpec extends SpecBase with Generators {
           LoadingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           AddUnLocodeYesNoPage,
           UnLocodePage,
           AddExtraInformationYesNoPage,
@@ -76,8 +76,8 @@ class LoadingDomainSpec extends SpecBase with Generators {
           LoadingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           AddUnLocodeYesNoPage,
           CountryPage,
           LocationPage
@@ -95,8 +95,8 @@ class LoadingDomainSpec extends SpecBase with Generators {
           LoadingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe UnLocodePage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual UnLocodePage
+        result.left.value.pages mustEqual Seq(
           AddUnLocodeYesNoPage,
           UnLocodePage
         )

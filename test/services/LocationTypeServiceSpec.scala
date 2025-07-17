@@ -52,7 +52,7 @@ class LocationTypeServiceSpec extends SpecBase with BeforeAndAfterEach {
           when(mockRefDataConnector.getTypesOfLocation()(any(), any()))
             .thenReturn(Future.successful(Right(lts)))
 
-          service.getLocationTypes(ProcedureType.Normal).futureValue mustBe
+          service.getLocationTypes(ProcedureType.Normal).futureValue mustEqual
             Seq(lt4, lt2, lt1)
 
           verify(mockRefDataConnector).getTypesOfLocation()(any(), any())
@@ -62,7 +62,7 @@ class LocationTypeServiceSpec extends SpecBase with BeforeAndAfterEach {
           when(mockRefDataConnector.getTypesOfLocation()(any(), any()))
             .thenReturn(Future.successful(Right(lts)))
 
-          service.getLocationTypes(ProcedureType.Simplified).futureValue mustBe
+          service.getLocationTypes(ProcedureType.Simplified).futureValue mustEqual
             Seq(lt3)
 
           verify(mockRefDataConnector).getTypesOfLocation()(any(), any())

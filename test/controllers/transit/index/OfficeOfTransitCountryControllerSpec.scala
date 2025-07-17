@@ -86,7 +86,7 @@ class OfficeOfTransitCountryControllerSpec extends SpecBase with AppWithDefaultM
         val userAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(userAnswersCaptor.capture())(any())
         userAnswersCaptor.getValue.get(OfficeOfTransitCountryPage(index)) must not be defined
-        userAnswersCaptor.getValue.getValue(InferredOfficeOfTransitCountryPage(index)) mustBe country1
+        userAnswersCaptor.getValue.getValue(InferredOfficeOfTransitCountryPage(index)) mustEqual country1
       }
     }
 

@@ -35,11 +35,11 @@ class AddAnotherOfficeOfExitViewModelSpec extends SpecBase with Generators with 
 
           val result = new AddAnotherOfficeOfExitViewModelProvider()(userAnswers, mode)
 
-          result.listItems.length mustBe 1
-          result.title mustBe "You have added 1 office of exit for transit"
-          result.heading mustBe "You have added 1 office of exit for transit"
-          result.legend mustBe "Do you want to add another office of exit for transit?"
-          result.maxLimitLabel mustBe "You cannot add any more offices of exit for transit. To add another office, you need to remove one first."
+          result.listItems.length mustEqual 1
+          result.title mustEqual "You have added 1 office of exit for transit"
+          result.heading mustEqual "You have added 1 office of exit for transit"
+          result.legend mustEqual "Do you want to add another office of exit for transit?"
+          result.maxLimitLabel mustEqual "You cannot add any more offices of exit for transit. To add another office, you need to remove one first."
       }
     }
 
@@ -55,11 +55,11 @@ class AddAnotherOfficeOfExitViewModelSpec extends SpecBase with Generators with 
 
           val result = new AddAnotherOfficeOfExitViewModelProvider()(userAnswers, mode)
 
-          result.listItems.length mustBe count
-          result.title mustBe s"You have added ${formatter.format(count)} offices of exit for transit"
-          result.heading mustBe s"You have added ${formatter.format(count)} offices of exit for transit"
-          result.legend mustBe "Do you want to add another office of exit for transit?"
-          result.maxLimitLabel mustBe "You cannot add any more offices of exit for transit. To add another office, you need to remove one first."
+          result.listItems.length mustEqual count
+          result.title mustEqual s"You have added ${formatter.format(count)} offices of exit for transit"
+          result.heading mustEqual s"You have added ${formatter.format(count)} offices of exit for transit"
+          result.legend mustEqual "Do you want to add another office of exit for transit?"
+          result.maxLimitLabel mustEqual "You cannot add any more offices of exit for transit. To add another office, you need to remove one first."
       }
     }
   }

@@ -49,7 +49,7 @@ class SpecificCircumstanceIndicatorsServiceSpec extends SpecBase with BeforeAndA
         when(mockRefDataConnector.getSpecificCircumstanceIndicators()(any(), any()))
           .thenReturn(Future.successful(Right(specificCircumstanceIndicators)))
 
-        service.getSpecificCircumstanceIndicators().futureValue mustBe
+        service.getSpecificCircumstanceIndicators().futureValue mustEqual
           Seq(sci2, sci1)
 
         verify(mockRefDataConnector).getSpecificCircumstanceIndicators()(any(), any())

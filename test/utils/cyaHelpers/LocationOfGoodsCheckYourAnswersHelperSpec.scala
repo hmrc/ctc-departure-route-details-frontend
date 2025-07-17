@@ -55,14 +55,14 @@ class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheck
               val result  = helper.addLocationOfGoods.get
 
               result.key.value mustEqual "Do you want to add a location of goods?"
-              result.value.value mustBe "Yes"
+              result.value.value mustEqual "Yes"
               val actions = result.actions.get.items
-              actions.size mustBe 1
+              actions.size mustEqual 1
               val action = actions.head
-              action.content.value mustBe "Change"
-              action.href mustBe routes.AddLocationOfGoodsController.onPageLoad(answers.lrn, mode).url
-              action.visuallyHiddenText.get mustBe "if you want to add a location of goods"
-              action.id mustBe "change-add-location-of-goods"
+              action.content.value mustEqual "Change"
+              action.href mustEqual routes.AddLocationOfGoodsController.onPageLoad(answers.lrn, mode).url
+              action.visuallyHiddenText.get mustEqual "if you want to add a location of goods"
+              action.id mustEqual "change-add-location-of-goods"
           }
         }
       }
