@@ -66,8 +66,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             OfficeOfTransitPage(index),
             AddOfficeOfTransitETAYesNoPage(index),
             OfficeOfTransitSection(index)
@@ -92,8 +92,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             OfficeOfDestinationPage,
             OfficeOfTransitPage(index),
             AddOfficeOfTransitETAYesNoPage(index),
@@ -120,8 +120,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             OfficeOfDestinationPage,
             OfficeOfTransitCountryPage(index),
             OfficeOfTransitPage(index),
@@ -153,8 +153,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           OfficeOfTransitCountryPage(index),
           OfficeOfTransitPage(index),
           AddOfficeOfTransitETAYesNoPage(index),
@@ -184,8 +184,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             OfficeOfDestinationPage,
             OfficeOfTransitCountryPage(index),
             OfficeOfTransitPage(index),
@@ -214,8 +214,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             OfficeOfDestinationPage,
             OfficeOfTransitCountryPage(index),
             OfficeOfTransitPage(index),
@@ -245,8 +245,8 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
           OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           OfficeOfDestinationPage,
           OfficeOfTransitCountryPage(index),
           OfficeOfTransitPage(index),
@@ -270,7 +270,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
-          result.left.value.page mustBe OfficeOfTransitCountryPage(index)
+          result.left.value.page mustEqual OfficeOfTransitCountryPage(index)
         }
 
         "when office missing" - {
@@ -283,7 +283,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
             ).run(userAnswers)
 
-            result.left.value.page mustBe OfficeOfTransitPage(index)
+            result.left.value.page mustEqual OfficeOfTransitPage(index)
           }
 
           "and inferred country defined" in {
@@ -295,7 +295,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
             ).run(userAnswers)
 
-            result.left.value.page mustBe OfficeOfTransitPage(index)
+            result.left.value.page mustEqual OfficeOfTransitPage(index)
           }
         }
 
@@ -313,7 +313,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
                 OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
               ).run(userAnswers)
 
-              result.left.value.page mustBe OfficeOfTransitETAPage(index)
+              result.left.value.page mustEqual OfficeOfTransitETAPage(index)
             }
           }
 
@@ -330,7 +330,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
                 OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
               ).run(userAnswers)
 
-              result.left.value.page mustBe AddOfficeOfTransitETAYesNoPage(index)
+              result.left.value.page mustEqual AddOfficeOfTransitETAYesNoPage(index)
             }
           }
         }
@@ -348,7 +348,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
               OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
             ).run(userAnswers)
 
-            result.left.value.page mustBe AddOfficeOfTransitETAYesNoPage(index)
+            result.left.value.page mustEqual AddOfficeOfTransitETAYesNoPage(index)
           }
         }
 
@@ -365,7 +365,7 @@ class OfficeOfTransitDomainSpec extends SpecBase with Generators {
             OfficeOfTransitDomain.userAnswersReader(index).apply(Nil)
           ).run(userAnswers)
 
-          result.left.value.page mustBe OfficeOfTransitETAPage(index)
+          result.left.value.page mustEqual OfficeOfTransitETAPage(index)
         }
       }
     }

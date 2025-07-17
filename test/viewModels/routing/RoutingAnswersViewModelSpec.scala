@@ -40,14 +40,14 @@ class RoutingAnswersViewModelSpec extends SpecBase with Generators {
 
     val sections = viewModelProvider.apply(userAnswers, mode).sections
 
-    sections.size mustBe 2
+    sections.size mustEqual 2
 
     sections.head.sectionTitle mustNot be(defined)
-    sections.head.rows.size mustBe 3
+    sections.head.rows.size mustEqual 3
     sections.head.addAnotherLink mustNot be(defined)
 
-    sections(1).sectionTitle.get mustBe "Transit route countries"
-    sections(1).rows.size mustBe 1
+    sections(1).sectionTitle.get mustEqual "Transit route countries"
+    sections(1).rows.size mustEqual 1
     sections(1).addAnotherLink must be(defined)
   }
 }

@@ -49,8 +49,8 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           UnloadingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           UnLocodeYesNoPage,
           UnLocodePage,
           AddExtraInformationYesNoPage,
@@ -74,8 +74,8 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           UnloadingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           UnLocodeYesNoPage,
           UnLocodePage,
           AddExtraInformationYesNoPage
@@ -97,8 +97,8 @@ class UnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           UnloadingDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           UnLocodeYesNoPage,
           CountryPage,
           LocationPage

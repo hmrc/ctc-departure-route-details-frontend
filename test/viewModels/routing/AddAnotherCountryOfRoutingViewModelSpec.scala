@@ -35,11 +35,11 @@ class AddAnotherCountryOfRoutingViewModelSpec extends SpecBase with Generators w
 
           val result = new AddAnotherCountryOfRoutingViewModelProvider()(userAnswers, mode)
 
-          result.listItems.length mustBe 1
-          result.title mustBe "You have added 1 country to the transit route"
-          result.heading mustBe "You have added 1 country to the transit route"
-          result.legend mustBe "Do you want to add another country to the transit route?"
-          result.maxLimitLabel mustBe "You cannot add any more countries to the transit route. To add another country, you need to remove one first."
+          result.listItems.length mustEqual 1
+          result.title mustEqual "You have added 1 country to the transit route"
+          result.heading mustEqual "You have added 1 country to the transit route"
+          result.legend mustEqual "Do you want to add another country to the transit route?"
+          result.maxLimitLabel mustEqual "You cannot add any more countries to the transit route. To add another country, you need to remove one first."
       }
     }
 
@@ -55,11 +55,11 @@ class AddAnotherCountryOfRoutingViewModelSpec extends SpecBase with Generators w
 
           val result = new AddAnotherCountryOfRoutingViewModelProvider()(userAnswers, mode)
 
-          result.listItems.length mustBe count
-          result.title mustBe s"You have added ${formatter.format(count)} countries to the transit route"
-          result.heading mustBe s"You have added ${formatter.format(count)} countries to the transit route"
-          result.legend mustBe "Do you want to add another country to the transit route?"
-          result.maxLimitLabel mustBe "You cannot add any more countries to the transit route. To add another country, you need to remove one first."
+          result.listItems.length mustEqual count
+          result.title mustEqual s"You have added ${formatter.format(count)} countries to the transit route"
+          result.heading mustEqual s"You have added ${formatter.format(count)} countries to the transit route"
+          result.legend mustEqual "Do you want to add another country to the transit route?"
+          result.maxLimitLabel mustEqual "You cannot add any more countries to the transit route. To add another country, you need to remove one first."
       }
     }
   }

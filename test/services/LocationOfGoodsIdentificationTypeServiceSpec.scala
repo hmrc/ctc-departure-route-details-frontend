@@ -58,7 +58,7 @@ class LocationOfGoodsIdentificationTypeServiceSpec extends SpecBase with BeforeA
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
             .thenReturn(Future.successful(Right(identifiers)))
           val locationType = LocationType(DesignatedLocation, "Designated location")
-          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(unlocodeIdentifier, customsOfficeIdentifier)
+          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustEqual Seq(unlocodeIdentifier, customsOfficeIdentifier)
         }
 
         "When LocationType is Authorised Place" in {
@@ -66,7 +66,7 @@ class LocationOfGoodsIdentificationTypeServiceSpec extends SpecBase with BeforeA
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
             .thenReturn(Future.successful(Right(identifiers)))
           val locationType = LocationType(AuthorisedPlace, "Authorised place")
-          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(authorisationNumber)
+          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustEqual Seq(authorisationNumber)
         }
 
         "When LocationType is Approved Place" in {
@@ -74,7 +74,7 @@ class LocationOfGoodsIdentificationTypeServiceSpec extends SpecBase with BeforeA
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
             .thenReturn(Future.successful(Right(identifiers)))
           val locationType = LocationType(ApprovedPlace, "Approved place")
-          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(
+          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustEqual Seq(
             unlocodeIdentifier,
             coordinatesIdentifier,
             eoriNumberIdentifier,
@@ -87,7 +87,7 @@ class LocationOfGoodsIdentificationTypeServiceSpec extends SpecBase with BeforeA
           when(mockRefDataConnector.getQualifierOfTheIdentifications()(any(), any()))
             .thenReturn(Future.successful(Right(identifiers)))
           val locationType = LocationType(Other, "Other")
-          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustBe Seq(
+          service.getLocationOfGoodsIdentificationTypes(locationType).futureValue mustEqual Seq(
             unlocodeIdentifier,
             coordinatesIdentifier,
             addressIdentifier

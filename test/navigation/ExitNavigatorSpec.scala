@@ -37,7 +37,7 @@ class ExitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
             answers =>
               navigator
                 .nextPage(answers, None)
-                .mustBe(controllers.exit.routes.AddAnotherOfficeOfExitController.onPageLoad(answers.lrn, mode))
+                .mustEqual(controllers.exit.routes.AddAnotherOfficeOfExitController.onPageLoad(answers.lrn, mode))
           }
         }
       }
@@ -55,7 +55,7 @@ class ExitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
             answers =>
               navigator
                 .nextPage(answers, None)
-                .mustBe(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
+                .mustEqual(controllers.routes.RouteDetailsAnswersController.onPageLoad(answers.lrn))
           }
         }
       }

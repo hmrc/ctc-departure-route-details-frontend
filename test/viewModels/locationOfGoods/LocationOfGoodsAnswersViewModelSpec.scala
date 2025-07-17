@@ -42,8 +42,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
           (userAnswers, mode) =>
             val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
             val section           = viewModelProvider.apply(userAnswers, mode).section
-            section.rows.size mustBe 4
-            section.sectionTitle.get mustBe "Route details - Location of goods"
+            section.rows.size mustEqual 4
+            section.sectionTitle.get mustEqual "Route details - Location of goods"
         }
       }
     }
@@ -62,8 +62,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).section
-              section.rows.size mustBe 9
-              section.sectionTitle.get mustBe "Route details - Location of goods"
+              section.rows.size mustEqual 9
+              section.sectionTitle.get mustEqual "Route details - Location of goods"
           }
         }
       }
@@ -79,8 +79,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).section
-              section.rows.size mustBe 6
-              section.sectionTitle.get mustBe "Route details - Location of goods"
+              section.rows.size mustEqual 6
+              section.sectionTitle.get mustEqual "Route details - Location of goods"
           }
         }
       }
@@ -100,8 +100,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).section
-              section.rows.size mustBe 9
-              section.sectionTitle.get mustBe "Route details - Location of goods"
+              section.rows.size mustEqual 9
+              section.sectionTitle.get mustEqual "Route details - Location of goods"
           }
         }
       }
@@ -117,8 +117,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).section
-              section.rows.size mustBe 6
-              section.sectionTitle.get mustBe "Route details - Location of goods"
+              section.rows.size mustEqual 6
+              section.sectionTitle.get mustEqual "Route details - Location of goods"
           }
         }
       }
@@ -137,8 +137,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).section
-              section.rows.size mustBe 7
-              section.sectionTitle.get mustBe "Route details - Location of goods"
+              section.rows.size mustEqual 7
+              section.sectionTitle.get mustEqual "Route details - Location of goods"
           }
         }
       }
@@ -153,8 +153,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).section
-              section.rows.size mustBe 5
-              section.sectionTitle.get mustBe "Route details - Location of goods"
+              section.rows.size mustEqual 5
+              section.sectionTitle.get mustEqual "Route details - Location of goods"
           }
         }
       }
@@ -173,8 +173,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).section
-              section.rows.size mustBe 7
-              section.sectionTitle.get mustBe "Route details - Location of goods"
+              section.rows.size mustEqual 7
+              section.sectionTitle.get mustEqual "Route details - Location of goods"
           }
         }
       }
@@ -189,8 +189,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).section
-              section.rows.size mustBe 5
-              section.sectionTitle.get mustBe "Route details - Location of goods"
+              section.rows.size mustEqual 5
+              section.sectionTitle.get mustEqual "Route details - Location of goods"
           }
         }
       }
@@ -209,8 +209,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).section
-              section.rows.size mustBe 8
-              section.sectionTitle.get mustBe "Route details - Location of goods"
+              section.rows.size mustEqual 8
+              section.sectionTitle.get mustEqual "Route details - Location of goods"
           }
         }
       }
@@ -225,8 +225,8 @@ class LocationOfGoodsAnswersViewModelSpec extends SpecBase with ScalaCheckProper
             (userAnswers, mode) =>
               val viewModelProvider = injector.instanceOf[LocationOfGoodsAnswersViewModelProvider]
               val section           = viewModelProvider.apply(userAnswers, mode).section
-              section.rows.size mustBe 6
-              section.sectionTitle.get mustBe "Route details - Location of goods"
+              section.rows.size mustEqual 6
+              section.sectionTitle.get mustEqual "Route details - Location of goods"
           }
         }
       }

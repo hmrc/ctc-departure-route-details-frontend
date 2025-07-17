@@ -70,7 +70,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               ).run(userAnswers)
 
               result.value.value must not be defined
-              result.value.pages mustBe Nil
+              result.value.pages mustEqual Nil
           }
         }
       }
@@ -86,7 +86,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           ).run(userAnswers)
 
           result.value.value must not be defined
-          result.value.pages mustBe Nil
+          result.value.pages mustEqual Nil
         }
 
         "when not a TIR declaration type" in {
@@ -126,7 +126,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               ).run(userAnswers)
 
               result.value.value must not be defined
-              result.value.pages mustBe Seq(
+              result.value.pages mustEqual Seq(
                 AddCustomsOfficeOfExitYesNoPage
               )
             }
@@ -148,7 +148,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                   ).run(answers)
 
                   result.value.value mustBe defined
-                  result.value.pages.head mustBe AddCustomsOfficeOfExitYesNoPage
+                  result.value.pages.head mustEqual AddCustomsOfficeOfExitYesNoPage
               }
             }
           }
@@ -165,7 +165,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             ).run(userAnswers)
 
             result.value.value must not be defined
-            result.value.pages mustBe Nil
+            result.value.pages mustEqual Nil
           }
         }
 
@@ -181,7 +181,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
           ).run(userAnswers)
 
           result.value.value must not be defined
-          result.value.pages mustBe Nil
+          result.value.pages mustEqual Nil
         }
       }
     }
@@ -201,8 +201,8 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             RouteDetailsDomain.exitReader.apply(Nil)
           ).run(userAnswers)
 
-          result.left.value.page mustBe AddCustomsOfficeOfExitYesNoPage
-          result.left.value.pages mustBe Seq(
+          result.left.value.page mustEqual AddCustomsOfficeOfExitYesNoPage
+          result.left.value.pages mustEqual Seq(
             AddCustomsOfficeOfExitYesNoPage
           )
         }
@@ -218,8 +218,8 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
             RouteDetailsDomain.exitReader.apply(Nil)
           ).run(userAnswers)
 
-          result.left.value.page mustBe AddCustomsOfficeOfExitYesNoPage
-          result.left.value.pages mustBe Seq(
+          result.left.value.page mustEqual AddCustomsOfficeOfExitYesNoPage
+          result.left.value.pages mustEqual Seq(
             AddCustomsOfficeOfExitYesNoPage
           )
         }
@@ -241,7 +241,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               ).run(userAnswers)
 
               result.value.value must not be defined
-              result.value.pages mustBe Seq(
+              result.value.pages mustEqual Seq(
                 AddLocationOfGoodsPage
               )
             }
@@ -299,7 +299,7 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                 ).run(userAnswers)
 
                 result.value.value must not be defined
-                result.value.pages mustBe Seq(
+                result.value.pages mustEqual Seq(
                   AddLocationOfGoodsPage
                 )
               }
@@ -402,8 +402,8 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
               RouteDetailsDomain.locationOfGoodsReader.apply(Nil)
             ).run(userAnswers)
 
-            result.left.value.page mustBe LocationTypePage
-            result.left.value.pages mustBe Seq(
+            result.left.value.page mustEqual LocationTypePage
+            result.left.value.pages mustEqual Seq(
               LocationTypePage
             )
           }
@@ -420,8 +420,8 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                 RouteDetailsDomain.locationOfGoodsReader.apply(Nil)
               ).run(userAnswers)
 
-              result.left.value.page mustBe AddLocationOfGoodsPage
-              result.left.value.pages mustBe Seq(
+              result.left.value.page mustEqual AddLocationOfGoodsPage
+              result.left.value.pages mustEqual Seq(
                 AddLocationOfGoodsPage
               )
             }
@@ -442,8 +442,8 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                   RouteDetailsDomain.locationOfGoodsReader.apply(Nil)
                 ).run(userAnswers)
 
-                result.left.value.page mustBe AddLocationOfGoodsPage
-                result.left.value.pages mustBe Seq(
+                result.left.value.page mustEqual AddLocationOfGoodsPage
+                result.left.value.pages mustEqual Seq(
                   AddLocationOfGoodsPage
                 )
               }
@@ -463,8 +463,8 @@ class RouteDetailsDomainSpec extends SpecBase with ScalaCheckPropertyChecks with
                   RouteDetailsDomain.locationOfGoodsReader.apply(Nil)
                 ).run(userAnswers)
 
-                result.left.value.page mustBe LocationTypePage
-                result.left.value.pages mustBe Seq(
+                result.left.value.page mustEqual LocationTypePage
+                result.left.value.pages mustEqual Seq(
                   LocationTypePage
                 )
               }

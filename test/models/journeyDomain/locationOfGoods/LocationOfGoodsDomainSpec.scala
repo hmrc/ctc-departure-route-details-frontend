@@ -59,8 +59,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationOfGoodsDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             LocationTypePage,
             IdentificationPage,
             CustomsOfficeIdentifierPage,
@@ -88,8 +88,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationOfGoodsDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             LocationTypePage,
             IdentificationPage,
             CoordinatesPage,
@@ -120,8 +120,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationOfGoodsDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             LocationTypePage,
             IdentificationPage,
             EoriPage,
@@ -154,8 +154,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationOfGoodsDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             LocationTypePage,
             IdentificationPage,
             EoriPage,
@@ -188,8 +188,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationOfGoodsDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             AuthorisationNumberPage,
             AddIdentifierYesNoPage,
             AddContactYesNoPage,
@@ -220,8 +220,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationOfGoodsDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             LocationTypePage,
             AuthorisationNumberPage,
             AddIdentifierYesNoPage,
@@ -254,8 +254,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationOfGoodsDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             LocationTypePage,
             IdentificationPage,
             CountryPage,
@@ -285,8 +285,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
             LocationOfGoodsDomain.userAnswersReader.apply(Nil)
           ).run(userAnswers)
 
-          result.value.value mustBe expectedResult
-          result.value.pages mustBe Seq(
+          result.value.value mustEqual expectedResult
+          result.value.pages mustEqual Seq(
             LocationTypePage,
             IdentificationPage,
             UnLocodePage,
@@ -321,8 +321,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           additionalContact = Some(AdditionalContactDomain(contactName, contactPhone))
         )
 
-        result.value.value mustBe expectedResult
-        result.value.pages mustBe Seq(
+        result.value.value mustEqual expectedResult
+        result.value.pages mustEqual Seq(
           LocationTypePage,
           AuthorisationNumberPage,
           AddIdentifierYesNoPage,
@@ -364,7 +364,7 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
               LocationOfGoodsDomain.userAnswersReader.apply(Nil)
             ).run(invalidUserAnswers)
 
-            result.left.value.page mustBe mandatoryPage
+            result.left.value.page mustEqual mandatoryPage
         }
       }
 
@@ -383,8 +383,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           LocationOfGoodsDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe AdditionalIdentifierPage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual AdditionalIdentifierPage
+        result.left.value.pages mustEqual Seq(
           LocationTypePage,
           AuthorisationNumberPage,
           AddIdentifierYesNoPage,
@@ -408,8 +408,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           LocationOfGoodsDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe contact.NamePage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual contact.NamePage
+        result.left.value.pages mustEqual Seq(
           LocationTypePage,
           AuthorisationNumberPage,
           AddIdentifierYesNoPage,
@@ -436,8 +436,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           LocationOfGoodsDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe contact.TelephoneNumberPage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual contact.TelephoneNumberPage
+        result.left.value.pages mustEqual Seq(
           LocationTypePage,
           AuthorisationNumberPage,
           AddIdentifierYesNoPage,
@@ -459,8 +459,8 @@ class LocationOfGoodsDomainSpec extends SpecBase with Generators {
           LocationOfGoodsDomain.userAnswersReader.apply(Nil)
         ).run(userAnswers)
 
-        result.left.value.page mustBe CountryPage
-        result.left.value.pages mustBe Seq(
+        result.left.value.page mustEqual CountryPage
+        result.left.value.pages mustEqual Seq(
           LocationTypePage,
           IdentificationPage,
           CountryPage

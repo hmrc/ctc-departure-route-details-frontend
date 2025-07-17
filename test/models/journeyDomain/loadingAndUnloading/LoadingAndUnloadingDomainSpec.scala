@@ -142,8 +142,8 @@ class LoadingAndUnloadingDomainSpec extends SpecBase with ScalaCheckPropertyChec
             LoadingAndUnloadingDomain.loadingReader.apply(Nil)
           ).run(userAnswers)
 
-          result.left.value.page mustBe AddPlaceOfLoadingYesNoPage
-          result.left.value.pages mustBe Seq(
+          result.left.value.page mustEqual AddPlaceOfLoadingYesNoPage
+          result.left.value.pages mustEqual Seq(
             AddPlaceOfLoadingYesNoPage
           )
         }
