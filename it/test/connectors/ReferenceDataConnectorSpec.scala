@@ -171,125 +171,195 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
     }
 
     "getCustomsOfficesForCountryAndRole" - {
-      val role                   = "TRA"
-      def url(countryId: String) = s"/$baseUrl/lists/CustomsOffices?data.countryId=$countryId&data.roles.role=$role"
+      val role = "TRA"
 
-      val customsOfficesResponseJson: String =
-        """
-          | {
-          |  "_links": {
-          |    "self": {
-          |      "href": "/customs-reference-data/lists/CustomsOffices"
-          |    }
-          |  },
-          |  "meta": {
-          |    "version": "410157ad-bc37-4e71-af2a-404d1ddad94c",
-          |    "snapshotDate": "2023-01-01"
-          |  },
-          |  "id": "CustomsOffices",
-          |  "data": [
-          |    {
-          |      "languageCode": "EN",
-          |      "name": "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA",
-          |      "phoneNumber": "+ (376) 84 1090",
-          |      "id": "AD000001",
-          |      "countryId": "AD",
-          |      "roles": [
-          |        {
-          |          "role": "AUT"
-          |        },
-          |        {
-          |          "role": "DEP"
-          |        },
-          |        {
-          |          "role": "DES"
-          |        },
-          |        {
-          |          "role": "TRA"
-          |        }
-          |      ]
-          |    },
-          |    {
-          |      "languageCode": "ES",
-          |      "name": "ADUANA DE ST. JULIÀ DE LÒRIA",
-          |      "phoneNumber": "+ (376) 84 1090",
-          |      "id": "AD000001",
-          |      "countryId": "AD",
-          |      "roles": [
-          |        {
-          |          "role": "AUT"
-          |        },
-          |        {
-          |          "role": "DEP"
-          |        },
-          |        {
-          |          "role": "DES"
-          |        },
-          |        {
-          |          "role": "TRA"
-          |        }
-          |      ]
-          |    },
-          |    {
-          |      "languageCode": "FR",
-          |      "name": "BUREAU DE SANT JULIÀ DE LÒRIA",
-          |      "phoneNumber": "+ (376) 84 1090",
-          |      "id": "AD000001",
-          |      "countryId": "AD",
-          |      "roles": [
-          |        {
-          |          "role": "AUT"
-          |        },
-          |        {
-          |          "role": "DEP"
-          |        },
-          |        {
-          |          "role": "DES"
-          |        },
-          |        {
-          |          "role": "TRA"
-          |        }
-          |      ]
-          |    }
-          |  ]
-          |}
-          |""".stripMargin
+      "when phase 5" - {
 
-      "must return a successful future response with a sequence of CustomsOffices" in {
-        val countryId = "AD"
+        def url(countryId: String) = s"/$baseUrl/lists/CustomsOffices?data.countryId=$countryId&data.roles.role=$role"
 
-        running(phase5App) {
-          app =>
-            val connector = app.injector.instanceOf[ReferenceDataConnector]
-            server.stubFor(
-              get(urlEqualTo(url(countryId)))
-                .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-                .willReturn(okJson(customsOfficesResponseJson))
-            )
+        val customsOfficesResponseJson: String =
+          """
+            | {
+            |  "_links": {
+            |    "self": {
+            |      "href": "/customs-reference-data/lists/CustomsOffices"
+            |    }
+            |  },
+            |  "meta": {
+            |    "version": "410157ad-bc37-4e71-af2a-404d1ddad94c",
+            |    "snapshotDate": "2023-01-01"
+            |  },
+            |  "id": "CustomsOffices",
+            |  "data": [
+            |    {
+            |      "languageCode": "EN",
+            |      "name": "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA",
+            |      "phoneNumber": "+ (376) 84 1090",
+            |      "id": "AD000001",
+            |      "countryId": "AD",
+            |      "roles": [
+            |        {
+            |          "role": "AUT"
+            |        },
+            |        {
+            |          "role": "DEP"
+            |        },
+            |        {
+            |          "role": "DES"
+            |        },
+            |        {
+            |          "role": "TRA"
+            |        }
+            |      ]
+            |    },
+            |    {
+            |      "languageCode": "ES",
+            |      "name": "ADUANA DE ST. JULIÀ DE LÒRIA",
+            |      "phoneNumber": "+ (376) 84 1090",
+            |      "id": "AD000001",
+            |      "countryId": "AD",
+            |      "roles": [
+            |        {
+            |          "role": "AUT"
+            |        },
+            |        {
+            |          "role": "DEP"
+            |        },
+            |        {
+            |          "role": "DES"
+            |        },
+            |        {
+            |          "role": "TRA"
+            |        }
+            |      ]
+            |    },
+            |    {
+            |      "languageCode": "FR",
+            |      "name": "BUREAU DE SANT JULIÀ DE LÒRIA",
+            |      "phoneNumber": "+ (376) 84 1090",
+            |      "id": "AD000001",
+            |      "countryId": "AD",
+            |      "roles": [
+            |        {
+            |          "role": "AUT"
+            |        },
+            |        {
+            |          "role": "DEP"
+            |        },
+            |        {
+            |          "role": "DES"
+            |        },
+            |        {
+            |          "role": "TRA"
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
 
-            val expectedResult = NonEmptySet.of(
-              CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD")
-            )
+        "must return a successful future response with a sequence of CustomsOffices" in {
+          val countryId = "AD"
 
-            connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue.value mustEqual expectedResult
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url(countryId)))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(customsOfficesResponseJson))
+              )
+
+              val expectedResult = NonEmptySet.of(
+                CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD")
+              )
+
+              connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue.value mustEqual expectedResult
+          }
+        }
+
+        "must return a NoReferenceDataFoundException for an empty response" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              val countryId = "AR"
+              checkNoReferenceDataFoundResponse(url(countryId), emptyPhase5ResponseJson, connector.getCustomsOfficesForCountryAndRole(countryId, role))
+          }
+        }
+
+        "must return an exception when an error response is returned" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              val countryId = "GB"
+              checkErrorResponse(url(countryId), connector.getCustomsOfficesForCountryAndRole(countryId, role))
+          }
         }
       }
 
-      "must return a NoReferenceDataFoundException for an empty response" in {
-        running(phase5App) {
-          app =>
-            val connector = app.injector.instanceOf[ReferenceDataConnector]
-            val countryId = "AR"
-            checkNoReferenceDataFoundResponse(url(countryId), emptyPhase5ResponseJson, connector.getCustomsOfficesForCountryAndRole(countryId, role))
-        }
-      }
+      "when phase 6" - {
 
-      "must return an exception when an error response is returned" in {
-        running(phase5App) {
-          app =>
-            val connector = app.injector.instanceOf[ReferenceDataConnector]
-            val countryId = "GB"
-            checkErrorResponse(url(countryId), connector.getCustomsOfficesForCountryAndRole(countryId, role))
+        def url(countryId: String) = s"/$baseUrl/lists/CustomsOffices?countryCodes=$countryId&roles=$role"
+
+        val customsOfficesResponseJson: String =
+          """
+            |[
+            |  {
+            |    "customsOfficeLsd": {
+            |      "languageCode": "EN",
+            |      "customsOfficeUsualName": "Glasgow Airport"
+            |    },
+            |    "referenceNumber": "GB000054",
+            |    "countryCode": "GB"
+            |  },
+            |  {
+            |    "customsOfficeLsd": {
+            |      "languageCode": "EN",
+            |      "customsOfficeUsualName": "Border Force, Port of Tyne"
+            |    },
+            |    "referenceNumber": "GB000218",
+            |    "countryCode": "GB"
+            |  }
+            |]
+            |""".stripMargin
+
+        "must return a successful future response with a sequence of CustomsOffices" in {
+          val countryId = "GB"
+
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url(countryId)))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(customsOfficesResponseJson))
+              )
+
+              val expectedResult = NonEmptySet.of(
+                CustomsOffice("GB000054", "Glasgow Airport", "GB"),
+                CustomsOffice("GB000218", "Border Force, Port of Tyne", "GB")
+              )
+
+              connector.getCustomsOfficesForCountryAndRole(countryId, role).futureValue.value mustEqual expectedResult
+          }
+        }
+
+        "must return a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              val countryId = "AR"
+              checkNoReferenceDataFoundResponse(url(countryId), emptyPhase6ResponseJson, connector.getCustomsOfficesForCountryAndRole(countryId, role))
+          }
+        }
+
+        "must return an exception when an error response is returned" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              val countryId = "GB"
+              checkErrorResponse(url(countryId), connector.getCustomsOfficesForCountryAndRole(countryId, role))
+          }
         }
       }
     }
