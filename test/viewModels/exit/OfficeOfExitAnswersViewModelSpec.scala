@@ -16,7 +16,7 @@
 
 package viewModels.exit
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.Mode
 import models.reference.Country
@@ -25,7 +25,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.exit.index.OfficeOfExitCountryPage
 import viewModels.exit.OfficeOfExitAnswersViewModel.OfficeOfExitAnswersViewModelProvider
 
-class OfficeOfExitAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class OfficeOfExitAnswersViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "apply" - {
 
@@ -37,7 +37,7 @@ class OfficeOfExitAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyC
             val answers = emptyUserAnswers
               .setValue(OfficeOfExitCountryPage(index), country)
 
-            val viewModelProvider = injector.instanceOf[OfficeOfExitAnswersViewModelProvider]
+            val viewModelProvider = new OfficeOfExitAnswersViewModelProvider()
 
             val section = viewModelProvider.apply(answers, mode, index).section
 

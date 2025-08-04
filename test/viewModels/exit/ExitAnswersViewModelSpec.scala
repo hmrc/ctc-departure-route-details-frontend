@@ -16,7 +16,7 @@
 
 package viewModels.exit
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.Mode
 import models.reference.{Country, CustomsOffice}
@@ -25,7 +25,7 @@ import pages.exit.AddCustomsOfficeOfExitYesNoPage
 import pages.exit.index.{OfficeOfExitCountryPage, OfficeOfExitPage}
 import viewModels.exit.ExitAnswersViewModel.ExitAnswersViewModelProvider
 
-class ExitAnswersViewModelSpec extends SpecBase with Generators {
+class ExitAnswersViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
   "must return sections" in {
     val mode = arbitrary[Mode].sample.value
@@ -35,7 +35,7 @@ class ExitAnswersViewModelSpec extends SpecBase with Generators {
       .setValue(OfficeOfExitCountryPage(index), arbitrary[Country].sample.value)
       .setValue(OfficeOfExitPage(index), arbitrary[CustomsOffice].sample.value)
 
-    val viewModelProvider = injector.instanceOf[ExitAnswersViewModelProvider]
+    val viewModelProvider = new ExitAnswersViewModelProvider()
     val sections          = viewModelProvider.apply(userAnswers, mode).sections
 
     sections.size mustEqual 2

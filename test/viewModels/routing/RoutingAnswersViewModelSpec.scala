@@ -16,7 +16,7 @@
 
 package viewModels.routing
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.Mode
 import models.reference.{Country, CustomsOffice}
@@ -25,7 +25,7 @@ import pages.routing.index.CountryOfRoutingPage
 import pages.routing.{AddCountryOfRoutingYesNoPage, BindingItineraryPage, OfficeOfDestinationPage}
 import viewModels.routing.RoutingAnswersViewModel.RoutingAnswersViewModelProvider
 
-class RoutingAnswersViewModelSpec extends SpecBase with Generators {
+class RoutingAnswersViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
   "must return sections" in {
     val mode = arbitrary[Mode].sample.value
@@ -36,7 +36,7 @@ class RoutingAnswersViewModelSpec extends SpecBase with Generators {
       .setValue(AddCountryOfRoutingYesNoPage, arbitrary[Boolean].sample.value)
       .setValue(CountryOfRoutingPage(index), arbitrary[Country].sample.value)
 
-    val viewModelProvider = app.injector.instanceOf[RoutingAnswersViewModelProvider]
+    val viewModelProvider = new RoutingAnswersViewModelProvider()
 
     val sections = viewModelProvider.apply(userAnswers, mode).sections
 

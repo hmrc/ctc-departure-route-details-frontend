@@ -16,7 +16,7 @@
 
 package utils.cyaHelpers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.exit.index.routes
 import generators.Generators
 import models.journeyDomain.UserAnswersReader
@@ -31,7 +31,7 @@ import play.api.libs.json.Json
 import utils.cyaHelpers.exit.ExitCheckYourAnswersHelper
 import viewModels.ListItem
 
-class ExitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class ExitCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "ExitCheckYourAnswersHelper" - {
 

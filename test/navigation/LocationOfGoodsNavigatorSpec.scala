@@ -17,18 +17,20 @@
 package navigation
 
 import base.SpecBase
+import config.FrontendAppConfig
 import generators.Generators
-import models._
+import models.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class LocationOfGoodsNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "Location Of Goods Navigator" - {
 
     "when in NormalMode" - {
 
       val mode              = NormalMode
-      val navigatorProvider = new LocationOfGoodsNavigatorProviderImpl()
+      val navigatorProvider = new LocationOfGoodsNavigatorProviderImpl()(mockFrontendAppConfig)
       val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {
@@ -46,7 +48,7 @@ class LocationOfGoodsNavigatorSpec extends SpecBase with ScalaCheckPropertyCheck
     "when in CheckMode" - {
 
       val mode              = CheckMode
-      val navigatorProvider = new LocationOfGoodsNavigatorProviderImpl()
+      val navigatorProvider = new LocationOfGoodsNavigatorProviderImpl()(mockFrontendAppConfig)
       val navigator         = navigatorProvider.apply(mode)
 
       "when answers complete" - {

@@ -16,22 +16,22 @@
 
 package utils.cyaHelpers
 
-import base.SpecBase
-import controllers.loadingAndUnloading.loading.{routes => loadingRoutes}
-import controllers.loadingAndUnloading.unloading.{routes => unloadingRoutes}
-import controllers.loadingAndUnloading.{routes => loadingAndUnloadingRoutes}
-import pages.loadingAndUnloading._
+import base.{AppWithDefaultMockFixtures, SpecBase}
+import controllers.loadingAndUnloading.loading.routes as loadingRoutes
+import controllers.loadingAndUnloading.unloading.routes as unloadingRoutes
+import controllers.loadingAndUnloading.routes as loadingAndUnloadingRoutes
+import pages.loadingAndUnloading.*
 import generators.Generators
 import models.Mode
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.loadingAndUnloading.{loading, unloading, AddPlaceOfUnloadingPage}
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import utils.cyaHelpers.loadingAndUnloading.LoadingAndUnloadingCheckYourAnswersHelper
 
-class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class LoadingAndUnloadingCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "LoadingAndUnloadingCheckYourAnswersHelper" - {
 

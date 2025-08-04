@@ -16,14 +16,14 @@
 
 package navigation
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.routes
 import generators.Generators
-import models._
+import models.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class RouteDetailsNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class RouteDetailsNavigatorSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "Route Details Navigator" - {
 

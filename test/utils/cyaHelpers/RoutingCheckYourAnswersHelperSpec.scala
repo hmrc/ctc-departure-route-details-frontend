@@ -16,9 +16,9 @@
 
 package utils.cyaHelpers
 
-import base.SpecBase
-import controllers.routing.index.{routes => indexRoutes}
-import controllers.routing.{routes => routingRoutes}
+import base.{AppWithDefaultMockFixtures, SpecBase}
+import controllers.routing.index.routes as indexRoutes
+import controllers.routing.routes as routingRoutes
 import generators.Generators
 import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.routing.CountryOfRoutingDomain
@@ -32,12 +32,12 @@ import pages.sections.routing.CountryOfRoutingSection
 import pages.{AddSpecificCircumstanceIndicatorYesNoPage, SpecificCircumstanceIndicatorPage}
 import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Value}
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 import uk.gov.hmrc.govukfrontend.views.html.components.{ActionItem, Actions}
 import utils.cyaHelpers.routing.RoutingCheckYourAnswersHelper
 import viewModels.ListItem
 
-class RoutingCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class RoutingCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "RoutingCheckYourAnswersHelper" - {
 

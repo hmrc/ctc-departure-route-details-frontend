@@ -16,12 +16,12 @@
 
 package navigation
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
-import models._
+import models.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class RoutingNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class RoutingNavigatorSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "Country of Routing Navigator" - {
 

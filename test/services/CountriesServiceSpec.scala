@@ -16,7 +16,7 @@
 
 package services
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import cats.data.NonEmptySet
 import config.Constants.DeclarationType.TIR
 import connectors.ReferenceDataConnector
@@ -24,8 +24,8 @@ import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generators.Generators
 import models.reference.{Country, CountryCode}
 import models.{Index, SelectableList}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.BeforeAndAfterEach
@@ -36,7 +36,7 @@ import pages.routing.index.{CountryOfRoutingInCL147Page, CountryOfRoutingPage}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generators with ScalaCheckPropertyChecks {
+class CountriesServiceSpec extends SpecBase with AppWithDefaultMockFixtures with BeforeAndAfterEach with Generators with ScalaCheckPropertyChecks {
 
   private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   private val service                                      = new CountriesService(mockRefDataConnector)

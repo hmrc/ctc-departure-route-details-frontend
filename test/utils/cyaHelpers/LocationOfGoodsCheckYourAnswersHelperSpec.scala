@@ -16,7 +16,7 @@
 
 package utils.cyaHelpers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.locationOfGoods.{contact, routes}
 import generators.Generators
 import models.reference.{Country, CustomsOffice, LocationOfGoodsIdentification, LocationType}
@@ -24,13 +24,13 @@ import models.{Coordinates, DynamicAddress, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.locationOfGoods.contact.{NamePage, TelephoneNumberPage}
-import pages.locationOfGoods._
+import pages.locationOfGoods.*
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import utils.cyaHelpers.locationOfGoods.LocationOfGoodsCheckYourAnswersHelper
 
-class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class LocationOfGoodsCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "LocationOfGoodsCheckYourAnswersHelper" - {
 
