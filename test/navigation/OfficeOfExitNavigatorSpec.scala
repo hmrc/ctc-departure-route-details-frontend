@@ -16,12 +16,12 @@
 
 package navigation
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
-import models._
+import models.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class OfficeOfExitNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class OfficeOfExitNavigatorSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "Office of Exit Navigator" - {
 

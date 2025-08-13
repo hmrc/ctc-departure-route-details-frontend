@@ -16,7 +16,7 @@
 
 package viewModels.transit
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.{DateTime, Mode}
 import models.reference.{Country, CustomsOffice}
@@ -25,7 +25,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
 import viewModels.transit.OfficeOfTransitAnswersViewModel.OfficeOfTransitAnswersViewModelProvider
 
-class OfficeOfTransitAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class OfficeOfTransitAnswersViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "apply" - {
 
@@ -42,7 +42,7 @@ class OfficeOfTransitAnswersViewModelSpec extends SpecBase with ScalaCheckProper
                 .setValue(OfficeOfTransitPage(index), office)
                 .setValue(AddOfficeOfTransitETAYesNoPage(index), false)
 
-              val viewModelProvider = injector.instanceOf[OfficeOfTransitAnswersViewModelProvider]
+              val viewModelProvider = new OfficeOfTransitAnswersViewModelProvider()
               val section           = viewModelProvider.apply(answers, mode, index).section
 
               section.sectionTitle mustNot be(defined)
@@ -61,7 +61,7 @@ class OfficeOfTransitAnswersViewModelSpec extends SpecBase with ScalaCheckProper
                 .setValue(AddOfficeOfTransitETAYesNoPage(index), true)
                 .setValue(OfficeOfTransitETAPage(index), dateTime)
 
-              val viewModelProvider = injector.instanceOf[OfficeOfTransitAnswersViewModelProvider]
+              val viewModelProvider = new OfficeOfTransitAnswersViewModelProvider()
               val section           = viewModelProvider.apply(answers, mode, index).section
 
               section.sectionTitle mustNot be(defined)

@@ -16,7 +16,7 @@
 
 package utils.cyaHelpers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.transit.index.routes
 import generators.Generators
 import models.{DateTime, Mode}
@@ -24,13 +24,13 @@ import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.transit.index.{AddOfficeOfTransitETAYesNoPage, OfficeOfTransitCountryPage, OfficeOfTransitETAPage, OfficeOfTransitPage}
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import utils.cyaHelpers.transit.OfficeOfTransitCheckYourAnswersHelper
 
 import java.time.LocalDateTime
 
-class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class OfficeOfTransitCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "OfficeOfTransitCheckYourAnswersHelper" - {
 

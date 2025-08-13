@@ -16,7 +16,7 @@
 
 package utils.cyaHelpers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import config.Constants.SecurityType.*
 import controllers.transit.index.routes as indexRoutes
 import generators.Generators
@@ -37,7 +37,7 @@ import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 import utils.cyaHelpers.transit.TransitCheckYourAnswersHelper
 import viewModels.ListItem
 
-class TransitCheckYourAnswersHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class TransitCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "TransitCheckYourAnswersHelper" - {
 

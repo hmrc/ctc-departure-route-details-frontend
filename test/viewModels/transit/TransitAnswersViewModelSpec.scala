@@ -16,14 +16,14 @@
 
 package viewModels.transit
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.Mode
 import org.scalacheck.Arbitrary.arbitrary
 import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
 import viewModels.transit.TransitAnswersViewModel.TransitAnswersViewModelProvider
 
-class TransitAnswersViewModelSpec extends SpecBase with Generators {
+class TransitAnswersViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
   "must return sections" in {
     val mode = arbitrary[Mode].sample.value
@@ -34,7 +34,7 @@ class TransitAnswersViewModelSpec extends SpecBase with Generators {
 
     val userAnswers = arbitraryOfficeOfTransitAnswers(initialAnswers, index).sample.value
 
-    val viewModelProvider = injector.instanceOf[TransitAnswersViewModelProvider]
+    val viewModelProvider = new TransitAnswersViewModelProvider()
     val sections          = viewModelProvider.apply(userAnswers, mode).sections
 
     sections.size mustEqual 2

@@ -16,14 +16,14 @@
 
 package navigation
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.external.SecurityDetailsTypePage
 
-class LoadingAndUnloadingNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class LoadingAndUnloadingNavigatorSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "LoadingAndUnloading Navigator" - {
 
