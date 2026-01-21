@@ -86,20 +86,11 @@ class TransitCheckYourAnswersHelper(
       Some(routes.ConfirmRemoveOfficeOfTransitController.onPageLoad(userAnswers.lrn, mode, index))
     }
 
-  private def shouldHideRemoveLinkForR0006(currentIndex: Index): Boolean = {
-    if (currentIndex.position != 0) return false
-
-    if (!isDestinationInCL112) return false
-
-    val destinationCountryCode = getDestinationCountryCode
-
-    val firstTransitCountryCode = getOfficeOfTransitCountryCode(currentIndex)
-
-    (destinationCountryCode, firstTransitCountryCode) match {
-      case (Some(destCode), Some(transitCode)) => destCode == transitCode
-      case _                                   => false
+  private def shouldHideRemoveLinkForR0006(currentIndex: Index): Boolean =
+    currentIndex.position == 0 && isDestinationInCL112 && getDestinationCountryCode.exists {
+      destCode =>
+        getOfficeOfTransitCountryCode(currentIndex).contains(destCode)
     }
-  }
 
   private def isDestinationInCL112: Boolean =
     userAnswers
