@@ -22,7 +22,7 @@ import controllers.transit.index.routes as indexRoutes
 import generators.Generators
 import models.journeyDomain.UserAnswersReader
 import models.journeyDomain.transit.OfficeOfTransitDomain
-import models.reference.{Country, CustomsOffice}
+import models.reference.{Country, CountryCode, CustomsOffice}
 import models.{Index, Mode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -193,18 +193,74 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMock
     }
 
     "listItems" - {
-      "must return list items" - {
-        "when multiple" in {
+      "must return list items with correct change and or remove/None links" - {
+        "when multiple and when neither office of departure, destination or transit are in CL112" in {
           val mode = arbitrary[Mode].sample.value
 
-          val country1 = arbitrary[Country].sample.value
-          val country2 = arbitrary[Country].sample.value
-          val country3 = arbitrary[Country].sample.value
+          val nonCL112Country1 = Country(CountryCode("FR"), "France")
+          val nonCL112Country2 = Country(CountryCode("DE"), "Germany")
+          val nonCL112Country3 = Country(CountryCode("BE"), "Belgium")
 
           def customsOffice = arbitrary[CustomsOffice].sample.value
 
-          val customsOffice1 = customsOffice.copy(id = country1.code.code)
-          val customsOffice2 = customsOffice.copy(id = country2.code.code)
+          val customsOffice1 = customsOffice.copy(id = s"${nonCL112Country1.code.code}1234")
+          val customsOffice2 = customsOffice.copy(id = s"${nonCL112Country2.code.code}2345")
+          val customsOffice3 = customsOffice.copy(id = s"${nonCL112Country3.code.code}3456")
+
+          val answers = emptyUserAnswers
+            .setValue(OfficeOfDeparturePage, customsOffice)
+            .setValue(OfficeOfDepartureInCL112Page, false)
+            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+            .setValue(OfficeOfDestinationPage, customsOffice1)
+            .setValue(OfficeOfDestinationInCL112Page, false)
+            .setValue(OfficeOfTransitCountryPage(Index(0)), nonCL112Country1)
+            .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
+            .setValue(OfficeOfTransitCountryPage(Index(1)), nonCL112Country2)
+            .setValue(OfficeOfTransitPage(Index(1)), customsOffice2)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(1)), false)
+            .setValue(OfficeOfTransitCountryPage(Index(2)), nonCL112Country3)
+            .setValue(OfficeOfTransitPage(Index(2)), customsOffice3)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(2)), false)
+
+          val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
+          helper.listItems mustEqual Seq(
+            Right(
+              ListItem(
+                name = s"$nonCL112Country1 - $customsOffice1",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(0)).url,
+                removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(0)).url)
+              )
+            ),
+            Right(
+              ListItem(
+                name = s"$nonCL112Country2 - $customsOffice2",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(1)).url,
+                removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(1)).url)
+              )
+            ),
+            Right(
+              ListItem(
+                name = s"$nonCL112Country3 - $customsOffice3",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(2)).url,
+                removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(2)).url)
+              )
+            )
+          )
+        }
+
+        "when multiple and when both office of departure and destination are in CL112 as is transit of first index only" in {
+          val mode = arbitrary[Mode].sample.value
+
+          val cl112Country1    = Country(CountryCode("GB"), "United Kingdom")
+          val nonCL112Country2 = Country(CountryCode("DE"), "Germany")
+          val nonCL112Country3 = Country(CountryCode("BE"), "Belgium")
+
+          def customsOffice = arbitrary[CustomsOffice].sample.value
+
+          val customsOffice1 = customsOffice.copy(id = s"${cl112Country1.code.code}1234")
+          val customsOffice2 = customsOffice.copy(id = s"${nonCL112Country2.code.code}2345")
+          val customsOffice3 = customsOffice.copy(id = s"${nonCL112Country3.code.code}3456")
 
           val answers = emptyUserAnswers
             .setValue(OfficeOfDeparturePage, customsOffice)
@@ -212,13 +268,180 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMock
             .setValue(SecurityDetailsTypePage, NoSecurityDetails)
             .setValue(OfficeOfDestinationPage, customsOffice1)
             .setValue(OfficeOfDestinationInCL112Page, true)
-            .setValue(OfficeOfTransitCountryPage(Index(0)), country1)
+            .setValue(OfficeOfTransitCountryPage(Index(0)), cl112Country1)
             .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
             .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
-            .setValue(OfficeOfTransitCountryPage(Index(1)), country2)
+            .setValue(OfficeOfTransitCountryPage(Index(1)), nonCL112Country2)
             .setValue(OfficeOfTransitPage(Index(1)), customsOffice2)
             .setValue(AddOfficeOfTransitETAYesNoPage(Index(1)), false)
-            .setValue(OfficeOfTransitCountryPage(Index(2)), country3)
+            .setValue(OfficeOfTransitCountryPage(Index(2)), nonCL112Country3)
+            .setValue(OfficeOfTransitPage(Index(2)), customsOffice3)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(2)), false)
+
+          val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
+          helper.listItems mustEqual Seq(
+            Right(
+              ListItem(
+                name = s"$customsOffice1",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(0)).url,
+                removeUrl = None
+              )
+            ),
+            Right(
+              ListItem(
+                name = s"$nonCL112Country2 - $customsOffice2",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(1)).url,
+                removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(1)).url)
+              )
+            ),
+            Right(
+              ListItem(
+                name = s"$nonCL112Country3 - $customsOffice3",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(2)).url,
+                removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(2)).url)
+              )
+            )
+          )
+        }
+
+        "when multiple and when office of departure is in CL112 but nothing else is" in {
+          val mode = arbitrary[Mode].sample.value
+
+          val nonCL112Country1 = Country(CountryCode("FR"), "France")
+          val nonCL112Country2 = Country(CountryCode("DE"), "Germany")
+          val nonCL112Country3 = Country(CountryCode("BE"), "Belgium")
+
+          def customsOffice = arbitrary[CustomsOffice].sample.value
+
+          val customsOffice1 = customsOffice.copy(id = s"${nonCL112Country1.code.code}1234")
+          val customsOffice2 = customsOffice.copy(id = s"${nonCL112Country2.code.code}2345")
+          val customsOffice3 = customsOffice.copy(id = s"${nonCL112Country3.code.code}3456")
+
+          val answers = emptyUserAnswers
+            .setValue(OfficeOfDeparturePage, customsOffice)
+            .setValue(OfficeOfDepartureInCL112Page, true)
+            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+            .setValue(OfficeOfDestinationPage, customsOffice1)
+            .setValue(OfficeOfDestinationInCL112Page, false)
+            .setValue(OfficeOfTransitCountryPage(Index(0)), nonCL112Country1)
+            .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
+            .setValue(OfficeOfTransitCountryPage(Index(1)), nonCL112Country2)
+            .setValue(OfficeOfTransitPage(Index(1)), customsOffice2)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(1)), false)
+            .setValue(OfficeOfTransitCountryPage(Index(2)), nonCL112Country3)
+            .setValue(OfficeOfTransitPage(Index(2)), customsOffice3)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(2)), false)
+
+          val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
+          helper.listItems mustEqual Seq(
+            Right(
+              ListItem(
+                name = s"$nonCL112Country1 - $customsOffice1",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(0)).url,
+                removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(0)).url)
+              )
+            ),
+            Right(
+              ListItem(
+                name = s"$nonCL112Country2 - $customsOffice2",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(1)).url,
+                removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(1)).url)
+              )
+            ),
+            Right(
+              ListItem(
+                name = s"$nonCL112Country3 - $customsOffice3",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(2)).url,
+                removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(2)).url)
+              )
+            )
+          )
+        }
+
+        "when multiple and all from office of departure, destination and transit are in CL112" in {
+          val mode = arbitrary[Mode].sample.value
+
+          val cl112Country1 = Country(CountryCode("GB"), "United Kingdom")
+          val cl112Country2 = Country(CountryCode("NO"), "Norway")
+          val cl112Country3 = Country(CountryCode("CH"), "Switzerland")
+
+          def customsOffice = arbitrary[CustomsOffice].sample.value
+
+          val customsOffice1 = customsOffice.copy(id = s"${cl112Country1.code.code}1234")
+          val customsOffice2 = customsOffice.copy(id = s"${cl112Country2.code.code}2345")
+          val customsOffice3 = customsOffice.copy(id = s"${cl112Country3.code.code}3456")
+
+          val answers = emptyUserAnswers
+            .setValue(OfficeOfDeparturePage, customsOffice)
+            .setValue(OfficeOfDepartureInCL112Page, true)
+            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+            .setValue(OfficeOfDestinationPage, customsOffice1)
+            .setValue(OfficeOfDestinationInCL112Page, true)
+            .setValue(OfficeOfTransitCountryPage(Index(0)), cl112Country1)
+            .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
+            .setValue(OfficeOfTransitCountryPage(Index(1)), cl112Country2)
+            .setValue(OfficeOfTransitPage(Index(1)), customsOffice2)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(1)), false)
+            .setValue(OfficeOfTransitCountryPage(Index(2)), cl112Country3)
+            .setValue(OfficeOfTransitPage(Index(2)), customsOffice3)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(2)), false)
+
+          val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
+          helper.listItems mustEqual Seq(
+            Right(
+              ListItem(
+                name = s"$customsOffice1",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(0)).url,
+                removeUrl = None
+              )
+            ),
+            Right(
+              ListItem(
+                name = s"$cl112Country2 - $customsOffice2",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(1)).url,
+                removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(1)).url)
+              )
+            ),
+            Right(
+              ListItem(
+                name = s"$cl112Country3 - $customsOffice3",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(2)).url,
+                removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(2)).url)
+              )
+            )
+          )
+        }
+
+        "when multiple and office of departure, destination and transit are in CL112 but transit fist index which is not in CL112" in {
+          val mode = arbitrary[Mode].sample.value
+
+          val nonCL112Country1 = Country(CountryCode("FR"), "France")
+          val cl112Country2    = Country(CountryCode("NO"), "Norway")
+          val cl112Country3    = Country(CountryCode("CH"), "Switzerland")
+
+          def customsOffice = arbitrary[CustomsOffice].sample.value
+
+          val customsOffice1 = customsOffice.copy(id = s"${nonCL112Country1.code.code}1234")
+          val customsOffice2 = customsOffice.copy(id = s"${cl112Country2.code.code}2345")
+          val customsOffice3 = customsOffice.copy(id = s"${cl112Country3.code.code}3456")
+
+          val answers = emptyUserAnswers
+            .setValue(OfficeOfDeparturePage, customsOffice)
+            .setValue(OfficeOfDepartureInCL112Page, true)
+            .setValue(SecurityDetailsTypePage, NoSecurityDetails)
+            .setValue(OfficeOfDestinationPage, customsOffice)
+            .setValue(OfficeOfDestinationInCL112Page, true)
+            .setValue(OfficeOfTransitCountryPage(Index(0)), nonCL112Country1)
+            .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(0)), false)
+            .setValue(OfficeOfTransitCountryPage(Index(1)), cl112Country2)
+            .setValue(OfficeOfTransitPage(Index(1)), customsOffice2)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(1)), false)
+            .setValue(OfficeOfTransitCountryPage(Index(2)), cl112Country3)
+            .setValue(OfficeOfTransitPage(Index(2)), customsOffice3)
+            .setValue(AddOfficeOfTransitETAYesNoPage(Index(2)), false)
 
           val helper = new TransitCheckYourAnswersHelper(answers, mode)(messages = messages, config = frontendAppConfig)
           helper.listItems mustEqual Seq(
@@ -231,15 +454,15 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMock
             ),
             Right(
               ListItem(
-                name = s"$country2 - $customsOffice2",
+                name = s"$cl112Country2 - $customsOffice2",
                 changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(1)).url,
                 removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(1)).url)
               )
             ),
-            Left(
+            Right(
               ListItem(
-                name = s"$country3",
-                changeUrl = indexRoutes.OfficeOfTransitController.onPageLoad(lrn, mode, Index(2)).url,
+                name = s"$cl112Country3 - $customsOffice3",
+                changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(2)).url,
                 removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(2)).url)
               )
             )
@@ -259,10 +482,10 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMock
 
               val answers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOffice1)
-                .setValue(OfficeOfDepartureInCL112Page, true)
+                .setValue(OfficeOfDepartureInCL112Page, false)
                 .setValue(SecurityDetailsTypePage, NoSecurityDetails)
                 .setValue(OfficeOfDestinationPage, customsOffice1)
-                .setValue(OfficeOfDestinationInCL112Page, true)
+                .setValue(OfficeOfDestinationInCL112Page, false)
                 .setValue(AddOfficeOfTransitYesNoPage, true)
                 .setValue(OfficeOfTransitCountryPage(Index(0)), country1)
                 .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
@@ -322,10 +545,10 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMock
 
               val answers = emptyUserAnswers
                 .setValue(OfficeOfDeparturePage, customsOffice1)
-                .setValue(OfficeOfDepartureInCL112Page, true)
+                .setValue(OfficeOfDepartureInCL112Page, false)
                 .setValue(SecurityDetailsTypePage, NoSecurityDetails)
                 .setValue(OfficeOfDestinationPage, customsOffice1)
-                .setValue(OfficeOfDestinationInCL112Page, true)
+                .setValue(OfficeOfDestinationInCL112Page, false)
                 .setValue(AddOfficeOfTransitYesNoPage, true)
                 .setValue(OfficeOfTransitCountryPage(Index(0)), country1)
                 .setValue(OfficeOfTransitPage(Index(0)), customsOffice1)
@@ -335,7 +558,7 @@ class TransitCheckYourAnswersHelperSpec extends SpecBase with AppWithDefaultMock
               helper.listItems mustEqual Seq(
                 Right(
                   ListItem(
-                    name = s"$customsOffice1",
+                    name = s"$country1 - $customsOffice1",
                     changeUrl = indexRoutes.CheckOfficeOfTransitAnswersController.onPageLoad(lrn, mode, Index(0)).url,
                     removeUrl = Some(indexRoutes.ConfirmRemoveOfficeOfTransitController.onPageLoad(lrn, mode, Index(0)).url)
                   )

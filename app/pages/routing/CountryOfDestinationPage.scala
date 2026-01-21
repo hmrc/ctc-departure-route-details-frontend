@@ -19,7 +19,7 @@ package pages.routing
 import controllers.routing.routes
 import models.reference.Country
 import models.{Mode, UserAnswers}
-import pages.QuestionPage
+import pages.{InferredPage, QuestionPage}
 import pages.sections.routing.RoutingSection
 import pages.sections.transit.TransitSection
 import play.api.libs.json.JsPath
@@ -40,4 +40,11 @@ case object CountryOfDestinationPage extends QuestionPage[Country] {
 
   override def route(userAnswers: UserAnswers, mode: Mode): Option[Call] =
     Some(routes.CountryOfDestinationController.onPageLoad(userAnswers.lrn, mode))
+}
+
+case object CountryOfDestinationInCL112Page extends InferredPage[Boolean] {
+
+  override def path: JsPath = RoutingSection.path \ toString
+
+  override def toString: String = "isInCL112"
 }
