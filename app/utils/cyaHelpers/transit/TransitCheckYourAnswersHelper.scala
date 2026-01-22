@@ -20,12 +20,14 @@ import config.FrontendAppConfig
 import controllers.transit.index.routes
 import models.journeyDomain.transit.OfficeOfTransitDomain
 import models.{Index, Mode, UserAnswers}
+import pages.routing.{CountryOfDestinationInCL112Page, CountryOfDestinationPage, OfficeOfDestinationInCL112Page, OfficeOfDestinationPage}
 import pages.sections.transit.OfficesOfTransitSection
-import pages.transit.index.OfficeOfTransitCountryPage
+import pages.transit.index.{OfficeOfTransitCountryPage, OfficeOfTransitPage}
 import pages.transit.{AddOfficeOfTransitYesNoPage, T2DeclarationTypeYesNoPage}
 import play.api.i18n.Messages
+import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 import utils.cyaHelpers.{AnswersHelper, RichListItems}
 import viewModels.{Link, ListItem}
 
@@ -73,7 +75,37 @@ class TransitCheckYourAnswersHelper(
         buildListItem[OfficeOfTransitDomain](
           nameWhenComplete = _.label,
           nameWhenInProgress = userAnswers.get(OfficeOfTransitCountryPage(index)).map(_.toString),
-          removeRoute = Some(routes.ConfirmRemoveOfficeOfTransitController.onPageLoad(userAnswers.lrn, mode, index))
+          removeRoute = getRemoveRouteForOfficeOfTransit(index)
         )(OfficeOfTransitDomain.userAnswersReader(index).apply(Nil))
     }.checkRemoveLinks(userAnswers.get(AddOfficeOfTransitYesNoPage).isEmpty)
+
+  private def getRemoveRouteForOfficeOfTransit(index: Index): Option[Call] =
+    if (shouldHideRemoveLinkForR0006(index)) {
+      None
+    } else {
+      Some(routes.ConfirmRemoveOfficeOfTransitController.onPageLoad(userAnswers.lrn, mode, index))
+    }
+
+  private def shouldHideRemoveLinkForR0006(currentIndex: Index): Boolean =
+    currentIndex.position == 0 && isDestinationInCL112 && getDestinationCountryCode.exists {
+      destCode =>
+        getOfficeOfTransitCountryCode(currentIndex).contains(destCode)
+    }
+
+  private def isDestinationInCL112: Boolean =
+    userAnswers
+      .get(OfficeOfDestinationInCL112Page)
+      .orElse(userAnswers.get(CountryOfDestinationInCL112Page))
+      .getOrElse(false)
+
+  private def getDestinationCountryCode: Option[String] =
+    userAnswers
+      .get(OfficeOfDestinationPage)
+      .map(_.countryId.take(2))
+      .orElse(userAnswers.get(CountryOfDestinationPage).map(_.code.code.take(2)))
+
+  private def getOfficeOfTransitCountryCode(index: Index): Option[String] =
+    userAnswers
+      .get(OfficeOfTransitPage(index))
+      .map(_.countryId.take(2))
 }
