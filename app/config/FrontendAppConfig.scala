@@ -25,7 +25,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val isPhase6Enabled: Boolean = configuration.get[Boolean]("feature-flags.phase-6-enabled")
 
-  lazy val disableUnLocodeExtendedLookup: Boolean = configuration.get[Boolean]("disable-un-locode-extended-lookup")
+  lazy val disableUnLocodeExtendedLookup: Boolean = configuration.get[Boolean]("feature-flags.disable-un-locode-extended-lookup")
 
   val appName: String = configuration.get[String]("appName")
 
