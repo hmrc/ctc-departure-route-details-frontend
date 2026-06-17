@@ -64,24 +64,7 @@ class UnLocodeSpec extends SpecBase with ScalaCheckPropertyChecks with Generator
       }
 
       "when reading from reference data" - {
-        "when phase 5" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(false)
-          forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-            (code, description) =>
-              val unLocode = UnLocode(code, description)
-              Json
-                .parse(s"""
-                         |{
-                         |  "unLocodeExtendedCode": "$code",
-                         |  "name": "$description"
-                         |}
-                         |""".stripMargin)
-                .as[UnLocode](UnLocode.reads(mockFrontendAppConfig)) mustEqual unLocode
-          }
-        }
-
         "when phase 6" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(true)
           forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
             (code, description) =>
               val unLocode = UnLocode(code, description)

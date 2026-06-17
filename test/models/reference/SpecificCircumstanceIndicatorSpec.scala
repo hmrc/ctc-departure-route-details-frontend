@@ -60,24 +60,7 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
       }
 
       "when reading from reference data" - {
-        "when phase 5" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(false)
-          forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-            (code, description) =>
-              val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
-              Json
-                .parse(s"""
-                         |{
-                         |  "code": "$code",
-                         |  "description": "$description"
-                         |}
-                         |""".stripMargin)
-                .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads(mockFrontendAppConfig)) mustEqual specificCircumstanceIndicator
-          }
-        }
-
         "when phase 6" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(true)
           forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
             (code, description) =>
               val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)

@@ -35,14 +35,10 @@ case class SpecificCircumstanceIndicator(
 object SpecificCircumstanceIndicator extends DynamicEnumerableType[SpecificCircumstanceIndicator] {
 
   def reads(config: FrontendAppConfig): Reads[SpecificCircumstanceIndicator] =
-    if (config.isPhase6Enabled) {
-      (
-        (__ \ "key").read[String] and
-          (__ \ "value").read[String]
-      )(SpecificCircumstanceIndicator.apply)
-    } else {
-      Json.reads[SpecificCircumstanceIndicator]
-    }
+    (
+      (__ \ "key").read[String] and
+        (__ \ "value").read[String]
+    )(SpecificCircumstanceIndicator.apply)
 
   implicit val format: Format[SpecificCircumstanceIndicator] = Json.format[SpecificCircumstanceIndicator]
 
