@@ -18,7 +18,6 @@ package models.reference
 
 import cats.Order
 import config.FrontendAppConfig
-import forms.mappings.RichSeq
 import models.Selectable
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
@@ -33,63 +32,23 @@ object CustomsOffice {
   implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
 
   def reads(config: FrontendAppConfig): Reads[CustomsOffice] =
-    if (config.isPhase6Enabled) {
-      (
-        (__ \ "referenceNumber").read[String] and
-          (__ \ "customsOfficeLsd" \ "customsOfficeUsualName").read[String] and
-          (__ \ "countryCode").read[String]
-      )(CustomsOffice.apply)
-    } else {
-      Json.reads[CustomsOffice]
-    }
+    (
+      (__ \ "referenceNumber").read[String] and
+        (__ \ "customsOfficeLsd" \ "customsOfficeUsualName").read[String] and
+        (__ \ "countryCode").read[String]
+    )(CustomsOffice.apply)
 
   implicit val order: Order[CustomsOffice] = (x: CustomsOffice, y: CustomsOffice) => (x, y).compareBy(_.name, _.id)
 
   def listReads(config: FrontendAppConfig): Reads[List[CustomsOffice]] =
-    if (config.isPhase6Enabled) {
-      Reads.list(reads(config))
-    } else {
-      case class TempCustomsOffice(customsOffice: CustomsOffice, languageCode: String)
-
-      implicit val reads: Reads[TempCustomsOffice] = (
-        __.read[CustomsOffice] and
-          (__ \ "languageCode").read[String]
-      )(TempCustomsOffice.apply)
-
-      Reads {
-        case JsArray(values) =>
-          JsSuccess {
-            values
-              .flatMap(_.asOpt[TempCustomsOffice])
-              .toSeq
-              .groupByPreserveOrder(_.customsOffice.id)
-              .flatMap {
-                case (_, customsOffices) =>
-                  customsOffices
-                    .find(_.languageCode == "EN")
-                    .orElse(customsOffices.headOption)
-              }
-              .map(_.customsOffice)
-              .toList
-          }
-        case _ =>
-          JsError("Expected customs offices to be in a JsArray")
-      }
-    }
+    Reads.list(reads(config))
 
   def queryParameters(
     roles: Seq[String] = Nil,
     countryCodes: Seq[String] = Nil
   )(config: FrontendAppConfig): Seq[(String, String)] =
-    if (config.isPhase6Enabled) {
-      Seq(
-        countryCodes.map("countryCodes" -> _),
-        roles.map("roles" -> _)
-      ).flatten
-    } else {
-      Seq(
-        countryCodes.map("data.countryId" -> _),
-        roles.map("data.roles.role" -> _)
-      ).flatten
-    }
+    Seq(
+      countryCodes.map("countryCodes" -> _),
+      roles.map("roles" -> _)
+    ).flatten
 }

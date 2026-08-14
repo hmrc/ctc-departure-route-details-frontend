@@ -63,37 +63,18 @@ class CountrySpec extends SpecBase with ScalaCheckPropertyChecks with Generators
         }
       }
 
-      "when reading from reference data" - {
-        "when phase 5" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(false)
-          forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-            (code, description) =>
-              val country = Country(CountryCode(code), description)
-              Json
-                .parse(s"""
-                         |{
-                         |  "code": "$code",
-                         |  "description": "$description"
-                         |}
-                         |""".stripMargin)
-                .as[Country](Country.reads(mockFrontendAppConfig)) mustEqual country
-          }
-        }
-
-        "when phase 6" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(true)
-          forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-            (code, description) =>
-              val country = Country(CountryCode(code), description)
-              Json
-                .parse(s"""
-                         |{
-                         |  "key": "$code",
-                         |  "value": "$description"
-                         |}
-                         |""".stripMargin)
-                .as[Country](Country.reads(mockFrontendAppConfig)) mustEqual country
-          }
+      "when reading from reference data" in {
+        forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+          (code, description) =>
+            val country = Country(CountryCode(code), description)
+            Json
+              .parse(s"""
+                       |{
+                       |  "key": "$code",
+                       |  "value": "$description"
+                       |}
+                       |""".stripMargin)
+              .as[Country](Country.reads(mockFrontendAppConfig)) mustEqual country
         }
       }
     }

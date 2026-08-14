@@ -32,14 +32,10 @@ case class LocationType(`type`: String, description: String) extends Radioable[L
 object LocationType extends DynamicEnumerableType[LocationType] {
 
   def reads(config: FrontendAppConfig): Reads[LocationType] =
-    if (config.isPhase6Enabled) {
-      (
-        (__ \ "key").read[String] and
-          (__ \ "value").read[String]
-      )(LocationType.apply)
-    } else {
-      Json.reads[LocationType]
-    }
+    (
+      (__ \ "key").read[String] and
+        (__ \ "value").read[String]
+    )(LocationType.apply)
 
   implicit val format: Format[LocationType] = Json.format[LocationType]
 

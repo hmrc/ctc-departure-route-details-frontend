@@ -49,37 +49,18 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
         }
       }
 
-      "when reading from reference data" - {
-        "when phase 5" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(false)
-          forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-            (qualifier, description) =>
-              val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
-              Json
-                .parse(s"""
-                         |{
-                         |  "qualifier": "$qualifier",
-                         |  "description": "$description"
-                         |}
-                         |""".stripMargin)
-                .as[LocationOfGoodsIdentification](LocationOfGoodsIdentification.reads(mockFrontendAppConfig)) mustEqual locationOfGoodsIdentification
-          }
-        }
-
-        "when phase 6" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(true)
-          forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-            (qualifier, description) =>
-              val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
-              Json
-                .parse(s"""
-                         |{
-                         |  "key": "$qualifier",
-                         |  "value": "$description"
-                         |}
-                         |""".stripMargin)
-                .as[LocationOfGoodsIdentification](LocationOfGoodsIdentification.reads(mockFrontendAppConfig)) mustEqual locationOfGoodsIdentification
-          }
+      "when reading from reference data" in {
+        forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+          (qualifier, description) =>
+            val locationOfGoodsIdentification = LocationOfGoodsIdentification(qualifier, description)
+            Json
+              .parse(s"""
+                       |{
+                       |  "key": "$qualifier",
+                       |  "value": "$description"
+                       |}
+                       |""".stripMargin)
+              .as[LocationOfGoodsIdentification](LocationOfGoodsIdentification.reads(mockFrontendAppConfig)) mustEqual locationOfGoodsIdentification
         }
       }
     }
