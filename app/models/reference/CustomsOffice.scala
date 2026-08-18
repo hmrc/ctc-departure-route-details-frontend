@@ -17,7 +17,6 @@
 package models.reference
 
 import cats.Order
-import config.FrontendAppConfig
 import models.Selectable
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
@@ -31,7 +30,7 @@ case class CustomsOffice(id: String, name: String, countryId: String) extends Se
 object CustomsOffice {
   implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
 
-  def reads(config: FrontendAppConfig): Reads[CustomsOffice] =
+  def reads(): Reads[CustomsOffice] =
     (
       (__ \ "referenceNumber").read[String] and
         (__ \ "customsOfficeLsd" \ "customsOfficeUsualName").read[String] and
@@ -40,13 +39,13 @@ object CustomsOffice {
 
   implicit val order: Order[CustomsOffice] = (x: CustomsOffice, y: CustomsOffice) => (x, y).compareBy(_.name, _.id)
 
-  def listReads(config: FrontendAppConfig): Reads[List[CustomsOffice]] =
-    Reads.list(reads(config))
+  def listReads(): Reads[List[CustomsOffice]] =
+    Reads.list(reads())
 
   def queryParameters(
     roles: Seq[String] = Nil,
     countryCodes: Seq[String] = Nil
-  )(config: FrontendAppConfig): Seq[(String, String)] =
+  ): Seq[(String, String)] =
     Seq(
       countryCodes.map("countryCodes" -> _),
       roles.map("roles" -> _)

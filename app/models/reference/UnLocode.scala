@@ -17,7 +17,6 @@
 package models.reference
 
 import cats.Order
-import config.FrontendAppConfig
 import models.Selectable
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.{__, Json, OFormat, Reads}
@@ -34,7 +33,7 @@ case class UnLocode(
 
 object UnLocode {
 
-  def reads(config: FrontendAppConfig): Reads[UnLocode] =
+  def reads(): Reads[UnLocode] =
     (
       (__ \ "key").read[String] and
         (__ \ "value").read[String]
@@ -44,6 +43,6 @@ object UnLocode {
 
   implicit val order: Order[UnLocode] = (x: UnLocode, y: UnLocode) => (x, y).compareBy(_.name)
 
-  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] =
+  def queryParams(code: String): Seq[(String, String)] =
     Seq("keys" -> code)
 }

@@ -18,10 +18,8 @@ package models.reference
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import config.FrontendAppConfig
 import generators.Generators
 import models.SelectableList
-import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -29,8 +27,6 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 class UnLocodeSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
-
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "UnLocode" - {
 
@@ -74,7 +70,7 @@ class UnLocodeSpec extends SpecBase with ScalaCheckPropertyChecks with Generator
                        |  "value": "$description"
                        |}
                        |""".stripMargin)
-              .as[UnLocode](UnLocode.reads(mockFrontendAppConfig)) mustEqual unLocode
+              .as[UnLocode](UnLocode.reads()) mustEqual unLocode
         }
       }
     }

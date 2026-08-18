@@ -17,7 +17,6 @@
 package models.reference
 
 import base.SpecBase
-import config.FrontendAppConfig
 import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -25,8 +24,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 
 class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckPropertyChecks {
-
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "SpecificCircumstanceIndicator" - {
 
@@ -70,7 +67,7 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
                        |  "value": "$description"
                        |}
                        |""".stripMargin)
-              .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads(mockFrontendAppConfig)) mustEqual specificCircumstanceIndicator
+              .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads()) mustEqual specificCircumstanceIndicator
         }
       }
     }

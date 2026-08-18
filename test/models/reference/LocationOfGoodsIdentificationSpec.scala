@@ -17,18 +17,14 @@
 package models.reference
 
 import base.SpecBase
-import config.FrontendAppConfig
 import generators.Generators
 import models.reference.LocationOfGoodsIdentification.*
-import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
 class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
-
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "LocationOfGoodsIdentification" - {
 
@@ -60,7 +56,7 @@ class LocationOfGoodsIdentificationSpec extends SpecBase with ScalaCheckProperty
                        |  "value": "$description"
                        |}
                        |""".stripMargin)
-              .as[LocationOfGoodsIdentification](LocationOfGoodsIdentification.reads(mockFrontendAppConfig)) mustEqual locationOfGoodsIdentification
+              .as[LocationOfGoodsIdentification](LocationOfGoodsIdentification.reads()) mustEqual locationOfGoodsIdentification
         }
       }
     }

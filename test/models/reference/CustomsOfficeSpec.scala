@@ -18,9 +18,7 @@ package models.reference
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import config.FrontendAppConfig
 import models.SelectableList
-import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -28,7 +26,6 @@ import play.api.libs.json.{JsError, Json}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "CustomsOffice" - {
 
@@ -61,7 +58,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
                  |  "countryCode": "$countryId"
                  |}
                  |""".stripMargin)
-            .as[CustomsOffice](CustomsOffice.reads(mockFrontendAppConfig)) mustEqual customsOffice
+            .as[CustomsOffice](CustomsOffice.reads()) mustEqual customsOffice
       }
     }
   }
@@ -132,7 +129,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
             |]
             |""".stripMargin)
 
-        val result = json.as[List[CustomsOffice]](CustomsOffice.listReads(mockFrontendAppConfig))
+        val result = json.as[List[CustomsOffice]](CustomsOffice.listReads())
 
         result mustEqual List(
           CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", "AD"),
@@ -150,7 +147,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks {
             |}
             |""".stripMargin)
 
-        val result = json.validate[List[CustomsOffice]](CustomsOffice.listReads(mockFrontendAppConfig))
+        val result = json.validate[List[CustomsOffice]](CustomsOffice.listReads())
 
         result mustEqual JsError("error.expected.jsarray")
       }

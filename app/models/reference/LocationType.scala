@@ -17,7 +17,6 @@
 package models.reference
 
 import cats.Order
-import config.FrontendAppConfig
 import models.{DynamicEnumerableType, Radioable}
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.{__, Format, Json, Reads}
@@ -31,7 +30,7 @@ case class LocationType(`type`: String, description: String) extends Radioable[L
 
 object LocationType extends DynamicEnumerableType[LocationType] {
 
-  def reads(config: FrontendAppConfig): Reads[LocationType] =
+  def reads(): Reads[LocationType] =
     (
       (__ \ "key").read[String] and
         (__ \ "value").read[String]

@@ -17,15 +17,11 @@
 package models.reference
 
 import base.SpecBase
-import config.FrontendAppConfig
-import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsString, Json}
 
 class CountryCodeSpec extends SpecBase with ScalaCheckPropertyChecks {
-
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "CountryCode" - {
 
@@ -55,7 +51,7 @@ class CountryCodeSpec extends SpecBase with ScalaCheckPropertyChecks {
                        |  "key": "$code"
                        |}
                        |""".stripMargin)
-              .as[CountryCode](CountryCode.reads(mockFrontendAppConfig)) mustEqual CountryCode(code)
+              .as[CountryCode](CountryCode.reads()) mustEqual CountryCode(code)
         }
       }
     }

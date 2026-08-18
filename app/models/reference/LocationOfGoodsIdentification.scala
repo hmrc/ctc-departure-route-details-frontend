@@ -17,7 +17,6 @@
 package models.reference
 
 import cats.Order
-import config.FrontendAppConfig
 import models.{DynamicEnumerableType, Radioable}
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.{__, Format, Json, Reads}
@@ -31,7 +30,7 @@ case class LocationOfGoodsIdentification(qualifier: String, description: String)
 
 object LocationOfGoodsIdentification extends DynamicEnumerableType[LocationOfGoodsIdentification] {
 
-  def reads(config: FrontendAppConfig): Reads[LocationOfGoodsIdentification] =
+  def reads(): Reads[LocationOfGoodsIdentification] =
     (
       (__ \ "key").read[String] and
         (__ \ "value").read[String]

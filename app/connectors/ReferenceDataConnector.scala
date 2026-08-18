@@ -44,46 +44,46 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     get[T](url).map(_.map(_.head))
 
   def getCountries(listName: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Responses[Country]] = {
-    implicit val reads: Reads[Country] = Country.reads(config)
+    implicit val reads: Reads[Country] = Country.reads()
     val url                            = url"${config.referenceDataUrl}/lists/$listName"
     get[Country](url)
   }
 
   def getCountry(listName: String, countryId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Country]] = {
-    implicit val reads: Reads[Country] = Country.reads(config)
-    val queryParameters                = Country.queryParams(countryId)(config)
+    implicit val reads: Reads[Country] = Country.reads()
+    val queryParameters                = Country.queryParams(countryId)
     val url                            = url"${config.referenceDataUrl}/lists/$listName?$queryParameters"
     getOne[Country](url)
   }
 
   def getCountriesWithoutZipCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[CountryCode]] = {
-    implicit val reads: Reads[CountryCode] = CountryCode.reads(config)
-    val queryParameters                    = CountryCode.queryParams(code)(config)
+    implicit val reads: Reads[CountryCode] = CountryCode.reads()
+    val queryParameters                    = CountryCode.queryParams(code)
     val url                                = url"${config.referenceDataUrl}/lists/CountryWithoutZip?$queryParameters"
     getOne[CountryCode](url)
   }
 
   def getUnLocode(unLocode: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[UnLocode]] = {
-    implicit val reads: Reads[UnLocode] = UnLocode.reads(config)
-    val queryParameters                 = UnLocode.queryParams(unLocode)(config)
+    implicit val reads: Reads[UnLocode] = UnLocode.reads()
+    val queryParameters                 = UnLocode.queryParams(unLocode)
     val url                             = url"${config.referenceDataUrl}/lists/UnLocodeExtended?$queryParameters"
     getOne[UnLocode](url)
   }
 
   def getSpecificCircumstanceIndicators()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Responses[SpecificCircumstanceIndicator]] = {
-    implicit val reads: Reads[SpecificCircumstanceIndicator] = SpecificCircumstanceIndicator.reads(config)
+    implicit val reads: Reads[SpecificCircumstanceIndicator] = SpecificCircumstanceIndicator.reads()
     val url                                                  = url"${config.referenceDataUrl}/lists/SpecificCircumstanceIndicatorCode"
     get[SpecificCircumstanceIndicator](url)
   }
 
   def getTypesOfLocation()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Responses[LocationType]] = {
-    implicit val reads: Reads[LocationType] = LocationType.reads(config)
+    implicit val reads: Reads[LocationType] = LocationType.reads()
     val url                                 = url"${config.referenceDataUrl}/lists/TypeOfLocation"
     get[LocationType](url)
   }
 
   def getQualifierOfTheIdentifications()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Responses[LocationOfGoodsIdentification]] = {
-    implicit val reads: Reads[LocationOfGoodsIdentification] = LocationOfGoodsIdentification.reads(config)
+    implicit val reads: Reads[LocationOfGoodsIdentification] = LocationOfGoodsIdentification.reads()
     val url                                                  = url"${config.referenceDataUrl}/lists/QualifierOfTheIdentification"
     get[LocationOfGoodsIdentification](url)
   }
@@ -92,8 +92,8 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     countryCode: String,
     role: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Responses[CustomsOffice]] = {
-    implicit val reads: Reads[List[CustomsOffice]] = CustomsOffice.listReads(config)
-    val queryParameters                            = CustomsOffice.queryParameters(countryCodes = Seq(countryCode), roles = Seq(role))(config)
+    implicit val reads: Reads[List[CustomsOffice]] = CustomsOffice.listReads()
+    val queryParameters                            = CustomsOffice.queryParameters(countryCodes = Seq(countryCode), roles = Seq(role))
     val url                                        = url"${config.referenceDataUrl}/lists/CustomsOffices?$queryParameters"
     get[CustomsOffice](url)
   }

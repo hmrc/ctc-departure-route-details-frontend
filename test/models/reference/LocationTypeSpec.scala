@@ -16,9 +16,7 @@
 
 package models.reference
 
-import config.FrontendAppConfig
 import generators.Generators
-import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
@@ -28,8 +26,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 
 class LocationTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with Generators {
-
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "LocationType" - {
 
@@ -73,7 +69,7 @@ class LocationTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
                        |  "value": "$description"
                        |}
                        |""".stripMargin)
-              .as[LocationType](LocationType.reads(mockFrontendAppConfig)) mustEqual locationType
+              .as[LocationType](LocationType.reads()) mustEqual locationType
         }
       }
     }

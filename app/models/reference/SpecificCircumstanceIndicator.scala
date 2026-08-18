@@ -17,7 +17,6 @@
 package models.reference
 
 import cats.Order
-import config.FrontendAppConfig
 import models.{DynamicEnumerableType, Radioable}
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.{__, Format, Json, Reads}
@@ -34,7 +33,7 @@ case class SpecificCircumstanceIndicator(
 
 object SpecificCircumstanceIndicator extends DynamicEnumerableType[SpecificCircumstanceIndicator] {
 
-  def reads(config: FrontendAppConfig): Reads[SpecificCircumstanceIndicator] =
+  def reads(): Reads[SpecificCircumstanceIndicator] =
     (
       (__ \ "key").read[String] and
         (__ \ "value").read[String]
