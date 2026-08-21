@@ -17,7 +17,7 @@ Run accessibility linter tests:
 
 <pre>
 sm2 --start CTC_TRADERS_P6_ACCEPTANCE
-sm2 --stop CTC_DEPARTURE_ROUTE_DETAILS_FRONTEND
+sm2 --stop CTC_DEPARTURE_ROUTE_DETAILS_FRONTEND_P6
 sbt run
 </pre>
 
