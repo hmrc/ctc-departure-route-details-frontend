@@ -17,7 +17,6 @@
 package models.reference
 
 import base.SpecBase
-import config.FrontendAppConfig
 import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -25,8 +24,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 
 class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckPropertyChecks {
-
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "SpecificCircumstanceIndicator" - {
 
@@ -59,37 +56,18 @@ class SpecificCircumstanceIndicatorSpec extends SpecBase with ScalaCheckProperty
         }
       }
 
-      "when reading from reference data" - {
-        "when phase 5" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(false)
-          forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-            (code, description) =>
-              val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
-              Json
-                .parse(s"""
-                         |{
-                         |  "code": "$code",
-                         |  "description": "$description"
-                         |}
-                         |""".stripMargin)
-                .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads(mockFrontendAppConfig)) mustEqual specificCircumstanceIndicator
-          }
-        }
-
-        "when phase 6" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(true)
-          forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-            (code, description) =>
-              val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
-              Json
-                .parse(s"""
-                         |{
-                         |  "key": "$code",
-                         |  "value": "$description"
-                         |}
-                         |""".stripMargin)
-                .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads(mockFrontendAppConfig)) mustEqual specificCircumstanceIndicator
-          }
+      "when reading from reference data" in {
+        forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+          (code, description) =>
+            val specificCircumstanceIndicator = SpecificCircumstanceIndicator(code, description)
+            Json
+              .parse(s"""
+                       |{
+                       |  "key": "$code",
+                       |  "value": "$description"
+                       |}
+                       |""".stripMargin)
+              .as[SpecificCircumstanceIndicator](SpecificCircumstanceIndicator.reads()) mustEqual specificCircumstanceIndicator
         }
       }
     }

@@ -18,10 +18,8 @@ package models.reference
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import config.FrontendAppConfig
 import generators.Generators
 import models.SelectableList
-import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -29,8 +27,6 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 class UnLocodeSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
-
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "UnLocode" - {
 
@@ -63,37 +59,18 @@ class UnLocodeSpec extends SpecBase with ScalaCheckPropertyChecks with Generator
         }
       }
 
-      "when reading from reference data" - {
-        "when phase 5" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(false)
-          forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-            (code, description) =>
-              val unLocode = UnLocode(code, description)
-              Json
-                .parse(s"""
-                         |{
-                         |  "unLocodeExtendedCode": "$code",
-                         |  "name": "$description"
-                         |}
-                         |""".stripMargin)
-                .as[UnLocode](UnLocode.reads(mockFrontendAppConfig)) mustEqual unLocode
-          }
-        }
-
-        "when phase 6" in {
-          when(mockFrontendAppConfig.isPhase6Enabled).thenReturn(true)
-          forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-            (code, description) =>
-              val unLocode = UnLocode(code, description)
-              Json
-                .parse(s"""
-                         |{
-                         |  "key": "$code",
-                         |  "value": "$description"
-                         |}
-                         |""".stripMargin)
-                .as[UnLocode](UnLocode.reads(mockFrontendAppConfig)) mustEqual unLocode
-          }
+      "when reading from reference data" in {
+        forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+          (code, description) =>
+            val unLocode = UnLocode(code, description)
+            Json
+              .parse(s"""
+                       |{
+                       |  "key": "$code",
+                       |  "value": "$description"
+                       |}
+                       |""".stripMargin)
+              .as[UnLocode](UnLocode.reads()) mustEqual unLocode
         }
       }
     }
